@@ -2,3 +2,5 @@
 cables_api
 cables
 cables_ui
+node_modules
+package-lock.json
