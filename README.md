@@ -22,4 +22,4 @@ start cables: `npm run start`
 
 
 # visual studio code
-* install extension: *editorconfig*
+* install extension: `editorconfig`
