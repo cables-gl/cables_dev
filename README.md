@@ -10,7 +10,10 @@ npm i
 git clone git@github.com:pandrr/cables.git
 git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:undev-studio/cables_ui.git
-
+cd cables_api
+npm i
+cd cables_ui
+npm i
 ```
 
 start cables: `npm run start`
