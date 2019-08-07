@@ -1,0 +1,26 @@
+{
+    "name": "cables_dev",
+    "version": "1.0.0",
+    "description": "cables development environment",
+    "main": "index.js",
+    "scripts": {
+        "start": "node start.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/undev-studio/cables_dev.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/undev-studio/cables_dev/issues"
+    },
+    "homepage": "https://github.com/undev-studio/cables_dev#readme",
+    "dependencies": {},
+    "devDependencies": {
+        "concurrently": "^4.1.1",
+        "gulp": "^4.0.2",
+        "gulp-nodemon": "^2.4.2"
+    }
+}
