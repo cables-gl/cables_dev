@@ -1,10 +1,5 @@
 const concurrently = require('concurrently');
 
-
-
-console.log("STARTY")
-
-
 concurrently([
     {
         command:'cd cables_api;npm run start',
