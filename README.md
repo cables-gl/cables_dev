@@ -1,7 +1,7 @@
 # cables_dev
 cables development environment
 
-install cables repositories
+install:
 
 ```
 git clone git@github.com:undev-studio/cables_dev.git
