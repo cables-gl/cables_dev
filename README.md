@@ -22,4 +22,5 @@ start cables: `npm run start`
 
 
 # visual studio code
-* install extension: `editorconfig`
+* install extensions: `Editorconfig`, `Eslint`, `Prettier - Code Formatter`
+* additional extensions to install (e.g for ES6 syntax highlighting): `Babel Javascript`
