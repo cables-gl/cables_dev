@@ -25,6 +25,11 @@ concurrently(
             name: "_ui",
             prefixColor: "green",
         },
+        {
+            command: "cd cables; npm run watch",
+            name: "core",
+            prefixColor: "red",
+        },
     ],
     {
         prefix: "name",
