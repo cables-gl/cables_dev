@@ -39,6 +39,11 @@ start cables: `npm run start`
         "typescript.validate.enable": false,
         "javascript.format.enable": false,
         "prettier.tabWidth": 4,
+        "search.useIgnoreFiles": false,
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/bower_components": true
+        }
 ```
-
+The `search.exclude` and `search.useIgnoreFiles` should be set like this so you are able to still search the files on VSCode (it ignores all folders that are in `.gitignore` by default).
 * Have fun!
