@@ -1,7 +1,4 @@
 .DS_Store
-cables
-cables_api
-cables_ui
 package-lock.json
 # *.code-workspace
 .vscode
