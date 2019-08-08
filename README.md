@@ -41,5 +41,6 @@ start cables: `npm run start`
     "prettier.eslintIntegration": true,
     "typescript.validate.enable": false,
     "prettier.tabWidth": 4
-    ```
+```
+
 * Have fun!
