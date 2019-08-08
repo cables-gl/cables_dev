@@ -11,11 +11,16 @@ git clone git@github.com:pandrr/cables.git
 git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:undev-studio/cables_ui.git
 cd cables_api
+git checkout develop
 npm i
 cd ..
 cd cables_ui
+git checkout develop
+touch scss/svgicons.scss
 npm i
 cd ..
+cd cables
+git checkout develop
 ```
 
 start cables: `npm run start`
