@@ -16,6 +16,7 @@ npm i
 cd ..
 cd cables_ui
 git checkout develop
+touch scss/svgicons.scss
 npm i
 cd ..
 cd cables
