@@ -3,9 +3,6 @@ const kill = require("tree-kill");
 
 const shouldStartMongo = Boolean(Number(process.env.STARTALL));
 
-console.log({ shouldStartMongo });
-
-// console.log(typeof process.env.STARTALL);
 concurrently(
     [
         shouldStartMongo && {
