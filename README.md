@@ -18,6 +18,8 @@ cd cables_ui
 git checkout develop
 npm i
 cd ..
+cd cables
+git checkout develop
 ```
 
 start cables: `npm run start`
