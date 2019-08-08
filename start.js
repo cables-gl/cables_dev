@@ -1,8 +1,23 @@
 const concurrently = require("concurrently");
 const kill = require("tree-kill");
 
+const shouldStartMongo = Boolean(Number(process.env.STARTALL));
+
+console.log({ shouldStartMongo });
+
+// console.log(typeof process.env.STARTALL);
 concurrently(
     [
+        shouldStartMongo && {
+            command: "cd cables_api; mongod",
+            name: "mongod",
+            prefixColor: "gray",
+        },
+        shouldStartMongo && {
+            command: "cd cables_api; memcached",
+            name: "memcached",
+            prefixColor: "gray",
+        },
         {
             command: "cd cables_api;npm run start",
             name: "api",
