@@ -30,7 +30,7 @@ concurrently(
             name: "core",
             prefixColor: "red",
         },
-    ],
+    ].filter(Boolean),
     {
         prefix: "name",
         killOthers: ["failure", "success"],
