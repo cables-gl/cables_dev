@@ -24,7 +24,7 @@ start cables: `npm run start`
 # visual studio code
 * install extensions: `Editorconfig`, `Eslint`, `Prettier - Code Formatter`
 * additional extensions to install (e.g for ES6 syntax highlighting): `Babel Javascript`
-* to make eslint work properly, please add the following to your *.code-workspace under `settings` or in your user settings:
+* to make eslint work properly, please add the following to your `*.code-workspace` under `settings` or in your user settings:
 
 ```json
     "editor.formatOnSave": false,
