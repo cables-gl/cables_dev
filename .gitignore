@@ -1,6 +1,6 @@
 .DS_Store
-cables_api
-cables
-cables_ui
+# cables_api
+# cables
+# cables_ui
 node_modules
 package-lock.json

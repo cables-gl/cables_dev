@@ -7,6 +7,11 @@ concurrently([
         prefixColor:"cyan"
     },
     {
+        command:'cd cables;npm run watch',
+        name:"core",
+        prefixColor:"red"
+    },
+    {
         command:'cd cables_ui;gulp',
         name:"_ui",
         prefixColor:"green"
