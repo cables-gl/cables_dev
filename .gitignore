@@ -3,7 +3,7 @@ cables
 cables_api
 cables_ui
 package-lock.json
-*.code-workspace
+# *.code-workspace
 .vscode
 yarn.lock
 
