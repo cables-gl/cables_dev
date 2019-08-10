@@ -21,6 +21,7 @@ npm i
 cd ..
 cd cables
 git checkout develop
+cd ..
 ```
 
 * start cables without mongodb & memcached: `npm run start`
