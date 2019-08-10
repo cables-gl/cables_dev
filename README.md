@@ -21,6 +21,7 @@ npm i
 cd ..
 cd cables
 git checkout develop
+npm i
 cd ..
 ```
 
