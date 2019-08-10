@@ -23,9 +23,8 @@ cd cables
 git checkout develop
 ```
 
-start cables without mongodb & memcached: `npm run start`
-
-start cables with mongodb & memcached: `npm run start:all`
+* start cables without mongodb & memcached: `npm run start`
+* start cables with mongodb & memcached: `npm run start:all`
 
 
 # visual studio code
