@@ -21,9 +21,12 @@ npm i
 cd ..
 cd cables
 git checkout develop
+npm i
+cd ..
 ```
 
-start cables: `npm run start`
+* start cables without mongodb & memcached: `npm run start`
+* start cables with mongodb & memcached: `npm run start:all`
 
 
 # visual studio code
