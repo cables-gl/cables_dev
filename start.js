@@ -17,18 +17,18 @@ concurrently(
         },
         {
             command: "cd cables_api;npm run start",
-            name: "api",
+            name: "api ",
             prefixColor: "cyan",
         },
         {
             command: "cd cables_ui;gulp",
-            name: "_ui",
+            name: "gui ",
             prefixColor: "green",
         },
         {
             command: "cd cables; npm run watch",
             name: "core",
-            prefixColor: "red",
+            prefixColor: "yellow",
         },
     ].filter(Boolean),
     {
