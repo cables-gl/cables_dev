@@ -64,14 +64,6 @@
         "prefer-template": 0,
         "prefer-rest-params": 0,
         "no-restricted-properties": 0,
-        "import/no-cycle": [
-            2,
-            {
-                "maxDepth": 3
-            }
-        ],
-        "prefer-template": 0,
-        "prefer-rest-params": 0,
         "import/prefer-default-export": 0
     }
 }
