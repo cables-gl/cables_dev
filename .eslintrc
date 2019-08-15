@@ -1,6 +1,5 @@
 {
     "extends": "airbnb-base",
-    "parser": "babel-eslint",
     "globals": {
         "op": true,
         "gui": true,
