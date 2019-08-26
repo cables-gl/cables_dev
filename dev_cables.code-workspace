@@ -19,7 +19,10 @@
         "search.useIgnoreFiles": false,
         "search.exclude": {
             "**/node_modules": true,
-            "**/bower_components": true
+            "**/bower_components": true,
+            "**/min.js": true,
+            "**/max.js": true,
+            "**/.map.js": true
         }
     }
 }

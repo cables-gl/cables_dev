@@ -4,6 +4,10 @@ const kill = require("tree-kill");
 const shouldStartServers = Boolean(Number(process.env.STARTSERVERS));
 const shouldStartServices = Boolean(Number(process.env.STARTSERVICES));
 
+console.log("shouldStartServers",shouldStartServers);
+console.log("shouldStartServices",shouldStartServices);
+
+
 concurrently(
     [
         shouldStartServices && {

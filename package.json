@@ -6,7 +6,7 @@
     "scripts": {
         "start": "cross-env STARTSERVERS=1 node start.js",
         "watch": "node start.js",
-        "start:all": "cross-env STARTSERVICES=1 node start.js",
+        "start:all": "cross-env STARTSERVICES=1 STARTSERVERS=1 node start.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
