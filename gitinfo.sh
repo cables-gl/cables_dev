@@ -1,17 +1,53 @@
+#!/bin/bash
+currentRepo=""
+testOrigin()
+{
+	UPSTREAM=${1:-'@{u}'}
+	LOCAL=$(git rev-parse @)
+	REMOTE=$(git rev-parse "$UPSTREAM")
+	BASE=$(git merge-base @ "$UPSTREAM")
+	
+	#check if theres no upstream branch here
+	#
+	if [[ $LOCAL = $REMOTE ]]; then
+	    echo "   Up-to-date"
+	elif [[ $LOCAL = $BASE ]]; then
+	    echo "   Need to pull"
+	elif [[ $REMOTE = $BASE ]]; then
+	    echo "   Need to push"
+	else
+	    echo "   Diverged"
+	fi
 
+}
 
-echo '------- cables'
+testBranch()
+{
+	current="${1}"
+	#git fetch origin
+	#git remote update
+	branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+	#status=$(git status -s)
+	#echo "status of branch is " $status
+
+	echo "CABLES"${current}
+	echo "   branch is "$branch
+	#echo "  status is " $status	
+}
+#branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+#echo $branch
+#git remote -v
+#git branch | grep \* | cut -d ' ' -f2
+
 cd cables
-git log -1
+	testBranch ""
+	testOrigin
 cd ..
-
-echo '------- cables_ui'
 cd cables_ui
-git log -1
+	testBranch "_UI"
+	testOrigin
 cd ..
-
-echo '------- cables_api'
 cd cables_api
-git log -1
+	testBranch "_API"
+	testOrigin
 cd ..
-

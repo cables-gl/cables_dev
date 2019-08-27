@@ -23,6 +23,9 @@
             "**/min.js": true,
             "**/max.js": true,
             "**/.map.js": true
+        },
+        "files.exclude": {
+            "**/.node_modules": true
         }
     }
 }
