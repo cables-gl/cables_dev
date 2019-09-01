@@ -55,3 +55,7 @@ cd ..
 ```
 The `search.exclude` and `search.useIgnoreFiles` should be set like this so you are able to still search the files on VSCode (it ignores all folders that are in `.gitignore` by default).
 * Have fun!
+
+# tips
+
+* on linux try `sudo apt-get install gcc g++ build-essential`
