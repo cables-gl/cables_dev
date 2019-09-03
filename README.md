@@ -58,7 +58,7 @@ cd ..
 ```
 The `search.exclude` and `search.useIgnoreFiles` should be set like this so you are able to still search the files on VSCode (it ignores all folders that are in `.gitignore` by default).
 
-good list of files to exclude from search:
+ * good list of files to exclude from search:
 ```
 *.min.js*,*.max.js*,*map*,*/ace/*,*dist*,*jsdoc*,*build*,*/public/*,*logs*
 ```
