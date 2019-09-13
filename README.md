@@ -60,5 +60,5 @@ The `search.exclude` and `search.useIgnoreFiles` should be set like this so you 
 
  * good list of files to exclude from search:
 ```
-*.min.js*,*.max.js*,*map*,*/ace/*,*dist*,*jsdoc*,*build*,*/public/*,*logs*
+*.min.js,*.max.js,*.map*,*/ace/*,*dist*,*jsdoc*,*build*,*/public/*,*/logs*
 ```
