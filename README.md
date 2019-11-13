@@ -30,7 +30,7 @@ cd ..
 
 # tips
 
-* on linux try `sudo apt-get install gcc g++ build-essential autoconf libpng-dev`
+* on linux try `sudo apt-get install gcc g++ build-essential autoconf libpng-dev nasm`
 
 # visual studio code
 
