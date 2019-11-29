@@ -31,6 +31,7 @@ cd ..
 # tips
 
 * on linux try `sudo apt-get install gcc g++ build-essential autoconf libpng-dev nasm`
+* if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
 
 # visual studio code
 
