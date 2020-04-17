@@ -7,11 +7,10 @@
     "settings": {
         "editor.formatOnSave": false,
         "editor.formatOnSaveTimeout": 1000,
-        "eslint.autoFixOnSave": false,
         "eslint.alwaysShowStatus": true,
         "files.autoSave": "off",
         "eslint.enable": true,
-        "editor.autoIndent": false,
+        "editor.autoIndent": "none",
         "prettier.eslintIntegration": true,
         "typescript.validate.enable": false,
         "javascript.format.enable": false,
@@ -20,10 +19,16 @@
         "search.exclude": {
             "**/node_modules": true,
             "**/bower_components": true,
-            "**/min.js": true,
-            "**/max.js": true,
-            "**/.map.js": true
-        },
+            "**/*min.js": true,
+            "**/*max.js": true,
+            "**/*.map.*": true,
+            "*/ace/*": true,
+            "*dist/*": true,
+            "*jsdoc*": true,
+            "*build*": true,
+            "*/public/*": true,
+            "*/logs*": true
+},
         "files.exclude": {
             "**/.node_modules": true
         }
