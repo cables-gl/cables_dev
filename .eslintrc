@@ -16,13 +16,25 @@
         "Raphael": true,
         "ace": true,
         "logStartup": true,
-        "attachments": true
+        "attachments": true,
+        "CABLESUILOADER": true,
+        "iziToast": true,
+        "CGL": true,
+        "vec2": true,
+        "vec3": true,
+        "vec4": true,
+        "mat3": true,
+        "mat4": true
     },
     "env": {
         "browser": true
     },
     "rules": {
-        "no-var": 0,
+        "object-property-newline":"error",
+        "global-require": 1,
+        "camelcase": 0,
+        "class-methods-use-this": 1,
+        "no-var": 1,
         "vars-on-top": 0,
         "no-bitwise": 0,
         "no-underscore-dangle": 0,
@@ -48,8 +60,14 @@
         "eqeqeq": 0,
         "one-var": 0,
         "no-plusplus": 0,
-        "indent": [2, 4],
-        "quotes": [2, "double"],
+        "indent": [
+            2,
+            4
+        ],
+        "quotes": [
+            2,
+            "double"
+        ],
         "no-use-before-define": 0,
         "no-multi-assign": 0,
         "no-extend-native": 0,
@@ -61,10 +79,24 @@
         "no-continue": 0,
         "guard-for-in": 1,
         "no-new": 0,
-        "import/no-cycle": [2, { "maxDepth": 3 }],
+        "import/no-cycle": [
+            2,
+            {
+                "maxDepth": 3
+            }
+        ],
         "prefer-template": 0,
         "prefer-rest-params": 0,
         "no-restricted-properties": 0,
-        "import/prefer-default-export": 0
+        "import/prefer-default-export": 0,
+        "import/no-default-export": "error",
+        "prefer-arrow-callback": 0,
+        "prefer-const": [
+            "error",
+            {
+                "destructuring": "any",
+                "ignoreReadBeforeAssign": false
+            }
+        ]
     }
 }
