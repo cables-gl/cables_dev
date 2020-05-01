@@ -76,7 +76,8 @@
         "object-curly-newline": 1,
         "implicit-arrow-linebreak": 0,
         "no-continue": 0,
-        "guard-for-in": 1,
+        "no-console": 0,
+        "guard-for-in": 0,
         "no-new": 0,
         "import/no-cycle": [
             2,

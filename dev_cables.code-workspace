@@ -10,7 +10,7 @@
         "eslint.alwaysShowStatus": true,
         "files.autoSave": "off",
         "eslint.enable": true,
-        "editor.autoIndent": "none",
+        "editor.autoIndent": true,
         "prettier.eslintIntegration": true,
         "typescript.validate.enable": false,
         "javascript.format.enable": false,
