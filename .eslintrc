@@ -16,6 +16,7 @@
         "Raphael": true,
         "ace": true,
         "logStartup": true,
+        "attachments": true,
         "CABLESUILOADER": true,
         "iziToast": true,
         "CGL": true,
