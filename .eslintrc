@@ -89,8 +89,10 @@
         "no-multi-assign": 0,
         "no-extend-native": 0,
         "no-prototype-builtins": 0,
+        "array-callback-return": 1,
         "prefer-destructuring": 0,
         "no-restricted-syntax": 0,
+        "no-restricted-globals": 0,
         "no-continue": 0,
         "no-console": 0,
         "no-else-return":0,
@@ -98,6 +100,7 @@
         "guard-for-in": 0,
         "no-new": 0,
 
+        "import/no-dynamic-require": 0,
         "import/no-cycle": [
             1,
             {
