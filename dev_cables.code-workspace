@@ -5,12 +5,12 @@
         }
     ],
     "settings": {
-        "editor.formatOnSave": false,
+        "editor.formatOnSave": true,
         "editor.formatOnSaveTimeout": 1000,
         "eslint.alwaysShowStatus": true,
         "files.autoSave": "off",
         "editor.autoIndent": true,
-        "eslint.enable": false,
+        "eslint.enable": true,
         "prettier.eslintIntegration": true,
         "typescript.validate.enable": false,
         "javascript.format.enable": false,
@@ -28,7 +28,7 @@
             "*build*": true,
             "*/public/*": true,
             "*/logs*": true
-},
+        },
         "files.exclude": {
             "**/.node_modules": true
         }

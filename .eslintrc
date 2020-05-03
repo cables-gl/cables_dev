@@ -30,7 +30,7 @@
         "browser": true
     },
     "rules": {
-        "object-property-newline":"error",
+        "object-property-newline": "error",
         "global-require": 1,
         "camelcase": 0,
         "class-methods-use-this": 1,
@@ -60,14 +60,9 @@
         "eqeqeq": 0,
         "one-var": 0,
         "no-plusplus": 0,
-        "indent": [
-            2,
-            4
-        ],
-        "quotes": [
-            2,
-            "double"
-        ],
+        "indent": [2, 4],
+        "quotes": [2, "double"],
+        "quote-props": [1, "always"],
         "no-use-before-define": 0,
         "no-multi-assign": 0,
         "no-extend-native": 0,
