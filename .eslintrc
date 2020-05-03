@@ -24,7 +24,8 @@
         "vec3": true,
         "vec4": true,
         "mat3": true,
-        "mat4": true
+        "mat4": true,
+        "introJs":true
     },
     "env": {
         "browser": true
@@ -81,9 +82,9 @@
         "object-curly-newline": 1,
         "implicit-arrow-linebreak": 0,
         "operator-linebreak": 0,
-
         "array-element-newline": 0,
 
+        "no-empty":0,
         "no-use-before-define": 0,
         "no-multi-assign": 0,
         "no-extend-native": 0,
@@ -96,6 +97,7 @@
         "one-var-declaration-per-line":0,
         "guard-for-in": 0,
         "no-new": 0,
+
         "import/no-cycle": [
             1,
             {
@@ -106,7 +108,7 @@
         "prefer-rest-params": 0,
         "no-restricted-properties": 0,
         "import/prefer-default-export": 0,
-        "import/no-default-export": 1,
+        "import/no-default-export": 0,
         "prefer-arrow-callback": 0,
         "prefer-const": [
             1,
