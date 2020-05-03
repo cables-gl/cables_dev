@@ -5,7 +5,10 @@
         }
     ],
     "settings": {
-        "editor.formatOnSave": true,
+
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        },
         "editor.formatOnSaveTimeout": 1000,
         "eslint.alwaysShowStatus": true,
         "files.autoSave": "off",
