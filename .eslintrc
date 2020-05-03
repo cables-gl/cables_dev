@@ -48,7 +48,7 @@
         ],
         "func-names": 0,
         "max-len": [
-            1,
+            0,
             {
                 "code": 120,
                 "tabWidth": 4,
@@ -78,11 +78,15 @@
         "space-infix-ops": 1,
         "keyword-spacing": 1,
         "padded-blocks": 1,
+        "comma-spacing":1,
 
         "object-curly-newline": 1,
         "implicit-arrow-linebreak": 0,
         "operator-linebreak": 0,
         "array-element-newline": 0,
+        "function-paren-newline": 0,
+
+        "no-self-compare":0,
 
         "no-empty":0,
         "no-use-before-define": 0,
