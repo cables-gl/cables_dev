@@ -25,7 +25,12 @@
         "vec4": true,
         "mat3": true,
         "mat4": true,
-        "introJs":true
+        "introJs":true,
+        "vueStore":true,
+        "UndoManager":true,
+        "Handlebars":true,
+        "hljs":true,
+        "tinysort":true,
     },
     "env": {
         "browser": true
@@ -79,8 +84,9 @@
         "keyword-spacing": 1,
         "padded-blocks": 1,
         "comma-spacing":1,
+        "spaced-comment":1,
 
-        "object-curly-newline": 1,
+        "object-curly-newline": 0,
         "implicit-arrow-linebreak": 0,
         "operator-linebreak": 0,
         "array-element-newline": 0,
@@ -88,6 +94,8 @@
 
         "no-self-compare":0,
 
+        "no-case-declarations":0,
+        "default-case":0,
         "no-empty":0,
         "no-use-before-define": 0,
         "no-multi-assign": 0,
@@ -103,6 +111,9 @@
         "one-var-declaration-per-line":0,
         "guard-for-in": 0,
         "no-new": 0,
+        "radix":0,
+        "no-template-curly-in-string":0,
+
 
         "import/no-dynamic-require": 0,
         "import/no-cycle": [
