@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-git pull
+git pull || true
 
 echo "LOADING NODEJS VERSION" `cat .nvmrc`
 . ~/.nvm/nvm.sh
