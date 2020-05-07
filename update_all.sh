@@ -3,12 +3,17 @@
 set -e
 set -o pipefail
 
+git pull
+
 echo "LOADING NODEJS VERSION" `cat .nvmrc`
 . ~/.nvm/nvm.sh
 nvm use
 
 echo "UPDATING CORE..."
 cd cables
+if [ -n "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
@@ -25,6 +30,9 @@ cd ..
 
 echo "UPDATING API..."
 cd cables_api
+if [ -n "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
@@ -41,6 +49,9 @@ cd ..
 
 echo "UPDATING UI..."
 cd cables_ui
+if [ -n "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
