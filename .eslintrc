@@ -24,13 +24,19 @@
         "vec3": true,
         "vec4": true,
         "mat3": true,
-        "mat4": true
+        "mat4": true,
+        "introJs":true,
+        "vueStore":true,
+        "UndoManager":true,
+        "Handlebars":true,
+        "hljs":true,
+        "tinysort":true,
     },
     "env": {
         "browser": true
     },
     "rules": {
-        "object-property-newline":"error",
+        "object-property-newline": "error",
         "global-require": 1,
         "camelcase": 0,
         "class-methods-use-this": 1,
@@ -39,7 +45,7 @@
         "no-bitwise": 0,
         "no-underscore-dangle": 0,
         "brace-style": [
-            2,
+            1,
             "allman",
             {
                 "allowSingleLine": true
@@ -47,9 +53,9 @@
         ],
         "func-names": 0,
         "max-len": [
-            1,
+            0,
             {
-                "code": 300,
+                "code": 120,
                 "tabWidth": 4,
                 "comments": 300,
                 "ignoreComments": true
@@ -59,28 +65,59 @@
         "consistent-return": 0,
         "eqeqeq": 0,
         "one-var": 0,
+        "no-unused-vars": 0,
+        "no-lonely-if": 0,
         "no-plusplus": 0,
-        "indent": [
-            2,
-            4
-        ],
-        "quotes": [
-            2,
-            "double"
-        ],
+        "indent": [1, 4],
+        "quotes": [1, "double"],
+        "quote-props": [1, "always"],
+        "comma-dangle": 0,
+        "nonblock-statement-body-position": 0,
+        "curly": 0,
+        "object-shorthand": 1,
+        "prefer-spread": 0,
+
+        "no-trailing-spaces": 1,
+        "space-before-function-paren": 1,
+        "space-in-parens": 1,
+        "space-infix-ops": 1,
+        "keyword-spacing": 1,
+        "padded-blocks": 1,
+        "comma-spacing":1,
+        "spaced-comment":1,
+
+        "object-curly-newline": 0,
+        "implicit-arrow-linebreak": 0,
+        "operator-linebreak": 0,
+        "array-element-newline": 0,
+        "function-paren-newline": 0,
+
+        "no-self-compare":0,
+
+        "no-case-declarations":0,
+        "default-case":0,
+        "no-empty":0,
         "no-use-before-define": 0,
         "no-multi-assign": 0,
         "no-extend-native": 0,
         "no-prototype-builtins": 0,
+        "array-callback-return": 1,
         "prefer-destructuring": 0,
         "no-restricted-syntax": 0,
-        "object-curly-newline": 1,
-        "implicit-arrow-linebreak": 0,
+        "no-restricted-globals": 0,
         "no-continue": 0,
-        "guard-for-in": 1,
+        "no-console": 0,
+        "no-else-return":0,
+        "one-var-declaration-per-line":0,
+        "guard-for-in": 0,
         "no-new": 0,
+        "radix":0,
+        "no-template-curly-in-string":0,
+
+
+        "import/no-dynamic-require": 0,
         "import/no-cycle": [
-            2,
+            1,
             {
                 "maxDepth": 3
             }
@@ -89,10 +126,10 @@
         "prefer-rest-params": 0,
         "no-restricted-properties": 0,
         "import/prefer-default-export": 0,
-        "import/no-default-export": "error",
+        "import/no-default-export": 0,
         "prefer-arrow-callback": 0,
         "prefer-const": [
-            "error",
+            1,
             {
                 "destructuring": "any",
                 "ignoreReadBeforeAssign": false
