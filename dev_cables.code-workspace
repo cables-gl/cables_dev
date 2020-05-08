@@ -12,7 +12,7 @@
         "editor.formatOnSaveTimeout": 1000,
         "eslint.alwaysShowStatus": true,
         "files.autoSave": "off",
-        "editor.autoIndent": true,
+        "editor.autoIndent": "full",
         "eslint.enable": true,
         "prettier.eslintIntegration": true,
         "typescript.validate.enable": false,
