@@ -11,7 +11,7 @@ nvm use
 
 echo "UPDATING CORE..."
 cd cables
-if [ -n "${1}" ]; then
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
 	git checkout "${1}"
 fi
 # get current branch
@@ -24,13 +24,16 @@ if [ "master" != "${branch}" ]; then
     git merge origin/develop;
 else
     echo "WARNING: not merging origin/develop into master!"
+fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
 fi
 npm i
 cd ..
 
 echo "UPDATING API..."
 cd cables_api
-if [ -n "${1}" ]; then
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
 	git checkout "${1}"
 fi
 # get current branch
@@ -44,12 +47,15 @@ if [ "master" != "${branch}" ]; then
 else
     echo "WARNING: not merging origin/develop into master!"
 fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
+fi
 npm i
 cd ..
 
 echo "UPDATING UI..."
 cd cables_ui
-if [ -n "${1}" ]; then
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
 	git checkout "${1}"
 fi
 # get current branch
@@ -62,6 +68,9 @@ if [ "master" != "${branch}" ]; then
     git merge origin/develop;
 else
     echo "WARNING: not merging origin/develop into master!"
+fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
 fi
 npm i
 cd ..
