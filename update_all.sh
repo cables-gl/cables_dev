@@ -3,12 +3,17 @@
 set -e
 set -o pipefail
 
+git pull || true
+
 echo "LOADING NODEJS VERSION" `cat .nvmrc`
 . ~/.nvm/nvm.sh
 nvm use
 
 echo "UPDATING CORE..."
 cd cables
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
@@ -19,12 +24,18 @@ if [ "master" != "${branch}" ]; then
     git merge origin/develop;
 else
     echo "WARNING: not merging origin/develop into master!"
+fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
 fi
 npm i
 cd ..
 
 echo "UPDATING API..."
 cd cables_api
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
@@ -36,11 +47,17 @@ if [ "master" != "${branch}" ]; then
 else
     echo "WARNING: not merging origin/develop into master!"
 fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
+fi
 npm i
 cd ..
 
 echo "UPDATING UI..."
 cd cables_ui
+if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
+	git checkout "${1}"
+fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
@@ -51,6 +68,9 @@ if [ "master" != "${branch}" ]; then
     git merge origin/develop;
 else
     echo "WARNING: not merging origin/develop into master!"
+fi
+if [ "clean" == "${1}" ]; then
+	rm -rf node_modules/
 fi
 npm i
 cd ..
