@@ -25,12 +25,20 @@
         "vec4": true,
         "mat3": true,
         "mat4": true,
+        "quat": true,
         "introJs":true,
         "vueStore":true,
         "UndoManager":true,
         "Handlebars":true,
         "hljs":true,
         "tinysort":true,
+        "loadjs":true,
+        "MathParser":true,
+        "socketClusterClient":true,
+        "incrementStartup":true,
+        "mmd":true,
+        "OpUi":true,
+        "UiLink":true
     },
     "env": {
         "browser": true
@@ -38,8 +46,9 @@
     "rules": {
         "object-property-newline": "error",
         "global-require": 1,
+        "no-compare-neg-zero":0,
         "camelcase": 0,
-        "class-methods-use-this": 1,
+        "class-methods-use-this": 0,
         "no-var": 1,
         "vars-on-top": 0,
         "no-bitwise": 0,
@@ -76,6 +85,7 @@
         "curly": 0,
         "object-shorthand": 1,
         "prefer-spread": 0,
+        "no-loop-func":0,
 
         "no-trailing-spaces": 1,
         "space-before-function-paren": 1,
@@ -84,7 +94,9 @@
         "keyword-spacing": 1,
         "padded-blocks": 1,
         "comma-spacing":1,
+        "space-before-blocks":1,
         "spaced-comment":1,
+        "object-curly-spacing":1,
 
         "object-curly-newline": 0,
         "implicit-arrow-linebreak": 0,
@@ -102,6 +114,7 @@
         "no-extend-native": 0,
         "no-prototype-builtins": 0,
         "array-callback-return": 1,
+
         "prefer-destructuring": 0,
         "no-restricted-syntax": 0,
         "no-restricted-globals": 0,
@@ -113,8 +126,7 @@
         "no-new": 0,
         "radix":0,
         "no-template-curly-in-string":0,
-
-
+        "no-useless-constructor":0,
         "import/no-dynamic-require": 0,
         "import/no-cycle": [
             1,
