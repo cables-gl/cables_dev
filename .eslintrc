@@ -152,5 +152,6 @@
             1,
             { "blankLine": "always", "prev": "function", "next": "*" }
     ]
+
     }
 }
