@@ -147,6 +147,10 @@
                 "destructuring": "any",
                 "ignoreReadBeforeAssign": false
             }
-        ]
+        ],
+        "padding-line-between-statements": [
+            1,
+            { "blankLine": "always", "prev": "function", "next": "*" }
+    ]
     }
 }
