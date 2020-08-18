@@ -3,9 +3,9 @@
 set -e
 set -o pipefail
 
-echo "LOADING NODEJS VERSION" `cat .nvmrc`
-. ~/.nvm/nvm.sh
-nvm use
+#echo "LOADING NODEJS VERSION" `cat .nvmrc`
+#. ~/.nvm/nvm.sh
+#nvm use
 
 cd cables
 echo "REBUILDING CORE"
