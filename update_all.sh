@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/bin/bash -l
 
 git pull
-which nvm > /dev/null 2>&1
+ls ~/.nvm/nvm.sh > /dev/null 2>&1
 
 if [ $? -eq 0 ] 
 then
 	echo "LOADING NODEJS VERSION" `cat .nvmrc`
+	. ~/.nvm/nvm.sh
 	nvm install `cat .nvmrc`
 	nvm use `cat .nvmrc`
-	. ~/.nvm/nvm.sh
 	nvm use
 else
 	echo "NVM NOT FOUND, RUNNING NODEJS WITH VERSION" `node --version` ", WANTED" `cat .nvmrc`;
