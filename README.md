@@ -2,7 +2,7 @@
 cables development environment
 
 ## short version
-- install `nvm` (on plaon windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
+- install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) (on plain windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
 - install memcached (or use `docker-compose up`)
 - install mongodb (or use `docker-compose up`)
 - clone this repository using  `git clone git@github.com:undev-studio/cables_api.git`

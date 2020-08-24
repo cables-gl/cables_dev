@@ -25,3 +25,4 @@ git clone git@github.com:undev-studio/cables_ui.git
 touch cables_ui/scss/svgicons.scss
 ./rebuild_natives.sh
 ./update_all.sh develop
+cp cables_api/cables_example.json cables_api/cables.json
