@@ -1,6 +1,15 @@
 # cables_dev
 cables development environment
 
+## short version
+- install `nvm` (on plaon windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
+- install memcached (or use `docker-compose up`)
+- install mongodb (or use `docker-compose up`)
+- clone this repository using  `git clone git@github.com:undev-studio/cables_api.git`
+- run `install.sh` (needs sudo password)
+
+## long/manual version
+
 install:
 
 ```
@@ -24,6 +33,8 @@ git checkout develop
 npm i
 cd ..
 ```
+
+# starting cables
 
 * start cables without mongodb & memcached: `npm run start`
 * start cables with mongodb & memcached: `npm run start:all`

@@ -16,20 +16,12 @@ fi
 set -e
 set -o pipefail
 
-cd cables
-echo "REBUILDING CORE"
+sudo apt-get install gcc g++ build-essential autoconf libpng-dev nasm
 nvm use
-npm rebuild node-sass
-npm rebuild bcrypt --update-binary
-cd ..
-cd cables_api
-echo "REBUILDING API"
-nvm use
-npm rebuild node-sass
-npm rebuild bcrypt --update-binary
-cd ..
-cd cables_ui
-echo "REBUILDING UI"
-nvm use
-npm rebuild node-sass
-npm rebuild bcrypt --update-binary
+npm install
+git clone git@github.com:pandrr/cables.git
+git clone git@github.com:undev-studio/cables_api.git
+git clone git@github.com:undev-studio/cables_ui.git
+touch cables_ui/scss/svgicons.scss
+./rebuild_natives.sh
+./update_all.sh develop
