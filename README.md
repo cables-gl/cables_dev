@@ -7,6 +7,7 @@ cables development environment
 * install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) (on plain windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
 * install memcached (or use `docker-compose up`)
 * install mongodb (or use `docker-compose up`)
+* install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_api.git`
 * run `install.sh` (needs sudo password)
 
@@ -38,7 +39,7 @@ cd ..
 
 ### tips
 
-* on linux try `sudo apt-get install gcc g++ build-essential autoconf libpng-dev nasm` (`install.sh` does that for you)
+* on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install.sh` does that for you)
 * if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
 
 ## starting cables

@@ -16,7 +16,7 @@ fi
 set -e
 set -o pipefail
 
-sudo apt-get install gcc g++ build-essential autoconf libpng-dev nasm
+sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
 nvm use
 npm install
 git clone git@github.com:pandrr/cables.git
