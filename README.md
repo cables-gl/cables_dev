@@ -8,7 +8,7 @@ cables development environment
 * install memcached (or use `docker-compose up`)
 * install mongodb (or use `docker-compose up`)
 * install git
-* clone this repository using  `git clone git@github.com:undev-studio/cables_api.git`
+* clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
 * run `install.sh` (needs sudo password)
 
 ### long/manual version
