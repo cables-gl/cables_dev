@@ -1,13 +1,21 @@
-#!/bin/bash
+#!/bin/bash -l
+
+git pull
+ls ~/.nvm/nvm.sh > /dev/null 2>&1
+
+if [ $? -eq 0 ] 
+then
+	echo "LOADING NODEJS VERSION" `cat .nvmrc`
+	. ~/.nvm/nvm.sh
+	nvm install `cat .nvmrc`
+	nvm use `cat .nvmrc`
+	nvm use
+else
+	echo "NVM NOT FOUND, RUNNING NODEJS WITH VERSION" `node --version` ", WANTED" `cat .nvmrc`;
+fi
 
 set -e
 set -o pipefail
-
-git pull || true
-
-echo "LOADING NODEJS VERSION" `cat .nvmrc`
-. ~/.nvm/nvm.sh
-nvm use
 
 echo "UPDATING CORE..."
 cd cables
