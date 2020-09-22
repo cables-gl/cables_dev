@@ -1,6 +1,7 @@
 {
     "extends": "airbnb-base",
     "globals": {
+        "ele": true,
         "op": true,
         "gui": true,
         "navigator": true,
@@ -26,19 +27,19 @@
         "mat3": true,
         "mat4": true,
         "quat": true,
-        "introJs":true,
-        "vueStore":true,
-        "UndoManager":true,
-        "Handlebars":true,
-        "hljs":true,
-        "tinysort":true,
-        "loadjs":true,
-        "MathParser":true,
-        "socketClusterClient":true,
-        "incrementStartup":true,
-        "mmd":true,
-        "OpUi":true,
-        "UiLink":true
+        "introJs": true,
+        "vueStore": true,
+        "UndoManager": true,
+        "Handlebars": true,
+        "hljs": true,
+        "tinysort": true,
+        "loadjs": true,
+        "MathParser": true,
+        "socketClusterClient": true,
+        "incrementStartup": true,
+        "mmd": true,
+        "OpUi": true,
+        "UiLink": true
     },
     "env": {
         "browser": true
@@ -77,35 +78,40 @@
         "no-unused-vars": 0,
         "no-lonely-if": 0,
         "no-plusplus": 0,
-        "indent": [1, 4],
-        "quotes": [1, "double"],
-        "quote-props": [1, "always"],
+        "indent": [
+            1,
+            4
+        ],
+        "quotes": [
+            1,
+            "double"
+        ],
+        "quote-props": [
+            1,
+            "always"
+        ],
         "comma-dangle": 0,
         "nonblock-statement-body-position": 0,
         "curly": 0,
         "object-shorthand": 0,
         "prefer-spread": 0,
         "no-loop-func": 0,
-
         "no-trailing-spaces": 1,
         "space-before-function-paren": 1,
-        "space-in-parens":1,
-        "space-infix-ops":1,
+        "space-in-parens": 1,
+        "space-infix-ops": 1,
         "keyword-spacing": 1,
         "padded-blocks": 1,
-        "comma-spacing":1,
-        "space-before-blocks":1,
-        "spaced-comment":1,
-        "object-curly-spacing":1,
-
+        "comma-spacing": 1,
+        "space-before-blocks": 1,
+        "spaced-comment": 1,
+        "object-curly-spacing": 1,
         "object-curly-newline": 0,
         "implicit-arrow-linebreak": 0,
         "operator-linebreak": 0,
         "array-element-newline": 0,
         "function-paren-newline": 0,
-
         "no-self-compare": 0,
-
         "no-case-declarations": 0,
         "default-case": 0,
         "no-empty": 0,
@@ -114,7 +120,6 @@
         "no-extend-native": 0,
         "no-prototype-builtins": 0,
         "array-callback-return": 1,
-
         "prefer-destructuring": 0,
         "no-restricted-syntax": 0,
         "no-restricted-globals": 0,
@@ -150,8 +155,11 @@
         ],
         "padding-line-between-statements": [
             1,
-            { "blankLine": "always", "prev": "function", "next": "*" }
-    ]
-
+            {
+                "blankLine": "always",
+                "prev": "function",
+                "next": "*"
+            }
+        ]
     }
 }
