@@ -7,6 +7,7 @@
     "settings": {
 
         "editor.codeActionsOnSave": {
+
             "source.fixAll.eslint": true
         },
         "editor.formatOnSaveTimeout": 1000,
