@@ -1,7 +1,6 @@
 {
     "extends": "airbnb-base",
     "globals": {
-        "ele": true,
         "op": true,
         "ele": true,
         "gui": true,
