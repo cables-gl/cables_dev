@@ -18,18 +18,15 @@ set -o pipefail
 
 cd cables
 echo "REBUILDING CORE"
-nvm use
 npm rebuild node-sass
 npm rebuild bcrypt --update-binary
 cd ..
 cd cables_api
 echo "REBUILDING API"
-nvm use
 npm rebuild node-sass
 npm rebuild bcrypt --update-binary
 cd ..
 cd cables_ui
 echo "REBUILDING UI"
-nvm use
 npm rebuild node-sass
 npm rebuild bcrypt --update-binary
