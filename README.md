@@ -41,6 +41,7 @@ cd ..
 
 * on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install.sh` does that for you)
 * if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
+* if you get "reached num max file watchers" errors: https://stackoverflow.com/a/56292289
 
 ## starting cables
 
