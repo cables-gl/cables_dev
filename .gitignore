@@ -2,6 +2,7 @@ cables/
 cables_api/
 cables_ui/
 cables_docs/
+assimp2json/
 
 .DS_Store
 package-lock.json
