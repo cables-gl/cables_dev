@@ -8,6 +8,7 @@ set -o pipefail
 cd ~/cables/cables
 git pull
 nvm install
+nvm use
 npm install
 npm run build
 
