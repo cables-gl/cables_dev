@@ -28,7 +28,6 @@
         "mat4": true,
         "quat": true,
         "introJs": true,
-        "vueStore": true,
         "UndoManager": true,
         "Handlebars": true,
         "hljs": true,
