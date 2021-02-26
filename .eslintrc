@@ -145,13 +145,9 @@
         "import/no-default-export": 0,
         "prefer-arrow-callback": 0,
         "new-cap": 0,
-        "prefer-const": [
-            1,
-            {
-                "destructuring": "any",
-                "ignoreReadBeforeAssign": false
-            }
-        ],
+        "prefer-const":
+            0
+        ,
         "padding-line-between-statements": [
             1,
             {
