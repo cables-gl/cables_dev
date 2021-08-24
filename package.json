@@ -4,9 +4,7 @@
     "description": "cables development environment",
     "main": "index.js",
     "scripts": {
-        "start": "cross-env STARTSERVERS=1 node start.js",
-        "watch": "node start.js",
-        "start:all": "cross-env STARTSERVICES=1 STARTSERVERS=1 node start.js",
+        "start": "cross-env node start.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -16,7 +14,7 @@
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/undev-studio/cables_dev/issues"
+        "url": "https://github.com/cables-gl/cables_docs/issues"
     },
     "homepage": "https://github.com/undev-studio/cables_dev#readme",
     "dependencies": {
@@ -24,15 +22,9 @@
         "tree-kill": "1.2.1"
     },
     "devDependencies": {
-        "npm": "6.14.8",
         "cross-env": "5.2.0",
-        "eslint": "5.3.0",
-        "eslint-config-airbnb-base": "13.2.0",
-        "eslint-plugin-import": "2.18.2",
+        "npm": "7.19.1",
         "gulp": "4.0.2",
-        "gulp-nodemon": "2.4.2",
-        "prettier": "1.18.2",
-        "prettier-eslint": "9.0.0",
-        "uglify-es": "3.3.9"
+        "gulp-nodemon": "2.4.2"
     }
 }

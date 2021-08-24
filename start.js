@@ -1,32 +1,12 @@
 const concurrently = require("concurrently");
 const kill = require("tree-kill");
 
-const shouldStartServers = Boolean(Number(process.env.STARTSERVERS));
-const shouldStartServices = Boolean(Number(process.env.STARTSERVICES));
-
-console.log("shouldStartServers", shouldStartServers);
-console.log("shouldStartServices", shouldStartServices);
-
+console.log("ENV", process.env.npm_config_apiconfig);
 
 concurrently(
     [
-        shouldStartServices && {
-            "command": "cd cables_api && mongod",
-            "name": "mongod",
-            "prefixColor": "gray",
-        },
-        shouldStartServices && {
-            "command": "cd cables_api && memcached",
-            "name": "memcached",
-            "prefixColor": "gray",
-        },
-        shouldStartServers && {
+        {
             "command": "cd cables_api && npm run start",
-            "name": "api ",
-            "prefixColor": "cyan",
-        },
-        !shouldStartServers && {
-            "command": "cd cables_api && npm run start:watch",
             "name": "api ",
             "prefixColor": "cyan",
         },
@@ -46,12 +26,10 @@ concurrently(
         "killOthers": ["failure", "success"],
         "restartTries": 3,
     },
-)
-    .then((success) =>
-    {
-        console.log("success!", success);
-    })
-    .catch(err => console.log("error", err));
+).then((success) =>
+{
+    console.log("success!", success);
+}).catch(err => console.log("error", err));
 
 const pid = process.pid;
 

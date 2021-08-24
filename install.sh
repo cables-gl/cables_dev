@@ -1,5 +1,17 @@
 #!/bin/bash
 
+CLEAN=false
+if [ "$1" = "clean" ]; then
+	echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key..."
+	while [ true ] ; do
+		read -t 3 -n 1
+		if [ $? = 0 ] ; then
+			CLEAN=true;
+			break
+		fi
+	done
+fi
+
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
 
 if [ "$?" -eq "0" ]; then
@@ -16,6 +28,7 @@ if [ "$?" -eq "0" ]; then
     nvm install `cat .nvmrc`
     nvm use `cat .nvmrc`
     nvm use
+	nvm alias default `cat .nvmrc`
 else
     node --version > /dev/null 2>&1
     if [ "$?" -eq "0" ]; then
@@ -29,25 +42,40 @@ fi
 set -e
 set -o pipefail
 
+echo "INSTALLING CORE..."
 npm install
 if [ -d "cables/" ]; then
 	cd cables/
+	if [ "$CLEAN" = "true" ]; then
+		echo "  ...deleting node modules";
+		rm -rf node_modules/
+	fi
 	git pull
 	cd ..
 else
 	git clone git@github.com:pandrr/cables.git
 fi
 
+echo "INSTALLING API..."
 if [ -d "cables_api/" ]; then
 	cd cables_api/
+	if [ "$CLEAN" = "true" ]; then
+		echo "  ...deleting node modules";
+		rm -rf node_modules/
+	fi
 	git pull
 	cd ..
 else
 	git clone git@github.com:undev-studio/cables_api.git
 fi
 
+echo "INSTALLING UI..."
 if [ -d "cables_ui/" ]; then
 	cd cables_ui/
+	if [ "$CLEAN" = "true" ]; then
+		echo "  ...deleting node modules";
+		rm -rf node_modules/
+	fi
 	git pull
 	cd ..
 else
@@ -58,5 +86,5 @@ touch cables_ui/scss/svgicons.scss
 mkdir -p cables_api/public/gen/
 touch cables_api/public/gen/opdocs.json
 ./rebuild_natives.sh
-./update_all.sh develop
-cp cables_api/cables_example.json cables_api/cables.json
+./update_all.sh #develop
+#cp cables_api/cables_example.json cables_api/cables.json

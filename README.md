@@ -9,7 +9,7 @@ cables development environment
 * install mongodb (or use `docker-compose up`)
 * install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
-* run `install.sh` (needs sudo password)
+* run `install.sh` (needs sudo password on linux)
 
 ### long/manual version
 
@@ -36,6 +36,13 @@ git checkout develop
 npm i
 cd ..
 ```
+
+### re-install
+* run `install.sh` (needs sudo password on linux)
+
+### update branches
+* run `update_all.sh` to update all branches from remote and also merge `develop` into them
+* run `update_all.sh develop` to switch all branches to `develop` and update from remote
 
 ### tips
 
