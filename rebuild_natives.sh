@@ -18,12 +18,11 @@ set -o pipefail
 
 cd cables
 echo "REBUILDING CORE"
-npm rebuild bcrypt --update-binary
 cd ..
 cd cables_api
 echo "REBUILDING API"
+npm rebuild canvas --update-binary
 npm rebuild bcrypt --update-binary
 cd ..
 cd cables_ui
 echo "REBUILDING UI"
-npm rebuild bcrypt --update-binary
