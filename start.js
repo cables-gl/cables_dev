@@ -1,8 +1,6 @@
 const concurrently = require("concurrently");
 const kill = require("tree-kill");
 
-console.log("ENV", process.env.npm_config_apiconfig);
-
 concurrently(
     [
         {

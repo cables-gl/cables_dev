@@ -55,7 +55,7 @@ cd ..
 * start cables: `npm run start`
 ## pick configfile
 * start cables with (i.e.) `npm run start --apiConfig=public`
-* * cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile 
+* cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile 
 ## development
 - update your environment by running `./update_dev.sh`
 - use `npm run start` or `npm run start:all` to start the webserver
