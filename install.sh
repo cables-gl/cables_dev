@@ -77,6 +77,7 @@ if [ -d "cables_ui/" ]; then
 		rm -rf node_modules/
 	fi
 	git pull
+	git checkout develop
 	cd ..
 else
 	git clone git@github.com:undev-studio/cables_ui.git
@@ -86,5 +87,7 @@ touch cables_ui/scss/svgicons.scss
 mkdir -p cables_api/public/gen/
 touch cables_api/public/gen/opdocs.json
 ./rebuild_natives.sh
-./update_all.sh node16
-#cp cables_api/cables_example.json cables_api/cables.json
+./update_all.sh
+if [ ! -f /cables_api/cables.json ]; then
+    cp cables_api/cables_example.json cables_api/cables.json
+fi
