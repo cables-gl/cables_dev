@@ -37,10 +37,12 @@ npm i
 cd ..
 ```
 
-### native dependencies
+### native dependencies mac
 
-`brew install GraphicsMagick`
-`brew install imagemagick`
+```
+brew install GraphicsMagick
+brew install imagemagick
+```
 
 ### re-install
 * run `install.sh` (needs sudo password on linux)
