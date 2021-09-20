@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/bash -l
 
 set -e
 set -o pipefail
@@ -11,5 +11,5 @@ git pull
 nvm install
 nvm use
 npm install
-gulp build
+npm run build
 pm2 restart all
