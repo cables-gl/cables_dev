@@ -1,3 +1,7 @@
+cables/
+cables_api/
+cables_ui/
+
 .DS_Store
 package-lock.json
 # *.code-workspace
