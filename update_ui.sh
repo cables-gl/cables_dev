@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/bash -l
 
 set -e
 set -o pipefail
@@ -10,4 +10,8 @@ git pull
 nvm install
 nvm use
 npm install
-gulp build
+if [ -n "${1}" ] && [ "live" = "${1}" ]; then
+	npm run build:live
+else
+  npm run build
+fi

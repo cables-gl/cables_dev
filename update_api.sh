@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/bash -l
 
 set -e
 set -o pipefail
@@ -6,8 +6,10 @@ set -o pipefail
 . ~/.nvm/nvm.sh
 
 cd ~/cables/cables_api
+git checkout package-lock.json
 git pull
 nvm install
+nvm use
 npm install
-gulp build
+npm run build
 pm2 restart all

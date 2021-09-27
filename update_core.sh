@@ -13,4 +13,6 @@ npm install
 npm run build
 
 cd ~/cables/cables_ui
+nvm install
+nvm use
 npm run build
