@@ -71,6 +71,7 @@ brew install imagemagick
 ## run api tests
 - make sure cables is running locally
 - pick or create two users, one with admin rights, one with user rights
+- make sure (for now) the user has at least one project that is public
 - add these two users to your cables.json:
 - ```
     "tests": {
