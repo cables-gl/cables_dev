@@ -68,6 +68,22 @@ brew install imagemagick
 - use `npm run start` or `npm run start:all` to start the webserver
 - open [http://localhost:5711/](http://localhost:5711/) in a browser
 - use user `cables` password `cables` to start patching
+## run api tests
+- make sure cables is running locally
+- pick or create two users, one with admin rights, one with user rights
+- add these two users to your cables.json:
+- ```
+    "tests": {
+        "user": { "username": "testuser", "password": "testuserpass" },
+        "admin":{ "username": "adminuser", "password": "adminpass" }
+    },
+  ```
+- change directory to `cables_api`
+- run `npm run tests` to run all tests
+- run `npm run tests:api` to run api endpoint tests
+- run `npm run tests:views` to run tests for html views
+- all endpoints and views that do not have a dedicated test will be called with anon/user/admin to see that they don't crash
+- run `npm run tests:api -- -g "should not be public"` to run tests that have "should not be public" in their description (good for running one test during development)
 
 ### visual studio code
 
