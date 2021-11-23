@@ -9,7 +9,7 @@ concurrently(
             "prefixColor": "cyan",
         },
         {
-            "command": "cd cables_ui && gulp",
+            "command": "cd cables_ui && npm run start",
             "name": "gui ",
             "prefixColor": "green",
         },
@@ -35,4 +35,5 @@ process.on("SIGINT", () =>
 {
     kill(pid, "SIGKILL");
     console.log("KILLED ALL!");
+    process.exit(0);
 });
