@@ -36,6 +36,8 @@ git checkout develop
 npm i
 cd ..
 ```
+* add sandbox.cables.local and dev.cables.local to your hostfile (i.e. /etc/hosts)
+* edit cables_api/cables.json as needed (copy from cables_api/cables_example.json first)
 
 ### native dependencies mac
 
