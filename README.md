@@ -39,6 +39,15 @@ cd ..
 * add sandbox.cables.local and dev.cables.local to your hostfile (i.e. /etc/hosts)
 * edit cables_api/cables.json as needed (copy from cables_api/cables_example.json first)
 
+# ssl and mdns
+
+* cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
+* this should work on most machines, for windows you have to enable mdns or put the hostnames in "/etc/hosts" (same for linux)
+  * Linux: `sudo apt-get avahi-utils`
+  * Windows: install "bonjour"
+* if you put "https" urls in cables.json cables will use the certificates in `./cert`
+* to install them to your os-keychain use `./localcerts.sh` or download the root cert after starting the server from `http://dev.cables.local/cert`
+
 ### native dependencies mac
 
 ```

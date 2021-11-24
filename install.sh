@@ -1,25 +1,5 @@
 #!/bin/bash
 
-echo "Checking for hostfile entry for web..."
-ping -q -c 1 dev.cables.local
-if [ "$?" -eq "0" ]; then
-  echo "Host reachable, continuing installation..."
-else
-  echo "Host unreachable, please point 127.0.0.1 to 'dev.cables.local' in /etc/hosts"
-  exit 1
-fi
-
-echo "Checking for hostfile entry for sandbox..."
-ping -q -c 1 sandbox.cables.local
-if [ "$?" -eq "0" ]; then
-  echo "Host reachable, continuing installation..."
-else
-  echo "Host unreachable, please point 127.0.0.1 to 'sandbox.cables.local' in /etc/hosts"
-  exit 1
-fi
-
-exit 0
-
 CLEAN=false
 if [ "$1" = "clean" ]; then
 	echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key..."
