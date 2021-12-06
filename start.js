@@ -4,6 +4,11 @@ const kill = require("tree-kill");
 concurrently(
     [
         {
+            "command": "cd cables && npm run start",
+            "name": "core",
+            "prefixColor": "yellow",
+        },
+        {
             "command": "cd cables_api && npm run start",
             "name": "api ",
             "prefixColor": "cyan",
@@ -13,27 +18,18 @@ concurrently(
             "name": "gui ",
             "prefixColor": "green",
         },
-        {
-            "command": "cd cables && npm run watch",
-            "name": "core",
-            "prefixColor": "yellow",
-        },
     ].filter(Boolean),
     {
         "prefix": "name",
         "killOthers": ["failure", "success"],
         "restartTries": 3,
     },
-).then((success) =>
+).then(() =>
 {
-    console.log("success!", success);
-}).catch(err => console.log("error", err));
-
-const pid = process.pid;
+    console.log("stopped!");
+}, () => { console.log("WTF!!!!!!"); }).catch(err => console.log("error", err));
 
 process.on("SIGINT", () =>
 {
-    kill(pid, "SIGKILL");
-    console.log("KILLED ALL!");
-    process.exit(0);
+    kill(process.pid, "SIGHUP");
 });

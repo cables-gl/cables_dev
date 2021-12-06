@@ -5,7 +5,6 @@
     "main": "index.js",
     "scripts": {
         "start": "cross-env node start.js",
-        "start:old": "cross-env node startold.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -24,12 +23,12 @@
     },
     "devDependencies": {
         "cross-env": "5.2.0",
-        "npm": "7.19.1",
-        "gulp": "4.0.2",
-        "gulp-nodemon": "2.4.2",
         "eslint": "5.3.0",
         "eslint-config-airbnb-base": "13.2.0",
         "eslint-plugin-import": "2.18.2",
+        "gulp": "4.0.2",
+        "gulp-nodemon": "2.4.2",
+        "npm": "7.19.1",
         "prettier": "1.18.2",
         "prettier-eslint": "9.0.0",
         "uglify-es": "3.3.9"
