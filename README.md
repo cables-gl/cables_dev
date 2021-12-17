@@ -87,8 +87,8 @@ brew install imagemagick
 - add these two users to your cables.json:
 - ```
     "tests": {
-        "user": { "username": "testuser", "password": "testuserpass" },
-        "admin":{ "username": "adminuser", "password": "adminpass" }
+        "user": { "userId": "theuserid", username": "testuser", "password": "testuserpass" },
+        "admin":{ "userId": "theuserid", username": "adminuser", "password": "adminpass" }
     },
   ```
 - change directory to `cables_api`

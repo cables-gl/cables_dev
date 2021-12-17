@@ -41,7 +41,7 @@
         "MathParser": true,
         "socketClusterClient": true,
         "incrementStartup": true,
-        "mmd": true,
+        "mmd": true
         // "OpUi": true,
         // "UiLink": true
     },
@@ -149,7 +149,7 @@
         "import/prefer-default-export": 0,
         "import/no-default-export": 0,
         "prefer-arrow-callback": 0,
-        "arrow-body-style": [ "always"],
+        "arrow-body-style": [ "error", "always"],
 
         "new-cap": 0,
         "prefer-const":
