@@ -44,9 +44,13 @@ cd ..
 * cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
 * this should work on most machines, for windows you have to enable mdns or put the hostnames in "/etc/hosts" (same for linux)
   * Linux: `sudo apt-get avahi-utils`
-  * Windows: install "bonjour"
+    * https://github.com/lathiat/avahi
+  * Windows: install "bonjour", 
+    * run this in `cmd`: `reg add "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient" /v EnableMulticast /t REG_DWORD /d 1 /f`
+    * very unreliable on windows
 * if you put "https" urls in cables.json cables will use the certificates in `./cert`
-* to install them to your os-keychain use `./localcerts.sh` or download the root cert after starting the server from `http://dev.cables.local/cert`
+* to install them to your os-keychain download the cert-chaing from `http://dev.cables.local/cert`
+  * to regenerate use `./localcerts.sh`
 
 ### native dependencies mac
 
