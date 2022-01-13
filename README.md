@@ -9,7 +9,7 @@ cables development environment
 * install mongodb (or use `docker-compose up`)
 * install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
-* run `install.sh` (needs sudo password on linux)
+* run `install_local.sh` (needs sudo password on linux)
 
 ### long/manual version
 
@@ -60,7 +60,7 @@ brew install imagemagick
 ```
 
 ### re-install
-* run `install.sh` (needs sudo password on linux)
+* run `install_local.sh` (needs sudo password on linux)
 
 ### update branches
 * run `update_all.sh` to update all branches from remote and also merge `develop` into them
@@ -69,7 +69,7 @@ brew install imagemagick
 ### tips
 
 * increase your "ulimit -n" (on OSX: `launchctl limit maxfiles 16384 16384 && ulimit -n 16384`)
-* on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install.sh` does that for you)
+* on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
 * if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
 * if you get "reached num max file watchers" errors: https://stackoverflow.com/a/56292289
 
