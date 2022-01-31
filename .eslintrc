@@ -162,6 +162,7 @@
                 "prev": "function",
                 "next": "*"
             }
-        ]
+        ],
+        "require-await": [ "error" ]
     }
 }
