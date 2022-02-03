@@ -163,6 +163,7 @@
                 "next": "*"
             }
         ],
-        "require-await": [ "error" ]
+        "require-await": [ "error" ],
+        "no-return-await": 0
     }
 }
