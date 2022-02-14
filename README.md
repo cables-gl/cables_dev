@@ -119,11 +119,6 @@ pulls upstream changes and merges develop into the current branch, also rebuilds
 if given a branch, like `update_all.sh develop` tries to switch all the repositories to that
 branch before then merging develop and building.
 
-### rebuild_natives.sh
-
-walks the three repositories and rebuild bcrypt and node-sass. sometime fixes error when
-switching node versions.
-
 ### stale_branches.sh
 
 walks the three repositories and outputs branches that have been merged to develop

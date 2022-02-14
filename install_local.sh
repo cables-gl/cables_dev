@@ -86,7 +86,6 @@ fi
 touch cables_ui/scss/svgicons.scss
 mkdir -p cables_api/public/gen/
 touch cables_api/public/gen/opdocs.json
-./rebuild_natives.sh
 ./update_all.sh
 if [ ! -f /cables_api/cables.json ]; then
     cp cables_api/cables_example.json cables_api/cables.json
