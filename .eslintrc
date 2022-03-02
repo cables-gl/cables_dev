@@ -14,7 +14,7 @@
         "CABLES": true,
         "XMLHttpRequest": true,
         // "jQuery": true,
-        // "Raphael": true,
+        "Raphael": true,
         "ace": true,
         "logStartup": true,
         "attachments": true,
@@ -163,7 +163,6 @@
                 "next": "*"
             }
         ],
-        "require-await": [ "error" ],
         "no-return-await": 0
     }
 }
