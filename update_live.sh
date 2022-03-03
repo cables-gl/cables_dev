@@ -29,7 +29,7 @@ git pull
 nvm install
 nvm use
 npm install
-npm run build:live
+npm run build
 cd ..
 
 echo "UPDATING API..."
@@ -39,7 +39,7 @@ git pull
 nvm install
 nvm use
 npm install
-npm run build:live
+npm run build
 cd ..
 
 echo "UPDATING UI..."
