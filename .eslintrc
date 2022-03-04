@@ -125,7 +125,7 @@
         "no-prototype-builtins": 0,
         "array-callback-return": 1,
         "prefer-destructuring": 0,
-        "no-restricted-syntax": 0,
+        "no-restricted-syntax": ["error", "TemplateLiteral"],
         "no-restricted-globals": 0,
         "no-continue": 0,
         "no-console": 1,
