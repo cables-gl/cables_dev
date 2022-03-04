@@ -10,8 +10,4 @@ git pull
 nvm install
 nvm use
 npm install
-if [ -n "${1}" ] && [ "live" = "${1}" ]; then
-	npm run build:live
-else
-  npm run build
-fi
+npm run build

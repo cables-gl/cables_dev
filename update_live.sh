@@ -49,6 +49,6 @@ git pull
 nvm install
 nvm use
 npm install
-npm run build:live
+npm run build
 cd ..
 echo "DONE"
