@@ -12,4 +12,5 @@ nvm install
 nvm use
 npm install
 npm run build
-pm2 restart all
+pm2 restart server_sandbox
+pm2 restart server_api

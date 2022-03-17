@@ -38,6 +38,7 @@
         "hljs": true,
         "tinysort": true,
         "loadjs": true,
+        "pako": true,
         "MathParser": true,
         "socketClusterClient": true,
         "incrementStartup": true,
