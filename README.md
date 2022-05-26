@@ -50,6 +50,7 @@ cd ..
     * very unreliable on windows
 * if you put "https" urls in cables.json cables will use the certificates in `./cert`
 * to install them to your os-keychain download the cert-chaing from `http://dev.cables.local/cert`
+* IOS: after installing go to settings, search for cert, click trusted certificates - activate toggle "enable full trust...." 
   * to regenerate use `./localcerts.sh`
 
 ### native dependencies mac
