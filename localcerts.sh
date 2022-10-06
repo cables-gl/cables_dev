@@ -1,7 +1,7 @@
 #!/bin/bash
 `mkcert > /dev/null 2>&1`
 if [ "$?" != "0" ]; then
-  echo "ERROR: 'mkcert' not found, please install 'mkcert' AND 'nss' via local packagemanger (brew/apt/...)"
+  echo "ERROR: 'mkcert' not found, please install 'mkcert' AND 'nss' via local packagemanger (see: https://github.com/FiloSottile/mkcert#installation)"
   exit 1
 fi
 mkdir -p ./certs/

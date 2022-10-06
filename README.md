@@ -4,12 +4,14 @@ cables development environment
 ## installation
 
 ### short version
+
 * install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) (on plain windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
 * install memcached (or use `docker-compose up`)
 * install mongodb (or use `docker-compose up`)
 * install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
 * run `install_local.sh` (needs sudo password on linux)
+* run `npm run start` and open a browser on 'http://localhost:5711' (see below for other options)
 
 ### long/manual version
 
@@ -36,22 +38,41 @@ git checkout develop
 npm i
 cd ..
 ```
-* add sandbox.cables.local and dev.cables.local to your hostfile (i.e. /etc/hosts)
 * edit cables_api/cables.json as needed (copy from cables_api/cables_example.json first)
 
-# ssl and mdns
+## ssl and mdns
 
+* if needed, cables can run a mdns client to make your environment available to machines on the local network
+* change `url` and `sandbox.url` in `cables.json` to something like `https://local.cables.local` and `https://sandbox.cables.local` respectively
+* make sure you can run servers on port 80 and 443, on linux try: ``
+
+### mdns
 * cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
 * this should work on most machines, for windows you have to enable mdns or put the hostnames in "/etc/hosts" (same for linux)
   * Linux: `sudo apt-get avahi-utils`
     * https://github.com/lathiat/avahi
-  * Windows: install "bonjour", 
+  * Windows: install "bonjour",
     * run this in `cmd`: `reg add "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient" /v EnableMulticast /t REG_DWORD /d 1 /f`
     * very unreliable on windows
+
+### ssl
 * if you put "https" urls in cables.json cables will use the certificates in `./cert`
-* to install them to your os-keychain download the cert-chaing from `http://dev.cables.local/cert`
-* IOS: after installing go to settings, search for cert, click trusted certificates - activate toggle "enable full trust...." 
-  * to regenerate use `./localcerts.sh`
+* to install them to your os-keychain download the cert-chain from `http://local.cables.local/cert`
+  * or try running `./localcerts.sh`
+* IOS: after installing go to settings, search for cert, click trusted certificates - activate toggle "enable full trust...."
+* to regenerate use `./localcerts.sh renew`
+
+## socketcluster/multiplayer
+
+* if you want socketcluster/multiplayer capabilities on your local environment, follow these instructions:
+
+### client
+* if you want to connect to the dev.cables.gl server, set `socketClusterClient.enable` to `true` in `cables.json`
+  and get the secret for `socketClusterServer.secret` from dev
+
+### server
+* if you want to run a local server, change to `cables_api` and run `npm run start:socketcluster
+  * change the options for `socketClusterClient` in `cables.json` to match up with `socketClusterServer`, you will most likely want to set `secure` to `false`
 
 ### native dependencies mac
 
@@ -64,8 +85,8 @@ brew install imagemagick
 * run `install_local.sh` (needs sudo password on linux)
 
 ### update branches
-* run `update_all.sh` to update all branches from remote and also merge `develop` into them
-* run `update_all.sh develop` to switch all branches to `develop` and update from remote
+* run `update_dev.sh` to update all branches from remote and also merge `develop` into them
+* run `update_dev.sh develop` to switch all branches to `develop` and update from remote
 
 ### tips
 
@@ -77,14 +98,17 @@ brew install imagemagick
 ## starting cables
 
 * start cables: `npm run start`
+
 ## pick configfile
 * start cables with (i.e.) `npm run start --apiconfig=public`
-* cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile 
+* cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile
+
 ## development
-- update your environment by running `./update_dev.sh`
-- use `npm run start` or `npm run start:all` to start the webserver
+- update your environment by running `./update_all.sh`
+- use `npm run start` to start the webserver
 - open [http://localhost:5711/](http://localhost:5711/) in a browser
 - use user `cables` password `cables` to start patching
+
 ## run api tests
 - make sure cables is running locally
 - pick or create two users, one with admin rights, one with user rights
@@ -113,6 +137,20 @@ brew install imagemagick
 
 ## scripts
 
+### build_all.sh
+
+enters all repositories and runs `npm run build`
+
+### install_local.sh
+
+tries to guess your OS, installs dependencies, creates needed directories and files and copies
+`cables_example.json` to `cables.json` if it does not exist
+
+### localcerts.sh
+
+uses `mkcert` to add selfsigned certificates to your systems keychaing. adding the parameter `renew` will renew
+the certificates to commit to the repository when expired.
+
 ### update_all.sh
 
 reads the current nodeversion vom .nvmrc and walks the three repositories,
@@ -120,8 +158,36 @@ pulls upstream changes and merges develop into the current branch, also rebuilds
 if given a branch, like `update_all.sh develop` tries to switch all the repositories to that
 branch before then merging develop and building.
 
-### stale_branches.sh
+### update_api.sh
 
-walks the three repositories and outputs branches that have been merged to develop
-and havent seen changes in at least two months. displaying the author of the last
-change...these branches could be deleted on remote.
+* intended for dev/live
+* pulls current branch of `cables_api`
+* runs `npm` to build
+* restarts pm2 servers `api` and `sandbox`
+
+### update_core.sh
+
+* intended for dev/live
+* pulls current branch of `cables`
+* runs `npm` to build
+* runs `npm` to build `cables_ui` to copy over updates
+
+### update_docs.sh
+
+* intended for dev/live
+* pulls current branch of `cables_docs`
+
+### update_live.sh
+
+* intended for live only!
+* makes sure wanted nodeversion is installed
+* makes sure all the repositories are on `master` branch
+* pulls `master` for all repostiories
+* runs `npm` to build all the repositories
+* on live: run `pm2 restart all` afterwards!
+
+### update_ui.sh
+
+* intended for dev/live
+* pulls current branch of `cables_ui`
+* runs `npm` to build
