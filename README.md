@@ -6,8 +6,8 @@ cables development environment
 ### short version
 
 * install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) (on plain windows install `nodejs` and `npm` for the version specified in `.nvmrc`)
-* install memcached (or use `docker-compose up`)
-* install mongodb (or use `docker-compose up`)
+* install and run memcached (or use `docker-compose up`)
+* install and run mongodb (or use `docker-compose up`)
 * install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
 * run `install_local.sh` (needs sudo password on linux)
@@ -43,13 +43,14 @@ cd ..
 ## ssl and mdns
 
 * if needed, cables can run a mdns client to make your environment available to machines on the local network
+* make sure you can run servers on port 80 and 443 and have nothing else running on these ports!
+  * on linux try `nvm use` and ``sudo setcap 'cap_net_bind_service=+ep' `which node` `` in this current directory
 * change `url` and `sandbox.url` in `cables.json` to something like `https://local.cables.local` and `https://sandbox.cables.local` respectively
-* make sure you can run servers on port 80 and 443, on linux try: ``
 
 ### mdns
 * cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
 * this should work on most machines, for windows you have to enable mdns or put the hostnames in "/etc/hosts" (same for linux)
-  * Linux: `sudo apt-get avahi-utils`
+  * Linux: `sudo apt-get install avahi-utils`
     * https://github.com/lathiat/avahi
   * Windows: install "bonjour",
     * run this in `cmd`: `reg add "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient" /v EnableMulticast /t REG_DWORD /d 1 /f`
