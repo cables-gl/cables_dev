@@ -74,21 +74,35 @@ cd ..
 * if you want to run a local server, change to `cables_api` and run `npm run start:socketcluster
   * change the options for `socketClusterClient` in `cables.json` to match up with `socketClusterServer`, you will most likely want to set `secure` to `false`
 
-### native dependencies mac
+## local docs
+* checkout `https://github.com/cables-gl/cables_docs` to (i.e. this current directory)
+* update `paths.docs_md` in `cables.json` with the proper (relative) directory path
+* restart server, go to (i.e) 'http://localhost:5711/docs/'
+
+## local electron/exe export
+* download electron for the supported platforms from https://github.com/electron/electron/releases
+* put them into a subdirectory of this current directory named `electron/win32-x64`, currently supported:
+  * win32-x64
+  * linux-x64
+  * darwin-x64
+  * darwin-arm64
+* update `paths.electron` in `cables.json` with the proper (relative) directory path
+
+## native dependencies mac
 
 ```
 brew install GraphicsMagick
 brew install imagemagick
 ```
 
-### re-install
+## re-install
 * run `install_local.sh` (needs sudo password on linux)
 
-### update branches
+## update branches
 * run `update_dev.sh` to update all branches from remote and also merge `develop` into them
 * run `update_dev.sh develop` to switch all branches to `develop` and update from remote
 
-### tips
+## tips
 
 * increase your "ulimit -n" (on OSX: `launchctl limit maxfiles 16384 16384 && ulimit -n 16384`)
 * on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
@@ -99,7 +113,7 @@ brew install imagemagick
 
 * start cables: `npm run start`
 
-## pick configfile
+### pick configfile
 * start cables with (i.e.) `npm run start --apiconfig=public`
 * cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile
 
@@ -127,7 +141,7 @@ brew install imagemagick
 - all endpoints and views that do not have a dedicated test will be called with anon/user/admin to see that they don't crash
 - run `npm run tests:api -- -g "should not be public"` to run tests that have "should not be public" in their description (good for running one test during development)
 
-### visual studio code
+## visual studio code
 
 * install extensions: `Editorconfig`, `Eslint`
  * good list of files to exclude from search:
