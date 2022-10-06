@@ -83,6 +83,7 @@ else
 	git clone git@github.com:undev-studio/cables_ui.git
 fi
 
+touch cables_api/scss/svgicons.scss
 touch cables_ui/scss/svgicons.scss
 mkdir -p cables_api/public/gen/
 touch cables_api/public/gen/opdocs.json

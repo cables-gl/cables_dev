@@ -45,16 +45,19 @@ cd ..
 * if needed, cables can run a mdns client to make your environment available to machines on the local network
 * make sure you can run servers on port 80 and 443 and have nothing else running on these ports!
   * on linux try `nvm use` and ``sudo setcap 'cap_net_bind_service=+ep' `which node` `` in this current directory
+* if you want to access these ports from other machines on the network, make sure they are not firewalled locally
 * change `url` and `sandbox.url` in `cables.json` to something like `https://local.cables.local` and `https://sandbox.cables.local` respectively
 
 ### mdns
 * cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
-* this should work on most machines, for windows you have to enable mdns or put the hostnames in "/etc/hosts" (same for linux)
+* this should work on most machines, for windows you have to enable mdns or  (same for linux)
   * Linux: `sudo apt-get install avahi-utils`
     * https://github.com/lathiat/avahi
+    * put the hostnames in `/etc/hosts`
   * Windows: install "bonjour",
     * run this in `cmd`: `reg add "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient" /v EnableMulticast /t REG_DWORD /d 1 /f`
     * very unreliable on windows
+    * put the hostnames in `%windir%\system32\drivers\etc\HOSTS`
 
 ### ssl
 * if you put "https" urls in cables.json cables will use the certificates in `./cert`
