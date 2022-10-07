@@ -6,14 +6,11 @@
         "gui": true,
         "navigator": true,
         "document": true,
-        // "$": true,
         "BroadcastChannel": true,
         "window": true,
-        // "Tone": true,
         "AudioContext": true,
         "CABLES": true,
         "XMLHttpRequest": true,
-        // "jQuery": true,
         "Raphael": true,
         "ace": true,
         "logStartup": true,
@@ -43,8 +40,6 @@
         "socketClusterClient": true,
         "incrementStartup": true,
         "mmd": true
-        // "OpUi": true,
-        // "UiLink": true
     },
     "env": {
         "browser": true
@@ -151,11 +146,8 @@
         "import/no-default-export": 0,
         "prefer-arrow-callback": 0,
         "arrow-body-style": [ "error", "always"],
-
         "new-cap": 0,
-        "prefer-const":
-            0
-        ,
+        "prefer-const": 0,
         "padding-line-between-statements": [
             1,
             {
