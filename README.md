@@ -153,6 +153,29 @@ brew install imagemagick
 *.min.js,*.max.js,*.map*,*/ace/*,*dist*,*jsdoc*,*build*,*/public/*,*/logs*
 ```
 
+## copy jobs in build process
+
+### cables
+#### watch
+- on changes to anything in `src/core`
+  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildInfo.json`
+  - copies `build/libs/` to `cables_api/public/libs_core`
+- on changes to anything in `libs/`
+  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildInfo.json`
+- on changes to anything in `src/libs/`
+  - copies `build/libs/` to `cables_api/public/libs_core`
+#### build
+- copies `build/libs/` to `cables_api/public/libs_core`
+### cables_api
+#### build
+- copies `../cables/build/libs/*.js` to `public/libs_core/`
+### cables_ui
+#### watch
+
+#### build
+- copies `../cables/build/` to `dist/js/` ignoring `libs/` and `buildInfo.json`
+- copies `svgicons.scss` to `../cables_api/scss/`
+- 
 ## scripts
 
 ### build_all.sh
