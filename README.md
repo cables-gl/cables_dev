@@ -64,7 +64,21 @@ cd ..
 * to install them to your os-keychain download the cert-chain from `http://local.cables.local/cert`
   * or try running `./localcerts.sh`
 * IOS: after installing go to settings, search for cert, click trusted certificates - activate toggle "enable full trust...."
+* windows: 
+  * download the cert-chain from `http://local.cables.local/cert`
+  * for firefox: open settings, privacy, pick "certificates" and import the dowloaded rootCA.pem
+  * for other browsers:
+    * login as admin
+    * open startmenu, type "cert", pick "manage computer certifcates", click "yes"
+    * pick folder "trusted root certification authorities"
+    * from the menu select "action", "all tasks", "import"
+    * make sure next dialog has "local machine" selected, click "next"
+    * pick the downloaded rootCA.pem (you may need to select "all files" to see it)
+    * click next, "certificate store" should be "trusted root certification authorities", click next
+    * click "finish"
+    * test in chrome
 * to regenerate use `./localcerts.sh renew`
+
 
 ## socketcluster/multiplayer
 
