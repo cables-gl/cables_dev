@@ -39,7 +39,10 @@
         "MathParser": true,
         "socketClusterClient": true,
         "incrementStartup": true,
-        "mmd": true
+        "mmd": true,
+        "getHandleBarHtml": true,
+        "executeFunctionByName": true,
+        "platform": true
     },
     "env": {
         "browser": true
