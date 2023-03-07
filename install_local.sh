@@ -89,5 +89,6 @@ mkdir -p cables_api/public/gen/
 touch cables_api/public/gen/opdocs.json
 ./update_all.sh
 if [ ! -f /cables_api/cables.json ]; then
+echo "overwriting cables.json";
     cp cables_api/cables_example.json cables_api/cables.json
 fi
