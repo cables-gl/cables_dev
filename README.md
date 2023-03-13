@@ -10,7 +10,8 @@ cables development environment
 * install and run mongodb (or use `docker-compose up`)
 * install git
 * clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
-* run `install_local.sh` (needs sudo password on linux)
+* run `. ./install_local.sh` (needs sudo password on linux, NOTICE THE EXTRA DOT AT THE BEGINNING!)
+* make sure your current shell has the proper node version `node --version` (if not, open a new terminal before you start the server, and check again)
 * run `npm run start` and open a browser on 'http://localhost:5711' (see below for other options)
 
 ### long/manual version

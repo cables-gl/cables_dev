@@ -24,11 +24,11 @@ if [ "$?" -eq "0" ]; then
     	sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
     fi
     echo "LOADING nodejs VERSION" `cat .nvmrc`
-    . ~/.nvm/nvm.sh
+    source ~/.nvm/nvm.sh
     nvm install `cat .nvmrc`
     nvm use `cat .nvmrc`
     nvm use
-	nvm alias default `cat .nvmrc`
+    nvm alias default `cat .nvmrc`
 else
     node --version > /dev/null 2>&1
     if [ "$?" -eq "0" ]; then
