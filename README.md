@@ -123,9 +123,12 @@ brew install imagemagick
 ## tips
 
 * increase your "ulimit -n" (on OSX: `launchctl limit maxfiles 16384 16384 && ulimit -n 16384`)
-* on linux try `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
+* on linux try 
+  * `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
 * if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
 * if you get "reached num max file watchers" errors: https://stackoverflow.com/a/56292289
+* how to don't get binary merge conflicts:
+  * `git config --global merge.ours.driver true`
 
 ## starting cables
 
@@ -136,7 +139,7 @@ brew install imagemagick
 * cables will then use (or create from `cables_example.json`) `cables_api/cables_env_public.json` as a configfile
 
 ## development
-- update your environment by running `./update_all.sh`
+- update your environment by running `./update_repos.sh`
 - use `npm run start` to start the webserver
 - open [http://localhost:5711/](http://localhost:5711/) in a browser
 - use user `cables` password `cables` to start patching
@@ -206,30 +209,36 @@ tries to guess your OS, installs dependencies, creates needed directories and fi
 uses `mkcert` to add selfsigned certificates to your systems keychaing. adding the parameter `renew` will renew
 the certificates to commit to the repository when expired.
 
-### update_all.sh
+### update_repos.sh
 
 reads the current nodeversion vom .nvmrc and walks the three repositories,
 pulls upstream changes and merges develop into the current branch, also rebuilds with npm.
-if given a branch, like `update_all.sh develop` tries to switch all the repositories to that
+if given a branch, like `update_repos.sh develop` tries to switch all the repositories to that
 branch before then merging develop and building.
 
-### update_api.sh
+### hook_api.sh
 
-* intended for dev/live
+* intended for webhook on dev
 * pulls current branch of `cables_api`
 * runs `npm` to build
 * restarts pm2 servers `api` and `sandbox`
 
-### update_core.sh
+### hook_core.sh
 
-* intended for dev/live
+* intended for webhook on dev
 * pulls current branch of `cables`
 * runs `npm` to build
 * runs `npm` to build `cables_ui` to copy over updates
 
-### update_docs.sh
+### hook_ui.sh
 
-* intended for dev/live
+* intended for webhook on dev
+* pulls current branch of `cables_ui`
+* runs `npm` to build
+
+### hook_docs.sh
+
+* intended for webhook on dev/live
 * pulls current branch of `cables_docs`
 
 ### update_live.sh
@@ -240,9 +249,3 @@ branch before then merging develop and building.
 * pulls `master` for all repostiories
 * runs `npm` to build all the repositories
 * on live: run `pm2 restart all` afterwards!
-
-### update_ui.sh
-
-* intended for dev/live
-* pulls current branch of `cables_ui`
-* runs `npm` to build
