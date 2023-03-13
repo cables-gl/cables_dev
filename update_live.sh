@@ -1,4 +1,5 @@
 #!/bin/bash -l
+# update all repos to master / mostly used for release on live server
 
 git pull
 ls ~/.nvm/nvm.sh > /dev/null 2>&1

@@ -1,4 +1,7 @@
 #!/bin/bash -l
+# 
+# updates all repositories and merge develop
+#
 
 git pull
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
