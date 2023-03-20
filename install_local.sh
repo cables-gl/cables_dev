@@ -83,3 +83,7 @@ else
 	git clone git@github.com:undev-studio/cables_ui.git
 fi
 
+echo ""
+echo -n "BEFORE YOU RUN 'npm run start' MAKE SURE YOUR NODE VERSION MATCHES "
+cat .nvmrc
+echo " BY RUNNING 'node --version'"
