@@ -7,7 +7,7 @@ fi
 mkdir -p ./certs/
 hosts="${@:2}"
 if [ "$hosts" = "" ]; then
-  hosts="dev.cables.local sandbox.cables.local local.cables.local "
+  hosts="dev.cables.local devsandbox.cables.local local.cables.local sandbox.cables.local"
 fi
 CAROOT=./certs/ mkcert -install
 if [ "$1" == "renew" ]; then

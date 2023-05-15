@@ -41,7 +41,7 @@
         "incrementStartup": true,
         "mmd": true,
         "getHandleBarHtml": true,
-        "fromDust": true,
+        "parseDustJson": true,
         "executeFunctionByName": true,
         "platform": true
     },
