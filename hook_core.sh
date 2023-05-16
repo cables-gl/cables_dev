@@ -1,4 +1,4 @@
-#!/bin/bash -l 
+#!/bin/bash -l
 
 set -e
 set -o pipefail
@@ -11,6 +11,9 @@ nvm install
 nvm use
 npm install
 npm run build
+
+cd ~/cables/cables_api
+npm run opdocs
 
 cd ~/cables/cables_ui
 nvm install
