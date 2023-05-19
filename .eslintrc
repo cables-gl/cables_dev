@@ -48,6 +48,9 @@
     "env": {
         "browser": true
     },
+    "parserOptions": {
+        "ecmaVersion": 2020
+    },
     "rules": {
         "object-property-newline": "error",
         "global-require": 1,
