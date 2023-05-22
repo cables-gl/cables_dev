@@ -163,6 +163,7 @@
                 "next": "*"
             }
         ],
-        "no-return-await": 0
+        "no-return-await": 0,
+        "no-multiple-empty-lines": 0
     }
 }
