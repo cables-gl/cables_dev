@@ -3,7 +3,7 @@ electron/
 data/
 
 .DS_Store
-# package-lock.json
+package-lock.json
 # *.code-workspace
 .vscode
 yarn.lock
