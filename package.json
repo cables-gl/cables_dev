@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "start": "cross-env node start.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "pm2": "pm2 start ecosystem.config.js"
     },
     "repository": {
         "type": "git",
@@ -19,6 +20,7 @@
     "homepage": "https://github.com/undev-studio/cables_dev#readme",
     "dependencies": {
         "concurrently": "4.1.1",
+        "pm2": "5.2.2",
         "tree-kill": "1.2.2"
     },
     "devDependencies": {
