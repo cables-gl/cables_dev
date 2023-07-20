@@ -5,7 +5,7 @@ set -o pipefail
 
 . ~/.nvm/nvm.sh
 
-cd cables_api
+cd ~/cables/cables_api
 git checkout package-lock.json
 git pull
 nvm install
