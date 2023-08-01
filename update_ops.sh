@@ -6,11 +6,14 @@ git pull
 set -e
 set -o pipefail
 
+CWD=`pwd`
+
 cd cables
 cd src/ops/
+BASEDIR=`pwd`
 
 echo "UPDATING USEROPS..."
-OPSDIR=`pwd`/users/
+OPSDIR=$BASEDIR/users/
 branch="master"
 if [ -d "$OPSDIR" ]; then
   cd $OPSDIR
@@ -23,10 +26,9 @@ if [ -d "$OPSDIR" ]; then
 else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
-cd ..
 
 echo "UPDATING TEAMOPS..."
-OPSDIR=`pwd`/teams/
+OPSDIR=$BASEDIR/teams/
 branch="main"
 if [ -d "$OPSDIR" ]; then
   cd $OPSDIR
@@ -39,10 +41,9 @@ if [ -d "$OPSDIR" ]; then
 else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
-cd ..
 
 echo "UPDATING EXTENSIONS..."
-OPSDIR=`pwd`/extensions/
+OPSDIR=$BASEDIR/extensions/
 branch="main"
 if [ -d "$OPSDIR" ]; then
   cd $OPSDIR
@@ -55,6 +56,8 @@ if [ -d "$OPSDIR" ]; then
 else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
-cd ..
+
+cd $CWD/cables_api
+npm run opdocs
 
 echo "DONE"
