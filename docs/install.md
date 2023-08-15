@@ -120,7 +120,7 @@ brew install imagemagick
 
 ## tips
 
-* mac os: if strange cpu or build errors (e.g. libpng,mozjpeg,pngquant,webp etc) try `softwareupdate --install-rosetta`
+* mac os: if strange cpu or build errors (e.g. autoconf,libpng,mozjpeg,pngquant,webp etc) try `softwareupdate --install-rosetta`
 * increase your "ulimit -n" (on OSX: `launchctl limit maxfiles 16384 16384 && ulimit -n 16384`)
 * on linux try
   * `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
