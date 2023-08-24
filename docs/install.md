@@ -220,27 +220,32 @@ branch before then merging develop and building.
 ### hook_api.sh
 
 * intended for webhook on dev
-* pulls current branch of `cables_api`
+* pulls current branch of `undev-studio/cables_api`
 * runs `npm` to build
 * restarts pm2 servers `api` and `sandbox`
 
 ### hook_core.sh
 
 * intended for webhook on dev
-* pulls current branch of `cables`
+* pulls current branch of `pandrr/cables`
 * runs `npm` to build
 * runs `npm` to build `cables_ui` to copy over updates
 
 ### hook_ui.sh
 
 * intended for webhook on dev
-* pulls current branch of `cables_ui`
+* pulls current branch of `undev-studio/cables_ui`
 * runs `npm` to build
 
 ### hook_docs.sh
 
 * intended for webhook on dev/live
-* pulls current branch of `cables_docs`
+* pulls current branch of `cables-gl/cables_docs`
+
+### hook_exe_export.sh
+
+* intended for webhook on dev/live
+* pulls current branch of `cables-gl/cables-exe-export`
 
 ### update_live.sh
 

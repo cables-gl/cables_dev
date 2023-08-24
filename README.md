@@ -10,3 +10,4 @@ cables development environment
 - [howto op_new_version](howto_op_new_version.md)
 - [howto jsdoc](howto_jsdoc.md)
 - [howto libaries](howto_libaries.md)
+- [howto_exe_export](howto_exe_export.md)
