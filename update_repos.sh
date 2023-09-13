@@ -1,5 +1,5 @@
 #!/bin/bash -l
-# 
+#
 # updates all repositories and merge develop
 #
 
@@ -29,6 +29,7 @@ fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
+git fetch || true
 git pull origin "$branch" || true
 # merge current remote develop if branch is not master
 if [ "master" != "${branch}" ]; then
@@ -51,6 +52,7 @@ fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
+git fetch || true
 git pull origin "$branch" || true
 # merge current remote develop if branch is not master
 if [ "master" != "${branch}" ]; then
@@ -73,6 +75,7 @@ fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
+git fetch || true
 git pull origin "${branch}" || true
 # merge current remote develop if branch is not master
 if [ "master" != "${branch}" ]; then
