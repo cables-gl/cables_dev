@@ -2,7 +2,7 @@
 
 CLEAN=false
 if [ "$1" = "clean" ]; then
-	echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key..."
+  echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key or stop here with ctrl-c..."
 	while [ true ] ; do
 		read -t 3 -n 1
 		if [ $? = 0 ] ; then
@@ -81,6 +81,19 @@ if [ -d "cables_ui/" ]; then
 	cd ..
 else
 	git clone git@github.com:undev-studio/cables_ui.git
+fi
+
+echo "INSTALLING DEFAULT ASSETS...";
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting default assets";
+  rm -rf cables_api/public/assets/library
+  git clone git@github.com:undev-studio/cables-asset-library.git cables_api/public/assets/library
+fi
+mkdir -p cables_api/public/assets/library
+if [ -d "cables_api/public/assets/library/.git" ]; then
+  git -C cables_api/public/assets/library pull
+else
+  git clone git@github.com:undev-studio/cables-asset-library.git cables_api/public/assets/library
 fi
 
 echo ""

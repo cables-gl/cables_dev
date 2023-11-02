@@ -77,6 +77,10 @@ cd ..
     * test in chrome
 * to regenerate use `./localcerts.sh renew`
 
+## local default assets
+* to get cables default assets locally:
+  * clone `https://github.com/undev-studio/cables-asset-library` into cables_api/public/assets/library
+  * if you ran `install_local.sh` this is already in place
 
 ## socketcluster/multiplayer
 
@@ -89,6 +93,12 @@ cd ..
 ### server
 * if you want to run a local server, change to `cables_api` and run `npm run start:socketcluster
   * change the options for `socketClusterClient` in `cables.json` to match up with `socketClusterServer`, you will most likely want to set `secure` to `false`
+
+## push notifications
+* if you want to get push notifications for the activityfeed locally:
+  * generate a vapid token (https://vapidkeys.com/)
+  * edit the "webPush" section in cables.json, or copy from live/dev
+  * (re)-start the server
 
 ## local docs
 * checkout `https://github.com/cables-gl/cables_docs` to (i.e. this current directory)
@@ -255,3 +265,10 @@ branch before then merging develop and building.
 * pulls `master` for all repostiories
 * runs `npm` to build all the repositories
 * on live: run `pm2 restart all` afterwards!
+
+### update_ops.sh
+
+* updates patchops/userops/teamops/extensionops
+* repositories need to be checked out to cables/src/ops/users, cables/ops/teams, ...
+* pulls `master` and `main` for all repostiories
+* runs `npm run opdocs` in cables_api to refresh caches
