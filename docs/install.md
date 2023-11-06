@@ -45,6 +45,7 @@ cd ..
   * on linux try `nvm use` and ``sudo setcap 'cap_net_bind_service=+ep' `which node` `` in this current directory
 * if you want to access these ports from other machines on the network, make sure they are not firewalled locally
 * change `url` and `sandbox.url` in `cables.json` to something like `https://local.cables.local` and `https://sandbox.cables.local` respectively
+* add urls to cors list
 
 ### mdns
 * cables registers sandbox.cables.local and dev.cables.local (hostnames according to your cables.json) in mdns
@@ -76,6 +77,7 @@ cd ..
     * click "finish"
     * test in chrome
 * to regenerate use `./localcerts.sh renew`
+* you may have to visit https://sandboxlocal.cables.local/ui/js/cables.max.js and accept the risc etc...
 
 ## local default assets
 * to get cables default assets locally:
