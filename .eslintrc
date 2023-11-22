@@ -27,6 +27,7 @@
         "chroma":true,
         "QRCode":true,
         "moment":true,
+        "marked": true,
         "Ops":true,
         "ColorRick":true,
         "introJs": true,
@@ -40,9 +41,6 @@
         "socketClusterClient": true,
         "incrementStartup": true,
         "mmd": true,
-        "getHandleBarHtml": true,
-        "parseDustJson": true,
-        "executeFunctionByName": true,
         "platform": true
     },
     "env": {
