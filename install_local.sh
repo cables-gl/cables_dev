@@ -83,6 +83,20 @@ else
 	git clone git@github.com:undev-studio/cables_ui.git
 fi
 
+echo "INSTALLING ELECTRON..."
+if [ -d "cables_electron/" ]; then
+	cd cables_electron/
+	if [ "$CLEAN" = "true" ]; then
+		echo "  ...deleting node modules";
+		rm -rf node_modules/
+	fi
+	git pull
+	git checkout develop
+	cd ..
+else
+	git clone git@github.com:cables-gl/cables_electron.git
+fi
+
 echo "INSTALLING DEFAULT ASSETS...";
 if [ "$CLEAN" = "true" ]; then
   echo "  ...deleting default assets";

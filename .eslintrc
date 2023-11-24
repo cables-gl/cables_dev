@@ -149,6 +149,7 @@
         "no-restricted-properties": 0,
         "import/prefer-default-export": 0,
         "import/no-default-export": 0,
+        "import/extensions": 0,
         "prefer-arrow-callback": 0,
         "arrow-body-style": [ "error", "always"],
         "new-cap": 0,
