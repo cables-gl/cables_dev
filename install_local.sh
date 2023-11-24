@@ -44,58 +44,60 @@ set -o pipefail
 
 echo "INSTALLING CORE..."
 npm install
-if [ -d "cables/" ]; then
-	cd cables/
-	if [ "$CLEAN" = "true" ]; then
-		echo "  ...deleting node modules";
-		rm -rf node_modules/
-	fi
-	git pull
-	cd ..
-else
-	git clone git@github.com:pandrr/cables.git
+if [ ! -d "cables/" ]; then
+  git clone git@github.com:pandrr/cables.git
 fi
+cd cables/
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting node modules";
+  rm -rf node_modules/
+fi
+git checkout develop
+git pull
+npm install
+cd ..
 
 echo "INSTALLING API..."
-if [ -d "cables_api/" ]; then
-	cd cables_api/
-	if [ "$CLEAN" = "true" ]; then
-		echo "  ...deleting node modules";
-		rm -rf node_modules/
-	fi
-	git pull
-	cd ..
-else
-	git clone git@github.com:undev-studio/cables_api.git
+if [ ! -d "cables_api/" ]; then
+  git clone git@github.com:undev-studio/cables_api.git
 fi
+cd cables_api/
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting node modules";
+  rm -rf node_modules/
+fi
+git checkout develop
+git pull
+npm install
+cd ..
 
 echo "INSTALLING UI..."
-if [ -d "cables_ui/" ]; then
-	cd cables_ui/
-	if [ "$CLEAN" = "true" ]; then
-		echo "  ...deleting node modules";
-		rm -rf node_modules/
-	fi
-	git pull
-	git checkout develop
-	cd ..
-else
-	git clone git@github.com:undev-studio/cables_ui.git
+if [ ! -d "cables_ui/" ]; then
+  git clone git@github.com:undev-studio/cables_ui.git
 fi
+cd cables_ui/
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting node modules";
+  rm -rf node_modules/
+fi
+git checkout develop
+git pull
+npm install
+cd ..
 
 echo "INSTALLING ELECTRON..."
-if [ -d "cables_electron/" ]; then
-	cd cables_electron/
-	if [ "$CLEAN" = "true" ]; then
-		echo "  ...deleting node modules";
-		rm -rf node_modules/
-	fi
-	git pull
-	git checkout develop
-	cd ..
-else
-	git clone git@github.com:cables-gl/cables_electron.git
+if [ ! -d "cables_electron/" ]; then
+  	git clone git@github.com:cables-gl/cables_electron.git
 fi
+cd cables_electron/
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting node modules";
+  rm -rf node_modules/
+fi
+git pull
+git checkout develop
+npm install
+cd ..
 
 echo "INSTALLING DEFAULT ASSETS...";
 if [ "$CLEAN" = "true" ]; then
