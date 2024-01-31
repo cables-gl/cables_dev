@@ -259,6 +259,11 @@ branch before then merging develop and building.
 * intended for webhook on dev/live
 * pulls current branch of `cables-gl/cables-exe-export`
 
+### hook_quotas_daily.sh
+
+* intended for webhook on dev/live
+* runs `npm run quota:daily` in `cables_api` sets userquota-usage to 0 for quotas defined in `cables_api/package.json`
+
 ### update_live.sh
 
 * intended for live only!
