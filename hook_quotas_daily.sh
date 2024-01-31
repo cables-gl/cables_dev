@@ -5,5 +5,5 @@ set -o pipefail
 
 . ~/.nvm/nvm.sh
 
-cd cables_api
+cd ~/cables/cables_api
 npm run quotas:daily
