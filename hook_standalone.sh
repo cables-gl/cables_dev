@@ -5,20 +5,23 @@ set -o pipefail
 
 . ~/.nvm/nvm.sh
 
-cd ~/cables/cables
+cd cables
 git pull
 nvm use
 npm install
 npm run build
+cd ..
 
-cd ~/cables/cables_ui
+cd cables_ui
 git pull
 nvm use
 npm install
 npm run build
+cd ..
 
-cd ~/cables/cables_electron
+cd cables_electron
 git pull
 nvm use
 npm install
 npm run p
+cd ..
