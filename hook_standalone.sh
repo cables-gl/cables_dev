@@ -27,5 +27,5 @@ nvm install
 nvm use
 npm install
 npm run build
-npm run p
+npm run dist
 cd ..
