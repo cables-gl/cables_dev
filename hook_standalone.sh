@@ -7,6 +7,7 @@ set -o pipefail
 
 cd cables
 git pull
+nvm install
 nvm use
 npm install
 npm run build
@@ -14,6 +15,7 @@ cd ..
 
 cd cables_ui
 git pull
+nvm install
 nvm use
 npm install
 npm run build
@@ -21,6 +23,7 @@ cd ..
 
 cd cables_electron
 git pull
+nvm install
 nvm use
 npm install
 npm run p
