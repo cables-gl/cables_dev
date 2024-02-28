@@ -1,7 +1,5 @@
 import fs from "fs";
 import mkdirp from "mkdirp";
-import imagemin from "imagemin";
-import imageminPngquant from "imagemin-pngquant";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 import SharedUtil from "./shared_util.js";

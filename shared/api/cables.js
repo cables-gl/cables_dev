@@ -18,30 +18,7 @@ export default class Cables extends SharedUtil
         this.configLocation = path.join(this._dirname, "../cables.json");
 
         this._config = this.getConfig();
-
-        if (!fs.existsSync("public/assets/library")) mkdirp.sync("public/assets/library");
-
-        if (!fs.existsSync(this.getGenPath())) mkdirp.sync(this.getGenPath());
-
-        if (!fs.existsSync(this.getOpDocsFile()))
-        {
-            if (!fs.existsSync(this.getOpDocsFile())) fs.writeFileSync(this.getOpDocsFile(), JSON.stringify({ "generated": Date.now(), "opDocs": [] }));
-        }
-
-        if (!fs.existsSync(this.getFeedPath())) mkdirp.sync(this.getFeedPath());
-        if (!fs.existsSync(this.getOpDocsFile())) fs.writeFileSync(this.getOpDocsFile(), JSON.stringify({}));
-        if (!fs.existsSync(this.getOpLookupFile())) fs.writeFileSync(this.getOpLookupFile(), JSON.stringify({ "names": {}, "ids": {} }));
-
-        if (!fs.existsSync(this.getOpsPath())) mkdirp(this.getOpsPath());
-        if (!fs.existsSync(this.getUserOpsPath())) mkdirp.sync(this.getUserOpsPath());
-        if (!fs.existsSync(this.getTeamOpsPath())) mkdirp.sync(this.getTeamOpsPath());
-        if (!fs.existsSync(this.getExtensionOpsPath())) mkdirp.sync(this.getExtensionOpsPath());
-        if (!fs.existsSync(this.getPatchOpsPath())) mkdirp.sync(this.getPatchOpsPath());
-        if (!fs.existsSync(this.getOpDocsCachePath())) mkdirp.sync(this.getOpDocsCachePath());
-
-        if (!fs.existsSync(this.getAssetPath())) mkdirp(this.getAssetPath());
-        if (!fs.existsSync(this.getLibsPath())) mkdirp(this.getLibsPath());
-        if (!fs.existsSync(this.getCoreLibsPath())) mkdirp(this.getCoreLibsPath());
+        this._createDirectories();
 
         const packageJsonFile = path.join(this.getSourcePath(), "../package.json");
         if (fs.existsSync(packageJsonFile))
@@ -206,6 +183,11 @@ export default class Cables extends SharedUtil
         return dirName;
     }
 
+    getAssetLibraryPath()
+    {
+        return path.join(this.getAssetPath(), "/library");
+    }
+
     getViewsPath()
     {
         return path.join(this._dirname, "/../views/");
@@ -252,5 +234,31 @@ export default class Cables extends SharedUtil
     getEnv()
     {
         return this._config.env;
+    }
+
+    _createDirectories()
+    {
+        if (!fs.existsSync(this.getAssetPath())) mkdirp(this.getAssetPath());
+        if (!fs.existsSync(this.getLibsPath())) mkdirp(this.getLibsPath());
+        if (!fs.existsSync(this.getCoreLibsPath())) mkdirp(this.getCoreLibsPath());
+        if (!fs.existsSync(this.getAssetLibraryPath())) mkdirp.sync(this.getAssetLibraryPath());
+
+        if (!fs.existsSync(this.getGenPath())) mkdirp.sync(this.getGenPath());
+
+        if (!fs.existsSync(this.getOpDocsFile()))
+        {
+            if (!fs.existsSync(this.getOpDocsFile())) fs.writeFileSync(this.getOpDocsFile(), JSON.stringify({ "generated": Date.now(), "opDocs": [] }));
+        }
+
+        if (!fs.existsSync(this.getFeedPath())) mkdirp.sync(this.getFeedPath());
+        if (!fs.existsSync(this.getOpDocsFile())) fs.writeFileSync(this.getOpDocsFile(), JSON.stringify({}));
+        if (!fs.existsSync(this.getOpLookupFile())) fs.writeFileSync(this.getOpLookupFile(), JSON.stringify({ "names": {}, "ids": {} }));
+
+        if (!fs.existsSync(this.getOpsPath())) mkdirp(this.getOpsPath());
+        if (!fs.existsSync(this.getUserOpsPath())) mkdirp.sync(this.getUserOpsPath());
+        if (!fs.existsSync(this.getTeamOpsPath())) mkdirp.sync(this.getTeamOpsPath());
+        if (!fs.existsSync(this.getExtensionOpsPath())) mkdirp.sync(this.getExtensionOpsPath());
+        if (!fs.existsSync(this.getPatchOpsPath())) mkdirp.sync(this.getPatchOpsPath());
+        if (!fs.existsSync(this.getOpDocsCachePath())) mkdirp.sync(this.getOpDocsCachePath());
     }
 }

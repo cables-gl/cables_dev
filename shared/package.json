@@ -23,8 +23,6 @@
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5",
     "uuid-v4": "0.1.0",
-    "sanitize-filename": "1.6.3",
-    "imagemin": "7.0.1",
-    "imagemin-pngquant": "9.0.2"
+    "sanitize-filename": "1.6.3"
   }
 }
