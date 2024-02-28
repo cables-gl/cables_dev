@@ -1,4 +1,4 @@
-import { EventTarget } from "./eventtarget.js";
+import EventTarget from "./eventtarget.js";
 
 export default class TalkerAPI extends EventTarget
 {

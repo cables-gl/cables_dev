@@ -1,0 +1,28 @@
+{
+  "name": "cables-shared-api",
+  "version": "0.0.1",
+  "author": "undefined development",
+  "description": "shared api classes between the different subprojects of cables_dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/undev-studio/cables_dev.git"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": "18.14.2"
+  },
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "mkdirp": "2.1.3",
+    "marked": "1.2.9",
+    "moment": "2.29.4",
+    "jsonfile": "6.1.0",
+    "fs-extra": "11.1.0",
+    "eslint": "7.32.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.27.5",
+    "uuid-v4": "0.1.0",
+    "sanitize-filename": "1.6.3"
+  }
+}

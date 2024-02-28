@@ -1,36 +1,41 @@
-import CABLES from "./helper.js";
+import helper from "./helper.js";
 
-const EventTarget = function ()
+export default class EventTarget
 {
-    this._log = console;
-    this._eventCallbacks = {};
-    this._logName = "";
-    this._logEvents = false;
-    this._listeners = {};
+    constructor()
+    {
+        this._log = console;
+        this._eventCallbacks = {};
+        this._logName = "";
+        this._logEvents = false;
+        this._listeners = {};
 
-    this.addEventListener = this.on = function (which, cb, idPrefix)
+        this.on = this.addEventListener;
+        this.off = this.removeEventListener;
+    }
+
+    addEventListener(which, cb, idPrefix)
     {
         const event =
-        {
-            "id": (idPrefix || "") + CABLES.simpleId(),
-            "name": which,
-            "cb": cb,
-        };
+            {
+                "id": (idPrefix || "") + helper.simpleId(),
+                "name": which,
+                "cb": cb,
+            };
         if (!this._eventCallbacks[which]) this._eventCallbacks[which] = [event];
         else this._eventCallbacks[which].push(event);
 
         this._listeners[event.id] = event;
 
         return event.id;
-    };
+    }
 
-    this.hasEventListener = function (which, cb)
+    hasEventListener(which, cb)
     {
         if (which && !cb)
         {
             // check by id
-            if (this._listeners[which]) return true;
-            else return false;
+            return !!this._listeners[which];
         }
         else
         {
@@ -40,19 +45,19 @@ const EventTarget = function ()
                 if (this._eventCallbacks[which])
                 {
                     const idx = this._eventCallbacks[which].indexOf(cb);
-                    if (idx == -1) return false;
+                    if (idx === -1) return false;
                     return true;
                 }
             }
         }
-    };
+    }
 
-    this.hasListenerForEventName = function (eventName)
+    hasListenerForEventName(eventName)
     {
         return this._eventCallbacks[eventName] && this._eventCallbacks[eventName].length > 0;
-    };
+    }
 
-    this.removeEventListener = this.off = function (which, cb)
+    removeEventListener(which, cb)
     {
         if (which === null || which === undefined) return;
 
@@ -94,7 +99,7 @@ const EventTarget = function ()
 
         let index = null;
         for (let i = 0; i < this._eventCallbacks[which].length; i++)
-            if (this._eventCallbacks[which][i].cb == cb)
+            if (this._eventCallbacks[which][i].cb === cb)
                 index = i;
 
         if (index !== null)
@@ -102,15 +107,15 @@ const EventTarget = function ()
             delete this._eventCallbacks[index];
         }
         else this._log.warn("removeEventListener not found " + which);
-    };
+    }
 
-    this.logEvents = function (enabled, name)
+    logEvents(enabled, name)
     {
         this._logEvents = enabled;
         this._logName = name;
-    };
+    }
 
-    this.emitEvent = function (which, param1, param2, param3, param4, param5, param6)
+    emitEvent(which, param1, param2, param3, param4, param5, param6)
     {
         if (this._logEvents) this._log.log("[event] ", this._logName, which, this._eventCallbacks);
 
@@ -128,7 +133,6 @@ const EventTarget = function ()
         {
             if (this._logEvents) this._log.log("[event] has no event callback", which, this._eventCallbacks);
         }
-    };
-};
+    }
+}
 
-export { EventTarget };

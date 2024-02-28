@@ -1,0 +1,16 @@
+{
+  "name": "cables-shared-client",
+  "version": "0.0.1",
+  "author": "undefined development",
+  "description": "shared client classes between the different subprojects of cables_dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/undev-studio/cables_dev.git"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": "18.14.2"
+  },
+  "type": "module",
+  "license": "MIT"
+}
