@@ -1,4 +1,3 @@
-import moment from "moment";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -14,6 +13,8 @@ export default class SharedHelperUtil extends SharedUtil
         this.DATE_FORMAT_LOG = "YYYY-MM-DD HH:mm";
         this.DATE_FORMAT_DISPLAY = "MMM D, YYYY [at] HH:mm";
         this.DATE_MOMENT_CUTOFF_DAYS = 7;
+
+        this._validShortIdChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     }
 
     get utilName()
@@ -246,5 +247,70 @@ export default class SharedHelperUtil extends SharedUtil
     {
         if (!date) date = Date.now();
         return { "created": date, "key": key, "text": text };
+    }
+
+    generateRandomId()
+    {
+        // https://gist.github.com/solenoid/1372386
+        let timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+        return timestamp + "xxxxxxxxxxxxxxxx".replace(/[x]/g, function ()
+        {
+            return (Math.random() * 16 | 0).toString(16);
+        }).toLowerCase();
+    }
+
+    // https://github.com/treygriffith/short-mongo-id
+    // but modified valid characters, see this._validShortIdChars
+    generateShortId(longId, creationTimestamp)
+    {
+        let newId = "";
+
+        // creation date
+        // time in milliseconds (with precision in seconds)
+        let time = creationTimestamp;
+
+        // hexadecimal counter converted to a decimal
+        let counter = parseInt(longId.slice(-6), 16);
+
+        // only use the last 3 digits of the counter to serve as our "milliseconds"
+        counter = parseInt(counter.toString().slice(-3), 10);
+
+        // add counter as our millisecond precision to our time
+        time += counter;
+
+        // convert to 64 base string (not strict base64)
+        newId = this._shortIdBase(time, 62);
+
+        // slice off the first, least variating, character
+        // this lowers the entropy, but brings us to 6 characters, which is nice.
+        // This will cause a roll-over once every two years, but the counter and the rest of the timestamp should make it unique (enough)
+        newId = newId.slice(1);
+
+        // reverse the string so that the first characters have the most variation
+        newId = newId.split("").reverse().join("");
+
+        return newId;
+    }
+
+    _shortIdBase(num, base)
+    {
+        let decimal = num;
+        let temp;
+        let conversion = "";
+
+        const symbols = this._validShortIdChars;
+        if (base > symbols.length || base <= 1)
+        {
+            throw new RangeError("Radix must be less than " + symbols.length + " and greater than 1");
+        }
+
+        while (decimal > 0)
+        {
+            temp = Math.floor(decimal / base);
+            conversion = symbols[(decimal - (base * temp))] + conversion;
+            decimal = temp;
+        }
+
+        return conversion;
     }
 }

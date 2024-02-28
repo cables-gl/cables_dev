@@ -93,4 +93,9 @@ export default class SharedUtil
     {
         return this._utilProvider.getUtil(UtilProvider.HELPER_UTIL);
     }
+
+    get _projectsUtil()
+    {
+        return this._utilProvider.getUtil(UtilProvider.PROJECTS_UTIL);
+    }
 }

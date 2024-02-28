@@ -19,7 +19,6 @@ export default class Cables extends SharedUtil
 
         this._config = this.getConfig();
 
-        if (!fs.existsSync("public/assets")) mkdirp.sync("public/assets");
         if (!fs.existsSync("public/assets/library")) mkdirp.sync("public/assets/library");
 
         if (!fs.existsSync(this.getGenPath())) mkdirp.sync(this.getGenPath());
@@ -202,7 +201,7 @@ export default class Cables extends SharedUtil
 
     getAssetPath()
     {
-        let dirName = path.join(this._dirname, "/", this._config.path.assets);
+        let dirName = path.join(this._writeableDirName, "/", this._config.path.assets);
         if (this._config.path.assets.startsWith("/")) dirName = this._config.path.assets;
         return dirName;
     }

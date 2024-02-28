@@ -7,5 +7,17 @@ import SharedOpsUtil from "./utils/shared_ops_util.js";
 import SharedTeamsUtil from "./utils/shared_teams_util.js";
 import SharedSubPatchOpUtil from "./utils/shared_subpatchop_util.js";
 import SharedLogger from "./utils/shared_logger.js";
+import SharedProjectsUtil from "./utils/shared_projects_util.js";
 
-export { Cables, utilProvider, SharedUtil, SharedDocUtil, SharedHelperUtil, SharedOpsUtil, SharedTeamsUtil, SharedSubPatchOpUtil, SharedLogger };
+export {
+    utilProvider,
+    Cables,
+    SharedUtil,
+    SharedDocUtil,
+    SharedHelperUtil,
+    SharedOpsUtil,
+    SharedProjectsUtil,
+    SharedTeamsUtil,
+    SharedSubPatchOpUtil,
+    SharedLogger
+};

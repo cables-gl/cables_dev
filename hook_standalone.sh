@@ -5,6 +5,13 @@ set -o pipefail
 
 . ~/.nvm/nvm.sh
 
+cd shared
+git pull
+nvm install
+nvm use
+npm install
+cd ..
+
 cd cables
 git pull
 nvm install
