@@ -3,9 +3,12 @@
 set -e
 set -o pipefail
 
-echo "nvm:" $SETUP_NODE_NVM_NVM
-echo "package:" $NPM_CONFIG_VERSION
-. ~/mynvm/nvm.sh
+if [ -z "$SETUP_NODE_NVM_NVM" ]; then
+
+  . ~/.nvm/nvm.sh
+else
+  . $SETUP_NODE_NVM_NVM
+fi
 
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
