@@ -3,18 +3,25 @@
 set -e
 set -o pipefail
 
+. ~/.nvm/nvm.sh
+
 echo "INSTALLING cables_dev DEPENDENCIES"
+nvm use
 npm install
 
 echo "BUILDING shared"
 cd shared
 git pull
+nvm install
+nvm use
 npm install
 cd ..
 
 echo "BUILDING cables"
 cd cables
 git pull
+nvm install
+nvm use
 npm install
 npm run build
 cd ..
@@ -22,6 +29,8 @@ cd ..
 echo "BUILDING cables_ui"
 cd cables_ui
 git pull
+nvm install
+nvm use
 npm install
 npm run build
 cd ..
