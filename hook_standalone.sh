@@ -3,6 +3,9 @@
 set -e
 set -o pipefail
 
+echo $SETUP_NODE_NVM_NVM
+. ~/mynvm/nvm.sh
+
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
 npm install
