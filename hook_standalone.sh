@@ -4,7 +4,6 @@ set -e
 set -o pipefail
 
 if [ -z "$SETUP_NODE_NVM_NVM" ]; then
-
   . ~/.nvm/nvm.sh
 else
   . $SETUP_NODE_NVM_NVM
