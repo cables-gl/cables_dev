@@ -6,10 +6,6 @@ set -o pipefail
 echo $SETUP_NODE_NVM_NVM
 . ~/mynvm/nvm.sh
 
-echo $CSC_LINK
-echo "---"
-echo $CSC_KEY_PASSWORD
-
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
 npm install
