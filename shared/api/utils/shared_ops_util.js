@@ -1977,5 +1977,225 @@ export default class SharedOpsUtil extends SharedUtil
         }
         return subPatchData;
     }
+
+    getOpRenameProblems(newName, oldName, userObj, teams = [], newOpProject = null, oldOpProject = null, opUsages = [], checkUsages = true)
+    {
+        const problems = {};
+        if (!newName)
+        {
+            problems.no_name = "No op name.";
+            newName = "";
+        }
+
+        let opNamespace = this.getNamespace(newName);
+        if (!opNamespace || opNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
+
+        if (newName.endsWith(".")) problems.name_ends_with_dot = "Op name cannot end with '.'";
+        if (!newName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name does not start with '" + this.PREFIX_OPS + "'.";
+        if (newName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
+        if (this.opExists(newName)) problems.target_exists = "Op exists already.";
+        if (this.opNameTaken(newName)) problems.name_taken = "Op with same name (ignoring case) exists already.";
+        if (newName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
+        if (newName.indexOf("..") !== -1) problems.name_contains_doubledot = "Op name contains '..'.";
+        let matchString = "[^abcdefghijklmnopqrstuvwxyz._ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9";
+        // patchops can have - because they contain the patch shortid
+        if (this.isPatchOp(newName) || this.isTeamOp(newName))
+        {
+            const shortName = this.getOpShortName(newName);
+            if (shortName.includes("-")) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
+            matchString += "\\-";
+        }
+        matchString += "]";
+
+        if (newName.match(matchString)) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
+
+        if (newName.toLowerCase().split(this.SUFFIX_VERSION).length > 2) problems.name_contains_illegal_characters = "Op name cannot contain version suffix `_v` more than once.";
+
+        const parts = newName.split(".");
+        for (let i = 0; i < parts.length; i++) // do not start
+        {
+            if (parts[i].length > 0)
+            {
+                const firstChar = parts[i].charAt(0);
+                const isnum = this._helperUtil.isNumeric(firstChar);
+                if (isnum) problems.namespace_starts_with_numbers = "Op namespace parts cannot start with numbers (" + parts[i] + ").";
+                if (firstChar === " ") problems.namespace_starts_with_whitespace = "Op namespace cannot start with whitespace (" + parts[i] + ").";
+                if (firstChar === "-") problems.namespace_starts_with_dash = "Op namespace parts can not start with - (" + parts[i] + ").";
+                if (parts[i].charAt(0) !== parts[i].charAt(0).toUpperCase())
+                {
+                    if (!this.isUserOp(newName) || i > 2)
+                    {
+                        problems.namespace_not_uppercase = "All namespace parts have to be uppercase (" + parts[i] + ").";
+                    }
+                }
+            }
+        }
+
+        if (Object.keys(problems).length === 0)
+        {
+            if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
+            {
+                problems.no_rights_target = "You lack permissions to " + newName + ".";
+            }
+
+            if (oldName)
+            {
+                if (!this.userHasWriteRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack permissions to " + oldName + ".";
+                if (!this.opExists(oldName)) problems.not_found_source = oldName + " does not exist.";
+            }
+        }
+        if (opUsages && checkUsages)
+        {
+            opUsages.forEach((opReference) =>
+            {
+                const refName = this.getOpNameById(opReference.referenceId);
+                if (refName)
+                {
+                    const hierarchyProblem = this.getNamespaceHierarchyProblem(refName, newName);
+                    if (hierarchyProblem)
+                    {
+                        const refLink = "[" + refName + "](" + refName + ")";
+                        const oldLink = "[" + oldName + "](" + oldName + ")";
+                        problems.op_used_elsewhere = refLink + " contains " + oldLink + ", and cannot be renamed, try cloning the op instead.";
+                    }
+                }
+            });
+        }
+        const subPatchAtt = this.getSubPatchOpAttachment(oldName);
+        if (subPatchAtt)
+        {
+            subPatchAtt.ops.forEach((subPatchOp) =>
+            {
+                const subPatchOpName = this.getOpNameById(subPatchOp.opId);
+                const hierarchyProblem = this.getNamespaceHierarchyProblem(newName, subPatchOpName);
+                if (hierarchyProblem)
+                {
+                    problems.bad_op_hierarchy = hierarchyProblem;
+                }
+            });
+        }
+        return problems;
+    }
+
+    getOpShortName(opName)
+    {
+        if (!opName) return "";
+        const parts = opName.split(".");
+        return parts.pop();
+    }
+
+    getOpRenameConsequences(newName, oldName)
+    {
+        const consequences = {};
+        if (this.isUserOp(newName))
+        {
+            consequences.will_be_userop = "Your new op will be available only to you in all your patches.";
+            consequences.edit_only_user = "Only you will be able to make changes to your new op.";
+        }
+        else if (this.isTeamOp(newName))
+        {
+            consequences.will_be_teamop = "Your new op will be available only by members of the owning team.";
+            consequences.edit_only_team = "Team members with full-access rights will be able to make changes to your new op.";
+            consequences.no_public_patches = "You will NOT be able to publish patches using this op in private or unlisted teams.";
+        }
+        else if (this.isExtensionOp(newName))
+        {
+            consequences.will_be_extensionop = "Your new op will be available to all users.";
+            consequences.read_only = "Team members with full-access rights will be able to make changes to your new op.";
+        }
+        else if (this.isPatchOp(newName))
+        {
+            consequences.will_be_patchop = "Your new op will be available only in the current patch.";
+            consequences.edit_only_collaborators = "People with access to the patch will be able to see, edit and copy it.";
+        }
+        else
+        {
+            consequences.will_be_extensionop = "Your new op will be available to all users of cables.";
+            consequences.edit_only_staff = "Only cables-staff will be able to make changes to this op.";
+        }
+        if (this.isDevOp(newName))
+        {
+            consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
+        }
+        return consequences;
+    }
+
+    namespaceExists(namespaceName, opDocs = null)
+    {
+        if (!namespaceName) return false;
+        if (!opDocs) opDocs = this._docsUtil.getOpDocs();
+        let exists = this.namespaceExistsInCore(namespaceName, opDocs);
+        if (exists) return true;
+        const nameLookup = this._docsUtil.getCachedOpLookup();
+        if (nameLookup && nameLookup.names)
+        {
+            let nsName = namespaceName.toLowerCase();
+            if (Object.keys(nameLookup.names).find((name) => { return name.toLowerCase().startsWith(nsName); })) return true;
+        }
+        return false;
+    }
+
+    getNextVersionOpName(opName, opDocs)
+    {
+        const highestVersion = this.getHighestVersionOpName(opName, opDocs);
+        let version = this.getVersionFromOpName(highestVersion);
+
+        const noVersionName = this.getOpNameWithoutVersion(opName);
+
+        let nextName = "";
+        if (!this.opExists(noVersionName))
+        {
+            nextName = noVersionName;
+        }
+        else if (version === 0)
+        {
+            nextName = noVersionName + this.SUFFIX_VERSION + 2;
+        }
+        else
+        {
+            version++;
+            nextName = noVersionName + this.SUFFIX_VERSION + version;
+        }
+        return nextName;
+    }
+
+    updateCoreLibs(opName, libNames)
+    {
+        const filename = this.getOpJsonPath(opName);
+        const obj = jsonfile.readFileSync(filename);
+        obj.coreLibs = libNames || [];
+        jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
+        return obj.coreLibs;
+    }
+
+    updateAttachments(opName, attachments)
+    {
+        let problems = null;
+        const update = Object.keys(attachments);
+        for (let i = 0; i < update.length; i++)
+        {
+            const attName = update[i];
+            if (attName && attName !== "null" && attName.indexOf("att_") === 0)
+            {
+                let content = attachments[attName];
+                problems = this.updateAttachment(opName, attName, content);
+                if (problems) break;
+            }
+        }
+        return problems;
+    }
+
+    getAttachments(opName)
+    {
+        const attachments = {};
+        const attachmentFiles = this.getAttachmentFiles(opName);
+        const dirName = this.getOpAbsolutePath(opName);
+        attachmentFiles.forEach((file) =>
+        {
+            const filename = path.join(dirName, file);
+            attachments[file] = fs.readFileSync(filename, { "encoding": "utf8" });
+        });
+        return attachments;
+    }
 }
 
