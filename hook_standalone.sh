@@ -3,7 +3,8 @@
 set -e
 set -o pipefail
 
-echo $SETUP_NODE_NVM_NVM
+echo "nvm:" $SETUP_NODE_NVM_NVM
+echo "package:" $NPM_CONFIG_VERSION
 . ~/mynvm/nvm.sh
 
 echo "INSTALLING cables_dev DEPENDENCIES"
