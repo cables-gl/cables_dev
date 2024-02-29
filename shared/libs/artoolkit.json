@@ -1,0 +1,7 @@
+{
+    "title":"artoolkit.js",
+    "description":"Emscripten port of ARToolKit to JavaScript.",
+    "url":"https://github.com/artoolkitx/jsartoolkit5",
+    "version": "27. September 2021",
+    "licence": "ARToolKit LGPLv3 license and additional permission"
+}

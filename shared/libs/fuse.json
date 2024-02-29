@@ -1,0 +1,7 @@
+{
+    "title":"fuse.js",
+    "description":"lightweight fuzzy-search",
+    "url":"https://fusejs.io/",
+    "version": "v6.6.2",
+    "licence": "Apache-2.0 License"
+}

@@ -1,0 +1,7 @@
+{
+    "title":"conway-heart",
+    "description":"polyhedral notation interpreter",
+    "url":"https://github.com/mikolalysenko/conway-hart",
+    "licence": "GPL",
+    "hidden": true
+}

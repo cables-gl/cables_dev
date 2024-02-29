@@ -1,0 +1,6 @@
+{
+    "title":"StartAudioContext",
+    "description":"Starts the Web Audio API's AudioContext on an explicit user action.",
+    "url":"https://github.com/tambien/StartAudioContext",
+    "licence": "MIT"
+}

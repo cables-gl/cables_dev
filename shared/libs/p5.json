@@ -1,0 +1,7 @@
+{
+    "title":"p5.js",
+    "description":"p5.js is an interpretation of Processing for today’s web",
+    "url":"https://p5js.org/",
+    "version": "1.2.0",
+    "licence": "LGPL"
+}

@@ -1,0 +1,7 @@
+{
+    "title":"earcut.js",
+    "description":"polygon triangulation library",
+    "url":"https://github.com/mapbox/earcut",
+    "licence": "ISC",
+    "version": "2.2.3"
+}

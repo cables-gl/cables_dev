@@ -1,0 +1,6 @@
+{
+    "title":"Webaudio Peaks",
+    "description":"extract peaks from audio samples or a webaudio AudioBuffer",
+    "url":"https://github.com/naomiaro/webaudio-peaks",
+    "licence": "MIT"
+}

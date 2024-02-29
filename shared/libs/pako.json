@@ -1,0 +1,7 @@
+{
+    "title":"pako.js",
+    "description":"zlib port to javascript, very fast!",
+    "url":"https://github.com/nodeca/pako",
+    "version": "2.0.3",
+    "licence": "MIT"
+}

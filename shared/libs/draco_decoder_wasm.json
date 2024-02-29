@@ -1,0 +1,6 @@
+{
+    "title":"draco - wasm",
+    "description":"draco 3d mesh compression",
+    "url":"https://github.com/google/draco/tree/gltf_2.0_draco_extension",
+    "licence": " Apache-2.0 License "
+}

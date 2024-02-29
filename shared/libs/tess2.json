@@ -1,0 +1,7 @@
+{
+    "title":"tess2",
+    "description":"The tess2.js library performs polygon boolean operations and tesselation to triangles and convex polygons.",
+    "url":"https://github.com/memononen/tess2.js",
+    "version": "5 Apr 2016",
+    "licence": "SGI-B-2.0"
+}

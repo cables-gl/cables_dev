@@ -1,0 +1,6 @@
+{
+    "title":"hashid",
+    "description":"generate short unique ids from integers",
+    "url":"http://hashids.org/",
+    "licence": "Public Domain"
+}

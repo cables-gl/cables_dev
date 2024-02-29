@@ -1,0 +1,7 @@
+{
+    "title":"echarts.js",
+    "description":"Apache ECharts is a powerful, interactive charting and data visualization library for browser",
+    "url":"https://echarts.apache.org/en/index.html",
+    "licence": "Apache-2.0",
+    "version": "5.1.2"
+}

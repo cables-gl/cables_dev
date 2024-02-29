@@ -1,0 +1,7 @@
+{
+    "title": "teachablemachine_tf_speech_image_pose",
+    "description": "Library for using models created with Teachable Machine. Includes tensorflow, tensorflow speech models, 'image' and 'pose'",
+    "url": "https://github.com/googlecreativelab/teachablemachine-libraries",
+    "version": "0.8.4",
+    "licence": "Apache-2.0"
+}

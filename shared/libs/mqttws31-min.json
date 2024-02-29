@@ -1,0 +1,6 @@
+{
+    "title":"websocket to mqtt",
+    "description":"Use WebSockets to connect to an MQTT Broker",
+    "url":"https://www.eclipse.org/paho/clients/js/",
+    "licence": "Eclipse Public License"
+}

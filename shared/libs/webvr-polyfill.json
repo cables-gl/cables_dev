@@ -1,0 +1,6 @@
+{
+    "title":"WebVr Polyfill",
+    "description":"A JavaScript implementation of the WebVR spec, e.g. use webvr on phones which browsers don't support it",
+    "url":"https://github.com/immersive-web/webvr-polyfill",
+    "licence": "Apache License"
+}

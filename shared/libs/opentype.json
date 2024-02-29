@@ -1,0 +1,7 @@
+{
+	"title": "opentype",
+	"description": "A JavaScript parser and writer for TrueType and OpenType fonts",
+	"url": "https://github.com/opentypejs/opentype.js",
+	"version": "1.3.4",
+	"licence": "MIT"
+}

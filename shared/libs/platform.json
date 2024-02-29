@@ -1,0 +1,7 @@
+{
+    "title": "Platform.js",
+    "description": "A platform detection library that works on nearly all JavaScript platforms.",
+    "url": "https://github.com/bestiejs/platform.js/",
+    "version": "1.3.6",
+    "licence": "MIT"
+}

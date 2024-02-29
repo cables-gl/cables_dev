@@ -1,0 +1,7 @@
+{
+    "title": "navigo",
+    "description": "A simple dependency-free minimalistic JavaScript router",
+    "url": "https://github.com/krasimir/navigo",
+    "version": "8.1.0",
+    "licence": "MIT"
+}

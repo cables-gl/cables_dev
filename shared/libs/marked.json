@@ -1,0 +1,7 @@
+{
+    "title": "marked",
+    "description": "markdown to html parser",
+    "url": "https://github.com/markedjs/marked",
+    "version":"4.2.3",
+    "licence": "MIT"
+}

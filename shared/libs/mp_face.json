@@ -1,0 +1,6 @@
+{
+    "title": "mediapipe face mesh",
+    "description": "",
+    "url": "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/face_mesh.js",
+    "licence": "Apache"
+}
