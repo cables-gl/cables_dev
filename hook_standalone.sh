@@ -3,8 +3,6 @@
 set -e
 set -o pipefail
 
-. ~/.nvm/nvm.sh
-
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
 npm install
