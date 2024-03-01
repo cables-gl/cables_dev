@@ -45,6 +45,7 @@ git pull
 nvm install
 nvm use
 npm install
+./node_modules/.bin/electron-rebuild
 npm run build
 echo "PACKAGING cables_electron"
 npm run dist
