@@ -2197,5 +2197,209 @@ export default class SharedOpsUtil extends SharedUtil
         });
         return attachments;
     }
+
+    cloneOp(oldName, newName, user)
+    {
+        const code = fs.readFileSync(this.getOpAbsoluteFileName(oldName), "utf8");
+        const fn = this.getOpAbsoluteFileName(newName);
+        const basePath = this.getOpAbsolutePath(newName);
+        const oldPath = this.getOpAbsolutePath(oldName);
+
+        mkdirp.sync(basePath);
+        fs.writeFileSync(fn, code);
+
+        const newJsonFile = this.getOpJsonPath(newName);
+        let newJson = {
+            "id": uuidv4(),
+            "authorName": user.username,
+            "created": Date.now()
+        };
+        const oldJsonFile = this.getOpJsonPath(oldName);
+        if (oldJsonFile)
+        {
+            const oldJson = JSON.parse(fs.readFileSync(oldJsonFile));
+            newJson = Object.assign(oldJson, newJson);
+        }
+
+        if (!Array.isArray(newJson.changelog)) newJson.changelog = [];
+        if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
+        if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
+        if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+
+        newJson.changelog.push(
+            {
+                "message": "cloned op from " + oldName,
+                "author": user.username,
+                "date": Date.now()
+            });
+
+        jsonfile.writeFileSync(newJsonFile, newJson, {
+            "encoding": "utf-8",
+            "spaces": 4
+        });
+
+        const opId = newJson.id;
+
+        const attachmentFiles = this.getAttachmentFiles(oldName);
+        const attachments = {};
+        for (let i = 0; i < attachmentFiles.length; i++)
+        {
+            const attachmentFile = attachmentFiles[i];
+            fs.copySync(oldPath + attachmentFile, basePath + attachmentFile);
+            attachments[attachmentFile] = this.getAttachment(newName, attachmentFile);
+        }
+
+        const docsMd = this._docsUtil.getOpDocMd(oldName);
+        if (docsMd)
+        {
+            const filenameMd = basePath + "/" + newName + ".md";
+            fs.writeFileSync(filenameMd, docsMd);
+        }
+        this._docsUtil.updateOpDocs(newName);
+        this._docsUtil.addOpToLookup(opId, newName);
+
+        return {
+            "name": newName,
+            "id": opId,
+            "opDoc": newJson,
+            "code": code,
+            "attachments": attachments
+        };
+    }
+
+    updateOp(user, opName, updates, options = {})
+    {
+        const opExists = this.opExists(opName);
+        let rebuildOpDocs = !opExists;
+        if (updates)
+        {
+            const result = {};
+            const changelogMessages = [];
+            const keys = Object.keys(updates);
+            if (keys.length > 0)
+            {
+                const jsonFile = this.getOpJsonPath(opName, !opExists);
+                let attProblems = null;
+                for (let i = 0; i < keys.length; i++)
+                {
+                    const key = keys[i];
+                    if (key !== null && key !== undefined)
+                    {
+                        switch (key)
+                        {
+                        case "code":
+                            let code = updates.code;
+                            const format = this.validateAndFormatOpCode(code);
+                            if (format.error)
+                            {
+                                const {
+                                    line,
+                                    message
+                                } = format.message;
+                                this._log.info({
+                                    line,
+                                    message
+                                });
+                                return;
+                            }
+
+                            const formatedCode = format.formatedCode;
+                            if (this.existingCoreOp(opName) || options.formatCode)
+                            {
+                                code = formatedCode;
+                            }
+                            result.code = this.updateOpCode(opName, user, updates.code);
+                            rebuildOpDocs = true;
+                            break;
+                        case "layout":
+                            const obj = jsonfile.readFileSync(jsonFile);
+                            obj.layout = updates.layout;
+                            if (obj.layout && obj.layout.name) delete obj.layout.name;
+                            jsonfile.writeFileSync(jsonFile, obj, {
+                                "encoding": "utf-8",
+                                "spaces": 4
+                            });
+                            result.layout = obj.layout;
+                            rebuildOpDocs = true;
+                            break;
+                        case "attachments":
+                            result.attachments = {};
+                            attProblems = this.updateAttachments(opName, updates.attachments);
+                            result.attachments = this.getAttachments(opName);
+                            break;
+                        case "libs":
+                            result.libs = [];
+                            const newLibNames = updates.libs;
+                            this.updateLibs(opName, newLibNames);
+                            result.libs = this.getOpLibs(opName);
+                            changelogMessages.push(" updated libs: " + newLibNames.join(","));
+                            rebuildOpDocs = true;
+                            break;
+                        case "coreLibs":
+                            result.coreLibs = [];
+                            const newCoreLibNames = updates.coreLibs;
+                            this.updateCoreLibs(opName, newCoreLibNames);
+                            result.coreLibs = this.getOpCoreLibs(opName);
+                            changelogMessages.push(" updated core libs: " + newCoreLibNames.join(","));
+                            rebuildOpDocs = true;
+                            break;
+                        }
+                    }
+                }
+                if (changelogMessages.length > 0)
+                {
+                    this.addOpChangeLogMessages(user, opName, changelogMessages, "");
+                }
+                if (rebuildOpDocs)
+                {
+                    this.updateOpDocs(opName);
+                }
+
+                if (!attProblems)
+                {
+                    return { "data": result };
+                }
+                else
+                {
+                    return attProblems;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    saveLayout(opName, layout)
+    {
+        const filename = this.getOpJsonPath(opName);
+
+        try
+        {
+            const obj = jsonfile.readFileSync(filename);
+
+            obj.layout = layout;
+            if (obj.layout && obj.layout.name) delete obj.layout.name;
+
+            try
+            {
+                jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
+                return true;
+            }
+            catch (_err)
+            {
+                return false;
+            }
+        }
+        catch (err)
+        {
+            return false;
+        }
+    }
 }
 

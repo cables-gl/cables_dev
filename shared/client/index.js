@@ -1,9 +1,11 @@
 import EventTarget from "./src/eventtarget.js";
 import helper from "./src/helper.js";
 import TalkerAPI from "./src/talkerapi.js";
+import ele from "./src/ele.js";
 
 export {
     helper,
+    ele,
     EventTarget,
-    TalkerAPI,
+    TalkerAPI
 };

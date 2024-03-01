@@ -1,3 +1,4 @@
+import fs from "fs";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -290,6 +291,37 @@ export default class SharedHelperUtil extends SharedUtil
         newId = newId.split("").reverse().join("");
 
         return newId;
+    }
+
+    getFilesRecursive(baseDir, fileName = null, dir = null)
+    {
+        if (!dir) dir = baseDir;
+        let results = {};
+        let list = fs.readdirSync(dir);
+        list.forEach((file) =>
+        {
+            file = dir + "/" + file;
+            let stat = fs.statSync(file);
+            if (stat && stat.isDirectory())
+            {
+                // recurse into subdirectory
+                results = { ...results, ...this.getFilesRecursive(baseDir, fileName, file) };
+            }
+            else
+            {
+                // is a file
+                const fileBaseName = file.replace(baseDir, "");
+                if (fileName)
+                {
+                    if (fileBaseName.endsWith(fileName)) results[fileBaseName] = fs.readFileSync(file);
+                }
+                else
+                {
+                    results[fileBaseName] = fs.readFileSync(file);
+                }
+            }
+        });
+        return results;
     }
 
     _shortIdBase(num, base)

@@ -114,18 +114,19 @@ export default class Cables extends SharedUtil
 
     getUiPath()
     {
+        if (this._config.path.ui) return path.join(this._dirname, this._config.path.ui);
         return path.join(this._dirname, "../../cables_ui/");
     }
 
     getUiDistPath()
     {
+        if (this._config.path.uiDist) return path.join(this._dirname, this._config.path.uiDist);
         return path.join(this.getUiPath(), "/dist/");
     }
 
     getOpsPath()
     {
         if (!this._config.path.ops) this._log.error("no path.ops found in cables.json!");
-
         return path.join(this._dirname, "/", this._config.path.ops);
     }
 
