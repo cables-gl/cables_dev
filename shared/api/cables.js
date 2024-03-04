@@ -2,6 +2,7 @@
 import mkdirp from "mkdirp";
 import fs from "fs-extra";
 import path from "path";
+import { fileURLToPath } from "url";
 import SharedUtil from "./utils/shared_util.js";
 import { UtilProvider } from "./utils/util_provider.js";
 
@@ -13,7 +14,7 @@ export default class Cables extends SharedUtil
     constructor(utilProvider, dirName = null, writableDirName = null)
     {
         super(utilProvider);
-        this._dirname = dirName || decodeURIComponent(new URL(".", import.meta.url).pathname);
+        this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url).pathname);
         this._writeableDirName = writableDirName || this._dirname;
         this.configLocation = path.resolve(this._dirname, "../cables.json");
 
