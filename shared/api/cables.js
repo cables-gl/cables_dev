@@ -15,7 +15,7 @@ export default class Cables extends SharedUtil
         super(utilProvider);
         this._dirname = dirName || decodeURIComponent(new URL(".", import.meta.url).pathname);
         this._writeableDirName = writableDirName || this._dirname;
-        this.configLocation = path.join(this._dirname, "../cables.json");
+        this.configLocation = path.resolve(this._dirname, "../cables.json");
 
         this._config = this.getConfig();
         this._createDirectories();
@@ -56,13 +56,13 @@ export default class Cables extends SharedUtil
     {
         if (!this._config)
         {
-            if (process.env.npm_config_apiconfig) this.configLocation = "./cables_env_" + process.env.npm_config_apiconfig + ".json";
+            if (process.env.npm_config_apiconfig) this.configLocation = path.resolve("./cables_env_" + process.env.npm_config_apiconfig + ".json");
 
             if (!fs.existsSync(this.configLocation))
             {
                 try
                 {
-                    fs.copySync("cables_example.json", this.configLocation);
+                    fs.copySync(path.resolve("./cables_example.json"), this.configLocation);
                 }
                 catch (err)
                 {
@@ -70,7 +70,6 @@ export default class Cables extends SharedUtil
                 }
             }
 
-            this.configLocation = path.resolve(this.configLocation);
             this._config = JSON.parse(fs.readFileSync(this.configLocation, "utf-8"));
             this._config.maxFileSizeMb = this._config.maxFileSizeMb || 256;
         }
