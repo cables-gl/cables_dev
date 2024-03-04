@@ -11,9 +11,6 @@ fi
 
 echo "building with node version `node --version`"
 
-pwd
-ls
-
 echo "INSTALLING cables_dev DEPENDENCIES"
 npm install
 
@@ -39,9 +36,6 @@ cd ..
 
 echo "BUILDING cables_electron"
 cd cables_electron
-pwd
-ls
-ls src_client/
 git pull
 npm install
 npm run build
