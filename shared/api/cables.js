@@ -14,10 +14,11 @@ export default class Cables extends SharedUtil
     constructor(utilProvider, dirName = null, writableDirName = null)
     {
         super(utilProvider);
-        this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url).pathname);
+        this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url));
         this._writeableDirName = writableDirName || this._dirname;
         this.configLocation = path.resolve(this._dirname, "../cables.json");
 
+        console.log("DIRNAME", dirName);
         this._config = this.getConfig();
         this._createDirectories();
 
