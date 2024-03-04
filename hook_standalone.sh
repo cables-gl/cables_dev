@@ -9,6 +9,12 @@ else
   . $SETUP_NODE_NVM_NVM
 fi
 
+if [ -z "$1" ]; then
+  BUILD_OS=""
+else
+  BUILD_OS=":$1";
+fi
+
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
 npm install
@@ -48,7 +54,7 @@ npm install
 ./node_modules/.bin/electron-rebuild
 npm run build
 echo "PACKAGING cables_electron"
-npm run dist
+npm run dist$BUILD_OS
 cd ..
 
 echo "DONE"
