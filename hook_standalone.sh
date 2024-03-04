@@ -9,6 +9,8 @@ else
   BUILD_OS=":$1";
 fi
 
+echo "building with node version `node --version`"
+
 echo "INSTALLING cables_dev DEPENDENCIES"
 #nvm install
 #nvm use
