@@ -17,6 +17,7 @@ fi
 
 echo "INSTALLING cables_dev DEPENDENCIES"
 nvm use
+nvm install
 npm install
 
 echo "BUILDING shared"
