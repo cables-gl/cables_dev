@@ -20,7 +20,7 @@
     "jsonfile": "6.1.0",
     "fs-extra": "11.1.0",
     "eslint": "7.32.0",
-    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-import": "2.27.5",
     "uuid-v4": "0.1.0",
     "sanitize-filename": "1.6.3"

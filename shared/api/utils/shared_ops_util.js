@@ -9,8 +9,6 @@ import sanitizeFileName from "sanitize-filename";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
-const CLIEngine = eslint.CLIEngine;
-
 /**
  * @abstract
  */
@@ -19,6 +17,9 @@ export default class SharedOpsUtil extends SharedUtil
     constructor(utilProvider)
     {
         super(utilProvider);
+
+        this._CLIEngine = eslint.CLIEngine;
+
         jsonfile.spaces = 4;
 
         this.PREFIX_OPS = "Ops.";
@@ -69,7 +70,7 @@ export default class SharedOpsUtil extends SharedUtil
             this.PREFIX_USEROPS
         ];
 
-        this.cli = new CLIEngine(this._getCLIConfig());
+        this.cli = new this._CLIEngine(this._getCLIConfig());
     }
 
     get utilName()
@@ -1121,22 +1122,20 @@ export default class SharedOpsUtil extends SharedUtil
 
     validateAndFormatOpCode(code)
     {
+        console.log("CLI", eslint, this.cli, this._getCLIConfig());
+
+        console.log("BEFORE", code);
         const { results } = this.cli.executeOnText(code);
-        const {
-            messages, errorCount, warningCount, fixableErrorCount, fixableWarningCount
-        } = results[0];
+        const { messages } = results[0];
 
         const hasFatal = messages.filter((message) => { return Boolean(message.fatal); }).length > 0;
 
         const status = {
-            "formatedCode": this._helperUtil.removeTrailingSpaces(code),
+            "formatedCode": this._helperUtil.removeTrailingSpaces(results[0].output || code),
             "error": hasFatal,
             "message": messages[0]
         };
-        if (results[0].output)
-        {
-            status.formatedCode = this._helperUtil.removeTrailingSpaces(results[0].output);
-        }
+        console.log("AFTER", status);
         return status;
     }
 
@@ -1483,6 +1482,9 @@ export default class SharedOpsUtil extends SharedUtil
     {
         return {
             "fix": true,
+            "baseConfig": {
+                "extends": ["airbnb-base"],
+            },
             "envs": ["browser"],
             "useEslintrc": false,
             "globals": [
@@ -1888,7 +1890,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (res) res.startTime("sanitizeFileName");
         let p = this.getOpAbsolutePath(opName);
-        console.log("APP", p);
         p += sanitizeFileName(attName);
         if (res) res.endTime("sanitizeFileName");
 

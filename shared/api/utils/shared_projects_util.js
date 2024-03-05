@@ -79,28 +79,19 @@ export default class SharedProjectsUtil extends SharedUtil
                 });
             }
 
-            if (proj.settings)
-            {
-                const assetPath = this.getAssetPath(proj._id);
-                if (!fs.existsSync(assetPath)) fs.mkdirSync(assetPath);
+            const assetPath = this.getAssetPath(proj._id);
+            if (!fs.existsSync(assetPath)) fs.mkdirSync(assetPath);
 
-                if (proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
-                mkdirp.sync(assetPath + "/_screenshots/");
-                const filenameScreenshot = assetPath + "/_screenshots/screenshot_" + Date.now() + ".tmp." + ext;
-                fs.writeFileSync(filenameScreenshot, bitmap);
-                this._convertScreenShot(proj, filenameScreenshot, ext, assetPath);
-            }
+            if (proj.settings && proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
+            mkdirp.sync(assetPath + "/_screenshots/");
+            const filenameScreenshot = assetPath + "/_screenshots/screenshot_" + Date.now() + ".tmp." + ext;
+            fs.writeFileSync(filenameScreenshot, bitmap);
+            return filenameScreenshot;
         }
         else
         {
             this._log.warn("patch screenshot UNKNOWN format, should be png", "EXT: " + ext, proj.shortId);
         }
+        return null;
     }
-
-    /**
-     * @private
-     * @abstract
-     * @return boolean
-     */
-    _convertScreenShot(project, filenameScreenshot, ext, assetPath) {}
 }

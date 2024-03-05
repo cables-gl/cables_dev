@@ -8,6 +8,19 @@ import { UtilProvider } from "./util_provider.js";
 /* eslint-disable no-console */
 export default class SharedLogger extends SharedUtil
 {
+    constructor(utilProvider)
+    {
+        super(utilProvider);
+        this._services = [];
+        // register console output, will include "verbose"
+        this._services.push({
+            "name": "console",
+            "levels": ["verbose", "info", "warn", "error", "uncaught", "startTime", "endTime"],
+            "log": this._logConsole.bind(this),
+            "active": true
+        });
+    }
+
     get utilName()
     {
         return UtilProvider.LOGGER;
@@ -18,53 +31,92 @@ export default class SharedLogger extends SharedUtil
         return this.constructor.name || "logger";
     }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    debug(...args) {}
+    _log(...args)
+    {
+        this.info(...args);
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    info(...args) {}
+    debug(...args)
+    {
+        this.verbose(...args);
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    verbose(...args) {}
+    info(...args)
+    {
+        const level = "info";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    warn(...args) {}
+    verbose(...args)
+    {
+        const level = "verbose";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    error(...args) {}
+    warn(...args)
+    {
+        const level = "warn";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    startTime(...args) {}
+    error(...args)
+    {
+        const level = "error";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
-    /**
-     * @param args
-     *  @abstract
-     */
-    endTime(...args) {}
+    startTime(...args)
+    {
+        const level = "startTime";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
-    /**
-     * @param args
-     * @abstract
-     */
-    uncaught(...args) {}
+    endTime(...args)
+    {
+        const level = "endTime";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
+
+    uncaught(...args)
+    {
+        const level = "uncaught";
+        const context = this._getContext();
+        const loggers = this._services.filter((s) => { return s.levels.includes(level); });
+        loggers.forEach((l) =>
+        {
+            l.log(this._initiator, level, context, args);
+        });
+    }
 
     _logConsole(initiator, level, context, args)
     {

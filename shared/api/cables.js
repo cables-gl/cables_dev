@@ -18,7 +18,6 @@ export default class Cables extends SharedUtil
         this._writeableDirName = writableDirName || this._dirname;
         this.configLocation = path.resolve(this._dirname, "../cables.json");
 
-        console.log("DIRNAME", dirName);
         this._config = this.getConfig();
         this._createDirectories();
 

@@ -4,6 +4,11 @@ const kill = require("tree-kill");
 concurrently(
     [
         {
+            "command": "cd shared && npm install",
+            "name": "core",
+            "prefixColor": "yellow",
+        },
+        {
             "command": "cd cables && npm run start",
             "name": "core",
             "prefixColor": "yellow",
@@ -27,7 +32,7 @@ concurrently(
 ).then(() =>
 {
     console.log("stopped!");
-}, () => { console.log("WTF!!!!!!"); }).catch(err => console.log("error", err));
+}, () => { console.log("WTF!!!!!!"); }).catch((err) => { return console.log("error", err); });
 
 process.on("SIGINT", () =>
 {
