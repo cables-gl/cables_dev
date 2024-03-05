@@ -235,7 +235,7 @@ export default class SharedDocUtil extends SharedUtil
             catch (e)
             {
                 this._rebuildOpDocCache = true;
-                this._log.error("failed to rebuild opdoc cache", e);
+                this._log.warn("failed to rebuild opdoc cache", e);
             }
         }
         else
