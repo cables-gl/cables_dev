@@ -1,0 +1,26 @@
+name: 'webhook dev'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+
+jobs:
+  webhook-dev:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          shared:
+            - 'shared/**'
+    - name: notify dev
+      if: needs.files-changed.outputs.shared == 'true'
+      needs: files-changed
+      uses: distributhor/workflow-webhook@v2
+      env:
+        webhook_type: "json-extended"
+        webhook_url: "https://dev.cables.gl/api/webhooks/updateshared?secret=${{ secrets.WEBHOOK_SECRET }}"
+        webhook_secret: ${{ secrets.WEBHOOK_SECRET }}

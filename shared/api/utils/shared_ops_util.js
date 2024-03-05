@@ -1122,9 +1122,6 @@ export default class SharedOpsUtil extends SharedUtil
 
     validateAndFormatOpCode(code)
     {
-        console.log("CLI", eslint, this.cli, this._getCLIConfig());
-
-        console.log("BEFORE", code);
         const { results } = this.cli.executeOnText(code);
         const { messages } = results[0];
 
@@ -1135,7 +1132,6 @@ export default class SharedOpsUtil extends SharedUtil
             "error": hasFatal,
             "message": messages[0]
         };
-        console.log("AFTER", status);
         return status;
     }
 
