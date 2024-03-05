@@ -12,7 +12,6 @@ fi
 echo "building with node version `node --version`"
 echo $PATH
 which node
-which nodejs
 echo $NODE_EXE
 echo $NPM_EXE
 exit
