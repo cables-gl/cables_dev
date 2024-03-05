@@ -10,6 +10,7 @@ else
 fi
 
 echo "building with node version `node --version`"
+echo $PATH
 exit
 echo "INSTALLING cables_dev DEPENDENCIES"
 npm install
