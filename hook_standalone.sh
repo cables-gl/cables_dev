@@ -9,8 +9,8 @@ else
   BUILD_OS=":$1";
 fi
 
-if [ -z "$NODE_EXE"] NODE_EXE=node
-if [ -z "$NPM_EXE"] NPM_EXE=npm
+if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
+if [ -z "$NPM_EXE" ]; then NPM_EXE="npm"; fi
 
 echo "building with node version `$NODE_EXE --version`"
 
