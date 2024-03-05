@@ -45,8 +45,7 @@ export default class EventTarget
                 if (this._eventCallbacks[which])
                 {
                     const idx = this._eventCallbacks[which].indexOf(cb);
-                    if (idx === -1) return false;
-                    return true;
+                    return idx !== -1;
                 }
             }
         }
