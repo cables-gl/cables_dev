@@ -12,13 +12,13 @@ class Ele
      */
     byId(id)
     {
-        if (id && id[0] == "#") console.warn("ele.byId should not contain #");
+        if (id && id[0] === "#") console.warn("ele.byId should not contain #");
         return document.getElementById(id);
     }
 
     /**
      * shortcut for document.querySelector(id)
-     * @param  {String} query
+     * @param  {String} q
      * @returns {Object} DOM element
      */
     byQuery(q)
@@ -28,7 +28,7 @@ class Ele
 
     /**
      * shortcut for document.querySelectorAll(id)
-     * @param  {String} query
+     * @param  {String} q
      * @returns {Array} DOM elements
      */
     byQueryAll(q)
@@ -38,12 +38,12 @@ class Ele
 
     /**
      * returns the first element with class
-     * @param  {String} classname
+     * @param  {String} name
      * @returns {Object} DOM element
      */
     byClass(name)
     {
-        if (name && name[0] == ".") console.warn("ele.byClass should not contain .");
+        if (name && name[0] === ".") console.warn("ele.byClass should not contain .");
         const els = document.getElementsByClassName(name);
         if (els.length > 0) return els[0];
         return null;
@@ -51,12 +51,12 @@ class Ele
 
     /**
      * returns the all elements with class
-     * @param  {String} classname
+     * @param  {String} name
      * @returns {Array} DOM elements
      */
     byClassAll(name)
     {
-        if (name && name[0] == ".") console.warn("ele.byClassAll should not contain .");
+        if (name && name[0] === ".") console.warn("ele.byClassAll should not contain .");
         const els = document.getElementsByClassName(name);
         if (!els) return [];
         return els;
@@ -64,7 +64,7 @@ class Ele
 
     forEachClass(name, cb)
     {
-        if (name && name[0] == ".") console.warn("ele.forEachClass should not contain .");
+        if (name && name[0] === ".") console.warn("ele.forEachClass should not contain .");
 
         const eles = document.getElementsByClassName(name);
         for (let i = 0; i < eles.length; i++) cb(eles[i]);
