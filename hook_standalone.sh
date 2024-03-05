@@ -13,6 +13,8 @@ echo "building with node version `node --version`"
 echo $PATH
 which node
 which nodejs
+echo $NODE_EXE
+echo $NPM_EXE
 exit
 echo "INSTALLING cables_dev DEPENDENCIES"
 npm install
