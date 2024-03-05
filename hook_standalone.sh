@@ -10,7 +10,7 @@ else
 fi
 
 if [ -z "$NODE_EXE"] NODE_EXE=node
-if [ -z "$NPM_EXE"] $NPM_EXE=npm
+if [ -z "$NPM_EXE"] NPM_EXE=npm
 
 echo "building with node version `$NODE_EXE --version`"
 
