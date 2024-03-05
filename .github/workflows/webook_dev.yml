@@ -17,8 +17,7 @@ jobs:
           shared:
             - 'shared/**'
     - name: notify dev
-      if: needs.files-changed.outputs.shared == 'true'
-      needs: files-changed
+      if: steps.changes.outputs.shared == 'true'
       uses: distributhor/workflow-webhook@v2
       env:
         webhook_type: "json-extended"
