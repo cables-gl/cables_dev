@@ -175,8 +175,11 @@ export default class SharedDocUtil extends SharedUtil
                         }
                         else
                         {
-                            opDoc = this.getDocForOp(opName, this.cachedOpDocs.opDocs);
-                            if (!opDoc) opDoc = this.buildOpDocs(opName);
+                            if (this.cachedLookup)
+                            {
+                                opDoc = this.getDocForOp(opName, this.cachedOpDocs.opDocs);
+                                if (!opDoc) opDoc = this.buildOpDocs(opName);
+                            }
                         }
                     }
                     if (opDoc)

@@ -13,11 +13,7 @@ if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
 if [ -z "$NPM_EXE" ]; then NPM_EXE="npm"; fi
 
 NODE_DIR=$(dirname $(which $NPM_EXE))
-which $NODE_EXE
-
-echo $NODE_DIR
 export PATH="$NODE_DIR:$PATH"
-which node
 
 echo "building with node version `$NODE_EXE --version`"
 
