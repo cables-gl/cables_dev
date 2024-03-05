@@ -16,7 +16,6 @@ echo "building with node version `$NODE_EXE --version`"
 
 echo "INSTALLING cables_dev DEPENDENCIES"
 $NPM_EXE install
-exit
 
 echo "BUILDING shared"
 cd shared
