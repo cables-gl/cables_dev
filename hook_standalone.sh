@@ -12,7 +12,7 @@ fi
 if [ -z "$BUILD_VERSION" ]; then
   ARGS=""
 else
-  ARGS="-- -c.buildVersion=$BUILD_VERSION";
+  ARGS="-- -c.buildVersion=$BUILD_VERSION -c.extraMetadata.version=$BUILD_VERSION";
 fi
 
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
