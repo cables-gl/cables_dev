@@ -9,13 +9,19 @@ else
   BUILD_OS=":$1";
 fi
 
+if [ -z "$BUILD_VERSION" ]; then
+  ARGS=""
+else
+  ARGS="-- -c.buildVersion=$BUILD_VERSION";
+fi
+
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
 if [ -z "$NPM_EXE" ]; then NPM_EXE="npm"; fi
 
 NODE_DIR=$(dirname $(which $NPM_EXE))
 export PATH="$NODE_DIR:$PATH"
 
-echo "building with node version `$NODE_EXE --version`"
+echo "building with node version `$NODE_EXE --version`, args: $ARGS"
 
 echo "INSTALLING cables_dev DEPENDENCIES"
 $NPM_EXE install
@@ -47,7 +53,7 @@ $NPM_EXE install
 ls node_modules
 $NPM_EXE run build
 echo "PACKAGING cables_electron"
-$NPM_EXE run dist$BUILD_OS
+$NPM_EXE run dist$BUILD_OS $ARGS
 cd ..
 
 echo "DONE"
