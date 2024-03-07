@@ -175,8 +175,11 @@ export default class SharedDocUtil extends SharedUtil
                         }
                         else
                         {
-                            opDoc = this.getDocForOp(opName, this.cachedOpDocs.opDocs);
-                            if (!opDoc) opDoc = this.buildOpDocs(opName);
+                            if (this.cachedLookup)
+                            {
+                                opDoc = this.getDocForOp(opName, this.cachedOpDocs.opDocs);
+                                if (!opDoc) opDoc = this.buildOpDocs(opName);
+                            }
                         }
                     }
                     if (opDoc)
@@ -235,7 +238,7 @@ export default class SharedDocUtil extends SharedUtil
             catch (e)
             {
                 this._rebuildOpDocCache = true;
-                this._log.error("failed to rebuild opdoc cache", e);
+                this._log.warn("failed to rebuild opdoc cache", e);
             }
         }
         else

@@ -20,32 +20,6 @@ export default class Cables extends SharedUtil
 
         this._config = this.getConfig();
         this._createDirectories();
-
-        const packageJsonFile = path.join(this.getSourcePath(), "../package.json");
-        if (fs.existsSync(packageJsonFile))
-        {
-            const pjson = JSON.parse(fs.readFileSync(packageJsonFile));
-            if (pjson && pjson.engines && pjson.engines.node)
-            {
-                const wantedVersion = pjson.engines.node;
-                if (process && process.versions && process.versions.node)
-                {
-                    const runningVersion = process.versions.node;
-                    if (wantedVersion !== runningVersion)
-                    {
-                        this._log.error("NODE VERSION MISMATCH, WANTED", wantedVersion, "GOT", runningVersion);
-                    }
-                }
-                else
-                {
-                    this._log.warn("COULD NOT DETERMINE RUNNING NODE VERSION FROM process, WANTED VERSION IS", wantedVersion);
-                }
-            }
-            else
-            {
-                this._log.warn("COULD NOT DETERMINE WANTED NODE VERSION FROM package.json");
-            }
-        }
     }
 
     get utilName()
