@@ -164,6 +164,7 @@
         ],
         "no-return-await": 0,
         "no-multiple-empty-lines": 0,
-        "no-mixed-operators":0
+        "no-mixed-operators":0,
+        "no-inner-declarations":0
     }
 }
