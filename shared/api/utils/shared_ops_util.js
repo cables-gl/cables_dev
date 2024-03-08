@@ -286,24 +286,90 @@ export default class SharedOpsUtil extends SharedUtil
                 "date": Date.now()
             };
             changes.push(change);
-            this._log.info("add changelog", opName, change.author, change.message);
+            const logStr = "*" + user.username + "* added changelog " + opName + " - https://cables.gl/op/" + opName;
+            this._log.info(logStr);
         });
+        this._writeOpChangelog(opName, changes, false);
+    }
 
+    _writeOpChangelog(opName, changes, update = false)
+    {
         const filename = this.getOpAbsoluteJsonFilename(opName);
         const obj = jsonfile.readFileSync(filename);
         if (obj)
         {
-            obj.changelog = obj.changelog || [];
-            obj.changelog = obj.changelog.concat(changes);
+            if (update)
+            {
+                obj.changelog = changes || [];
+            }
+            else
+            {
+                obj.changelog = obj.changelog || [];
+                obj.changelog = obj.changelog.concat(changes);
+            }
+            obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
             jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
-            const logStr = "*" + user.username + "* added changelog " + opName + " - https://cables.gl/op/" + opName;
-            this._log.info(logStr);
         }
     }
 
-    addOpChangelog(user, opname, message, type = "")
+    addOpChangelog(user, opName, newEntry, referenceDate = null, update = false)
     {
-        this.addOpChangeLogMessages(user, opname, [message], type);
+        let changes = [];
+        if (update && referenceDate)
+        {
+            const opDocs = this._docsUtil.getDocForOp(opName);
+            if (opDocs)
+            {
+                const timestamp = Number(referenceDate);
+                const changelog = opDocs.changelog || [];
+                const oldEntry = changelog.find((change) => { return change.date && change.date === timestamp; });
+                if (oldEntry)
+                {
+                    if (newEntry.message) oldEntry.message = newEntry.message;
+                    if (newEntry.type) oldEntry.type = newEntry.type;
+                    if (newEntry.date)
+                    {
+                        if (this._helperUtil.isNumeric(newEntry.date))
+                        {
+                            oldEntry.date = Number(newEntry.date);
+                        }
+                    }
+                }
+                changes = changelog;
+            }
+        }
+        else
+        {
+            const change = {
+                "message": newEntry.message,
+                "type": newEntry.type,
+                "author": user.username,
+                "date": Date.now()
+            };
+            changes.push(change);
+            const logStr = "*" + user.username + "* added changelog " + opName + " - https://cables.gl/op/" + opName;
+            this._log.info(logStr);
+        }
+        this._writeOpChangelog(opName, changes, update);
+    }
+
+    removeOpChangelog(user, opName, date)
+    {
+        if (date)
+        {
+            const opDocs = this._docsUtil.getDocForOp(opName);
+            if (opDocs)
+            {
+                const timestamp = Number(date);
+                const changelog = opDocs.changelog || [];
+                const oldEntryIndex = changelog.findIndex((change) => { return change.date && change.date === timestamp; });
+                if (oldEntryIndex !== -1)
+                {
+                    changelog.splice(oldEntryIndex, 1);
+                    this._writeOpChangelog(opName, changelog, true);
+                }
+            }
+        }
     }
 
     getOpFullCode(fn, name, opid = null)
@@ -994,7 +1060,6 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-
         return opNames;
     }
 
@@ -1049,7 +1114,6 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (filterOldVersions && !opDocs) opDocs = this._docsUtil.getOpDocs(filterOldVersions, filterDeprecated);
 
-        const opNames = [];
         ops = ops.filter((op) =>
         {
             const opName = this.getOpNameById(op.opId) || op.objName;
@@ -1062,8 +1126,6 @@ export default class SharedOpsUtil extends SharedUtil
             }
             if (filterDeprecated && this.isDeprecated(opName)) return false;
             if (filterOldVersions && this.isOpOldVersion(opName, opDocs)) return false;
-
-            opNames.push(opName);
             return true;
         });
 
@@ -1093,7 +1155,6 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-
                 code += this.getOpFullCode(fn, opName, ops[i].opId);
             }
             catch (e)
@@ -1332,10 +1393,10 @@ export default class SharedOpsUtil extends SharedUtil
         return this.isTeamNamespace(name) || this.isExtensionNamespace(name);
     }
 
-    getCollectionDir(name)
+    getCollectionDir(name, relative = false)
     {
-        if (this.isExtensionNamespace(name)) return this.getExtensionDir(name);
-        if (this.isTeamNamespace(name)) return this.getTeamNamespaceDir(name);
+        if (this.isExtensionNamespace(name)) return this.getExtensionDir(name, relative);
+        if (this.isTeamNamespace(name)) return this.getTeamNamespaceDir(name, relative);
         return null;
     }
 
@@ -1671,7 +1732,28 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getTeamNamespaceDir(name)
+    getOpTargetDir(opName)
+    {
+        if (opName.endsWith(".")) opName = opName.substring(0, opName.length - 1);
+        if (this.isUserOp(opName))
+        {
+            return path.join(opName, "/");
+        }
+        else if (this.isCollection(opName))
+        {
+            return path.join(this.getCollectionDir(opName, true), opName, "/");
+        }
+        else if (this.isPatchOp(opName))
+        {
+            return path.join(this.getPatchOpDir(opName, true), opName, "/");
+        }
+        else
+        {
+            return path.join(opName, "/");
+        }
+    }
+
+    getTeamNamespaceDir(name, relative = false)
     {
         let teamNameSpace = this.getTeamNamespaceByOpName(name);
         if (!name || !teamNameSpace) return null;
@@ -1682,22 +1764,25 @@ export default class SharedOpsUtil extends SharedUtil
             teamNameSpace = this.PREFIX_TEAMOPS + name;
         }
         if (teamNameSpace.endsWith(".")) teamNameSpace = teamNameSpace.substring(0, teamNameSpace.length - 1);
-        const teamNamespacePath = path.join(this._cables.getTeamOpsPath(), "/", teamNameSpace, "/");
+        let teamNamespacePath = path.join(teamNameSpace, "/");
+        if (!relative) teamNamespacePath = path.join(this._cables.getTeamOpsPath(), "/", teamNameSpace, "/");
         return path.join(teamNamespacePath, "/");
     }
 
-    getExtensionDir(name)
+    getExtensionDir(name, relative = false)
     {
         let extensionName = this.getExtensionNamespaceByOpName(name);
         if (extensionName.endsWith(".")) extensionName = extensionName.substring(0, extensionName.length - 1);
-        const extensionPath = path.join(this._cables.getExtensionOpsPath(), "/", extensionName, "/");
+        let extensionPath = path.join(extensionName, "/");
+        if (!relative) extensionPath = path.join(this._cables.getExtensionOpsPath(), "/", extensionName, "/");
         return path.join(extensionPath, "/");
     }
 
-    getPatchOpDir(name)
+    getPatchOpDir(name, relative = false)
     {
         const patchOpDir = name ? name.split(".", 3).join(".") : null;
-        const extensionPath = path.join(this._cables.getPatchOpsPath(), "/", patchOpDir, "/");
+        let extensionPath = path.join(patchOpDir, "/");
+        if (!relative) extensionPath = path.join(this._cables.getPatchOpsPath(), "/", patchOpDir, "/");
         return path.join(extensionPath, "/");
     }
 
