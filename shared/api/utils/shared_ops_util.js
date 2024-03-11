@@ -372,14 +372,14 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, name, opid = null)
+    getOpFullCode(fn, opName, opId = null)
     {
-        if (!fn || !name) return "";
+        if (!fn || !opName) return "";
 
         try
         {
             const code = fs.readFileSync(fn, "utf8");
-            if (!opid) opid = this.getOpIdByObjName(name);
+            if (!opId) opId = this.getOpIdByObjName(opName);
             let codeAttachments = "const attachments=op.attachments={";
             let codeAttachmentsInc = "";
             const dir = fs.readdirSync(path.dirname(fn));
@@ -408,20 +408,21 @@ export default class SharedOpsUtil extends SharedUtil
 
             const codeHead = "\n\n// **************************************************************\n" +
                 "// \n" +
-                "// " + name + "\n" +
+                "// " + opName + "\n" +
                 "// \n" +
                 "// **************************************************************\n\n" +
-                name + " = function()\n{\nCABLES.Op.apply(this,arguments);\nconst op=this;\n";
-            let codeFoot = "\n\n};\n\n" + name + ".prototype = new CABLES.Op();\n";
+                opName + " = function()\n{\nCABLES.Op.apply(this,arguments);\nconst op=this;\n";
+            let codeFoot = "\n\n};\n\n" + opName + ".prototype = new CABLES.Op();\n";
 
-            if (opid) codeFoot += "CABLES.OPS[\"" + opid + "\"]={f:" + name + ",objName:\"" + name + "\"};";
+            if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
             codeFoot += "\n\n\n";
 
             return codeHead + codeAttachments + codeAttachmentsInc + code + codeFoot;
         }
         catch (e)
         {
-            this._log.warn("getfullopcode fail", fn, name);
+            this._log.warn("getfullopcode fail", fn, opName);
+            this._docsUtil.removeOpNameFromLookup(opName);
         }
         return "";
     }
@@ -1425,9 +1426,9 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    getOpCode(objName)
+    getOpCode(opName)
     {
-        const fn = this.getOpAbsoluteFileName(objName);
+        const fn = this.getOpAbsoluteFileName(opName);
         try
         {
             if (fn && fs.existsSync(fn))
@@ -1437,7 +1438,8 @@ export default class SharedOpsUtil extends SharedUtil
         }
         catch (e)
         {
-            this._log.warn("op code file not found", objName);
+            this._log.warn("op code file not found", opName);
+            this._docsUtil.removeOpNameFromLookup(opName);
         }
         return null;
     }
