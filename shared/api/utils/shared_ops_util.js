@@ -1401,13 +1401,14 @@ export default class SharedOpsUtil extends SharedUtil
     isCollection(name)
     {
         if (!name) return false;
-        return this.isTeamNamespace(name) || this.isExtensionNamespace(name);
+        return this.isTeamNamespace(name) || this.isExtensionNamespace(name) || this.isPatchOpNamespace(name);
     }
 
     getCollectionDir(name, relative = false)
     {
         if (this.isExtensionNamespace(name)) return this.getExtensionDir(name, relative);
         if (this.isTeamNamespace(name)) return this.getTeamNamespaceDir(name, relative);
+        if (this.isPatchOpNamespace(name)) return this.getPatchOpDir(name, relative);
         return null;
     }
 
