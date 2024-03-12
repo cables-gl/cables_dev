@@ -423,7 +423,6 @@ export default class SharedDocUtil extends SharedUtil
                 if (js.changelog)
                 {
                     docObj.changelog = js.changelog;
-                    for (let i = 0; i < js.changelog.length; i++) js.changelog[i].dateReadable = moment(js.changelog[i].date).format("YYYY-MM-DD");
                 }
                 if (js.todos)
                 {
