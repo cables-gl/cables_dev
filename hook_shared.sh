@@ -12,6 +12,13 @@ nvm install
 nvm use
 npm install
 
+cd ~/cables/cables_ui
+git pull
+nvm install
+nvm use
+npm install
+npm run build
+
 cd ~/cables/cables_api
 git checkout package-lock.json
 git pull

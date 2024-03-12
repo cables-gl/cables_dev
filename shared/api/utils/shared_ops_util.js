@@ -326,7 +326,17 @@ export default class SharedOpsUtil extends SharedUtil
                 if (oldEntry)
                 {
                     if (newEntry.message) oldEntry.message = newEntry.message;
-                    if (newEntry.type) oldEntry.type = newEntry.type;
+                    if (newEntry.hasOwnProperty("type"))
+                    {
+                        if (newEntry.type)
+                        {
+                            oldEntry.type = newEntry.type;
+                        }
+                        else
+                        {
+                            delete oldEntry.type;
+                        }
+                    }
                     if (newEntry.date)
                     {
                         if (this._helperUtil.isNumeric(newEntry.date))
