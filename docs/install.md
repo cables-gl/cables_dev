@@ -176,13 +176,17 @@ brew install imagemagick
 ## visual studio code
 
 * install extensions: `Editorconfig`, `Eslint`
+* add this to your settings.json so the imports jave a .js suffix:
+```
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "typescript.preferences.importModuleSpecifierEnding": "js",
+```
 * vscode: in eslint config set to "code actions on save mode" to "all"
 * vscode: open workspace via "open workspace from file" only from system menu, option not available in the welcome/open panel
 * good list of files to exclude from search:
 ```
 *.min.js,*.max.js,*.map*,*/ace/*,*dist*,*jsdoc*,*build*,*/public/*,*/logs*
 ```
-
 ## copy jobs in build process
 
 ### cables
