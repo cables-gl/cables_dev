@@ -1,5 +1,6 @@
-import Events from "./eventtarget.js";
 import Talker from "../libs/talker.cjs";
+import Events from "./eventtarget.js";
+
 
 export default class TalkerAPI extends Events
 {
