@@ -1,10 +1,11 @@
 import helper from "./helper.js";
+import Logger from "./logger.js";
 
-export default class EventTarget
+export default class Events
 {
     constructor()
     {
-        this._log = console;
+        this._log = new Logger("eventtarget");
         this._eventCallbacks = {};
         this._logName = "";
         this._logEvents = false;

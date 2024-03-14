@@ -1,13 +1,14 @@
-import EventTarget from "./eventtarget.js";
+import Events from "./eventtarget.js";
+import Talker from "../libs/talker.cjs";
 
-export default class TalkerAPI extends EventTarget
+export default class TalkerAPI extends Events
 {
     constructor(target)
     {
         super();
 
         // eslint-disable-next-line no-undef
-        this._talker = new Talker(target, "*");
+        this._talker = new Talker.default(target, "*");
         this._callbackCounter = 0;
         this._callbacks = {};
 
