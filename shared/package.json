@@ -13,6 +13,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
+    "build": "npm install",
     "postinstall": "npm --prefix ./api install && npm --prefix ./client install"
   }
 }

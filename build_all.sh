@@ -1,3 +1,6 @@
+cd shared
+npm run build
+cd ..
 cd cables
 npm run build
 cd ..

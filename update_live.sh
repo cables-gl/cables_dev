@@ -20,6 +20,17 @@ set -o pipefail
 
 # set master branch
 branch="master"
+echo "UPDATING SHARED..."
+cd shared
+
+# ignore errors here, since branch might not be on remote
+git checkout master
+git pull
+nvm install
+nvm use
+npm install
+npm run build
+cd ..
 
 echo "UPDATING CORE..."
 cd cables
