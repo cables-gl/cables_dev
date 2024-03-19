@@ -41,9 +41,19 @@ fi
 
 set -e
 set -o pipefail
+npm install
+echo "INSTALLING SHARED..."
+cd shared/
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting node modules";
+  rm -rf node_modules/
+fi
+git checkout develop
+git pull
+npm install
+cd ..
 
 echo "INSTALLING CORE..."
-npm install
 if [ ! -d "cables/" ]; then
   git clone git@github.com:pandrr/cables.git
 fi
