@@ -8,6 +8,7 @@ import SharedTeamsUtil from "./utils/shared_teams_util.js";
 import SharedSubPatchOpUtil from "./utils/shared_subpatchop_util.js";
 import SharedLogger from "./utils/shared_logger.js";
 import SharedProjectsUtil from "./utils/shared_projects_util.js";
+import SharedFilesUtil from "./utils/shared_files_util.js";
 
 export {
     utilProvider,
@@ -19,5 +20,6 @@ export {
     SharedProjectsUtil,
     SharedTeamsUtil,
     SharedSubPatchOpUtil,
+    SharedFilesUtil,
     SharedLogger
 };

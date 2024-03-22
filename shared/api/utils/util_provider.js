@@ -25,6 +25,7 @@ UtilProvider.OPS_UTIL = "opsUtil";
 UtilProvider.SUBPATCH_OP_UTIL = "subPatchOpUtil";
 UtilProvider.TEAMS_UTIL = "teamsUtil";
 UtilProvider.PROJECTS_UTIL = "projectsUtil";
+UtilProvider.FILES_UTIL = "filesUtil";
 
 export { UtilProvider };
 export default new UtilProvider();

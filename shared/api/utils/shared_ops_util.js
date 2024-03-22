@@ -7,6 +7,7 @@ import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import eslintAirbnbBase from "eslint-config-airbnb-base";
+import eslintImportPlugin from "eslint-plugin-import";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -1551,8 +1552,18 @@ export default class SharedOpsUtil extends SharedUtil
 
     _getCLIConfig()
     {
+        const importPlugin = eslintImportPlugin;
+        const plugins = [];
+        if (importPlugin)
+        {
+            importPlugin.configs.recommended.plugins.forEach((plugin) =>
+            {
+                plugins.push("eslint-plugin-" + plugin);
+            });
+        }
         return {
             "fix": true,
+            "plugins": plugins,
             "baseConfig": {
                 "extends": eslintAirbnbBase.extends,
             },
