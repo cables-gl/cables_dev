@@ -11,12 +11,12 @@ import { UtilProvider } from "./utils/util_provider.js";
  */
 export default class Cables extends SharedUtil
 {
-    constructor(utilProvider, dirName = null, writableDirName = null)
+    constructor(utilProvider, dirName = null, writableDirName = null, configLocation = null)
     {
         super(utilProvider);
         this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url));
         this._writeableDirName = writableDirName || this._dirname;
-        this.configLocation = path.resolve(this._dirname, "../cables.json");
+        this.configLocation = configLocation || path.resolve(this._dirname, "../cables.json");
 
         this._config = this.getConfig();
         this._createDirectories();
