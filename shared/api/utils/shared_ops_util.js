@@ -724,11 +724,27 @@ export default class SharedOpsUtil extends SharedUtil
         const validName = this.isOpNameValid(opName);
         if (!validName) return false;
 
+
         if (this.isPatchOpOfProject(opName, project))
         {
             // patchops are allowed to be edited by project collaborators with full access, patch owners
+            // and team members with full access
             if (project.users && project.users.indexOf(user._id) > -1) return true;
             if (project.userId == user._id) return true;
+            if (teams)
+            {
+                for (let i = 0; i < teams.length; i++)
+                {
+                    if (teams[i].projects)
+                    {
+                        for (let j = 0; j < teams[i].projects.length; j++)
+                        {
+                            const teamProject = teams[i].projects[j];
+                            if (String(teamProject._id) === String(project._id) && this._teamsUtil.userHasWriteAccess(user, teams[i])) return true;
+                        }
+                    }
+                }
+            }
             return false;
         }
         if (this.isUserOp(opName))
