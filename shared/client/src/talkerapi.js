@@ -23,7 +23,7 @@ export default class TalkerAPI extends Events
             {
                 if (!this.hasListenerForEventName(msg.data.cmd))
                 {
-                    console.error("TalkerAPI in api has no listener for", msg.data.cmd);
+                    console.error("TalkerAPI has no listener for", msg.data.cmd);
                 }
                 this.emitEvent(msg.data.cmd, msg.data.data, (error, r) =>
                 {
