@@ -310,13 +310,13 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
-    addOpsToLookup(ops)
+    addOpsToLookup(ops, clearFiles = false)
     {
         if (!ops) return;
         let writeToFile = false;
-        if (!this.cachedLookup) this.cachedLookup = {};
-        if (!this.cachedLookup.ids) this.cachedLookup.ids = {};
-        if (!this.cachedLookup.names) this.cachedLookup.names = {};
+        if (clearFiles || !this.cachedLookup) this.cachedLookup = {};
+        if (clearFiles || !this.cachedLookup.ids) this.cachedLookup.ids = {};
+        if (clearFiles || !this.cachedLookup.names) this.cachedLookup.names = {};
         ops.forEach((op) =>
         {
             if (op.id && op.name)
@@ -666,7 +666,7 @@ export default class SharedDocUtil extends SharedUtil
         docs = docs.concat(this.getOpDocsForCollections(opNames));
 
         // make sure all ops are in lookup table
-        this.addOpsToLookup(docs);
+        this.addOpsToLookup(docs, true);
         if (cb) cb(docs);
     }
 

@@ -1269,7 +1269,10 @@ export default class SharedOpsUtil extends SharedUtil
 
     opExists(name)
     {
-        const p = this.getOpAbsolutePath(name);
+        let p = this.getOpAbsolutePath(name);
+        if (!p) return false;
+        p = fs.realpathSync.native(p);
+        if (!p.includes(name)) return false;
         let exists = false;
         try
         {
