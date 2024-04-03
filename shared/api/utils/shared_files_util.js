@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import moment from "moment";
 import sizeOfImage from "image-size";
+import sanitizeFileName from "sanitize-filename";
 import { UtilProvider } from "./util_provider.js";
 import SharedUtil from "./shared_util.js";
 
@@ -173,5 +174,38 @@ export default class SharedFilesUtil extends SharedUtil
         else if (fileDb.type === "audio") icon = "file-audio-2";
 
         return icon;
+    }
+
+    realSanitizeFilename(_filename)
+    {
+        let filename = sanitizeFileName(_filename);
+        // eslint-disable-next-line no-control-regex
+        filename = filename.replace(/[^\x00-\x7F]/g, "_");
+        filename = filename.replace(/ /g, "_");
+        filename = filename.replace(/&/g, "_");
+        filename = filename.replace(/;/g, "_");
+        filename = filename.replace(/'/g, "_");
+        filename = filename.replace(/!/g, "_");
+        filename = filename.replace(/#/g, "_");
+        filename = filename.replace(/\$/g, "_");
+        filename = filename.replace(/\(/g, "_");
+        filename = filename.replace(/\)/g, "_");
+
+        const suffix = this.getSuffix(filename);
+        if (suffix) filename = filename.replace(suffix.toUpperCase(), suffix); // force lowercase file extensions
+
+        return filename;
+    }
+
+    getSuffix(filename)
+    {
+        let suffix = null;
+
+        if (!suffix)
+            for (const k in this.FILETYPES)
+                for (let j = 0; j < this.FILETYPES[k].length; j++)
+                    if (filename.toLowerCase().endsWith(this.FILETYPES[k][j])) suffix = this.FILETYPES[k][j];
+
+        return suffix;
     }
 }
