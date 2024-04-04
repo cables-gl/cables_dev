@@ -50,6 +50,7 @@
         "ecmaVersion": 2020
     },
     "rules": {
+        "no-useless-concat": 0,
         "object-property-newline": "error",
         "global-require": 1,
         "no-compare-neg-zero": 0,
