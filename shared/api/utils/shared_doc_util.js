@@ -406,7 +406,7 @@ export default class SharedDocUtil extends SharedUtil
                 docObj.hasScreenshot = screenshotExists;
                 docObj.authorName = js.authorName || "unknown";
                 docObj.docs = js.docs;
-                docObj.relatedops = js.relatedops || [];
+                docObj.license = js.license;
                 docObj.hasExample = !!js.exampleProjectId;
                 docObj.exampleProjectId = js.exampleProjectId || "";
                 docObj.namespace = namespace;
