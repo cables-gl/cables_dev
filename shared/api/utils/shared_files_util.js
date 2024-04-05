@@ -166,7 +166,7 @@ export default class SharedFilesUtil extends SharedUtil
         else if (fileDb.type === "gltf" || fileDb.type === "3d json") icon = "file-box";
         else if (fileDb.type === "video") icon = "file-video-2";
         else if (fileDb.type === "font") icon = "file-type";
-        else if (fileDb.type === "JSON" || fileDb.type === "XML") icon = "file-code";
+        else if (fileDb.type === "JSON" || fileDb.type === "XML" || fileDb.type === "CSS") icon = "file-code";
         else if (fileDb.type === "javascript") icon = "file-json";
         else if (fileDb.type === "shader") icon = "file-text";
         else if (fileDb.type === "textfile") icon = "file-text";
