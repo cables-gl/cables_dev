@@ -189,7 +189,7 @@ export default class Cables extends SharedUtil
 
     isLocal()
     {
-        return this._config.url.includes("local");
+        return !this.isLive() && this._config.url.includes("local");
     }
 
     isLive()
