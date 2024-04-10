@@ -611,7 +611,7 @@ export default class SharedDocUtil extends SharedUtil
         return this._getNamespaceDocs(extensionName, shortName, null, extensionOps);
     }
 
-    rebuildOpCaches(cb, scopes = ["core"])
+    rebuildOpCaches(cb, scopes = ["core"], clearFiles = false)
     {
         this._rebuildOpDocCache = true;
 
@@ -666,7 +666,7 @@ export default class SharedDocUtil extends SharedUtil
         docs = docs.concat(this.getOpDocsForCollections(opNames));
 
         // make sure all ops are in lookup table
-        this.addOpsToLookup(docs, true);
+        this.addOpsToLookup(docs, clearFiles);
         if (cb) cb(docs);
     }
 
