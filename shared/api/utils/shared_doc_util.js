@@ -314,6 +314,7 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!ops) return;
         let writeToFile = false;
+        if (clearFiles) this._log.warn("WARN: rewriting caches with", ops.length, "ops");
         if (clearFiles || !this.cachedLookup) this.cachedLookup = {};
         if (clearFiles || !this.cachedLookup.ids) this.cachedLookup.ids = {};
         if (clearFiles || !this.cachedLookup.names) this.cachedLookup.names = {};
