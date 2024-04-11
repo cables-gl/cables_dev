@@ -220,6 +220,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpNameWithoutVersion(opname)
     {
+        if (!opname) return "";
         const ver = this.getVersionFromOpName(opname);
 
         let str = "";
@@ -1093,6 +1094,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpJsonPath(opname, createPath = false)
     {
+        if (!opname) return null;
         const dirName = this.getOpSourceDir(opname);
         const filename = path.join(dirName, opname + ".json");
         const exists = fs.existsSync(filename);
