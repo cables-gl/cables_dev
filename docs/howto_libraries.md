@@ -31,14 +31,10 @@ libs
 Output structure:
 ```bash
 libs
-├── cgl_cubemap.max.js
-├── cgl_cubemap.min.js
-├── cgl_light.max.js
-├── cgl_light.min.js
-├── cgl_functions.max.js
-├── cgl_functions.min.js
-├── vargetset.max.js
-└── vargetset.min.js
+├── cgl_cubemap.js
+├── cgl_light.js
+├── cgl_functions.js
+├── vargetset.js
 ```
 #### Working with internal libraries
 

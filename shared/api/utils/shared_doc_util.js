@@ -554,6 +554,8 @@ export default class SharedDocUtil extends SharedUtil
         // remove empty strings etc from array:
         delete obj.collections;
         delete obj.todos;
+        if (obj.youtubeids) delete obj.youtubeid;
+        if (obj.youtubeids) obj.youtubeids = obj.youtubeids.filter(Boolean);
         if (obj.relatedops)
         {
             for (let i = 0; i < obj.relatedops.length; i++)obj.relatedops[i] = obj.relatedops[i].trim();
@@ -563,6 +565,7 @@ export default class SharedDocUtil extends SharedUtil
                 delete obj.relatedops;
             }
         }
+        return this._helperUtil.cleanJson(obj);
     }
 
     makeReadable(opDocs)

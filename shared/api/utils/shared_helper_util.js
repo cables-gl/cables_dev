@@ -324,6 +324,19 @@ export default class SharedHelperUtil extends SharedUtil
         return results;
     }
 
+    cleanJson(obj)
+    {
+        for (const i in obj)
+        {
+            if (obj[i] && typeof obj[i] === "object" && obj[i].constructor === Object) obj[i] = this.cleanJson(obj[i]);
+            if (obj[i] === null || obj[i] === undefined) delete obj[i];
+            if (obj[i] === "") delete obj[i];
+            else if (Array.isArray(obj[i]) && obj[i].length === 0) delete obj[i];
+        }
+
+        return obj;
+    }
+
     _shortIdBase(num, base)
     {
         let decimal = num;
