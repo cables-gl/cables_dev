@@ -192,10 +192,10 @@ brew install imagemagick
 ### cables
 #### watch
 - on changes to anything in `src/core`
-  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildInfo.json`
+  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildinfo.json`
   - copies `build/libs/` to `cables_api/public/libs_core`
 - on changes to anything in `libs/`
-  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildInfo.json`
+  - copies `build/` to `cables_ui/dist/js` ignoring `libs/` and `buildinfo.json`
 - on changes to anything in `src/libs/`
   - copies `build/libs/` to `cables_api/public/libs_core`
 #### build
@@ -207,7 +207,7 @@ brew install imagemagick
 #### watch
 
 #### build
-- copies `../cables/build/` to `dist/js/` ignoring `libs/` and `buildInfo.json`
+- copies `../cables/build/` to `dist/js/` ignoring `libs/` and `buildinfo.json`
 - copies `svgicons.scss` to `../cables_api/scss/`
 -
 ## scripts
