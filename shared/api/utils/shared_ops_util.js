@@ -384,7 +384,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null, addSourceMap = false)
+    getOpFullCode(fn, opName, opId = null)
     {
         if (!fn || !opName) return "";
 
@@ -427,17 +427,13 @@ export default class SharedOpsUtil extends SharedUtil
             let codeFoot = "\n\n};\n\n" + opName + ".prototype = new CABLES.Op();\n";
 
             if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
-            if (addSourceMap)
-            {
-                const cablesUrl = this._cables.getConfig().url;
-                codeFoot += "\n//# sourceURL=" + cablesUrl + "/api/op/" + opName + "\n\n\n\n";
-            }
+            codeFoot += "\n\n\n";
 
             return codeHead + codeAttachments + codeAttachmentsInc + code + codeFoot;
         }
         catch (e)
         {
-            this._log.warn("getfullopcode fail", fn, opName, e.message);
+            this._log.warn("getfullopcode fail", fn, opName);
             this._docsUtil.removeOpNameFromLookup(opName);
         }
         return "";
@@ -1111,7 +1107,7 @@ export default class SharedOpsUtil extends SharedUtil
         return filename;
     }
 
-    buildCode(basePath, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, addSourceMap = false)
+    buildCode(basePath, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null)
     {
         if (filterOldVersions && !opDocs) opDocs = this._docsUtil.getOpDocs(filterOldVersions, filterDeprecated);
         if (!basePath || !fs.existsSync(basePath))
@@ -1137,11 +1133,11 @@ export default class SharedOpsUtil extends SharedUtil
                 const opId = this.getOpIdByObjName(dirName);
                 ops.push({ "objName": dirName, "opId": opId });
             }
-            return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs, addSourceMap);
+            return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs);
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, addSourceMap = false)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1189,7 +1185,7 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId, addSourceMap);
+                code += this.getOpFullCode(fn, opName, ops[i].opId);
             }
             catch (e)
             {
