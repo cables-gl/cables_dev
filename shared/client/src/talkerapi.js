@@ -15,20 +15,23 @@ export default class TalkerAPI extends Events
 
         this._talker.onMessage = (msg) =>
         {
-            if (msg.data.cmd === "callback")
+            if (msg.data && msg.data.cmd) // other messages are not for talkerapi, i.e. anything that somehow is sent via .postMessage
             {
-                if (this._callbacks[msg.data.cb]) this._callbacks[msg.data.cb](msg.data.error, msg.data.response);
-            }
-            else
-            {
-                if (!this.hasListenerForEventName(msg.data.cmd))
+                if (msg.data.cmd === "callback")
                 {
-                    console.error("TalkerAPI has no listener for", msg.data.cmd);
+                    if (this._callbacks[msg.data.cb]) this._callbacks[msg.data.cb](msg.data.error, msg.data.response);
                 }
-                this.emitEvent(msg.data.cmd, msg.data.data, (error, r) =>
+                else
                 {
-                    this._talker.send("cables", { "cmd": "callback", "cb": msg.data.cb, "response": r, "error": error });
-                });
+                    if (!this.hasListenerForEventName(msg.data.cmd))
+                    {
+                        console.error("TalkerAPI has no listener for", msg.data.cmd);
+                    }
+                    this.emitEvent(msg.data.cmd, msg.data.data, (error, r) =>
+                    {
+                        this._talker.send("cables", { "cmd": "callback", "cb": msg.data.cb, "response": r, "error": error });
+                    });
+                }
             }
         };
     }
