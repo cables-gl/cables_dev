@@ -382,7 +382,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null)
+    getOpFullCode(fn, opName, opId = null, minifySubPatches = false)
     {
         if (!fn || !opName) return "";
 
@@ -405,6 +405,27 @@ export default class SharedOpsUtil extends SharedUtil
                     varName = varName.replace(/\./g, "_");
                     codeAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i]))
                         .toString("base64") + "\",";
+                }
+                else if (dir[i] === this.SUBPATCH_ATTACHMENT_NAME)
+                {
+                    let varName = dir[i].substr(4, dir[i].length - 4);
+                    varName = varName.replace(/\./g, "_");
+                    let content = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
+                    if (minifySubPatches)
+                    {
+                        try
+                        {
+                            let subPatch = JSON.parse(content);
+                            subPatch = this._projectsUtil.makeExportable(subPatch);
+                            subPatch = JSON.stringify(subPatch);
+                            content = subPatch;
+                        }
+                        catch (e)
+                        {
+                            this._log.error("failed to parse", this.SUBPATCH_ATTACHMENT_NAME, "during minify, keeping unminified", e);
+                        }
+                    }
+                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(content) + ",";
                 }
                 else if (dir[i].startsWith("att_"))
                 {
@@ -1135,7 +1156,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, minifySubPatches = false)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1183,7 +1204,7 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId);
+                code += this.getOpFullCode(fn, opName, ops[i].opId, minifySubPatches);
             }
             catch (e)
             {
