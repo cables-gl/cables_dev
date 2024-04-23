@@ -42,6 +42,8 @@ export default class SharedOpsUtil extends SharedUtil
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
+        this.SUBPATCH_ATTACHMENT_GEN_PORTS = "att_inc_gen_ports";
+        this.SUBPATCH_ATTACHMENT_PORTS = "att_ports";
 
         this.OP_NAME_MIN_LENGTH = 5;
 
@@ -382,7 +384,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null, minifySubPatches = false)
+    getOpFullCode(fn, opName, opId = null, prepareForExport = false)
     {
         if (!fn || !opName) return "";
 
@@ -395,7 +397,12 @@ export default class SharedOpsUtil extends SharedUtil
             const dir = fs.readdirSync(path.dirname(fn));
             for (const i in dir)
             {
-                if (dir[i].startsWith("att_inc_"))
+                if (dir[i] === this.SUBPATCH_ATTACHMENT_GEN_PORTS)
+                {
+                    if (prepareForExport) continue;
+                    codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
+                }
+                else if (dir[i].startsWith("att_inc_"))
                 {
                     codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
                 }
@@ -406,12 +413,19 @@ export default class SharedOpsUtil extends SharedUtil
                     codeAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i]))
                         .toString("base64") + "\",";
                 }
+                else if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
+                {
+                    if (prepareForExport) continue;
+                    let varName = dir[i].substr(4, dir[i].length - 4);
+                    varName = varName.replace(/\./g, "_");
+                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8")) + ",";
+                }
                 else if (dir[i] === this.SUBPATCH_ATTACHMENT_NAME)
                 {
                     let varName = dir[i].substr(4, dir[i].length - 4);
                     varName = varName.replace(/\./g, "_");
                     let content = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
-                    if (minifySubPatches)
+                    if (prepareForExport)
                     {
                         try
                         {
@@ -1156,7 +1170,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, minifySubPatches = false)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1204,7 +1218,7 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId, minifySubPatches);
+                code += this.getOpFullCode(fn, opName, ops[i].opId, prepareForExport);
             }
             catch (e)
             {
