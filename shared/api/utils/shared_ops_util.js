@@ -42,7 +42,7 @@ export default class SharedOpsUtil extends SharedUtil
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
-        this.SUBPATCH_ATTACHMENT_PORTS = "att_ports";
+        this.SUBPATCH_ATTACHMENT_PORTS = "att_ports.json";
 
         this.OP_NAME_MIN_LENGTH = 5;
 
