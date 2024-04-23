@@ -42,7 +42,6 @@ export default class SharedOpsUtil extends SharedUtil
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
-        this.SUBPATCH_ATTACHMENT_GEN_PORTS = "att_inc_gen_ports";
         this.SUBPATCH_ATTACHMENT_PORTS = "att_ports";
 
         this.OP_NAME_MIN_LENGTH = 5;
@@ -397,12 +396,7 @@ export default class SharedOpsUtil extends SharedUtil
             const dir = fs.readdirSync(path.dirname(fn));
             for (const i in dir)
             {
-                if (dir[i] === this.SUBPATCH_ATTACHMENT_GEN_PORTS)
-                {
-                    if (prepareForExport) continue;
-                    codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
-                }
-                else if (dir[i].startsWith("att_inc_"))
+                if (dir[i].startsWith("att_inc_"))
                 {
                     codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
                 }
