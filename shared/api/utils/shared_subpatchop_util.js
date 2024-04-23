@@ -48,33 +48,33 @@ export default class SharedSubPatchOpUtil extends SharedUtil
 
     getOpsUsedInSubPatches(subPatch)
     {
-        let opsInBlueprints = [];
-        if (!subPatch || !subPatch.ops) return opsInBlueprints;
+        let opsInSubPatches = [];
+        if (!subPatch || !subPatch.ops) return opsInSubPatches;
         const v2Bps = subPatch.ops.filter((op) => { return op.storage && op.storage.blueprintVer > 1; });
-        opsInBlueprints = opsInBlueprints.concat(this._getOpsUsedInSubPatch({ "ops": v2Bps }));
-        opsInBlueprints = opsInBlueprints.filter((obj, index) => { return opsInBlueprints.findIndex((item) => { return item.opId === obj.opId; }) === index; });
-        return opsInBlueprints;
+        opsInSubPatches = opsInSubPatches.concat(this._getOpsUsedInSubPatch({ "ops": v2Bps }));
+        opsInSubPatches = opsInSubPatches.filter((obj, index) => { return opsInSubPatches.findIndex((item) => { return item.opId === obj.opId; }) === index; });
+        return opsInSubPatches;
     }
 
     _getOpsUsedInSubPatch(subPatch)
     {
-        let opsInBlueprint = [];
+        let opsInSubPatch = [];
         if (!subPatch) return [];
-        if (subPatch && subPatch.ops) opsInBlueprint = opsInBlueprint.concat(subPatch.ops);
+        if (subPatch && subPatch.ops) opsInSubPatch = opsInSubPatch.concat(subPatch.ops);
 
-        const blueprints = subPatch.ops.filter((op) => { return op.storage && op.storage.blueprintVer > 1; });
+        const subPatchOps = subPatch.ops.filter((op) => { return op.storage && op.storage.blueprintVer > 1; });
 
-        if (blueprints.length > 0)
+        if (subPatchOps.length > 0)
         {
-            blueprints.forEach((blueprint) =>
+            subPatchOps.forEach((subPatchOp) =>
             {
-                const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(blueprint.opId));
-                opsInBlueprint = opsInBlueprint.concat(this._getOpsUsedInSubPatch(attachmentOps));
+                const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(subPatchOp.opId));
+                opsInSubPatch = opsInSubPatch.concat(this._getOpsUsedInSubPatch(attachmentOps));
             });
 
-            opsInBlueprint = opsInBlueprint.filter((obj, index) => { return opsInBlueprint.findIndex((item) => { return item.opId === obj.opId; }) === index; });
+            opsInSubPatch = opsInSubPatch.filter((obj, index) => { return opsInSubPatch.findIndex((item) => { return item.opId === obj.opId; }) === index; });
         }
-        return opsInBlueprint;
+        return opsInSubPatch;
     }
 }
 

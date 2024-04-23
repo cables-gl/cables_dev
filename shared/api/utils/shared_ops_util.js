@@ -39,8 +39,6 @@ export default class SharedOpsUtil extends SharedUtil
             "-": "___"
         };
 
-        this.BLUEPRINT_OP_NAME = "Ops.Dev.Blueprint";
-        this.SUBPATCH_OP_CURRENT_VERSION = 1;
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
@@ -2091,7 +2089,6 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     subPatchData.ops.forEach((attachmentOp) =>
                     {
-                        // FIXME: this is somehow not good, maybe store in opjson?
                         if (!attachmentOp.hasOwnProperty("storage")) attachmentOp.storage = {};
                         attachmentOp.storage.blueprintVer = 2;
                     });
