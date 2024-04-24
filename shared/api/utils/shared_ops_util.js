@@ -39,11 +39,10 @@ export default class SharedOpsUtil extends SharedUtil
             "-": "___"
         };
 
-        this.BLUEPRINT_OP_NAME = "Ops.Dev.Blueprint";
-        this.SUBPATCH_OP_CURRENT_VERSION = 1;
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
+        this.SUBPATCH_ATTACHMENT_PORTS = "att_ports.json";
 
         this.OP_NAME_MIN_LENGTH = 5;
 
@@ -384,7 +383,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null)
+    getOpFullCode(fn, opName, opId = null, prepareForExport = false)
     {
         if (!fn || !opName) return "";
 
@@ -407,6 +406,34 @@ export default class SharedOpsUtil extends SharedUtil
                     varName = varName.replace(/\./g, "_");
                     codeAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i]))
                         .toString("base64") + "\",";
+                }
+                else if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
+                {
+                    if (prepareForExport) continue;
+                    let varName = dir[i].substr(4, dir[i].length - 4);
+                    varName = varName.replace(/\./g, "_");
+                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8")) + ",";
+                }
+                else if (dir[i] === this.SUBPATCH_ATTACHMENT_NAME)
+                {
+                    let varName = dir[i].substr(4, dir[i].length - 4);
+                    varName = varName.replace(/\./g, "_");
+                    let content = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
+                    if (prepareForExport)
+                    {
+                        try
+                        {
+                            let subPatch = JSON.parse(content);
+                            subPatch = this._projectsUtil.makeExportable(subPatch);
+                            subPatch = JSON.stringify(subPatch);
+                            content = subPatch;
+                        }
+                        catch (e)
+                        {
+                            this._log.error("failed to parse", this.SUBPATCH_ATTACHMENT_NAME, "during minify, keeping unminified", e);
+                        }
+                    }
+                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(content) + ",";
                 }
                 else if (dir[i].startsWith("att_"))
                 {
@@ -1137,7 +1164,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1185,7 +1212,7 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId);
+                code += this.getOpFullCode(fn, opName, ops[i].opId, prepareForExport);
             }
             catch (e)
             {
@@ -2091,7 +2118,6 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     subPatchData.ops.forEach((attachmentOp) =>
                     {
-                        // FIXME: this is somehow not good, maybe store in opjson?
                         if (!attachmentOp.hasOwnProperty("storage")) attachmentOp.storage = {};
                         attachmentOp.storage.blueprintVer = 2;
                     });
@@ -2260,6 +2286,8 @@ export default class SharedOpsUtil extends SharedUtil
             let nsName = namespaceName.toLowerCase();
             if (Object.keys(nameLookup.names).find((name) => { return name.toLowerCase().startsWith(nsName); })) return true;
         }
+        const namespaceDir = this.getCollectionDir(namespaceName);
+        if (namespaceDir && fs.existsSync(namespaceDir)) return true;
         return false;
     }
 

@@ -94,4 +94,57 @@ export default class SharedProjectsUtil extends SharedUtil
         }
         return null;
     }
+
+    makeExportable(p, keepAlso = [])
+    {
+        let readable = JSON.parse(JSON.stringify(p));
+        readable = this.makeReadable(readable, true);
+
+        const keepInExport = ["_id", "ops", ...keepAlso];
+        const keepUiAttribs = ["subPatch"];
+
+        for (let key in readable)
+        {
+            if (!keepInExport.includes(key)) delete readable[key];
+        }
+
+        for (let j = 0; j < readable.ops.length; j++)
+        {
+            const op = readable.ops[j];
+            if (op.opId)
+            {
+                const objName = this._opsUtil.getOpNameById(op.opId);
+                if (objName)
+                {
+                    readable.ops[j].objName = objName;
+                    delete readable.ops[j].opId;
+                }
+                else
+                {
+                    this._log.error("NO OBJNAME BY ID IN EXPORT", p.shortId, op.opId);
+                }
+            }
+            else
+            {
+                if (op.objName)
+                {
+                    this._log.warn("NO OPID IN EXPORT", p.should, op.objName);
+                }
+                else
+                {
+                    this._log.error("NO OPID AND NO OBJNAME IN PROJECT", p.shortId, op);
+                }
+            }
+
+            if (op.uiAttribs)
+            {
+                for (let key in op.uiAttribs)
+                {
+                    if (!keepUiAttribs.includes(key)) delete readable.ops[j].uiAttribs[key];
+                }
+            }
+        }
+
+        return readable;
+    }
 }
