@@ -1,4 +1,5 @@
 import moment from "moment";
+import path from "path";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -28,7 +29,8 @@ export default class SharedLogger extends SharedUtil
 
     get _initiator()
     {
-        return this.constructor.name || "logger";
+        const initiator = this._getCallerFile();
+        return initiator || "logger";
     }
 
     _log(...args)
@@ -43,78 +45,85 @@ export default class SharedLogger extends SharedUtil
 
     info(...args)
     {
+        const initiator = this._initiator;
         const level = "info";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     verbose(...args)
     {
+        const initiator = this._initiator;
         const level = "verbose";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     warn(...args)
     {
+        const initiator = this._initiator;
         const level = "warn";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     error(...args)
     {
+        const initiator = this._initiator;
         const level = "error";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     startTime(...args)
     {
+        const initiator = this._initiator;
         const level = "startTime";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     endTime(...args)
     {
+        const initiator = this._initiator;
         const level = "endTime";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
     uncaught(...args)
     {
+        const initiator = this._initiator;
         const level = "uncaught";
         const context = this._getContext();
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
-            l.log(this._initiator, level, context, args);
+            l.log(initiator, level, context, args);
         });
     }
 
@@ -153,14 +162,10 @@ export default class SharedLogger extends SharedUtil
     {
         try
         {
-            throw Error("");
-        }
-        catch (err)
-        {
+            let err = new Error();
             let line = err.stack.split("\n")[4];
             let index = line ? line.indexOf("at ") : "unknown";
-            let clean = line ? line.slice(index + 2, line.length)
-                .trim() : "unknown";
+            let clean = line ? line.slice(index + 2, line.length).trim() : "unknown";
             return {
                 line,
                 index,
@@ -168,5 +173,37 @@ export default class SharedLogger extends SharedUtil
                 "stack": err.stack
             };
         }
+        catch (err) {}
+    }
+
+    _getCallerFile()
+    {
+        let originalFunc = Error.prepareStackTrace;
+
+        let callerFile = null;
+        let currentFileLine = null;
+        try
+        {
+            let err = new Error();
+
+            Error.prepareStackTrace = (_err, stack) => { return stack; };
+            let currentFileName = err.stack.shift().getFileName();
+            while (err.stack.length)
+            {
+                const stack = err.stack.shift();
+                callerFile = stack.getFileName();
+                currentFileLine = stack.getLineNumber();
+                if (currentFileName !== callerFile) break;
+            }
+        }
+        catch (e) {}
+        Error.prepareStackTrace = originalFunc;
+        let result = "logger";
+        if (callerFile)
+        {
+            result = path.basename(callerFile, ".js");
+            if (currentFileLine) result += ":" + currentFileLine;
+        }
+        return result;
     }
 }
