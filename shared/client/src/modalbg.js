@@ -10,7 +10,10 @@ export default class ModalBackground extends Events
 
         this._eleBg.addEventListener("pointerdown", () =>
         {
-            // this.emitEvent("click");
+            this.hide();
+        });
+        this._eleBg.addEventListener("click", () =>
+        {
             this.hide();
         });
 
