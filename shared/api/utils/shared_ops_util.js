@@ -1119,6 +1119,22 @@ export default class SharedOpsUtil extends SharedUtil
         return opNames;
     }
 
+    getTeamOpNames(team)
+    {
+        let opNames = [];
+        if (!team) return opNames;
+
+        let teamNamespaces = team.namespaces || [];
+        if (team.extensions) teamNamespaces = teamNamespaces.concat(team.extensions);
+
+        teamNamespaces.forEach((teamNamespace) =>
+        {
+            opNames = opNames.concat(this.getCollectionOpNames(teamNamespace));
+        });
+
+        return opNames;
+    }
+
     getOpJsonPath(opname, createPath = false)
     {
         if (!opname) return null;
@@ -1600,18 +1616,8 @@ export default class SharedOpsUtil extends SharedUtil
 
     _getCLIConfig()
     {
-        const importPlugin = eslintImportPlugin;
-        const plugins = [];
-        if (importPlugin)
-        {
-            importPlugin.configs.recommended.plugins.forEach((plugin) =>
-            {
-                plugins.push("eslint-plugin-" + plugin);
-            });
-        }
         return {
             "fix": true,
-            "plugins": plugins,
             "baseConfig": {
                 "extends": eslintAirbnbBase.extends,
             },
@@ -1931,6 +1937,7 @@ export default class SharedOpsUtil extends SharedUtil
         let dir = this._cables.getUserOpsPath();
         if (this.isPatchOpNamespace(collectionName)) dir = this.getPatchOpDir(collectionName);
         if (this.isCollection(collectionName)) dir = this.getCollectionDir(collectionName);
+        if (this.isCoreOp(collectionName)) dir = this._cables.getCoreOpsPath();
 
         if (fs.existsSync(dir))
         {
