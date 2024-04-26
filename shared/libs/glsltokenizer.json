@@ -1,0 +1,7 @@
+{
+    "title":"glsltokenizer.js",
+    "description":"Maps GLSL string data into GLSL tokens",
+    "url":"https://www.npmjs.com/package/glsl-tokenizer",
+    "version": "2.1.5",
+    "licence": "MIT"
+}
