@@ -1523,7 +1523,16 @@ export default class SharedOpsUtil extends SharedUtil
     setOpDefaults(opname, author)
     {
         const fn = this.getOpJsonPath(opname);
-        const obj = jsonfile.readFileSync(fn);
+        let obj = null;
+        try
+        {
+            obj = jsonfile.readFileSync(fn);
+        }
+        catch (e)
+        {
+            this._log.error("op default error read", opname, fn, e);
+            return;
+        }
         const defaults = this.getOpDefaults(opname, author);
         if (!obj)
         {
