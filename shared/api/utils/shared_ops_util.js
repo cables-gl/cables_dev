@@ -7,7 +7,6 @@ import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import eslintAirbnbBase from "eslint-config-airbnb-base";
-import eslintImportPlugin from "eslint-plugin-import";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
