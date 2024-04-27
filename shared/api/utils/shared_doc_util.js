@@ -77,6 +77,18 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    getOpDocsFromFile(opName)
+    {
+        const p = this._opsUtil.getOpAbsoluteJsonFilename(opName);
+        try
+        {
+            const o = jsonfile.readFileSync(p);
+            if (o) return o;
+        }
+        catch (e) {}
+        return null;
+    }
+
     getOpDocMd(opname)
     {
         if (this._opsUtil.isOpNameValid(opname))

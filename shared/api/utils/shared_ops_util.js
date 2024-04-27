@@ -7,7 +7,6 @@ import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import eslintAirbnbBase from "eslint-config-airbnb-base";
-import eslintImportPlugin from "eslint-plugin-import";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -977,10 +976,10 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpLibs(opName)
     {
-        const p = this.getOpAbsoluteFileName(opName);
+        const p = this.getOpAbsoluteJsonFilename(opName);
         try
         {
-            const o = jsonfile.readFileSync(p + "on");
+            const o = jsonfile.readFileSync(p);
             if (o && o.libs) return o.libs;
         }
         catch (e) {}
@@ -989,10 +988,10 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpCoreLibs(opName)
     {
-        const p = this.getOpAbsoluteFileName(opName);
+        const p = this.getOpAbsoluteJsonFilename(opName);
         try
         {
-            const o = jsonfile.readFileSync(p + "on");
+            const o = jsonfile.readFileSync(p);
             if (o && o.coreLibs) return o.coreLibs;
         }
         catch (e) {}
@@ -1351,7 +1350,7 @@ export default class SharedOpsUtil extends SharedUtil
     existingCoreOp(opname)
     {
         if (!opname) return false;
-        return this.opExists(opname) && this.isCoreOp(opname);
+        return this.isCoreOp(opname) && this.opExists(opname);
     }
 
     isOpId(id)
