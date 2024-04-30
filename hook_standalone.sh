@@ -18,6 +18,8 @@ fi
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
 if [ -z "$NPM_EXE" ]; then NPM_EXE="npm"; fi
 
+$NPM_EXE config set script-shell /bin/bash
+
 NODE_DIR=$(dirname $(which $NPM_EXE))
 export PATH="$NODE_DIR:$PATH"
 
