@@ -1145,16 +1145,16 @@ export default class SharedOpsUtil extends SharedUtil
         return opNames;
     }
 
-    getOpJsonPath(opname, createPath = false)
+    getOpJsonPath(opName, createPath = false)
     {
-        if (!opname) return null;
-        const dirName = this.getOpSourceDir(opname);
-        const filename = path.join(dirName, opname + ".json");
+        if (!opName) return null;
+        const dirName = this.getOpAbsolutePath(opName);
+        const filename = path.join(dirName, opName + ".json");
         const exists = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
         if (!existsPath && createPath) mkdirp.sync(dirName);
         existsPath = fs.existsSync(dirName);
-        if (existsPath && !exists) jsonfile.writeFileSync(filename, { "name": opname }, { "encoding": "utf-8", "spaces": 4 });
+        if (existsPath && !exists) jsonfile.writeFileSync(filename, { "name": opName }, { "encoding": "utf-8", "spaces": 4 });
         if (!existsPath) return null;
 
         return filename;
@@ -2593,6 +2593,103 @@ export default class SharedOpsUtil extends SharedUtil
         catch (err)
         {
             return false;
+        }
+    }
+
+    createOp(opName, author, code = null, layout = null, libs = null, coreLibs = null, attachments = null, targetDir = null)
+    {
+        let parts = opName.split(".");
+        if (parts[0] === "Ops" && parts[1] === "User")
+        {
+            parts[2] = author.usernameLowercase;
+        }
+        opName = parts.join(".");
+
+        const result = {};
+        let fn = this.getOpAbsoluteFileName(opName);
+        let basePath = this.getOpAbsolutePath(opName);
+        mkdirp.sync(basePath);
+
+        const newJson = this.getOpDefaults(opName, author);
+        const changelogMessages = [];
+        changelogMessages.push("created op");
+
+        const opId = newJson.id;
+        code = code || "// your new op\n// have a look at the documentation at: \n// https://cables.gl/docs/5_writing_ops/coding_ops";
+        fs.writeFileSync(fn, code);
+
+        if (layout)
+        {
+            const obj = newJson;
+            obj.layout = layout;
+            if (obj.layout && obj.layout.name) delete obj.layout.name;
+            result.layout = obj.layout;
+        }
+
+        if (libs)
+        {
+            const newLibNames = libs;
+            newJson.libs = newLibNames;
+            result.libs = newLibNames;
+            changelogMessages.push(" updated libs: " + newLibNames.join(","));
+        }
+
+        if (coreLibs)
+        {
+            result.coreLibs = [];
+            const newCoreLibNames = coreLibs;
+            newJson.coreLibs = newCoreLibNames;
+            result.coreLibs = newCoreLibNames;
+            changelogMessages.push(" updated core libs: " + newCoreLibNames.join(","));
+        }
+
+        jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
+            "encoding": "utf-8",
+            "spaces": 4
+        });
+
+        let attProblems = null;
+        if (attachments)
+        {
+            result.attachments = {};
+            attProblems = this.updateAttachments(opName, attachments);
+            result.attachments = this.getAttachments(opName);
+        }
+
+        if (changelogMessages.length > 0)
+        {
+            this.addOpChangeLogMessages(author, opName, changelogMessages, "");
+        }
+
+        this._docsUtil.updateOpDocs(opName);
+        this._docsUtil.addOpToLookup(opId, opName);
+
+        if (!attProblems)
+        {
+            const response = {
+                "name": opName,
+                "id": opId,
+                "code": code,
+                "opDoc": newJson
+            };
+            if (result.attachments)
+            {
+                const attachmentFiles = this.getAttachmentFiles(opName);
+                const atts = {};
+                for (let i = 0; i < attachmentFiles.length; i++)
+                {
+                    const attachmentFile = attachmentFiles[i];
+                    atts[attachmentFile] = this.getAttachment(opName, attachmentFile);
+                }
+                response.attachments = atts;
+            }
+            if (result.coreLibs) response.coreLibs = result.coreLibs;
+            if (result.libs) response.libs = result.libs;
+            return response;
+        }
+        else
+        {
+            return attProblems;
         }
     }
 }
