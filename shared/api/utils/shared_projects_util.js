@@ -80,12 +80,11 @@ export default class SharedProjectsUtil extends SharedUtil
                 });
             }
 
-            const assetPath = this.getAssetPath(proj._id);
-            if (!fs.existsSync(assetPath)) fs.mkdirSync(assetPath);
+            const screenShotPath = this.getScreenShotPath(proj._id);
+            if (!fs.existsSync(screenShotPath)) fs.mkdirSync(screenShotPath);
 
             if (proj.settings && proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
-            mkdirp.sync(assetPath + "/_screenshots/");
-            const filenameScreenshot = assetPath + "/_screenshots/screenshot_" + Date.now() + ".tmp." + ext;
+            const filenameScreenshot = this.getScreenShotFileName(proj, ext);
             fs.writeFileSync(filenameScreenshot, bitmap);
             return filenameScreenshot;
         }
@@ -154,5 +153,11 @@ export default class SharedProjectsUtil extends SharedUtil
         if (!randomize) return "new project";
         const randomName = generate().spaced;
         return randomName.substring(0, this._helperUtil.MAX_NAME_LENGTH);
+    }
+
+    getScreenShotFileName(proj, ext)
+    {
+        const screenShotPath = this.getScreenShotPath(proj.id);
+        return path.join(screenShotPath, "/", "screenshot_" + Date.now() + ".tmp." + ext);
     }
 }
