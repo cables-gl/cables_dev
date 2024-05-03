@@ -147,4 +147,11 @@ export default class SharedProjectsUtil extends SharedUtil
 
         return readable;
     }
+
+    getNewProjectName(randomize = false)
+    {
+        if (!randomize) return "new project";
+        const randomName = generate().spaced;
+        return randomName.substring(0, this._helperUtil.MAX_NAME_LENGTH);
+    }
 }

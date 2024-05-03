@@ -1202,6 +1202,7 @@ export default class SharedOpsUtil extends SharedUtil
             const opName = this.getOpNameById(op.opId) || op.objName;
 
             if (!this.isOpNameValid(opName)) return false;
+
             if (codePrefix !== "none")
             {
                 if (!codePrefix && opName.startsWith(this.PREFIX_USEROPS)) return false;
@@ -1214,7 +1215,6 @@ export default class SharedOpsUtil extends SharedUtil
 
         for (const i in ops)
         {
-            let fn = "";
             let opName = ops[i].objName;
             if (!ops[i].opId)
             {
@@ -1225,7 +1225,7 @@ export default class SharedOpsUtil extends SharedUtil
                 opName = this.getOpNameById(ops[i].opId);
             }
 
-            if (!fn) fn = this.getOpAbsoluteFileName(opName);
+            let fn = this.getOpAbsoluteFileName(opName);
 
             try
             {
@@ -2170,7 +2170,7 @@ export default class SharedOpsUtil extends SharedUtil
         return subPatchData;
     }
 
-    getOpRenameProblems(newName, oldName, userObj, teams = [], newOpProject = null, oldOpProject = null, opUsages = [], checkUsages = true)
+    getOpRenameProblems(newName, oldName, userObj, teams = [], newOpProject = null, oldOpProject = null, opUsages = [], checkUsages = true, targetDir = null)
     {
         const problems = {};
         if (!newName)
@@ -2392,12 +2392,20 @@ export default class SharedOpsUtil extends SharedUtil
         return attachments;
     }
 
-    cloneOp(oldName, newName, user)
+    cloneOp(oldName, newName, user, targetDir = null)
     {
         const code = fs.readFileSync(this.getOpAbsoluteFileName(oldName), "utf8");
-        const fn = this.getOpAbsoluteFileName(newName);
-        const basePath = this.getOpAbsolutePath(newName);
+        let fn = this.getOpAbsoluteFileName(newName);
+        let basePath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
+
+        if (targetDir)
+        {
+            basePath = targetDir;
+            let opPath = path.join(basePath, this.getOpTargetDir(newName, true));
+            mkdirp.sync(opPath);
+            fn = path.join(opPath, this.getOpFileName(newName));
+        }
 
         mkdirp.sync(basePath);
         fs.writeFileSync(fn, code);
@@ -2608,6 +2616,14 @@ export default class SharedOpsUtil extends SharedUtil
         const result = {};
         let fn = this.getOpAbsoluteFileName(opName);
         let basePath = this.getOpAbsolutePath(opName);
+        if (targetDir)
+        {
+            basePath = targetDir;
+            let opPath = path.join(basePath, this.getOpTargetDir(opName, true));
+            mkdirp.sync(opPath);
+            fn = path.join(opPath, this.getOpFileName(opName));
+            console.log("BASE", basePath, fn);
+        }
         mkdirp.sync(basePath);
 
         const newJson = this.getOpDefaults(opName, author);
@@ -2615,7 +2631,22 @@ export default class SharedOpsUtil extends SharedUtil
         changelogMessages.push("created op");
 
         const opId = newJson.id;
-        code = code || "// your new op\n// have a look at the documentation at: \n// https://cables.gl/docs/5_writing_ops/coding_ops";
+        code = code ||
+            ""
+            + "// welcome to your new op!\n"
+            + "// have a look at the documentation: \n"
+            + "// https://cables.gl/docs/5_writing_ops/dev_ops/dev_ops\n"
+            + "\n"
+            + "const\n"
+            + "    exec = op.inTrigger(\"Trigger\"),\n"
+            + "    myNumber = op.inFloat(\"Number\"),\n"
+            + "    next = op.outTrigger(\"Next\"),\n"
+            + "    result = op.outNumber(\"Result\");\n"
+            + "\n"
+            + "exec.onTriggered = () =>\n"
+            + "{\n"
+            + "    result.set(myNumber.get() * 100);\n"
+            + "};\n";
         fs.writeFileSync(fn, code);
 
         if (layout)
