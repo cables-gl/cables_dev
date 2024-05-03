@@ -103,19 +103,25 @@ export default class SharedOpsUtil extends SharedUtil
         return name.startsWith(this.PREFIX_OPS);
     }
 
-    getOpAbsoluteJsonFilename(opname)
+    getOpAbsoluteJsonFilename(opName)
     {
-        const p = this.getOpAbsolutePath(opname);
+        const p = this.getOpAbsolutePath(opName);
         if (!p) return null;
-        return p + opname + ".json";
+        return path.join(p, "/", this.getOpJsonFilename(opName));
     }
 
-    getOpAbsolutePath(opname)
+    getOpJsonFilename(opName)
     {
-        if (!opname) return null;
-        if (!this.isOpNameValid(opname)) return null;
+        if (!opName) return null;
+        return opName + ".json";
+    }
 
-        return this.getOpSourceDir(opname);
+    getOpAbsolutePath(opName)
+    {
+        if (!opName) return null;
+        if (!this.isOpNameValid(opName)) return null;
+
+        return this.getOpSourceDir(opName);
     }
 
     getOpById(opDocs, id)
@@ -683,13 +689,18 @@ export default class SharedOpsUtil extends SharedUtil
         return srcWarnings;
     }
 
-    getOpAbsoluteFileName(opname)
+    getOpAbsoluteFileName(opName)
     {
-        if (this.isOpNameValid(opname))
+        if (this.isOpNameValid(opName))
         {
-            return this.getOpAbsolutePath(opname) + opname + ".js";
+            return path.join(this.getOpAbsolutePath(opName), this.getOpFileName(opName));
         }
         return null;
+    }
+
+    getOpFileName(opName)
+    {
+        return opName + ".js";
     }
 
     getAttachmentFiles(opName)
@@ -1134,16 +1145,16 @@ export default class SharedOpsUtil extends SharedUtil
         return opNames;
     }
 
-    getOpJsonPath(opname, createPath = false)
+    getOpJsonPath(opName, createPath = false)
     {
-        if (!opname) return null;
-        const dirName = this.getOpSourceDir(opname);
-        const filename = path.join(dirName, opname + ".json");
+        if (!opName) return null;
+        const dirName = this.getOpAbsolutePath(opName);
+        const filename = path.join(dirName, opName + ".json");
         const exists = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
         if (!existsPath && createPath) mkdirp.sync(dirName);
         existsPath = fs.existsSync(dirName);
-        if (existsPath && !exists) jsonfile.writeFileSync(filename, { "name": opname }, { "encoding": "utf-8", "spaces": 4 });
+        if (existsPath && !exists) jsonfile.writeFileSync(filename, { "name": opName }, { "encoding": "utf-8", "spaces": 4 });
         if (!existsPath) return null;
 
         return filename;
@@ -1311,14 +1322,14 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opExists(name)
+    opExists(opName)
     {
-        let p = this.getOpAbsolutePath(name);
+        let p = this.getOpAbsolutePath(opName);
         try
         {
             if (!p || !fs.existsSync(p)) return false;
             p = fs.realpathSync.native(p);
-            return p.includes(name);
+            return p.includes(opName);
         }
         catch (e)
         {
@@ -1797,46 +1808,37 @@ export default class SharedOpsUtil extends SharedUtil
         return path.join(opPath, "/screenshot.png");
     }
 
-    getOpSourceDir(opName)
+    getOpSourceDir(opName, relative = false)
     {
         if (opName.endsWith(".")) opName = opName.substring(0, opName.length - 1);
         if (this.isUserOp(opName))
         {
-            return path.join(this._cables.getUserOpsPath(), opName, "/");
+            let absolutePath = this._cables.getUserOpsPath();
+            if (relative) absolutePath = this._cables.USER_OPS_SUBDIR;
+            return path.join(absolutePath, opName, "/");
         }
         else if (this.isCollection(opName))
         {
-            return path.join(this.getCollectionDir(opName), opName, "/");
+            let absolutePath = this.getCollectionDir(opName, relative);
+            return path.join(absolutePath, opName, "/");
         }
         else if (this.isPatchOp(opName))
         {
-            return path.join(this.getPatchOpDir(opName), opName, "/");
+            let absolutePath = this.getPatchOpDir(opName, relative);
+            if (relative) absolutePath = this._cables.PATCH_OPS_SUBDIR;
+            return path.join(absolutePath, opName, "/");
         }
         else
         {
-            return path.join(this._cables.getCoreOpsPath(), opName, "/");
+            let absolutePath = this._cables.getCoreOpsPath();
+            if (relative) absolutePath = this._cables.CORE_OPS_SUBDIR;
+            return path.join(absolutePath, opName, "/");
         }
     }
 
-    getOpTargetDir(opName)
+    getOpTargetDir(opName, relative = false)
     {
-        if (opName.endsWith(".")) opName = opName.substring(0, opName.length - 1);
-        if (this.isUserOp(opName))
-        {
-            return path.join(opName, "/");
-        }
-        else if (this.isCollection(opName))
-        {
-            return path.join(this.getCollectionDir(opName, true), opName, "/");
-        }
-        else if (this.isPatchOp(opName))
-        {
-            return path.join(this.getPatchOpDir(opName, true), opName, "/");
-        }
-        else
-        {
-            return path.join(opName, "/");
-        }
+        return this.getOpSourceDir(opName, relative);
     }
 
     getTeamNamespaceDir(name, relative = false)
@@ -1850,26 +1852,47 @@ export default class SharedOpsUtil extends SharedUtil
             teamNameSpace = this.PREFIX_TEAMOPS + name;
         }
         if (teamNameSpace.endsWith(".")) teamNameSpace = teamNameSpace.substring(0, teamNameSpace.length - 1);
-        let teamNamespacePath = path.join(teamNameSpace, "/");
-        if (!relative) teamNamespacePath = path.join(this._cables.getTeamOpsPath(), "/", teamNameSpace, "/");
-        return path.join(teamNamespacePath, "/");
+        let collectionPath = path.join(teamNameSpace, "/");
+        if (!relative)
+        {
+            collectionPath = path.join(this._cables.getTeamOpsPath(), "/", teamNameSpace, "/");
+        }
+        else
+        {
+            collectionPath = path.join(this._cables.TEAM_OPS_SUBDIR, "/", teamNameSpace, "/");
+        }
+        return path.join(collectionPath, "/");
     }
 
     getExtensionDir(name, relative = false)
     {
         let extensionName = this.getExtensionNamespaceByOpName(name);
         if (extensionName.endsWith(".")) extensionName = extensionName.substring(0, extensionName.length - 1);
-        let extensionPath = path.join(extensionName, "/");
-        if (!relative) extensionPath = path.join(this._cables.getExtensionOpsPath(), "/", extensionName, "/");
-        return path.join(extensionPath, "/");
+        let collectionPath = path.join(extensionName, "/");
+        if (!relative)
+        {
+            collectionPath = path.join(this._cables.getExtensionOpsPath(), "/", extensionName, "/");
+        }
+        else
+        {
+            collectionPath = path.join(this._cables.EXTENSION_OPS_SUBDIR, "/", extensionName, "/");
+        }
+        return path.join(collectionPath, "/");
     }
 
     getPatchOpDir(name, relative = false)
     {
         const patchOpDir = name ? name.split(".", 3).join(".") : null;
-        let extensionPath = path.join(patchOpDir, "/");
-        if (!relative) extensionPath = path.join(this._cables.getPatchOpsPath(), "/", patchOpDir, "/");
-        return path.join(extensionPath, "/");
+        let collectionPath = path.join(patchOpDir, "/");
+        if (!relative)
+        {
+            collectionPath = path.join(this._cables.getPatchOpsPath(), "/", patchOpDir, "/");
+        }
+        else
+        {
+            collectionPath = path.join(this._cables.PATCH_OPS_SUBDIR, "/", patchOpDir, "/");
+        }
+        return path.join(collectionPath, "/");
     }
 
     getCollectionJsonPath(name, create = true)
@@ -2523,7 +2546,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
                 if (rebuildOpDocs)
                 {
-                    this.updateOpDocs(opName);
+                    this._docsUtil.updateOpDocs(opName);
                 }
 
                 if (!attProblems)
@@ -2570,6 +2593,103 @@ export default class SharedOpsUtil extends SharedUtil
         catch (err)
         {
             return false;
+        }
+    }
+
+    createOp(opName, author, code = null, layout = null, libs = null, coreLibs = null, attachments = null, targetDir = null)
+    {
+        let parts = opName.split(".");
+        if (parts[0] === "Ops" && parts[1] === "User")
+        {
+            parts[2] = author.usernameLowercase;
+        }
+        opName = parts.join(".");
+
+        const result = {};
+        let fn = this.getOpAbsoluteFileName(opName);
+        let basePath = this.getOpAbsolutePath(opName);
+        mkdirp.sync(basePath);
+
+        const newJson = this.getOpDefaults(opName, author);
+        const changelogMessages = [];
+        changelogMessages.push("created op");
+
+        const opId = newJson.id;
+        code = code || "// your new op\n// have a look at the documentation at: \n// https://cables.gl/docs/5_writing_ops/coding_ops";
+        fs.writeFileSync(fn, code);
+
+        if (layout)
+        {
+            const obj = newJson;
+            obj.layout = layout;
+            if (obj.layout && obj.layout.name) delete obj.layout.name;
+            result.layout = obj.layout;
+        }
+
+        if (libs)
+        {
+            const newLibNames = libs;
+            newJson.libs = newLibNames;
+            result.libs = newLibNames;
+            changelogMessages.push(" updated libs: " + newLibNames.join(","));
+        }
+
+        if (coreLibs)
+        {
+            result.coreLibs = [];
+            const newCoreLibNames = coreLibs;
+            newJson.coreLibs = newCoreLibNames;
+            result.coreLibs = newCoreLibNames;
+            changelogMessages.push(" updated core libs: " + newCoreLibNames.join(","));
+        }
+
+        jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
+            "encoding": "utf-8",
+            "spaces": 4
+        });
+
+        let attProblems = null;
+        if (attachments)
+        {
+            result.attachments = {};
+            attProblems = this.updateAttachments(opName, attachments);
+            result.attachments = this.getAttachments(opName);
+        }
+
+        if (changelogMessages.length > 0)
+        {
+            this.addOpChangeLogMessages(author, opName, changelogMessages, "");
+        }
+
+        this._docsUtil.updateOpDocs(opName);
+        this._docsUtil.addOpToLookup(opId, opName);
+
+        if (!attProblems)
+        {
+            const response = {
+                "name": opName,
+                "id": opId,
+                "code": code,
+                "opDoc": newJson
+            };
+            if (result.attachments)
+            {
+                const attachmentFiles = this.getAttachmentFiles(opName);
+                const atts = {};
+                for (let i = 0; i < attachmentFiles.length; i++)
+                {
+                    const attachmentFile = attachmentFiles[i];
+                    atts[attachmentFile] = this.getAttachment(opName, attachmentFile);
+                }
+                response.attachments = atts;
+            }
+            if (result.coreLibs) response.coreLibs = result.coreLibs;
+            if (result.libs) response.libs = result.libs;
+            return response;
+        }
+        else
+        {
+            return attProblems;
         }
     }
 }

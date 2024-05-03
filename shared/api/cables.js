@@ -14,6 +14,11 @@ export default class Cables extends SharedUtil
     constructor(utilProvider, dirName = null, writableDirName = null, configLocation = null)
     {
         super(utilProvider);
+        this.CORE_OPS_SUBDIR = "base/";
+        this.EXTENSION_OPS_SUBDIR = "extensions/";
+        this.TEAM_OPS_SUBDIR = "teams/";
+        this.USER_OPS_SUBDIR = "users/";
+        this.PATCH_OPS_SUBDIR = "patches/";
         this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url));
         this._writeableDirName = writableDirName || this._dirname;
         this.configLocation = configLocation || path.resolve(this._dirname, "../cables.json");
@@ -54,31 +59,31 @@ export default class Cables extends SharedUtil
 
     getUserOpsPath()
     {
-        if (!this._config.path.userops) return path.join(this.getOpsPath(), "/users/");
+        if (!this._config.path.userops) return path.join(this.getOpsPath(), this.USER_OPS_SUBDIR);
         return this._config.path.userops.startsWith("/") ? this._config.path.userops : path.join(this._writeableDirName, this._config.path.userops);
     }
 
     getTeamOpsPath()
     {
-        if (!this._config.path.teamops) return path.join(this.getOpsPath(), "/teams/");
+        if (!this._config.path.teamops) return path.join(this.getOpsPath(), "/", this.TEAM_OPS_SUBDIR);
         return this._config.path.teamops.startsWith("/") ? this._config.path.teamops : path.join(this._writeableDirName, this._config.path.teamops);
     }
 
     getExtensionOpsPath()
     {
-        if (!this._config.path.extensionops) return path.join(this.getOpsPath(), "/extensions/");
+        if (!this._config.path.extensionops) return path.join(this.getOpsPath(), "/", this.EXTENSION_OPS_SUBDIR);
         return this._config.path.extensionops.startsWith("/") ? this._config.path.extensionops : path.join(this._writeableDirName, this._config.path.extensionops);
     }
 
     getPatchOpsPath()
     {
-        if (!this._config.path.patchops) return path.join(this.getOpsPath(), "/patches/");
+        if (!this._config.path.patchops) return path.join(this.getOpsPath(), this.PATCH_OPS_SUBDIR);
         return this._config.path.patchops.startsWith("/") ? this._config.path.patchops : path.join(this._writeableDirName, this._config.path.patchops);
     }
 
     getCoreOpsPath()
     {
-        return path.join(this.getOpsPath(), "/base/");
+        return path.join(this.getOpsPath(), "/", this.CORE_OPS_SUBDIR);
     }
 
 
