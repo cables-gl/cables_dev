@@ -81,7 +81,7 @@ export default class SharedProjectsUtil extends SharedUtil
             }
 
             const screenShotPath = this.getScreenShotPath(proj._id);
-            if (!fs.existsSync(screenShotPath)) fs.mkdirSync(screenShotPath);
+            if (!fs.existsSync(screenShotPath)) mkdirp.sync(screenShotPath);
 
             if (proj.settings && proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
             const filenameScreenshot = this.getScreenShotFileName(proj, ext);
