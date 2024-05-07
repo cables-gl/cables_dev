@@ -12,11 +12,7 @@ fi
 if [ -z "$BUILD_VERSION" ] ; then
   ARGS="-- "
 else
-  ARGS="-- -c.buildVersion=$BUILD_VERSION -c.executableName=$BUILD_VERSION -c.extraMetadata.version=$BUILD_VERSION";
-fi
-
-if [ -n "$EXE_NAME" ]; then
-  ARGS="${ARGS} -c.artifactName=$EXE_NAME"qq
+  ARGS="-- -c.buildVersion=$BUILD_VERSION -c.executableName=$EXE_NAME -c.extraMetadata.version=$BUILD_VERSION";
 fi
 
 if [ -z "$NOTARIZE" ] || [ "$NOTARIZE" = "false" ]; then
