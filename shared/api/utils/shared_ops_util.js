@@ -1149,6 +1149,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opName) return null;
         const dirName = this.getOpAbsolutePath(opName);
+        if (!dirName) return null;
         const filename = path.join(dirName, opName + ".json");
         const exists = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
