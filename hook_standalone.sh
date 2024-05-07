@@ -9,10 +9,18 @@ else
   BUILD_OS=":$1";
 fi
 
-if [ -z "$BUILD_VERSION" ]; then
-  ARGS=""
+if [ -z "$BUILD_VERSION" ] ; then
+  ARGS="-- "
 else
-  ARGS="-- -c.buildVersion=$BUILD_VERSION -c.executableName=$EXE_NAME -c.extraMetadata.version=$BUILD_VERSION";
+  ARGS="-- -c.buildVersion=$BUILD_VERSION -c.executableName=$BUILD_VERSION -c.extraMetadata.version=$BUILD_VERSION";
+fi
+
+if [ -n "$EXE_NAME" ]; then
+  ARGS="${ARGS} -c.artifactName=$EXE_NAME"qq
+fi
+
+if [ -z "$NOTARIZE" ] || [ "$NOTARIZE" = "false" ]; then
+  ARGS="${ARGS} -c.mac.notarize=false"
 fi
 
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
