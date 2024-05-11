@@ -321,14 +321,14 @@ export default class SharedOpsUtil extends SharedUtil
     addOpChangelog(user, opName, newEntry, referenceDate = null, update = false)
     {
         let changes = [];
-        if (update && referenceDate)
+        if (update && referenceDate !== null)
         {
             const opDocs = this._docsUtil.getDocForOp(opName);
             if (opDocs)
             {
                 const timestamp = Number(referenceDate);
                 const changelog = opDocs.changelog || [];
-                const oldEntry = changelog.find((change) => { return change.date && change.date === timestamp; });
+                const oldEntry = changelog.find((change) => { return change.hasOwnProperty("date") && change.date === timestamp; });
                 if (oldEntry)
                 {
                     if (newEntry.message) oldEntry.message = newEntry.message;
@@ -378,7 +378,7 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 const timestamp = Number(date);
                 const changelog = opDocs.changelog || [];
-                const oldEntryIndex = changelog.findIndex((change) => { return change.date && change.date === timestamp; });
+                const oldEntryIndex = changelog.findIndex((change) => { return change.hasOwnProperty("date") && change.date === timestamp; });
                 if (oldEntryIndex !== -1)
                 {
                     changelog.splice(oldEntryIndex, 1);
