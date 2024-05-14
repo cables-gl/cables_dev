@@ -41,9 +41,6 @@ cd ..
 echo "BUILDING cables"
 cd cables
 git pull
-# unpacking objects so we have commit messages...
-for i in `ls .git/objects/pack/*.pack`; do mv -f $i .git/; done
-for i in `ls .git/*.pack`; do cat $i | git unpack-objects -r; done
 $NPM_EXE install
 $NPM_EXE run build
 cd ..
@@ -51,9 +48,6 @@ cd ..
 echo "BUILDING cables_ui"
 cd cables_ui
 git pull
-# unpacking objects so we have commit messages...
-for i in `ls .git/objects/pack/*.pack`; do mv -f $i .git/; done
-for i in `ls .git/*.pack`; do cat $i | git unpack-objects -r; done
 $NPM_EXE install
 $NPM_EXE run build
 cd ..
@@ -61,9 +55,6 @@ cd ..
 echo "BUILDING cables_electron"
 cd cables_electron
 git pull
-# unpacking objects so we have commit messages...
-for i in `ls .git/objects/pack/*.pack`; do mv -f $i .git/; done
-for i in `ls .git/*.pack`; do cat $i | git unpack-objects -r; done
 $NPM_EXE install
 $NPM_EXE run build
 echo "PACKAGING cables_electron"
