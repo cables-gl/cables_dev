@@ -1534,6 +1534,11 @@ export default class SharedOpsUtil extends SharedUtil
     setOpDefaults(opname, author)
     {
         const fn = this.getOpJsonPath(opname);
+        if (!fn)
+        {
+            this._log.error("op default error read", opname, "has no json path");
+            return;
+        }
         let obj = null;
         try
         {
@@ -2623,7 +2628,6 @@ export default class SharedOpsUtil extends SharedUtil
             let opPath = path.join(basePath, this.getOpTargetDir(opName, true));
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(opName));
-            console.log("BASE", basePath, fn);
         }
         mkdirp.sync(basePath);
 
