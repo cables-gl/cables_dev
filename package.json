@@ -5,9 +5,9 @@
     "main": "index.js",
     "scripts": {
         "start": "cross-env node start.js",
+        "start:standalone": "cross-env node start.js standalone",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "pm2": "pm2 start pm2_ecosystem.config.js",
-        "start:electron": "npm --prefix cables_electron/ run start"
+        "pm2": "pm2 start pm2_ecosystem.config.js"
     },
     "repository": {
         "type": "git",

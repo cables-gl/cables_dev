@@ -127,8 +127,8 @@ brew install imagemagick
 * run `install_local.sh` (needs sudo password on linux)
 
 ## update branches
-* run `update_dev.sh` to update all branches from remote and also merge `develop` into them
-* run `update_dev.sh develop` to switch all branches to `develop` and update from remote
+* run `update_repos.sh` to update all branches from remote and also merge `develop` into them
+* run `update_repos.sh develop` to switch all branches to `develop` and update from remote
 
 ## tips
 
