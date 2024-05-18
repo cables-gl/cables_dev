@@ -217,6 +217,12 @@ export default class Cables extends SharedUtil
         return this._config.env;
     }
 
+    getChangelogLocation()
+    {
+        if (this._config.path.changelog) return path.join(this._dirname, this._config.path.changelog);
+        return path.join(this.getSourcePath(), "../../shared/changelog.json");
+    }
+
     _createDirectories()
     {
         if (!fs.existsSync(this.getAssetPath())) mkdirp(this.getAssetPath());
