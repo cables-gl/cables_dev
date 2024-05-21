@@ -293,7 +293,6 @@ export default class SharedDocUtil extends SharedUtil
                 const fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
-                    this._log.startTime("find ops to remove");
                     const idsAndNames = {};
 
                     const allOpNames = Object.keys(fileLookUp.names);
@@ -322,7 +321,6 @@ export default class SharedDocUtil extends SharedUtil
                             }
                         }
                     }
-                    this._log.endTime("find ops to remove");
                 }
                 this.cachedLookup = fileLookUp;
                 this.removeOpNamesFromLookup(removeOps);
@@ -344,7 +342,7 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        this._log.startTime("removeOpNamesFromLookup");
+        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table");
         for (let i = 0; i < opNames.length; i++)
         {
             const opName = opNames[i];
@@ -367,14 +365,11 @@ export default class SharedDocUtil extends SharedUtil
                 changed = true;
             }
         }
-        this._log.endTime("removeOpNamesFromLookup");
-        this._log.startTime("writeFileSync");
         if (changed)
         {
-            this._log.info("removing", opNames.length, "ops from lookup table");
             jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
+            this._log.info("DONE - removing", opNames.length, "ops from lookup table");
         }
-        this._log.endTime("writeFileSync");
     }
 
     removeOpNameFromLookup(opName)
