@@ -293,6 +293,7 @@ export default class SharedDocUtil extends SharedUtil
                 const fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
+                    this._log.startTime("find ops to remove");
                     Object.keys(fileLookUp.ids).forEach((id) =>
                     {
                         const namesForId = Object.entries(fileLookUp.names).filter(([opName, idForName]) => { return id === idForName; });
@@ -307,6 +308,7 @@ export default class SharedDocUtil extends SharedUtil
                             });
                         }
                     });
+                    this._log.endTime("find ops to remove");
                 }
                 this.cachedLookup = fileLookUp;
                 this.removeOpNamesFromLookup(removeOps);
@@ -328,6 +330,8 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
+        this._log.debug("removing", opNames.length, "ops");
+        this._log.startTime("removeOpNamesFromLookup");
         for (let i = 0; i < opNames.length; i++)
         {
             const opName = opNames[i];
@@ -350,10 +354,14 @@ export default class SharedDocUtil extends SharedUtil
                 changed = true;
             }
         }
+        this._log.endTime("removeOpNamesFromLookup");
+        this._log.debug("writing to file?", changed);
+        this._log.startTime("writeFileSync");
         if (changed)
         {
             jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
         }
+        this._log.endTime("writeFileSync");
     }
 
     removeOpNameFromLookup(opName)
