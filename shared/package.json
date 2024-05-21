@@ -5,7 +5,7 @@
   "description": "shared artifacts between the different subprojects of cables_dev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/undev-studio/cables_dev.git"
+    "url": "git+https://github.com/cables-gl/cables_dev.git"
   },
   "engines": {
     "node": "18.14.2"

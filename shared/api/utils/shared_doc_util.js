@@ -289,7 +289,27 @@ export default class SharedDocUtil extends SharedUtil
         {
             if (fs.existsSync(this.opLookupFilename))
             {
-                this.cachedLookup = jsonfile.readFileSync(this.opLookupFilename);
+                let removeOps = [];
+                const fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
+                if (fileLookUp && fileLookUp.ids && fileLookUp.names)
+                {
+                    Object.keys(fileLookUp.ids).forEach((id) =>
+                    {
+                        const namesForId = Object.entries(fileLookUp.names).filter(([opName, idForName]) => { return id === idForName; });
+                        if (namesForId.length > 1)
+                        {
+                            namesForId.forEach(([opName, opId]) =>
+                            {
+                                if (fileLookUp.ids[opId] !== opName)
+                                {
+                                    removeOps.push(opName);
+                                }
+                            });
+                        }
+                    });
+                }
+                this.cachedLookup = fileLookUp;
+                this.removeOpNamesFromLookup(removeOps);
             }
             else
             {
@@ -304,22 +324,42 @@ export default class SharedDocUtil extends SharedUtil
         this.addOpsToLookup([{ "id": opId, "name": opName }]);
     }
 
+    removeOpNamesFromLookup(opNames)
+    {
+        if (!opNames) return;
+        let changed = false;
+        for (let i = 0; i < opNames.length; i++)
+        {
+            const opName = opNames[i];
+            if (!opName) continue;
+            if (!this.cachedLookup || !this.cachedLookup.ids || !this.cachedLookup.names)
+            {
+                this._log.warn("no cache of op lookup table during rename!");
+                continue;
+            }
+            let opId = null;
+            if (this.cachedLookup.names[opName])
+            {
+                opId = this.cachedLookup.names[opName];
+            }
+
+            if (opId)
+            {
+                delete this.cachedLookup.ids[opId];
+                delete this.cachedLookup.names[opName];
+                changed = true;
+            }
+        }
+        if (changed)
+        {
+            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
+        }
+    }
+
     removeOpNameFromLookup(opName)
     {
         if (!opName) return;
-        if (!this.cachedLookup || !this.cachedLookup.ids || !this.cachedLookup.names)
-        {
-            this._log.warn("no cache of op lookup table during rename!");
-            return;
-        }
-        let opId = null;
-        if (this.cachedLookup.names[opName]) opId = this.cachedLookup.names[opName];
-        if (opId)
-        {
-            delete this.cachedLookup.ids[opId];
-            delete this.cachedLookup.names[opName];
-            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
-        }
+        this.removeOpNamesFromLookup([opName]);
     }
 
     addOpsToLookup(ops, clearFiles = false)

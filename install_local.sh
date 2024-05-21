@@ -83,7 +83,7 @@ cd ..
 
 echo "INSTALLING UI..."
 if [ ! -d "cables_ui/" ]; then
-  git clone git@github.com:undev-studio/cables_ui.git
+  git clone git@github.com:cables-gl/cables_ui.git
 fi
 cd cables_ui/
 if [ "$CLEAN" = "true" ]; then
@@ -113,13 +113,13 @@ echo "INSTALLING DEFAULT ASSETS...";
 if [ "$CLEAN" = "true" ]; then
   echo "  ...deleting default assets";
   rm -rf cables_api/public/assets/library
-  git clone git@github.com:undev-studio/cables-asset-library.git cables_api/public/assets/library
+  git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
 fi
 mkdir -p cables_api/public/assets/library
 if [ -d "cables_api/public/assets/library/.git" ]; then
   git -C cables_api/public/assets/library pull
 else
-  git clone git@github.com:undev-studio/cables-asset-library.git cables_api/public/assets/library
+  git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
 fi
 
 echo ""
