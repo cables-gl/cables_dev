@@ -294,20 +294,34 @@ export default class SharedDocUtil extends SharedUtil
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
                     this._log.startTime("find ops to remove");
-                    Object.keys(fileLookUp.ids).forEach((id) =>
+                    const idsAndNames = {};
+
+                    const allOpNames = Object.keys(fileLookUp.names);
+                    for (let j = 0; j < allOpNames.length; j++)
                     {
-                        const namesForId = Object.entries(fileLookUp.names).filter(([opName, idForName]) => { return id === idForName; });
-                        if (namesForId.length > 1)
+                        const currentOpName = allOpNames[j];
+                        const idForCurrentName = fileLookUp.names[currentOpName];
+                        if (!idsAndNames.hasOwnProperty(idForCurrentName)) idsAndNames[idForCurrentName] = [];
+                        idsAndNames[idForCurrentName].push(currentOpName);
+                    }
+
+                    const idsWithNames = Object.keys(idsAndNames);
+                    for (let i = 0; i < idsWithNames.length; i++)
+                    {
+                        const opId = idsWithNames[i];
+                        const opNamesForId = idsAndNames[opId];
+                        if (opNamesForId.length > 1)
                         {
-                            namesForId.forEach(([opName, opId]) =>
+                            for (let j = 0; j < opNamesForId.length; j++)
                             {
+                                const opName = opNamesForId[j];
                                 if (fileLookUp.ids[opId] !== opName)
                                 {
                                     removeOps.push(opName);
                                 }
-                            });
+                            }
                         }
-                    });
+                    }
                     this._log.endTime("find ops to remove");
                 }
                 this.cachedLookup = fileLookUp;
@@ -330,7 +344,6 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        this._log.debug("removing", opNames.length, "ops");
         this._log.startTime("removeOpNamesFromLookup");
         for (let i = 0; i < opNames.length; i++)
         {
@@ -355,10 +368,10 @@ export default class SharedDocUtil extends SharedUtil
             }
         }
         this._log.endTime("removeOpNamesFromLookup");
-        this._log.debug("writing to file?", changed);
         this._log.startTime("writeFileSync");
         if (changed)
         {
+            this._log.info("removing", opNames.length, "ops from lookup table");
             jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
         }
         this._log.endTime("writeFileSync");
