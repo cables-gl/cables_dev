@@ -160,4 +160,18 @@ export default class SharedProjectsUtil extends SharedUtil
         const screenShotPath = this.getScreenShotPath(proj.id);
         return path.join(screenShotPath, "/", "screenshot_" + Date.now() + ".tmp." + ext);
     }
+
+    getProjectAssetPorts(proj, includeLibraryAssets = false)
+    {
+        let assetPorts = [];
+        if (!proj || !proj.ops) return assetPorts;
+        for (let o = 0; o < proj.ops.length; o++)
+        {
+            if (proj.ops[o].portsIn)
+            {
+                assetPorts = assetPorts.concat(this._opsUtil.getOpAssetPorts(proj.ops[o], includeLibraryAssets));
+            }
+        }
+        return assetPorts;
+    }
 }
