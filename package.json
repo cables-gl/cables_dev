@@ -11,17 +11,17 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/undev-studio/cables_dev.git"
+        "url": "git+https://github.com/cables-gl/cables_dev.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/cables-gl/cables_docs/issues"
     },
-    "homepage": "https://github.com/undev-studio/cables_dev#readme",
+    "homepage": "https://github.com/cables-gl/cables_dev#readme",
     "dependencies": {
         "concurrently": "4.1.1",
-        "pm2": "5.2.2",
+        "pm2": "5.3.0",
         "tree-kill": "1.2.2"
     },
     "devDependencies": {

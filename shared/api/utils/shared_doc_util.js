@@ -289,7 +289,41 @@ export default class SharedDocUtil extends SharedUtil
         {
             if (fs.existsSync(this.opLookupFilename))
             {
-                this.cachedLookup = jsonfile.readFileSync(this.opLookupFilename);
+                let removeOps = [];
+                const fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
+                if (fileLookUp && fileLookUp.ids && fileLookUp.names)
+                {
+                    const idsAndNames = {};
+
+                    const allOpNames = Object.keys(fileLookUp.names);
+                    for (let j = 0; j < allOpNames.length; j++)
+                    {
+                        const currentOpName = allOpNames[j];
+                        const idForCurrentName = fileLookUp.names[currentOpName];
+                        if (!idsAndNames.hasOwnProperty(idForCurrentName)) idsAndNames[idForCurrentName] = [];
+                        idsAndNames[idForCurrentName].push(currentOpName);
+                    }
+
+                    const idsWithNames = Object.keys(idsAndNames);
+                    for (let i = 0; i < idsWithNames.length; i++)
+                    {
+                        const opId = idsWithNames[i];
+                        const opNamesForId = idsAndNames[opId];
+                        if (opNamesForId.length > 1)
+                        {
+                            for (let j = 0; j < opNamesForId.length; j++)
+                            {
+                                const opName = opNamesForId[j];
+                                if (fileLookUp.ids[opId] !== opName)
+                                {
+                                    removeOps.push(opName);
+                                }
+                            }
+                        }
+                    }
+                }
+                this.cachedLookup = fileLookUp;
+                this.removeOpNamesFromLookup(removeOps);
             }
             else
             {
@@ -304,22 +338,44 @@ export default class SharedDocUtil extends SharedUtil
         this.addOpsToLookup([{ "id": opId, "name": opName }]);
     }
 
+    removeOpNamesFromLookup(opNames)
+    {
+        if (!opNames) return;
+        let changed = false;
+        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table");
+        for (let i = 0; i < opNames.length; i++)
+        {
+            const opName = opNames[i];
+            if (!opName) continue;
+            if (!this.cachedLookup || !this.cachedLookup.ids || !this.cachedLookup.names)
+            {
+                this._log.warn("no cache of op lookup table during rename!");
+                continue;
+            }
+            let opId = null;
+            if (this.cachedLookup.names[opName])
+            {
+                opId = this.cachedLookup.names[opName];
+            }
+
+            if (opId)
+            {
+                delete this.cachedLookup.ids[opId];
+                delete this.cachedLookup.names[opName];
+                changed = true;
+            }
+        }
+        if (changed)
+        {
+            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
+            this._log.info("DONE - removing", opNames.length, "ops from lookup table");
+        }
+    }
+
     removeOpNameFromLookup(opName)
     {
         if (!opName) return;
-        if (!this.cachedLookup || !this.cachedLookup.ids || !this.cachedLookup.names)
-        {
-            this._log.warn("no cache of op lookup table during rename!");
-            return;
-        }
-        let opId = null;
-        if (this.cachedLookup.names[opName]) opId = this.cachedLookup.names[opName];
-        if (opId)
-        {
-            delete this.cachedLookup.ids[opId];
-            delete this.cachedLookup.names[opName];
-            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
-        }
+        this.removeOpNamesFromLookup([opName]);
     }
 
     addOpsToLookup(ops, clearFiles = false)

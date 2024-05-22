@@ -6,7 +6,7 @@
 * install and run memcached (or use `docker-compose up`)
 * install and run mongodb (or use `docker-compose up`)
 * install git
-* clone this repository using  `git clone git@github.com:undev-studio/cables_dev.git`
+* clone this repository using  `git clone git@github.com:cables-gl/cables_dev.git`
 * run `. ./install_local.sh` (needs sudo password on linux, NOTICE THE EXTRA DOT AT THE BEGINNING!)
 * make sure your current shell has the proper node version `node --version` (if not, open a new terminal before you start the server, and check again)
 * run `npm run start` and open a browser on 'http://localhost:5711' (see below for other options)
@@ -16,12 +16,12 @@
 install:
 
 ```
-git clone git@github.com:undev-studio/cables_dev.git
+git clone git@github.com:cables-gl/cables_dev.git
 cd cables_dev
 npm i
 git clone git@github.com:pandrr/cables.git
 git clone git@github.com:undev-studio/cables_api.git
-git clone git@github.com:undev-studio/cables_ui.git
+git clone git@github.com:cables-gl/cables_ui.git
 cd cables_api
 git checkout develop
 npm i
@@ -81,7 +81,7 @@ cd ..
 
 ## local default assets
 * to get cables default assets locally:
-  * clone `https://github.com/undev-studio/cables-asset-library` into cables_api/public/assets/library
+  * clone `https://github.com/cables-gl/cables-asset-library` into cables_api/public/assets/library
   * if you ran `install_local.sh` this is already in place
 
 ## socketcluster/multiplayer
@@ -236,7 +236,7 @@ branch before then merging develop and building.
 ### hook_api.sh
 
 * intended for webhook on dev
-* pulls current branch of `undev-studio/cables_api`
+* pulls current branch of `cables-gl/cables_api`
 * runs `npm` to build
 * restarts pm2 servers `api` and `sandbox`
 
@@ -250,7 +250,7 @@ branch before then merging develop and building.
 ### hook_ui.sh
 
 * intended for webhook on dev
-* pulls current branch of `undev-studio/cables_ui`
+* pulls current branch of `cables-gl/cables_ui`
 * runs `npm` to build
 
 ### hook_docs.sh
