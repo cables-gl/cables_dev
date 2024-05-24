@@ -78,8 +78,6 @@ export default class SharedFilesUtil extends SharedUtil
         info.fileDb.fileName = this.getAssetFileName(fileDb);
         info.cachebuster = fileDb.cachebuster;
         info.date = fileDb.updated;
-        info.readableDateSince = new moment(fileDb.updated).fromNow();
-        info.readableDate = new moment(fileDb.updated).format("lll");
         info.converters = [];
 
         info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb) + "");
@@ -97,6 +95,7 @@ export default class SharedFilesUtil extends SharedUtil
         }
 
         info.icon = this.getFileIconName(fileDb);
+        info.path = this.getFileAssetUrlPath(fileDb);
 
         return info;
     }
