@@ -949,7 +949,7 @@ export default class SharedOpsUtil extends SharedUtil
         const collections = {};
         opNames.forEach((opName) =>
         {
-            if (this.isCoreOp(opName)) return;
+            // if (this.isCoreOp(opName)) return;
             const collectionName = this.getCollectionName(opName);
             if (!collections.hasOwnProperty(collectionName)) collections[collectionName] = [];
             collections[collectionName].push(opName);
@@ -1531,7 +1531,7 @@ export default class SharedOpsUtil extends SharedUtil
         return null;
     }
 
-    setOpDefaults(opname, author)
+    setOpDefaults(opname, author = null)
     {
         const fn = this.getOpJsonPath(opname);
         if (!fn)
@@ -1582,7 +1582,7 @@ export default class SharedOpsUtil extends SharedUtil
         return hasChanged;
     }
 
-    getOpDefaults(opName, author)
+    getOpDefaults(opName, author = null)
     {
         const defaults = {
             "id": uuidv4(),

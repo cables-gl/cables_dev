@@ -51,6 +51,8 @@ export default class SharedDocUtil extends SharedUtil
     getDocForOp(opName, docs = null)
     {
         if (!opName) return null;
+        if (!this._opsUtil.isOpNameValid(opName)) return null;
+
         if (this._opsUtil.existingCoreOp(opName))
         {
             if (!docs) docs = this.getOpDocs();
@@ -61,7 +63,9 @@ export default class SharedDocUtil extends SharedUtil
                     return docs[i];
                 }
             }
-            return null;
+            const fromFile = this.getOpDocsFromFile(opName);
+            if (fromFile) fromFile.name = opName;
+            return fromFile;
         }
         else if (this._opsUtil.opExists(opName))
         {
@@ -215,7 +219,7 @@ export default class SharedDocUtil extends SharedUtil
                             }
                             else
                             {
-                                this._log.error("DUPLICATE OP ID:", opid, opName);
+                                this._log.error("DUPLICATE OP ID:", opid, opName, idLookup[opid]);
                             }
                         }
                         else

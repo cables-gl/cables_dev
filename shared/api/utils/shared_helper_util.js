@@ -1,4 +1,5 @@
 import fs from "fs";
+import uuid from "uuid-v4";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -49,7 +50,8 @@ export default class SharedHelperUtil extends SharedUtil
 
     uniqueArray(arr)
     {
-        const u = {}, a = [];
+        const u = {};
+        const a = [];
         for (let i = 0, l = arr.length; i < l; ++i)
         {
             if (!u.hasOwnProperty(arr[i]))
@@ -357,5 +359,10 @@ export default class SharedHelperUtil extends SharedUtil
         }
 
         return conversion;
+    }
+
+    generateUUID()
+    {
+        return uuid();
     }
 }
