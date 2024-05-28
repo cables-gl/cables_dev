@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "cables development environment",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "start": "cross-env node start.js",
         "start:standalone": "cross-env node start.js standalone",
@@ -20,8 +21,8 @@
     },
     "homepage": "https://github.com/cables-gl/cables_dev#readme",
     "dependencies": {
-        "concurrently": "4.1.1",
-        "pm2": "5.3.0",
+        "concurrently": "8.2.2",
+        "pm2": "5.3.1",
         "tree-kill": "1.2.2"
     },
     "devDependencies": {
@@ -31,9 +32,9 @@
         "eslint-plugin-import": "2.27.5",
         "gulp": "4.0.2",
         "gulp-nodemon": "2.4.2",
-        "npm": "7.19.1",
-        "prettier": "1.18.2",
-        "prettier-eslint": "9.0.0",
-        "uglify-es": "3.3.9"
+        "uglify-es": "3.3.9",
+        "npm": "10.5.2",
+        "prettier": "3.2.5",
+        "prettier-eslint": "16.3.0"
     }
 }

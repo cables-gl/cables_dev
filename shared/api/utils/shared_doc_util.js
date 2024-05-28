@@ -1,6 +1,6 @@
 import path from "path";
 import moment from "moment";
-import marked from "marked";
+import { marked } from "marked";
 import fs from "fs";
 import jsonfile from "jsonfile";
 
