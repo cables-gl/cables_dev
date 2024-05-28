@@ -21,6 +21,9 @@ fi
 set -e
 set -o pipefail
 
+echo "UPDATING DEV..."
+npm i
+
 echo "UPDATING SHARED..."
 cd shared
 if [ -n "${1}" ] && [ "clean" != "${1}" ]; then
