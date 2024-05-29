@@ -1,5 +1,5 @@
 {
-  "name": "cables-shared-api",
+  "name": "cables-shared",
   "version": "0.0.1",
   "author": "undefined development",
   "description": "shared artifacts between the different subprojects of cables_dev",
@@ -10,10 +10,13 @@
   "engines": {
     "node": "20.13.1"
   },
+  "devDependencies": {
+    "concurrently": "8.2.2"
+  },
   "type": "module",
   "license": "MIT",
   "scripts": {
     "build": "npm install",
-    "postinstall": "npm --prefix ./api install && npm --prefix ./client install"
+    "postinstall": "concurrently \"npm --prefix ./api install\" \"npm --prefix ./client install\""
   }
 }
