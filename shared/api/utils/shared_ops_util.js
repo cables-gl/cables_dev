@@ -2,7 +2,7 @@ import jsonfile from "jsonfile";
 import fs from "fs-extra";
 import eslint from "eslint";
 import path from "path";
-import marked from "marked";
+import { marked } from "marked";
 import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";

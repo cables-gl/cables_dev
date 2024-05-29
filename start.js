@@ -1,5 +1,5 @@
-const concurrently = require("concurrently");
-const kill = require("tree-kill");
+import concurrently from "concurrently";
+import kill from "tree-kill";
 
 const args = process.argv ? process.argv.slice(2) : [];
 const standalone = args && args[0] === "standalone";
@@ -31,16 +31,19 @@ if (!standalone)
     });
 }
 
-concurrently(
+const { result } = concurrently(
     commands,
     {
         "prefix": "name",
         "killOthers": ["failure", "success"],
         "restartTries": 3,
     },
-).then(() =>
+);
+
+result.then(() =>
 {
     console.log("stopped!");
+    kill(process.pid, "SIGHUP");
 }, () => { console.log("WTF!!!!!!"); }).catch((err) => { return console.log("error", err); });
 
 process.on("SIGINT", () =>
