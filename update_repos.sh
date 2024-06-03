@@ -45,6 +45,7 @@ if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
 npm i
+npm run build
 cd ..
 
 echo "UPDATING CORE..."
