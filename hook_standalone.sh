@@ -35,6 +35,7 @@ $NPM_EXE install
 echo "BUILDING shared"
 cd shared
 git pull
+$NPM_EXE install
 $NPM_EXE run build
 cd ..
 
