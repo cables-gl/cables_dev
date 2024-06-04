@@ -2185,8 +2185,10 @@ export default class SharedOpsUtil extends SharedUtil
             newName = "";
         }
 
-        let opNamespace = this.getNamespace(newName);
-        if (!opNamespace || opNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
+        const newNamespace = this.getNamespace(newName);
+        const oldNamespace = this.getNamespace(oldName);
+        if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
+        if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(newName)) problems.patch_op_illegal_namespace = "Illegal patch op namespace: '" + newNamespace + "'.";
 
         if (newName.endsWith(".")) problems.name_ends_with_dot = "Op name cannot end with '.'";
         if (!newName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name does not start with '" + this.PREFIX_OPS + "'.";
@@ -2204,6 +2206,10 @@ export default class SharedOpsUtil extends SharedUtil
             matchString += "\\-";
         }
         matchString += "]";
+        if (this.isPatchOp(oldName) && this.isPatchOp(newName) && (oldNamespace !== newNamespace))
+        {
+            problems.patch_op_rename_illegal = "Patch ops cannot be renamed to another patch, use copypaste to use the op in other patches";
+        }
 
         if (newName.match(matchString)) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
 
