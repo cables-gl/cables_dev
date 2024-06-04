@@ -51,6 +51,7 @@ fi
 git checkout develop
 git pull
 npm install
+npm run build
 cd ..
 
 echo "INSTALLING CORE..."
