@@ -28,7 +28,7 @@ git checkout master
 git pull
 nvm install
 nvm use
-npm install
+npm ci
 npm run build
 cd ..
 
@@ -40,7 +40,7 @@ git checkout master
 git pull
 nvm install
 nvm use
-npm install
+npm ci
 npm run build
 cd ..
 
@@ -50,7 +50,7 @@ git checkout master
 git pull
 nvm install
 nvm use
-npm install
+npm ci
 npm run build
 cd ..
 
@@ -60,7 +60,7 @@ git checkout master
 git pull
 nvm install
 nvm use
-npm install
+npm ci
 npm run build:live
 cd ..
 echo "DONE"

@@ -9,7 +9,7 @@ cd ~/cables/cables_api
 git pull
 nvm install
 nvm use
-npm install
+npm ci
 npm run build
 pm2 restart server_sandbox
 pm2 restart server_api

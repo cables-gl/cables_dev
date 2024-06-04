@@ -6,7 +6,7 @@ const standalone = args && args[0] === "standalone";
 
 let commands = [
     {
-        "command": "cd shared && npm install",
+        "command": "cd shared && npm ci",
         "name": "core",
         "prefixColor": "yellow",
     },

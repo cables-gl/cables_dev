@@ -18,22 +18,22 @@ install:
 ```
 git clone git@github.com:cables-gl/cables_dev.git
 cd cables_dev
-npm i
+npm ci
 git clone git@github.com:pandrr/cables.git
 git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:cables-gl/cables_ui.git
 cd cables_api
 git checkout develop
-npm i
+npm ci
 cd ..
 cd cables_ui
 git checkout develop
 touch scss/svgicons.scss
-npm i
+npm ci
 cd ..
 cd cables
 git checkout develop
-npm i
+npm ci
 cd ..
 ```
 * edit cables_api/cables.json as needed (copy from cables_api/cables_example.json first)
@@ -136,7 +136,7 @@ brew install imagemagick
 * increase your "ulimit -n" (on OSX: `launchctl limit maxfiles 16384 16384 && ulimit -n 16384`)
 * on linux try
   * `sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm` (`install_local.sh` does that for you)
-* if you have strange errors of concurrently in cables_ui: use `npm install --unsafe-perm=true`
+* if you have strange errors of concurrently in cables_ui: use `npm ci --unsafe-perm=true`
 * if you get "reached num max file watchers" errors: https://stackoverflow.com/a/56292289
 * how to don't get binary merge conflicts:
   * `git config --global merge.ours.driver true`
