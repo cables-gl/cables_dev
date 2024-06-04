@@ -9,11 +9,11 @@ cd ~/cables/cables
 git pull
 nvm install
 nvm use
-npm ci
+npm install
 npm run build
 
 cd ~/cables/cables_ui
-npm ci
+nvm install
 nvm use
 npm run build
 

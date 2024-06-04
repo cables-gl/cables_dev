@@ -9,28 +9,28 @@ cd ~/cables/shared
 git pull
 nvm install
 nvm use
-npm ci
+npm install
 npm run build
 
 cd ~/cables/cables_ui
 git pull
 nvm install
 nvm use
-npm ci
+npm install
 npm run build
 
 cd ~/cables/cables
 git pull
 nvm install
 nvm use
-npm ci
+npm install
 npm run build
 
 cd ~/cables/cables_api
 git pull
 nvm install
 nvm use
-npm ci
+npm install
 npm run build
 pm2 restart server_sandbox
 pm2 restart server_api

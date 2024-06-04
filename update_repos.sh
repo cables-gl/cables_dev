@@ -22,7 +22,7 @@ set -e
 set -o pipefail
 
 echo "UPDATING DEV..."
-npm ci
+npm i
 
 echo "UPDATING SHARED..."
 cd shared
@@ -44,7 +44,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm ci
+npm i
 npm run build
 cd ..
 
@@ -68,7 +68,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm ci
+npm i
 cd ..
 
 if [ -d cables_api ]; then
@@ -92,7 +92,7 @@ if [ -d cables_api ]; then
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
-  npm ci
+  npm i
   cd ..
 fi
 
@@ -116,7 +116,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm ci
+npm i
 cd ..
 echo "DONE"
 
@@ -141,7 +141,7 @@ if [ -d cables_electron ]; then
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
-  npm ci
+  npm i
   cd ..
 fi
 echo "DONE"
