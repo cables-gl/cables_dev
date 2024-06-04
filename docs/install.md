@@ -18,22 +18,22 @@ install:
 ```
 git clone git@github.com:cables-gl/cables_dev.git
 cd cables_dev
-npm i
+npm install --no-save
 git clone git@github.com:cables-gl/cables.git
 git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:cables-gl/cables_ui.git
 cd cables_api
 git checkout develop
-npm i
+npm install --no-save
 cd ..
 cd cables_ui
 git checkout develop
 touch scss/svgicons.scss
-npm i
+npm install --no-save
 cd ..
 cd cables
 git checkout develop
-npm i
+npm install --no-save
 cd ..
 ```
 * edit cables_api/cables.json as needed (copy from cables_api/cables_example.json first)

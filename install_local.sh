@@ -41,7 +41,7 @@ fi
 
 set -e
 set -o pipefail
-npm install
+npm install --no-save
 echo "INSTALLING SHARED..."
 cd shared/
 if [ "$CLEAN" = "true" ]; then
@@ -50,7 +50,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git checkout develop
 git pull
-npm install
+npm install --no-save
 npm run build
 cd ..
 
@@ -65,7 +65,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git checkout develop
 git pull
-npm install
+npm install --no-save
 cd ..
 
 echo "INSTALLING API..."
@@ -79,7 +79,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git checkout develop
 git pull
-npm install
+npm install --no-save
 cd ..
 
 echo "INSTALLING UI..."
@@ -93,7 +93,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git checkout develop
 git pull
-npm install
+npm install --no-save
 cd ..
 
 echo "INSTALLING ELECTRON..."
@@ -107,7 +107,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git pull
 git checkout develop
-npm install
+npm install --no-save
 cd ..
 
 echo "INSTALLING DEFAULT ASSETS...";

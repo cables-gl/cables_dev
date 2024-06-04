@@ -22,7 +22,7 @@ set -e
 set -o pipefail
 
 echo "UPDATING DEV..."
-npm i
+npm install --no-save
 
 echo "UPDATING SHARED..."
 cd shared
@@ -44,7 +44,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm i
+npm install --no-save
 npm run build
 cd ..
 
@@ -68,7 +68,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm i
+npm install --no-save
 cd ..
 
 if [ -d cables_api ]; then
@@ -92,7 +92,7 @@ if [ -d cables_api ]; then
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
-  npm i
+  npm install --no-save
   cd ..
 fi
 
@@ -116,7 +116,7 @@ fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
-npm i
+npm install --no-save
 cd ..
 echo "DONE"
 
@@ -141,7 +141,7 @@ if [ -d cables_electron ]; then
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
-  npm i
+  npm install --no-save
   cd ..
 fi
 echo "DONE"
