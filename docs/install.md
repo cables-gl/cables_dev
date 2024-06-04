@@ -19,7 +19,7 @@ install:
 git clone git@github.com:cables-gl/cables_dev.git
 cd cables_dev
 npm i
-git clone git@github.com:pandrr/cables.git
+git clone git@github.com:cables-gl/cables.git
 git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:cables-gl/cables_ui.git
 cd cables_api
@@ -243,7 +243,7 @@ branch before then merging develop and building.
 ### hook_core.sh
 
 * intended for webhook on dev
-* pulls current branch of `pandrr/cables`
+* pulls current branch of `cables-gl/cables`
 * runs `npm` to build
 * runs `npm` to build `cables_ui` to copy over updates
 

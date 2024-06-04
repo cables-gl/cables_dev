@@ -55,7 +55,7 @@ cd ..
 
 echo "INSTALLING CORE..."
 if [ ! -d "cables/" ]; then
-  git clone git@github.com:pandrr/cables.git
+  git clone git@github.com:cables-gl/cables.git
 fi
 cd cables/
 if [ "$CLEAN" = "true" ]; then
