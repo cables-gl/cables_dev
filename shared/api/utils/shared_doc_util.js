@@ -660,7 +660,7 @@ export default class SharedDocUtil extends SharedUtil
         return cleanDocs;
     }
 
-    getAllExtensionDocs()
+    getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false)
     {
         const collectionPath = this._cables.getExtensionOpsPath();
         const exDirs = fs.readdirSync(collectionPath);
@@ -672,7 +672,7 @@ export default class SharedDocUtil extends SharedUtil
                 const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
                 if (extensionOps.length > 0)
                 {
-                    const extDocs = this.getExtensionDoc(extensionName);
+                    const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
                     if (extDocs) extensions.push(extDocs);
                 }
             }
@@ -680,11 +680,11 @@ export default class SharedDocUtil extends SharedUtil
         return extensions;
     }
 
-    getExtensionDoc(extensionName)
+    getExtensionDoc(extensionName, filterOldVersions = false, filterDeprecated = false)
     {
         const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
         const shortName = this._opsUtil.getExtensionShortName(extensionName);
-        return this._getNamespaceDocs(extensionName, shortName, null, extensionOps);
+        return this._getNamespaceDocs(extensionName, shortName, null, extensionOps, filterOldVersions, filterDeprecated);
     }
 
     rebuildOpCaches(cb, scopes = ["core"], clearFiles = false)
@@ -762,16 +762,26 @@ export default class SharedDocUtil extends SharedUtil
         return opDocs;
     }
 
-    _getNamespaceDocs(namespaceName, shortName, team, ops = [])
+    _getNamespaceDocs(namespaceName, shortName, team, opNames = [], filterOldVersions = false, filterDeprecated = false)
     {
+        if (opNames && (filterOldVersions || filterDeprecated))
+        {
+            let opDocs = this._docsUtil.getOpDocsForCollections(opNames);
+            opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
+            if (filterDeprecated) opNames = opNames.filter((opName) => { return !this._opsUtil.isDeprecated(opName); });
+            if (filterOldVersions) opNames = opNames.filter((opName) =>
+            {
+                return !this._opsUtil.isOpOldVersion(opName, opDocs);
+            });
+        }
         let extDocs = {
             "name": namespaceName,
             "summary": "",
             "shortName": shortName,
             "nameSpace": namespaceName,
             "shortNameDisplay": shortName,
-            "numOps": ops.length,
-            "ops": ops
+            "numOps": opNames.length,
+            "ops": opNames
         };
         if (team)
         {
