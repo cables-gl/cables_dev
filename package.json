@@ -30,6 +30,7 @@
         "uglify-es": "3.3.9",
         "npm": "10.5.2",
         "prettier": "3.2.5",
-        "prettier-eslint": "16.3.0"
+        "prettier-eslint": "16.3.0",
+        "eslint-plugin-import": "2.27.5"
     }
 }
