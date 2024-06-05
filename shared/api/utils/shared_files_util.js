@@ -85,7 +85,7 @@ export default class SharedFilesUtil extends SharedUtil
         if (fileDb.suffix && (fileDb.suffix.endsWith(".png") || fileDb.suffix.endsWith(".jpg") || fileDb.suffix.endsWith(".jpeg") || fileDb.suffix.endsWith(".svg") || fileDb.suffix.endsWith(".webp") || fileDb.suffix.endsWith(".avif")))
         {
             info.imgPreview = this.getFileAssetUrlPath(fileDb);
-            info.imgPreview += "?rnd" + info.cachebuster;
+            if (info.cachebuster) info.imgPreview += "?rnd" + info.cachebuster;
 
             const dimensions = this.imageSize(fn);
             info.imgSizeWidth = dimensions.width;
