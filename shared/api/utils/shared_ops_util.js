@@ -1507,8 +1507,13 @@ export default class SharedOpsUtil extends SharedUtil
         const theVersion = this.getVersionFromOpName(opname);
 
         for (let i = 0; i < opDocs.length; i++)
-            if (opDocs[i] && opDocs[i].nameNoVersion === opnameWithoutVersion)
-                if (opDocs[i].version > theVersion) return true;
+        {
+            const opDoc = opDocs[i];
+            if (opDoc && opDoc.nameNoVersion === opnameWithoutVersion)
+            {
+                if (opDoc.version > theVersion) return true;
+            }
+        }
 
         return false;
     }
