@@ -2084,6 +2084,11 @@ export default class SharedOpsUtil extends SharedUtil
 
     updateOpCode(opName, author, code)
     {
+        const opDir = this.getOpSourceDir(opName);
+        if (!fs.existsSync(opDir))
+        {
+            mkdirp.sync(opDir);
+        }
         const fn = this.getOpAbsoluteFileName(opName);
         let returnedCode = this._helperUtil.removeTrailingSpaces(code);
         fs.writeFileSync(fn, returnedCode);
