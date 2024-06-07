@@ -1580,6 +1580,12 @@ export default class SharedOpsUtil extends SharedUtil
             hasChanged = true;
         }
 
+        if (!obj.hasOwnProperty("license"))
+        {
+            obj.license = defaults.license;
+            hasChanged = true;
+        }
+
         if (hasChanged)
         {
             jsonfile.writeFileSync(fn, obj, { "encoding": "utf-8", "spaces": 4 });
@@ -1591,7 +1597,8 @@ export default class SharedOpsUtil extends SharedUtil
     {
         const defaults = {
             "id": uuidv4(),
-            "created": Date.now()
+            "created": Date.now(),
+            "license": "MIT"
         };
         if (author) defaults.authorName = author.username;
         return defaults;
