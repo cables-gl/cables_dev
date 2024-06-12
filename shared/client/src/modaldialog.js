@@ -56,7 +56,6 @@ export default class ModalDialog extends Events
         if (autoOpen) this.show();
 
         ele.byId("modalclose").style.display = "block";
-
         if (window.gui) gui.currentModal = this;
     }
 
@@ -250,7 +249,7 @@ export default class ModalDialog extends Events
 
         this._addListeners();
 
-        CABLES.UI.hideToolTip();
+        if (CABLES && CABLES.UI) CABLES.UI.hideToolTip();
 
         this.emitEvent("onShow", this);
     }

@@ -18,6 +18,11 @@ export default class SharedProjectsUtil extends SharedUtil
         return path.join(this._cables.getAssetPath(), String(projectId));
     }
 
+    getAssetPathUrl(projectId)
+    {
+        return path.join("/assets/", projectId, "/");
+    }
+
     getScreenShotPath(pId)
     {
         pId = sanitizeFileName("" + pId);
@@ -173,5 +178,95 @@ export default class SharedProjectsUtil extends SharedUtil
             }
         }
         return assetPorts;
+    }
+
+    getAvailableLibs(project)
+    {
+        let _libs = [];
+        if (project)
+        {
+            _libs = this.getAssetLibs(project);
+        }
+        _libs = _libs.concat(fs.readdirSync(this._cables.getLibsPath()));
+        const libs = [];
+        for (let i = 0; i < _libs.length; i++)
+        {
+            let skip = false;
+            if (_libs[i].endsWith(".js"))
+            {
+                const libName = path.parse(_libs[i]);
+                if (libName)
+                {
+                    let jsonName = path.join(this._cables.getLibsPath(), libName.name);
+                    jsonName += ".json";
+                    if (fs.existsSync(jsonName))
+                    {
+                        const json = JSON.parse(fs.readFileSync(jsonName));
+                        if (json.hidden)
+                        {
+                            skip = true;
+                        }
+                    }
+                }
+                if (!skip)
+                {
+                    libs.push(_libs[i]);
+                }
+            }
+        }
+        return libs;
+    }
+
+    getCoreLibs()
+    {
+        const _coreLibs = fs.readdirSync(this._cables.getCoreLibsPath());
+        const coreLibs = [];
+        for (let i = 0; i < _coreLibs.length; i++)
+        {
+            const coreFilename = _coreLibs[i];
+            if (coreFilename.endsWith(".js"))
+            {
+                coreLibs.push(coreFilename.split(".")[0]);
+            }
+        }
+        return coreLibs;
+    }
+
+    getAssetLibs(project)
+    {
+        if (!project) return [];
+        const libs = [];
+        const assetPath = this.getAssetPath(project._id);
+        if (fs.existsSync(assetPath))
+        {
+            let _libs = fs.readdirSync(assetPath);
+            for (let i = 0; i < _libs.length; i++)
+            {
+                let skip = false;
+                if (_libs[i].endsWith(".js"))
+                {
+                    const libName = path.parse(_libs[i]);
+                    if (libName)
+                    {
+                        let jsonName = path.join(this._cables.getLibsPath(), libName.name);
+                        jsonName += ".json";
+                        if (fs.existsSync(jsonName))
+                        {
+                            const json = JSON.parse(fs.readFileSync(jsonName));
+                            if (json.hidden)
+                            {
+                                skip = true;
+                            }
+                        }
+                    }
+                    if (!skip)
+                    {
+                        libs.push(path.join("/assets", String(project._id), _libs[i]));
+                    }
+                }
+            }
+        }
+
+        return libs;
     }
 }
