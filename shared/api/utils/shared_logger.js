@@ -193,7 +193,7 @@ export default class SharedLogger extends SharedUtil
                 const stack = err.stack.shift();
                 callerFile = stack.getFileName();
                 currentFileLine = stack.getLineNumber();
-                if (currentFileName !== callerFile) break;
+                if (currentFileName !== callerFile && !callerFile.includes("logger.js")) break;
             }
         }
         catch (e) {}
