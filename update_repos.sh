@@ -3,6 +3,10 @@
 # updates all repositories and merge develop
 #
 
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+WARNING='\033[0;31m'
+NC='\033[0m' # No Color
+
 git pull
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
 
@@ -46,7 +50,7 @@ if [ "clean" == "${1}" ]; then
 fi
 npm install --no-save
 npm run build
-cd ..
+cd $BASEDIR
 
 echo "UPDATING CORE..."
 cd cables
@@ -63,13 +67,29 @@ if [ "master" != "${branch}" ]; then
     echo "merging current state of origin/develop into ${branch}";
     git merge origin/develop;
 else
-    echo "WARNING: not merging origin/develop into master!"
+    echo "${WARNING}not merging origin/develop into master!${NC}"
 fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
 npm install --no-save
-cd ..
+cd $BASEDIR
+
+echo "UPDATING EXTENSIONS..."
+OPSDIR=cables/src/ops/extensions/
+branch="main"
+if [ -d "$OPSDIR" ]; then
+  cd $OPSDIR
+  if [ -d ".git" ]; then
+      git checkout $branch
+      git pull
+  else
+      echo "${WARNING} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
+  fi
+else
+  echo "${WARNING}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
+fi
+cd $BASEDIR
 
 if [ -d cables_api ]; then
   echo "UPDATING API..."
@@ -87,14 +107,14 @@ if [ -d cables_api ]; then
       echo "merging current state of origin/develop into ${branch}";
       git merge origin/develop;
   else
-      echo "WARNING: not merging origin/develop into master!"
+      echo "${WARNING}not merging origin/develop into master!${NC}"
   fi
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
   npm install --no-save
-  cd ..
 fi
+cd $BASEDIR
 
 echo "UPDATING UI..."
 cd cables_ui
@@ -111,13 +131,13 @@ if [ "master" != "${branch}" ]; then
     echo "merging current state of origin/develop into ${branch}";
     git merge origin/develop;
 else
-    echo "WARNING: not merging origin/develop into master!"
+    echo "${WARNING}not merging origin/develop into master!${NC}"
 fi
 if [ "clean" == "${1}" ]; then
 	rm -rf node_modules/
 fi
 npm install --no-save
-cd ..
+cd $BASEDIR
 echo "DONE"
 
 if [ -d cables_electron ]; then
@@ -136,12 +156,13 @@ if [ -d cables_electron ]; then
       echo "merging current state of origin/develop into ${branch}";
       git merge origin/develop;
   else
-      echo "WARNING: not merging origin/develop into master!"
+      echo "${WARNING}not merging origin/develop into master!${NC}"
   fi
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
   npm install --no-save
-  cd ..
 fi
+cd $BASEDIR
+
 echo "DONE"
