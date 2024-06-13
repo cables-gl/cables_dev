@@ -20,7 +20,7 @@ export default class SharedProjectsUtil extends SharedUtil
 
     getAssetPathUrl(projectId)
     {
-        return path.join("/assets/", projectId, "/");
+        return "/assets/" + projectId + "/";
     }
 
     getScreenShotPath(pId)
