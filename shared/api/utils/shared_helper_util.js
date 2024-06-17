@@ -326,6 +326,37 @@ export default class SharedHelperUtil extends SharedUtil
         return results;
     }
 
+    getFileNamesRecursive(baseDir, fileName = null, dir = null)
+    {
+        if (!dir) dir = baseDir;
+        let results = [];
+        let list = fs.readdirSync(dir);
+        list.forEach((file) =>
+        {
+            file = dir + "/" + file;
+            let stat = fs.statSync(file);
+            if (stat && stat.isDirectory())
+            {
+                // recurse into subdirectory
+                results = [...results, ...this.getFileNamesRecursive(baseDir, fileName, file)];
+            }
+            else
+            {
+                // is a file
+                const fileBaseName = file.replace(baseDir, "");
+                if (fileName)
+                {
+                    if (fileBaseName.endsWith(fileName)) results.push(fileBaseName);
+                }
+                else
+                {
+                    results.push(fileBaseName);
+                }
+            }
+        });
+        return results;
+    }
+
     cleanJson(obj)
     {
         for (const i in obj)

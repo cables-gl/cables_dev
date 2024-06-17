@@ -708,29 +708,29 @@ export default class SharedOpsUtil extends SharedUtil
         const attachmentFiles = [];
         const dirName = this.getOpAbsolutePath(opName);
 
-        try
+        if (fs.existsSync(dirName))
         {
-            const attFiles = fs.readdirSync(dirName);
-            for (const j in attFiles) if (attFiles[j].indexOf("att_") === 0) attachmentFiles.push(attFiles[j]);
-        }
-        catch (e)
-        {
-            this._log.warn("getattachmentfiles exception " + dirName, opName);
+            try
+            {
+                const attFiles = fs.readdirSync(dirName);
+                for (const j in attFiles) if (attFiles[j].indexOf("att_") === 0) attachmentFiles.push(attFiles[j]);
+            }
+            catch (e)
+            {
+                this._log.warn("getattachmentfiles exception ", opName, e.message);
+            }
         }
 
         return attachmentFiles;
     }
 
-    getAttachment(opName, attachmentName, res = null)
+    getAttachment(opName, attachmentName)
     {
         if (!opName || !attachmentName) return null;
         let attachment = null;
-        if (res) res.startTime("getAttachmentFiles");
         const attachmentFiles = this.getAttachmentFiles(opName);
-        if (res) res.endTime("getAttachmentFiles");
 
         const dirName = this.getOpAbsolutePath(opName);
-        if (res) res.startTime("getAttachmentFileContent");
         for (let i = 0; i < attachmentFiles.length; i++)
         {
             const file = attachmentFiles[i];
@@ -745,7 +745,6 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-        if (res) res.endTime("getAttachmentFileContent");
         return attachment;
     }
 
@@ -2498,7 +2497,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (updates)
         {
             const result = {};
-            const changelogMessages = [];
             const keys = Object.keys(updates);
             if (keys.length > 0)
             {
@@ -2556,7 +2554,6 @@ export default class SharedOpsUtil extends SharedUtil
                             const newLibNames = updates.libs;
                             this.updateLibs(opName, newLibNames);
                             result.libs = this.getOpLibs(opName);
-                            changelogMessages.push(" updated libs: " + newLibNames.join(","));
                             rebuildOpDocs = true;
                             break;
                         case "coreLibs":
@@ -2564,15 +2561,10 @@ export default class SharedOpsUtil extends SharedUtil
                             const newCoreLibNames = updates.coreLibs;
                             this.updateCoreLibs(opName, newCoreLibNames);
                             result.coreLibs = this.getOpCoreLibs(opName);
-                            changelogMessages.push(" updated core libs: " + newCoreLibNames.join(","));
                             rebuildOpDocs = true;
                             break;
                         }
                     }
-                }
-                if (changelogMessages.length > 0)
-                {
-                    this.addOpChangeLogMessages(user, opName, changelogMessages, "");
                 }
                 if (rebuildOpDocs)
                 {
@@ -2626,8 +2618,9 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    createOp(opName, author, code = null, layout = null, libs = null, coreLibs = null, attachments = null, targetDir = null)
+    createOp(opName, author, code = null, opDocDefaults = null, attachments = null, targetDir = null)
     {
+        if (!opDocDefaults) opDocDefaults = {};
         let parts = opName.split(".");
         if (parts[0] === "Ops" && parts[1] === "User")
         {
@@ -2637,7 +2630,11 @@ export default class SharedOpsUtil extends SharedUtil
 
         const result = {};
         let fn = this.getOpAbsoluteFileName(opName);
-        let basePath = this.getOpAbsolutePath(opName);
+        if (!fn)
+        {
+            return { "problems": ["invalid op name" + opName] };
+        }
+        let basePath = this.getOpTargetDir(opName);
         if (targetDir)
         {
             basePath = targetDir;
@@ -2647,9 +2644,13 @@ export default class SharedOpsUtil extends SharedUtil
         }
         mkdirp.sync(basePath);
 
-        const newJson = this.getOpDefaults(opName, author);
-        const changelogMessages = [];
-        changelogMessages.push("created op");
+        const opDefaults = this.getOpDefaults(opName, author);
+        let newJson = opDefaults;
+        if (opDocDefaults)
+        {
+            delete opDocDefaults.id;
+            newJson = { ...opDefaults, ...opDocDefaults };
+        }
 
         const opId = newJson.id;
         code = code ||
@@ -2670,29 +2671,27 @@ export default class SharedOpsUtil extends SharedUtil
             + "};\n";
         fs.writeFileSync(fn, code);
 
-        if (layout)
+        if (opDocDefaults.layout)
         {
             const obj = newJson;
-            obj.layout = layout;
+            obj.layout = opDocDefaults.layout;
             if (obj.layout && obj.layout.name) delete obj.layout.name;
             result.layout = obj.layout;
         }
 
-        if (libs)
+        if (opDocDefaults.libs)
         {
-            const newLibNames = libs;
+            const newLibNames = opDocDefaults.libs;
             newJson.libs = newLibNames;
             result.libs = newLibNames;
-            changelogMessages.push(" updated libs: " + newLibNames.join(","));
         }
 
-        if (coreLibs)
+        if (opDocDefaults.coreLibs)
         {
             result.coreLibs = [];
-            const newCoreLibNames = coreLibs;
+            const newCoreLibNames = opDocDefaults.coreLibs;
             newJson.coreLibs = newCoreLibNames;
             result.coreLibs = newCoreLibNames;
-            changelogMessages.push(" updated core libs: " + newCoreLibNames.join(","));
         }
 
         jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
@@ -2708,22 +2707,18 @@ export default class SharedOpsUtil extends SharedUtil
             result.attachments = this.getAttachments(opName);
         }
 
-        if (changelogMessages.length > 0)
-        {
-            this.addOpChangeLogMessages(author, opName, changelogMessages, "");
-        }
-
+        this.addOpChangelog(author, opName, { "message": "op created", "type": "new op" });
         this._docsUtil.updateOpDocs(opName);
         this._docsUtil.addOpToLookup(opId, opName);
 
+        const response = {
+            "name": opName,
+            "id": opId,
+            "code": code,
+            "opDoc": newJson
+        };
         if (!attProblems)
         {
-            const response = {
-                "name": opName,
-                "id": opId,
-                "code": code,
-                "opDoc": newJson
-            };
             if (result.attachments)
             {
                 const attachmentFiles = this.getAttachmentFiles(opName);
@@ -2737,12 +2732,12 @@ export default class SharedOpsUtil extends SharedUtil
             }
             if (result.coreLibs) response.coreLibs = result.coreLibs;
             if (result.libs) response.libs = result.libs;
-            return response;
         }
         else
         {
-            return attProblems;
+            response.problems = attProblems;
         }
+        return response;
     }
 
     getOpAssetPorts(op, includeLibraryAssets = false)
@@ -2783,6 +2778,14 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
         return assetPorts;
+    }
+
+    getOpNameByAbsoluteFileName(fileName)
+    {
+        if (!fileName) return "";
+        const parts = path.parse(fileName);
+        if (parts && parts.name) return parts.name;
+        return "";
     }
 }
 
