@@ -142,8 +142,7 @@ class HandlebarsHelper
                 {
                     date = "";
                 }
-                //                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + date + "</span>");
-                return new Handlebars.SafeString(date);
+                return new Handlebars.SafeString("<span title=\"" + date + "\">" + date + "</span>");
             });
 
 
@@ -162,7 +161,22 @@ class HandlebarsHelper
                 {
                     displayDate = "";
                 }
-                //                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
+                return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
+            });
+
+            Handlebars.registerHelper("tooltipdate", (str) =>
+            {
+                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
+                let displayDate;
+                if (str && moment)
+                {
+                    const m = moment(str);
+                    displayDate = m.format("MMM D, YYYY [at] HH:mm");
+                }
+                else
+                {
+                    displayDate = "";
+                }
                 return new Handlebars.SafeString(displayDate);
             });
 
@@ -177,8 +191,7 @@ class HandlebarsHelper
                     date = m.format("YYYY-MM-DD");
                     displayDate = m.format("MMM D, YYYY");
                 }
-                // return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
-                return new Handlebars.SafeString(displayDate);
+                return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
 
             Handlebars.registerHelper("relativedate", (str) =>
@@ -190,7 +203,7 @@ class HandlebarsHelper
                 {
                     const m = moment(str);
                     displayDate = m.fromNow();
-                    // if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format("MMM D, YYYY [at] HH:mm");
+                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format("MMM D, YYYY [at] HH:mm");
                     date = m.format("MMM D, YYYY [at] HH:mm");
                 }
                 else
@@ -199,7 +212,6 @@ class HandlebarsHelper
                     displayDate = "";
                 }
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
-                /// return new Handlebars.SafeString(displayDate);
             });
         }
     }

@@ -27,7 +27,7 @@ export default class SharedHelperUtil extends SharedUtil
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 1000;
             const m = moment(date);
-            if (m.isBefore(moment().subtract(7, "days"))) return moment(date).format(this.DATE_FORMAT_DISPLAY);
+            if (m.isBefore(moment().subtract(7, "days"))) return moment(date).format("MMM D, YYYY [at] HH:mm");
             return m.fromNow();
         }
         else if (format === "displaydate")
@@ -39,6 +39,11 @@ export default class SharedHelperUtil extends SharedUtil
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 100;
             return moment(date).format("MMM DD YYYY ");
+        }
+        else if (format === "tooltipdate")
+        {
+            if (this.isNumeric(date) && String(date).length < 11) date *= 100;
+            return moment(date).format("MMM D, YYYY [at] HH:mm");
         }
         else
         {
