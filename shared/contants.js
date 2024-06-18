@@ -1,0 +1,10 @@
+const CablesConstants = {};
+CablesConstants.DATE_FORMAT_LOGDATE = "YYYY-MM-DD HH:mm";
+CablesConstants.DATE_FORMAT_DISPLAYDATE_DATE = "YYYY-MM-DD HH:mm";
+CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY = "MMM D, YYYY [at] HH:mm";
+CablesConstants.DATE_FORMAT_TOOLTIPDATE = "MMM D, YYYY [at] HH:mm";
+CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DATE = "YYYY-MM-DD";
+CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY = "MMM D, YYYY ";
+CablesConstants.DATE_FORMAT_RELATIVEDATE_CUTOFF_DAYS = 7;
+CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL = "MMM D, YYYY [at] HH:mm";
+export default CablesConstants;
