@@ -1,4 +1,5 @@
 import helper from "./helper.js";
+import CablesConstants from "../../contants.js";
 
 class HandlebarsHelper
 {
@@ -136,7 +137,7 @@ class HandlebarsHelper
                 let date;
                 if (str && moment)
                 {
-                    date = moment(str).format("YYYY-MM-DD HH:mm");
+                    date = moment(str).format(CablesConstants.DATE_FORMAT_LOGDATE);
                 }
                 else
                 {
@@ -154,8 +155,8 @@ class HandlebarsHelper
                 if (str && moment)
                 {
                     const m = moment(str);
-                    date = m.format("YYYY-MM-DD HH:mm");
-                    displayDate = m.format("MMM D, YYYY [at] HH:mm");
+                    date = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DATE);
+                    displayDate = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY);
                 }
                 else
                 {
@@ -171,7 +172,7 @@ class HandlebarsHelper
                 if (str && moment)
                 {
                     const m = moment(str);
-                    displayDate = m.format("MMM D, YYYY [at] HH:mm");
+                    displayDate = m.format(CablesConstants.DATE_FORMAT_TOOLTIPDATE);
                 }
                 else
                 {
@@ -188,8 +189,8 @@ class HandlebarsHelper
                 if (moment)
                 {
                     const m = moment(str);
-                    date = m.format("YYYY-MM-DD");
-                    displayDate = m.format("MMM D, YYYY");
+                    date = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DATE);
+                    displayDate = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY);
                 }
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
@@ -203,8 +204,8 @@ class HandlebarsHelper
                 {
                     const m = moment(str);
                     displayDate = m.fromNow();
-                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format("MMM D, YYYY [at] HH:mm");
-                    date = m.format("MMM D, YYYY [at] HH:mm");
+                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                    date = m.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
                 }
                 else
                 {

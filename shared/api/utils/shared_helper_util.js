@@ -3,6 +3,7 @@ import uuid from "uuid-v4";
 import moment from "moment";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
+import CablesConstants from "../../contants.js";
 
 /**
  * @abstract
@@ -21,29 +22,29 @@ export default class SharedHelperUtil extends SharedUtil
         if (format === "logdate")
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 1000;
-            return moment(date).format("YYYY-MM-DD HH:mm");
+            return moment(date).format(CablesConstants.DATE_FORMAT_LOGDATE);
         }
         else if (format === "relativedate")
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 1000;
             const m = moment(date);
-            if (m.isBefore(moment().subtract(7, "days"))) return moment(date).format("MMM D, YYYY [at] HH:mm");
+            if (m.isBefore(moment().subtract(7, "days"))) return moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
             return m.fromNow();
         }
         else if (format === "displaydate")
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 1000;
-            return moment(date).format("MMM D, YYYY [at] HH:mm");
+            return moment(date).format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY);
         }
         else if (format === "displaydateNoTime")
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 100;
-            return moment(date).format("MMM DD YYYY ");
+            return moment(date).format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY);
         }
         else if (format === "tooltipdate")
         {
             if (this.isNumeric(date) && String(date).length < 11) date *= 100;
-            return moment(date).format("MMM D, YYYY [at] HH:mm");
+            return moment(date).format(CablesConstants.DATE_FORMAT_TOOLTIPDATE);
         }
         else
         {

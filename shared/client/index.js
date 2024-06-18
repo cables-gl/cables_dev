@@ -5,6 +5,7 @@ import TalkerAPI from "./src/talkerapi.js";
 import Logger from "./src/logger.js";
 import ModalBackground from "./src/modalbg.js";
 import HandlebarsHelper from "./src/handlebars.js";
+import CablesConstants from "../contants.js";
 
 export {
     helper,
@@ -13,5 +14,6 @@ export {
     TalkerAPI,
     Logger,
     ModalBackground,
-    HandlebarsHelper
+    HandlebarsHelper,
+    CablesConstants
 };
