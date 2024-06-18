@@ -197,7 +197,7 @@ class HandlebarsHelper
             Handlebars.registerHelper("relativedate", (str) =>
             {
                 if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date;
+                let date = str;
                 let displayDate;
                 if (str && moment)
                 {
