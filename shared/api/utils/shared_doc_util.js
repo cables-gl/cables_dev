@@ -500,7 +500,6 @@ export default class SharedDocUtil extends SharedUtil
                 if (js.todos)
                 {
                     docObj.todos = js.todos;
-                    for (let i = 0; i < js.todos.length; i++) js.todos[i].dateReadable = moment(js.todos[i].date).format("YYYY-MM-DD");
                 }
                 if (js.coreLibs)
                 {
