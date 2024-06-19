@@ -1294,7 +1294,6 @@ export default class SharedOpsUtil extends SharedUtil
         }
         else if (this.isExtensionOp(outerName))
         {
-            if (this.isExtensionOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) Extension ops cannot contain ops of other extensions.";
             if (this.isTeamOp(innerName)) return "(SubpatchOp) Extension ops cannot contain team ops.";
             if (this.isUserOp(innerName)) return "(SubpatchOp) Extension ops cannot contain user ops.";
             if (this.isPatchOp(innerName)) return "(SubpatchOp) Extension ops cannot contain patch ops.";
