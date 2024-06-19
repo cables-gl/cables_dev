@@ -1602,11 +1602,18 @@ export default class SharedOpsUtil extends SharedUtil
         return defaults;
     }
 
-    getNamespace(opname)
+    getNamespace(opname, topLevel = false)
     {
         if (!opname) return "";
         const parts = opname.split(".");
-        parts.length -= 1;
+        if (topLevel)
+        {
+            parts.length = this.isCoreOp(opname) ? 2 : 3;
+        }
+        else
+        {
+            parts.length -= 1;
+        }
         return parts.join(".") + ".";
     }
 
