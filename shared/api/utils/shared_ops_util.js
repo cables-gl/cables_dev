@@ -70,6 +70,10 @@ export default class SharedOpsUtil extends SharedUtil
             this.PREFIX_USEROPS
         ];
 
+        this.VISIBILITY_PUBLIC = "public";
+        this.VISIBILITY_UNLISTED = "unlisted";
+        this.VISIBILITY_PRIVATE = "private";
+
         this.cli = new this._CLIEngine(this._getCLIConfig());
     }
 
@@ -1602,11 +1606,18 @@ export default class SharedOpsUtil extends SharedUtil
         return defaults;
     }
 
-    getNamespace(opname)
+    getNamespace(opname, topLevel = false)
     {
         if (!opname) return "";
         const parts = opname.split(".");
-        parts.length -= 1;
+        if (topLevel)
+        {
+            parts.length = this.isCoreOp(opname) ? 2 : 3;
+        }
+        else
+        {
+            parts.length -= 1;
+        }
         return parts.join(".") + ".";
     }
 
@@ -1924,6 +1935,13 @@ export default class SharedOpsUtil extends SharedUtil
         let docs = {};
         if (fs.existsSync(file)) docs = jsonfile.readFileSync(file);
         return docs;
+    }
+
+    getCollectionVisibility(name, defaultVisibility = "public")
+    {
+        const docs = this.getCollectionDocs(name);
+        if (docs.hasOwnProperty("visibility")) return docs.visibility;
+        return defaultVisibility;
     }
 
     getTeamNamespaceJsonPath(name, create = true)
