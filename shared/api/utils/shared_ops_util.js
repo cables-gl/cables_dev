@@ -7,9 +7,9 @@ import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import eslintAirbnbBase from "eslint-config-airbnb-base";
+import tokenString from "glsl-tokenizer/string.js";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
-
 /**
  * @abstract
  */
@@ -392,7 +392,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null, prepareForExport = false)
+    getOpFullCode(fn, opName, opId = null, prepareForExport = false, minifyGlsl = false)
     {
         if (!fn || !opName) return "";
 
@@ -446,9 +446,21 @@ export default class SharedOpsUtil extends SharedUtil
                 }
                 else if (dir[i].startsWith("att_"))
                 {
+                    let attachment = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
+                    if (minifyGlsl && (dir[i].endsWith(".att") || dir[i].endsWith(".frag")))
+                    {
+                        try
+                        {
+                            attachment = this._minifyGlsl(attachment);
+                        }
+                        catch (e)
+                        {
+                            this._log.warn("failed to minify glsl, keeping unminified", opName, dir[i], e);
+                        }
+                    }
                     let varName = dir[i].substr(4, dir[i].length - 4);
                     varName = varName.replace(/\./g, "_");
-                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8")) + ",";
+                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(attachment) + ",";
                 }
             }
 
@@ -638,18 +650,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": marked("use `op.log`, not `console.log` ")
             });
 
-            // if (code.indexOf("console.warn") > -1) srcWarnings.push({
-            //     "type": "code",
-            //     "id": "console.warn",
-            //     "text": marked("use `op.logWarn`, not `console.warn` ")
-            // });
-
-            // if (code.indexOf("console.error") > -1) srcWarnings.push({
-            //     "type": "code",
-            //     "id": "console.error",
-            //     "text": marked("use `op.logError`, not `console.error` ")
-            // });
-
             const atts = this.getAttachmentFiles(opname);
 
             for (let i = 0; i < atts.length; i++)
@@ -664,7 +664,6 @@ export default class SharedOpsUtil extends SharedUtil
                         "id": "gl_FragColor",
                         "text": marked(atts[i] + ": use `outColor=vec4();` instead of gl_FragColor.")
                     });
-                    // if (att.indexOf("precision ") > -1) srcWarnings.push({ "type": "shadercode", "id": "precision ", "text": marked(atts[i] + ": do not set precision in shadercode") });
                     if (att.indexOf("texture2D(") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "texture2D ",
@@ -1194,7 +1193,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false, minifyGlsl = false)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1242,7 +1241,7 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId, prepareForExport);
+                code += this.getOpFullCode(fn, opName, ops[i].opId, prepareForExport, minifyGlsl);
             }
             catch (e)
             {
@@ -2803,6 +2802,61 @@ export default class SharedOpsUtil extends SharedUtil
         const parts = path.parse(fileName);
         if (parts && parts.name) return parts.name;
         return "";
+    }
+
+    _minifyGlsl(glsl)
+    {
+        if (!glsl) return "";
+
+        const tokens = tokenString(glsl);
+        let str = "";
+        for (let i = 0; i < tokens.length - 1; i++)
+        {
+            const token = tokens[i];
+
+            if (i > 0)
+            {
+                if (token.type == "line-comment") continue;
+                if (token.type == "block-comment") continue;
+
+                if (token.type == "whitespace" && token.data == "\n" && tokens[i - 1].type == "line-comment") continue;
+
+                if (token.type == "whitespace")
+                {
+                    if (token.data.indexOf("\n") == 0 && token.data.endsWith(" ")) token.data = "\n";
+
+                    for (let j = 0; j < 3; j++)
+                        token.data = token.data.replaceAll("\n\n", "\n");
+
+                    token.data = token.data.replaceAll("\t", " ");
+
+                    for (let j = 0; j < 3; j++)
+                        token.data = token.data.replaceAll("  ", " ");
+
+                    for (let j = 0; j < 2; j++)
+                        token.data = token.data.replaceAll("\n\n", "\n");
+                }
+
+                if (token.type == "float")
+                    while (token.data.indexOf(".") > 0 && token.data.endsWith("0"))
+                        token.data = token.data.substring(0, token.data.length - 1);
+
+                if (token.type == "whitespace" && token.data == " ")
+                {
+                    if (tokens[i - 1].type == "ident" && tokens[i + 1].type == "ident") continue;
+                    if (tokens[i - 1].type == "ident" && tokens[i + 1].type == "operator") continue;
+                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "ident") continue;
+                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "float") continue;
+                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "keyword") continue;
+                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "operator") continue;
+                    if (tokens[i + 1].type != "ident" && tokens[i + 1].type != "keyword" && tokens[i - 1].type != "ident" && tokens[i - 1].type != "keyword") continue;
+                }
+            }
+
+            str += token.data;
+        }
+
+        return str;
     }
 }
 
