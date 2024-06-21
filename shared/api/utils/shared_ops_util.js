@@ -8,8 +8,10 @@ import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import eslintAirbnbBase from "eslint-config-airbnb-base";
 import tokenString from "glsl-tokenizer/string.js";
+import XMLWriter from "xml-writer";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
+
 /**
  * @abstract
  */
@@ -2858,6 +2860,232 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         return str;
+    }
+
+    getOpSVG(opName, backgroundOptions)
+    {
+        const opDoc = this._docsUtil.getOpDocsFromFile(opName);
+
+        if (!opDoc)
+        {
+            return this._getErrorSvg(opName, "unknown filename", backgroundOptions);
+        }
+
+        const xw = new XMLWriter();
+        const height = 40;
+        let width = 200;
+
+        xw.startDocument();
+        xw.startElement("svg");
+
+        if (opDoc.layout)
+        {
+            if (opDoc.layout.portsIn) width = Math.max(width, opDoc.layout.portsIn.length * 14);
+            if (opDoc.layout.portsOut) width = Math.max(width, opDoc.layout.portsOut.length * 14);
+            if (backgroundOptions && backgroundOptions.imageWidth && backgroundOptions.imageWidth < width) backgroundOptions.imageWidth = width + (backgroundOptions.paddingLeft * 2);
+        }
+
+        xw.writeAttribute("xmlns", "http://www.w3.org/2000/svg");
+        xw.writeAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        xw.writeAttribute("version", "1.1");
+
+        if (backgroundOptions)
+        {
+            const viewboxWidth = backgroundOptions.imageWidth || width + (backgroundOptions.paddingLeft * 2);
+            const viewboxHeight = backgroundOptions.imageHeight || height + (backgroundOptions.paddingTop * 2);
+            xw.writeAttribute("x", "0px");
+            xw.writeAttribute("y", "0px");
+            xw.writeAttribute("viewBox", "0 0 " + viewboxWidth + " " + viewboxHeight);
+
+            xw.startElement("rect");
+            xw.writeAttribute("width", "100%");
+            xw.writeAttribute("height", "100%");
+            xw.writeAttribute("fill", backgroundOptions.color);
+            xw.endElement();
+
+            xw.startElement("g");
+            xw.writeAttribute("transform", "translate(" + backgroundOptions.paddingLeft + "," + backgroundOptions.paddingTop + ")");
+        }
+        else
+        {
+            xw.writeAttribute("width", width);
+            xw.writeAttribute("height", "40");
+        }
+
+        xw.startElement("rect");
+        xw.writeAttribute("width", width);
+        xw.writeAttribute("height", height);
+        xw.writeAttribute("fill", "#333");
+
+        if (opDoc.coreLibs && opDoc.coreLibs.indexOf("subpatchop") > -1)
+        {
+            xw.writeAttribute("stroke", "#555");
+            xw.writeAttribute("stroke-width", "5");
+        }
+
+        xw.endElement();
+
+        if (opDoc.layout)
+        {
+            if (opDoc.layout.portsIn)
+                for (let i = 0; i < opDoc.layout.portsIn.length; i++)
+                {
+                    xw.startElement("rect");
+                    xw.writeAttribute("x", i * 14);
+                    xw.writeAttribute("width", "11");
+                    xw.writeAttribute("height", "6");
+                    xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsIn[i].type));
+                    xw.endElement();
+                }
+
+            if (opDoc.layout.portsOut)
+                for (let i = 0; i < opDoc.layout.portsOut.length; i++)
+                {
+                    xw.startElement("rect");
+                    xw.writeAttribute("x", i * 14);
+                    xw.writeAttribute("y", height - 6);
+                    xw.writeAttribute("width", "11");
+                    xw.writeAttribute("height", "6");
+                    xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsOut[i].type));
+                    xw.endElement();
+                }
+        }
+
+        const shortName = this.getOpShortName(opName);
+
+        xw.startElement("text");
+        xw.writeAttribute("x", 8);
+        xw.writeAttribute("y", 25);
+        xw.writeAttribute("style", "font-family:SourceSansPro, arial;font-size:14px;");
+        xw.writeAttribute("fill", this.opGetNamespaceColor(opName));
+        xw.text(this.getOpNameWithoutVersion(shortName));
+        xw.endElement();
+
+        if (backgroundOptions) xw.endElement(); // end "g" when drawing background
+        xw.endDocument();
+
+        return xw.toString();
+    }
+
+    opGetPortColor(type)
+    {
+        if (!this._helperUtil.isNumeric(type)) return "#F00";
+        type = Number(type);
+        if (type === 0) return "#5CB59E";
+        if (type === 1) return "#F0D165";
+        if (type === 2) return "#AB5A94";
+        if (type === 3) return "#8084D4";
+        if (type === 4) return "#ffffff";
+        if (type === 5) return "#d57272";
+        return "#F00";
+    }
+
+    opGetNamespaceColor(ns)
+    {
+        if (!ns) return "#8084d4";
+
+        if (ns.startsWith("Ops.Array")) return "#666aaa";
+        if (
+            ns.startsWith("Ops.String") ||
+            ns.startsWith("Ops.Website")) return "#d57272";
+
+        if (ns.startsWith("Ops.Sidebar") ||
+            ns.startsWith("Ops.Json") ||
+            ns.startsWith("Ops.Net") ||
+            ns.startsWith("Ops.Webaudio") ||
+            ns.startsWith("Ops.Html")) return "#9e5289";
+
+
+        if (ns.startsWith("Ops.Gl") ||
+            ns.startsWith("Ops.Trigger") ||
+            ns.startsWith("Ops.Graphics")) return "#f0d165";
+
+        if (ns.startsWith("Ops.Math") ||
+            ns.startsWith("Ops.Boolean") ||
+            ns.startsWith("Ops.Date") ||
+            ns.startsWith("Ops.Color") ||
+            ns.startsWith("Ops.Time") ||
+            ns.startsWith("Ops.Anim") ||
+            ns.startsWith("Ops.Number")) return "#4a917e";
+
+        if (ns.startsWith(this.PREFIX_USEROPS)) return "#ffffff";
+        return "#e7e7e7";
+    }
+
+    getPortTypeString(type)
+    {
+        if (!this._helperUtil.isNumeric(type)) return "Unknown";
+        type = Number(type);
+        if (type === 0) return "Number";
+        else if (type === 1) return "Trigger";
+        else if (type === 2) return "Object";
+        else if (type === 4) return "Dynamic";
+        else if (type === 5) return "String";
+        else if (type === 3) return "Array";
+        else return "Unknown";
+    }
+
+    _getErrorSvg(opName, err, backgroundOptions)
+    {
+        const xw = new XMLWriter();
+        xw.startDocument();
+        xw.startElement("svg");
+
+        const width = 200;
+        const height = 40;
+
+        if (opName)
+        {
+            const parts = opName.split(".");
+            opName = parts[parts.length - 1];
+        }
+
+        xw.writeAttribute("xmlns", "http://www.w3.org/2000/svg");
+        xw.writeAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        xw.writeAttribute("version", "1.1");
+
+        if (backgroundOptions)
+        {
+            const viewboxWidth = backgroundOptions.imageWidth || width + (backgroundOptions.paddingLeft * 2);
+            const viewboxHeight = backgroundOptions.imageHeight || height + (backgroundOptions.paddingTop * 2);
+            xw.writeAttribute("x", "0px");
+            xw.writeAttribute("y", "0px");
+            xw.writeAttribute("viewBox", "0 0 " + viewboxWidth + " " + viewboxHeight);
+
+            xw.startElement("rect");
+            xw.writeAttribute("width", "100%");
+            xw.writeAttribute("height", "100%");
+            xw.writeAttribute("fill", backgroundOptions.color);
+            xw.endElement();
+
+            xw.startElement("g");
+            xw.writeAttribute("transform", "translate(" + backgroundOptions.paddingLeft + "," + backgroundOptions.paddingTop + ")");
+        }
+        else
+        {
+            xw.writeAttribute("width", width);
+            xw.writeAttribute("height", height);
+        }
+
+
+        xw.startElement("rect");
+        xw.writeAttribute("width", width);
+        xw.writeAttribute("height", height);
+        xw.writeAttribute("fill", "#333");
+        xw.endElement();
+
+        xw.startElement("text");
+        xw.writeAttribute("x", 8);
+        xw.writeAttribute("y", 26);
+        xw.writeAttribute("style", "font-family:SourceSansPro, arial;font-size:18px;");
+        xw.writeAttribute("fill", "#ffffff");
+        xw.text(this.getOpNameWithoutVersion(opName));
+        xw.endElement();
+
+        if (backgroundOptions) xw.endElement(); // end "g" when adding background
+        xw.endDocument();
+
+        return xw.toString();
     }
 }
 
