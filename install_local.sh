@@ -79,7 +79,7 @@ if [ "$CLEAN" = "true" ]; then
 fi
 git checkout develop
 git pull
-npm install --no-save --omit=optional
+npm install --no-save
 cd ..
 
 echo "INSTALLING UI..."

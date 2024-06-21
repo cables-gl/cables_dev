@@ -24,7 +24,7 @@ git clone git@github.com:undev-studio/cables_api.git
 git clone git@github.com:cables-gl/cables_ui.git
 cd cables_api
 git checkout develop
-npm install --no-save --omit=optional
+npm install --no-save
 cd ..
 cd cables_ui
 git checkout develop
