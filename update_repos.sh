@@ -112,7 +112,7 @@ if [ -d cables_api ]; then
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
   fi
-  npm install --no-save
+  npm install --no-save --omit=optional
 fi
 cd $BASEDIR
 

@@ -50,7 +50,7 @@ git checkout master
 git pull
 nvm install
 nvm use
-npm install --no-save
+npm install --no-save --omit=optional
 npm run build
 cd ..
 
