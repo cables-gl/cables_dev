@@ -72,7 +72,14 @@ export default class SharedDocUtil extends SharedUtil
             let collectionDocs = [];
             const collection = this._opsUtil.getCollectionName(opName);
             collectionDocs = this.getCollectionOpDocs(collection);
-            return collectionDocs.find((doc) => { return doc.name === opName; });
+            let opDocs = collectionDocs.find((doc) => { return doc.name === opName; });
+            if (!opDocs)
+            {
+                const fromFile = this.getOpDocsFromFile(opName);
+                if (fromFile) fromFile.name = opName;
+                opDocs = fromFile;
+            }
+            return opDocs;
         }
         else
         {

@@ -153,6 +153,23 @@ export default class SharedProjectsUtil extends SharedUtil
         return readable;
     }
 
+    getBackup(project)
+    {
+        // remove deployment information and secrets
+        if (project.deployments)
+        {
+            for (let key in project.deployments)
+            {
+                if (key !== "lastDeployment") delete project.deployments[key];
+            }
+        }
+        if (project.settings && project.settings.secret)
+        {
+            delete project.settings.secret;
+        }
+        return project;
+    }
+
     getNewProjectName(randomize = false)
     {
         if (!randomize) return "new project";

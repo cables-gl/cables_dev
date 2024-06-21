@@ -18,6 +18,7 @@
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-plugin-import": "2.27.5",
     "fs-extra": "11.2.0",
+    "glsl-tokenizer": "2.1.5",
     "image-size": "1.0.2",
     "jsonfile": "6.1.0",
     "marked": "12.0.2",
