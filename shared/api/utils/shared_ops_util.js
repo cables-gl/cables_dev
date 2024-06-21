@@ -1936,11 +1936,12 @@ export default class SharedOpsUtil extends SharedUtil
         return docs;
     }
 
-    getCollectionVisibility(name, defaultVisibility = "public")
+    getCollectionVisibility(name, defaultVisibility = this.VISIBILITY_PUBLIC)
     {
+        let visibility = defaultVisibility;
         const docs = this.getCollectionDocs(name);
-        if (docs.hasOwnProperty("visibility")) return docs.visibility;
-        return defaultVisibility;
+        if (docs.hasOwnProperty("visibility")) visibility = docs.visibility;
+        return visibility;
     }
 
     getTeamNamespaceJsonPath(name, create = true)
