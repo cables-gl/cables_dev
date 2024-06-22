@@ -673,7 +673,7 @@ export default class SharedDocUtil extends SharedUtil
         const extensions = [];
         exDirs.forEach((extensionName) =>
         {
-            if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName, this._docsUtil.VISIBILITY_PUBLIC) === this._docsUtil.VISIBILITY_PUBLIC)
+            if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
             {
                 const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
                 if (extensionOps.length > 0)

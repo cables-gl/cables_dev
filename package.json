@@ -22,7 +22,7 @@
     "homepage": "https://github.com/cables-gl/cables_dev#readme",
     "devDependencies": {
         "concurrently": "8.2.2",
-        "pm2": "5.4.0",
+        "pm2": "5.4.1",
         "tree-kill": "1.2.2",
         "cross-env": "5.2.0",
         "eslint": "8.40.0",

@@ -26,6 +26,7 @@
     "moment": "2.30.1",
     "project-name-generator": "2.1.9",
     "sanitize-filename": "1.6.3",
-    "uuid-v4": "0.1.0"
+    "uuid-v4": "0.1.0",
+    "xml-writer": "1.7.0"
   }
 }
