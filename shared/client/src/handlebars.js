@@ -1,5 +1,5 @@
 import helper from "./helper.js";
-import CablesConstants from "../../contants.js";
+import CablesConstants from "../constants.js";
 
 class HandlebarsHelper
 {
