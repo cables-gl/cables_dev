@@ -127,9 +127,14 @@ export default class SharedLogger extends SharedUtil
         });
     }
 
-    _logConsole(initiator, level, context, args)
+    _logConsole(initiator, level, context, args, dateFormat = "DD-MM-YYYY HH:mm:ss")
     {
-        const dateTime = moment().format("DD-MM-YYYY HH:mm:ss");
+        let dateTime = moment().format(dateFormat);
+        if (this._cables && this._cables.isLocal())
+        {
+            dateTime = "[" + moment().format("HH:mm:ss") + "]";
+        }
+
         switch (level)
         {
         case "uncaught":
