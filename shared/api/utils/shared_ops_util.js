@@ -75,6 +75,7 @@ export default class SharedOpsUtil extends SharedUtil
         this.VISIBILITY_PUBLIC = "public";
         this.VISIBILITY_UNLISTED = "unlisted";
         this.VISIBILITY_PRIVATE = "private";
+        this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
         this.cli = new this._CLIEngine(this._getCLIConfig());
     }
@@ -394,14 +395,13 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId = null, prepareForExport = false, minifyGlsl = false)
+    getOpFullCode(fn, opName, opId, prepareForExport = false, minifyGlsl = false)
     {
-        if (!fn || !opName) return "";
+        if (!fn || !opName || !opId) return "";
 
         try
         {
             const code = fs.readFileSync(fn, "utf8");
-            if (!opId) opId = this.getOpIdByObjName(opName);
             let codeAttachments = "const attachments=op.attachments={";
             let codeAttachmentsInc = "";
             const dir = fs.readdirSync(path.dirname(fn));
@@ -1221,13 +1221,14 @@ export default class SharedOpsUtil extends SharedUtil
         for (const i in ops)
         {
             let opName = ops[i].objName;
-            if (!ops[i].opId)
+            let opId = ops[i].opId;
+            if (!opId)
             {
-                ops[i].opId = this.getOpIdByObjName(ops[i].objName);
+                opId = this.getOpIdByObjName(opName);
             }
             else
             {
-                opName = this.getOpNameById(ops[i].opId);
+                opName = this.getOpNameById(opId);
             }
 
             let fn = this.getOpAbsoluteFileName(opName);
@@ -1243,23 +1244,23 @@ export default class SharedOpsUtil extends SharedUtil
                     partPartname = partPartname.substr(0, partPartname.length - 1);
                     codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
                 }
-                code += this.getOpFullCode(fn, opName, ops[i].opId, prepareForExport, minifyGlsl);
+                code += this.getOpFullCode(fn, opName, opId, prepareForExport, minifyGlsl);
             }
             catch (e)
             {
                 if (this.isCoreOp(opName))
                 {
-                    this._log.error("op read error:" + opName, fn, e.stacktrace);
+                    this._log.error("op read error:" + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
                 }
                 else
                 {
-                    this._log.warn("op read error: " + opName, fn, e.stacktrace);
+                    this._log.warn("op read error: " + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
                 }
             }
         }
 
-        codeNamespaces = this._sortAndReduceNamespaces(codeNamespaces);
-        let fullCode = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
+        codeNamespaces = this._helperUtil.sortAndReduce(codeNamespaces);
+        let fullCode = this.OPS_CODE_PREFIX;
         if (codeNamespaces && codeNamespaces.length > 0)
         {
             codeNamespaces[0] = "var " + codeNamespaces[0];
@@ -1641,24 +1642,6 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
         return invisible;
-    }
-
-    _sortAndReduceNamespaces(arr)
-    {
-        const uniq = arr.slice() // slice makes copy of array before sorting it
-            .sort()
-            .reduce(function (a, b)
-            {
-                if (a.slice(-1)[0] !== b) a.push(b); // slice(-1)[0] means last item in array without removing it (like .pop())
-                return a;
-            }, []); // this empty array becomes the starting value for a
-
-        arr = uniq.sort(function (a, b)
-        {
-            return a.length - b.length;
-        });
-
-        return arr;
     }
 
     _getCLIConfig()
