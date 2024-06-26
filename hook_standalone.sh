@@ -27,6 +27,13 @@ $NPM_EXE config set script-shell /bin/bash
 NODE_DIR=$(dirname $(which $NPM_EXE))
 export PATH="$NODE_DIR:$PATH"
 
+export BUILD_OS=$BUILD_OS
+export BUILD_VERSION=$BUILD_VERSION
+export NOTARIZE=$NOTARIZE
+export NODE_EXE=$NODE_EXE
+export NODE_DIR=$NODE_DIR
+export ARGS=$ARGS
+
 echo "building with node version `$NODE_EXE --version`, args: $ARGS"
 
 echo "INSTALLING cables_dev DEPENDENCIES"
