@@ -2,7 +2,6 @@ import jsonfile from "jsonfile";
 import fs from "fs-extra";
 import eslint from "eslint";
 import path from "path";
-import { marked } from "marked";
 import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
@@ -496,7 +495,7 @@ export default class SharedOpsUtil extends SharedUtil
         const blendmodeWarning = ": use `{{CGL.BLENDMODES}}` in your shader and remove all manual replace code";
         const srcWarnings = [];
         const fn = this.getOpAbsoluteFileName(opname);
-        if (this.existingCoreOp(opname))
+        if (this.isCoreOp(opname))
         {
             const parts = opname.split(".");
             for (let i = 0; i < parts.length; i++)
@@ -505,7 +504,7 @@ export default class SharedOpsUtil extends SharedUtil
                     srcWarnings.push({
                         "type": "name",
                         "id": "lowercase",
-                        "text": marked("all namespace parts have to be capitalized")
+                        "text": "all namespace parts have to be capitalized"
                     });
         }
 
@@ -516,31 +515,31 @@ export default class SharedOpsUtil extends SharedUtil
             if (!info.id) srcWarnings.push({
                 "type": "json",
                 "id": "noId",
-                "text": marked("has no op id")
+                "text": "has no op id"
             });
             if (!info) srcWarnings.push({
                 "type": "json",
                 "id": "noJson",
-                "text": marked("has no json")
+                "text": "has no json"
             });
             else
             {
                 if (!info.layout) srcWarnings.push({
                     "type": "json",
                     "id": "noLayout",
-                    "text": marked("has no layout")
+                    "text": "has no layout"
                 });
                 if (!info.authorName || info.authorName === "") srcWarnings.push({
                     "type": "json",
                     "id": "noAuthor",
-                    "text": marked("has no author")
+                    "text": "has no author"
                 });
             }
 
             if (code.indexOf("void main()") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "inlineShaderCode",
-                "text": marked("found shader code in the .js, should be put to an attachment")
+                "text": "found shader code in the .js, should be put to an attachment"
             });
 
             if (code.indexOf("self.") > -1) srcWarnings.push({
@@ -552,96 +551,96 @@ export default class SharedOpsUtil extends SharedUtil
             if (code.indexOf("cgl.mvMatrix") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "mvMatrix",
-                "text": marked("use of `MvMatrix` is deprecated, use cgl.mMatrix / cgl.vMatrix instead.")
+                "text": "use of `MvMatrix` is deprecated, use cgl.mMatrix / cgl.vMatrix instead."
             });
 
             if (code.indexOf("OP_PORT_TYPE_TEXTURE") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "texturePortType",
-                "text": marked("use `op.inTexture(\"name\")` to create a texture port ")
+                "text": "use `op.inTexture(\"name\")` to create a texture port "
             });
 
             if (opname.indexOf("Ops.Gl.ImageCompose") >= 0 && code.indexOf("checkOpInEffect") == -1 && opname.indexOf("ImageCompose") == -1) srcWarnings.push({
                 "type": "code",
                 "id": "no_check_effect",
-                "text": marked("every textureEffect op should use `if(!CGL.TextureEffect.checkOpInEffect(op)) return;` in the rendering function to automatically show a warning to the user if he is trying to use it outside of an imageCompose")
+                "text": "every textureEffect op should use `if(!CGL.TextureEffect.checkOpInEffect(op)) return;` in the rendering function to automatically show a warning to the user if he is trying to use it outside of an imageCompose"
             });
 
             if (code.indexOf(".onValueChange") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "onValueChanged",
-                "text": marked("do not use `port.onValueChanged=`, now use `port.onChange=`")
+                "text": "do not use `port.onValueChanged=`, now use `port.onChange=`"
             });
 
             if (code.indexOf(".inValueEditor") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "inValueEditor",
-                "text": marked("do not use `op.inValueEditor()`, now use `op.inStringEditor()`")
+                "text": "do not use `op.inValueEditor()`, now use `op.inStringEditor()`"
             });
 
             if (code.indexOf(".inFile") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "inFile",
-                "text": marked("do not use `op.inFile()`, now use `op.inUrl()`")
+                "text": "do not use `op.inFile()`, now use `op.inUrl()`"
             });
 
             if (code.indexOf("op.outValue") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "op.outValue",
-                "text": marked("use `op.outNumber`, or `op.outString` ")
+                "text": "use `op.outNumber`, or `op.outString` "
             });
 
             if (code.indexOf("\"use strict\";") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "use strict",
-                "text": marked("\"use strict\"; is not needed, remove it!")
+                "text": "\"use strict\"; is not needed, remove it!"
             });
 
             if (code.indexOf("\nvar ") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "var",
-                "text": marked("use `let`, or `const` ")
+                "text": "use `let`, or `const` "
             });
 
             if (code.indexOf(".val=") > -1 || code.indexOf(".val =") > -1 || code.indexOf(".val;") > -1) srcWarnings.push({
                 "type": "code",
                 "id": ".val",
-                "text": marked("do not use `port.val`, now use `port.get()`")
+                "text": "do not use `port.val`, now use `port.get()`"
             });
 
             if (code.indexOf("op.addInPort(") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "port",
-                "text": marked("use `op.inValue` or `op.inTrigger` etc. to create ports...")
+                "text": "use `op.inValue` or `op.inTrigger` etc. to create ports..."
             });
 
             if (code.indexOf("colorPick: 'true'") > -1 || code.indexOf("colorPick:'true'") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "colorpick",
-                "text": marked("how to create a colorpicker the nice way: \n const r = op.inValueSlider(\"r\", Math.random());\n\nconst g = op.inValueSlider(\"g\", Math.random());\nconst b = op.inValueSlider(\"b\", Math.random()); \nr.setUiAttribs({ colorPick: true }); ")
+                "text": "how to create a colorpicker the nice way: \n const r = op.inValueSlider(\"r\", Math.random());\n\nconst g = op.inValueSlider(\"g\", Math.random());\nconst b = op.inValueSlider(\"b\", Math.random()); \nr.setUiAttribs({ colorPick: true }); "
             });
 
             if (code.indexOf("blendMode.onChange") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "blendmode",
-                "text": marked("do not directly set `.onChange` for blendMode select. use this now: `CGL.TextureEffect.setupBlending(op,shader,blendMode,amount);`")
+                "text": "do not directly set `.onChange` for blendMode select. use this now: `CGL.TextureEffect.setupBlending(op,shader,blendMode,amount);`"
             });
 
             if (code.indexOf("op.outFunction") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "outFunction",
-                "text": marked("use `op.outTrigger` instead of `op.outFunction` ")
+                "text": "use `op.outTrigger` instead of `op.outFunction` "
             });
             if (code.indexOf("op.inFunction") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "inFunction",
-                "text": marked("use `op.inTrigger` instead of `op.inFunction` ")
+                "text": "use `op.inTrigger` instead of `op.inFunction` "
             });
 
             if (code.indexOf("{{BLENDCODE}}") > -1) srcWarnings.push({
                 "type": "shadercode",
                 "id": "blendmode",
-                "text": marked(blendmodeWarning)
+                "text": blendmodeWarning
             });
 
             // remove comments, before checking for console usage
@@ -649,7 +648,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (code.indexOf("console.log") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "console.log",
-                "text": marked("use `op.log`, not `console.log` ")
+                "text": "use `op.log`, not `console.log` "
             });
 
             const atts = this.getAttachmentFiles(opname);
@@ -664,28 +663,28 @@ export default class SharedOpsUtil extends SharedUtil
                     if (att.indexOf("gl_FragColor") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "gl_FragColor",
-                        "text": marked(atts[i] + ": use `outColor=vec4();` instead of gl_FragColor.")
+                        "text": atts[i] + ": use `outColor=vec4();` instead of gl_FragColor."
                     });
                     if (att.indexOf("texture2D(") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "texture2D ",
-                        "text": marked(atts[i] + ": do not set `texture2D`, use `texture()`")
+                        "text": atts[i] + ": do not set `texture2D`, use `texture()`"
                     });
                     if (att.indexOf(" uniform") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "uniform ",
-                        "text": marked(atts[i] + ": use `UNI` instead of `uniform`")
+                        "text": atts[i] + ": use `UNI` instead of `uniform`"
                     });
                     if (att.indexOf("{{BLENDCODE}}") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "blendmode",
-                        "text": marked(atts[i] + blendmodeWarning)
+                        "text": atts[i] + blendmodeWarning
                     });
 
                     if (att.indexOf("_blend(base.rgb,col.rgb)") > -1) srcWarnings.push({
                         "type": "shadercode",
                         "id": "blending",
-                        "text": marked(atts[i] + " use `outColor=cgl_blend(oldColor,newColor,amount);`")
+                        "text": atts[i] + " use `outColor=cgl_blend(oldColor,newColor,amount);`"
                     });
                 }
             }
