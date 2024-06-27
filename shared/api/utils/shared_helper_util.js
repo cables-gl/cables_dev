@@ -440,4 +440,22 @@ export default class SharedHelperUtil extends SharedUtil
     {
         return uuid();
     }
+
+    sortAndReduce(arr)
+    {
+        const uniq = arr.slice() // slice makes copy of array before sorting it
+            .sort()
+            .reduce(function (a, b)
+            {
+                if (a.slice(-1)[0] !== b) a.push(b); // slice(-1)[0] means last item in array without removing it (like .pop())
+                return a;
+            }, []); // this empty array becomes the starting value for a
+
+        arr = uniq.sort(function (a, b)
+        {
+            return a.length - b.length;
+        });
+
+        return arr;
+    }
 }
