@@ -198,6 +198,7 @@ export default class SharedFilesUtil extends SharedUtil
             const stats = fs.statSync(absolutePath);
             const fileSizeInBytes = stats.size;
             const fileSizeInKb = fileSizeInBytes / 1024;
+            info.sizeKb = Math.ceil(fileSizeInKb);
 
             info.fileUpdated = stats.mtime;
             info.fileCreated = stats.ctime;
