@@ -57,42 +57,23 @@ export default class SharedFilesUtil extends SharedUtil
 
     getFileInfo(fileDb)
     {
-        let info = {};
+        if (!fileDb) return {};
         const fn = this.getFileAssetLocation(fileDb);
 
-        if (fs.existsSync(fn))
-        {
-            const stats = fs.statSync(fn);
-            const fileSizeInBytes = stats.size;
-            const fileSizeInKb = fileSizeInBytes / 1024;
-            info.sizeKb = Math.ceil(fileSizeInKb);
-
-            info.sizeReadable = info.sizeKb + " kb";
-            if (info.sizeKb > 1024)info.sizeReadable = Math.round(fileSizeInKb / 1024 * 100) / 100 + " mb";
-
-            info.size = fileSizeInBytes;
-            info.type = this.getFileType(fn);
-        }
-
+        let info = this.getFileInfoFromFile(fn);
         info.fileDb = fileDb;
         info.fileDb.fileName = this.getAssetFileName(fileDb);
         info.cachebuster = fileDb.cachebuster;
         info.date = fileDb.updated;
         info.converters = [];
 
-        info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb) + "");
-
-        if (fileDb.suffix && (fileDb.suffix.endsWith(".png") || fileDb.suffix.endsWith(".jpg") || fileDb.suffix.endsWith(".jpeg") || fileDb.suffix.endsWith(".svg") || fileDb.suffix.endsWith(".webp") || fileDb.suffix.endsWith(".avif")))
+        if (info.isImage)
         {
             info.imgPreview = this.getFileAssetUrlPath(fileDb);
             if (info.cachebuster) info.imgPreview += "?rnd" + info.cachebuster;
-
-            const dimensions = this.imageSize(fn);
-            info.imgSizeWidth = dimensions.width;
-            info.imgSizeHeight = dimensions.height;
-            if (this.isPowerOfTwo(parseInt(dimensions.width)) && this.isPowerOfTwo(parseInt(dimensions.height))) info.imgSizePower = "is power of two";
-            else info.imgSizePower = "is NOT power of two";
         }
+
+        info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb) + "");
 
         info.icon = this.getFileIconName(fileDb);
         info.path = this.getFileAssetUrlPath(fileDb);
@@ -206,5 +187,40 @@ export default class SharedFilesUtil extends SharedUtil
                     if (filename.toLowerCase().endsWith(this.FILETYPES[k][j])) suffix = this.FILETYPES[k][j];
 
         return suffix;
+    }
+
+    getFileInfoFromFile(absolutePath)
+    {
+        const info = {};
+        if (!absolutePath) return info;
+        if (absolutePath && fs.existsSync(absolutePath))
+        {
+            const stats = fs.statSync(absolutePath);
+            const fileSizeInBytes = stats.size;
+            const fileSizeInKb = fileSizeInBytes / 1024;
+            info.sizeKb = Math.ceil(fileSizeInKb);
+
+            info.fileUpdated = stats.mtime;
+            info.fileCreated = stats.ctime;
+
+            info.sizeReadable = info.sizeKb + " kb";
+            if (info.sizeKb > 1024) info.sizeReadable = Math.round(fileSizeInKb / 1024 * 100) / 100 + " mb";
+
+            info.size = fileSizeInBytes;
+            info.type = this.getFileType(absolutePath);
+
+            const parts = path.parse(absolutePath);
+            if (parts.ext && (parts.ext.endsWith(".png") || parts.ext.endsWith(".jpg") || parts.ext.endsWith(".jpeg") || parts.ext.endsWith(".svg") || parts.ext.endsWith(".webp") || parts.ext.endsWith(".avif")))
+            {
+                info.isImage = true;
+                const dimensions = this.imageSize(absolutePath);
+                info.imgSizeWidth = dimensions.width;
+                info.imgSizeHeight = dimensions.height;
+                if (this.isPowerOfTwo(parseInt(dimensions.width)) && this.isPowerOfTwo(parseInt(dimensions.height))) info.imgSizePower = "is power of two";
+                else info.imgSizePower = "is NOT power of two";
+            }
+        }
+
+        return info;
     }
 }

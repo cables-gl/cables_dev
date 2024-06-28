@@ -554,14 +554,21 @@ export default class SharedDocUtil extends SharedUtil
         let opDocs = [];
         if (!collectionName) return opDocs;
         collectionName = this._opsUtil.getCollectionName(collectionName);
-        const dirName = this._opsUtil.getCollectionOpDocFile(collectionName);
-        if (fs.existsSync(dirName))
+        if (this._opsUtil.isCoreOp(collectionName))
         {
-            const opNames = this._opsUtil.getCollectionOpNames(collectionName);
-            opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
-            opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
-            opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
+            opDocs = this.getOpDocs().filter((opDoc) => { return opDoc.name.startsWith(collectionName); });
         }
+        else
+        {
+            const dirName = this._opsUtil.getCollectionOpDocFile(collectionName);
+            if (fs.existsSync(dirName))
+            {
+                const opNames = this._opsUtil.getCollectionOpNames(collectionName);
+                opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
+            }
+        }
+        opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
+        opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
         return opDocs;
     }
 
