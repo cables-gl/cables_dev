@@ -185,6 +185,8 @@ export default class SharedDocUtil extends SharedUtil
                 for (const i in dir)
                 {
                     const opName = dir[i];
+                    if (!this._opsUtil.isOpNameValid(opName)) continue;
+
                     let opDoc = null;
                     if (!rebuildOpName)
                     {
