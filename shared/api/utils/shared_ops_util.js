@@ -2108,7 +2108,7 @@ export default class SharedOpsUtil extends SharedUtil
         p += sanitizeFileName(attName);
         if (res) res.endTime("sanitizeFileName");
 
-        if (this.existingCoreOp(opName))
+        if (this.isCoreOp(opName))
         {
             if (p.endsWith(".js"))
             {
@@ -2527,7 +2527,7 @@ export default class SharedOpsUtil extends SharedUtil
                             }
 
                             const formatedCode = format.formatedCode;
-                            if (this.existingCoreOp(opName) || options.formatCode)
+                            if (options.formatCode || this.isCoreOp(opName))
                             {
                                 code = formatedCode;
                             }

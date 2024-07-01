@@ -353,7 +353,7 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table");
+        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table", opNames.join(","));
         for (let i = 0; i < opNames.length; i++)
         {
             const opName = opNames[i];
@@ -446,7 +446,7 @@ export default class SharedDocUtil extends SharedUtil
 
             docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opname) || [];
 
-            const jsonFilename = dirName + opname + ".json";
+            const jsonFilename = path.join(dirName, opname + ".json");
             const jsonExists = fs.existsSync(jsonFilename);
 
             const screenshotFilename = dirName + "screenshot.png";
@@ -601,7 +601,7 @@ export default class SharedDocUtil extends SharedUtil
             this._log.warn("getExampleProjectId: no opDocs");
             return null;
         }
-        if (this._opsUtil.existingCoreOp(opname))
+        if (this._opsUtil.isCoreOp(opname))
         {
             for (const i in opDocs)
             {
