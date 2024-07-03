@@ -77,6 +77,8 @@ export default class SharedOpsUtil extends SharedUtil
         this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
         this.cli = new this._CLIEngine(this._getCLIConfig());
+        // do this to fill eslints "filename" cache for executeOnText...
+        this.cli.executeOnText("", "__placeholder__.js");
     }
 
     get utilName()
@@ -1907,16 +1909,25 @@ export default class SharedOpsUtil extends SharedUtil
 
     getCollectionJsonPath(name, create = true)
     {
-        let filename = this.getExtensionJsonPath(name, create);
-        if (!filename) filename = this.getTeamNamespaceJsonPath(name, create);
-        return filename;
+        if (this.isTeamNamespace(name))
+        {
+            return this.getTeamNamespaceJsonPath(name, create);
+        }
+        else if (this.isExtensionNamespace(name))
+        {
+            return this.getExtensionJsonPath(name, create);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     getCollectionDocs(name)
     {
         const file = this.getCollectionJsonPath(name, false);
         let docs = {};
-        if (fs.existsSync(file)) docs = jsonfile.readFileSync(file);
+        if (file) docs = jsonfile.readFileSync(file);
         return docs;
     }
 
@@ -1934,15 +1945,19 @@ export default class SharedOpsUtil extends SharedUtil
         let extName = this.getTeamNamespaceByOpName(name);
         if (extName.endsWith(".")) extName = extName.substring(0, extName.length - 1);
         const filename = path.join(dirName, extName + ".json");
-        const exists = fs.existsSync(filename);
+        let existsFile = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
         if (!existsPath && create)
         {
             mkdirp.sync(dirName);
             existsPath = fs.existsSync(dirName);
         }
-        if (existsPath && !exists && create) jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
-        if (!existsPath) return null;
+        if (existsPath && !existsFile && create)
+        {
+            jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
+            existsFile = true;
+        }
+        if (!existsPath || !existsFile) return null;
         return filename;
     }
 
@@ -1952,15 +1967,19 @@ export default class SharedOpsUtil extends SharedUtil
         let extName = this.getExtensionNamespaceByOpName(name);
         if (extName.endsWith(".")) extName = extName.substring(0, extName.length - 1);
         const filename = path.join(dirName, extName + ".json");
-        const exists = fs.existsSync(filename);
+        let existsFile = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
         if (!existsPath && create)
         {
             mkdirp.sync(dirName);
             existsPath = fs.existsSync(dirName);
         }
-        if (existsPath && !exists && create) jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
-        if (!existsPath) return null;
+        if (existsPath && !existsFile && create)
+        {
+            jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
+            existsFile = true;
+        }
+        if (!existsPath || !existsFile) return null;
         return filename;
     }
 
