@@ -19,8 +19,8 @@ if [ -z "$NOTARIZE" ] || [ "$NOTARIZE" = "false" ]; then
   ARGS="${ARGS} -c.mac.notarize=false"
 fi
 
-if [ -n "$RELEASE_TYPE" ]; then
-  ARGS="${ARGS} -c.publish.releaseType=$RELEASE_TYPE"
+if [ "prerelease" = "$RELEASE_TYPE" ]; then
+  export EP_PRE_RELEASE=true
 fi
 
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
