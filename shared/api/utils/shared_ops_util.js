@@ -77,8 +77,6 @@ export default class SharedOpsUtil extends SharedUtil
         this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
         this.cli = new this._CLIEngine(this._getCLIConfig());
-        // do this to fill eslints "filename" cache for executeOnText...
-        this.cli.executeOnText("", "__placeholder__.js");
     }
 
     get utilName()

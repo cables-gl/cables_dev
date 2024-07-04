@@ -9,7 +9,7 @@ else
   BUILD_OS=":$1";
 fi
 
-if [ -z "$BUILD_VERSION" ] ; then
+if [ -z "$BUILD_VERSION" ]; then
   ARGS="-- "
 else
   ARGS="-- -c.buildVersion=$BUILD_VERSION -c.executableName=$EXE_NAME -c.extraMetadata.version=$BUILD_VERSION";
@@ -17,6 +17,10 @@ fi
 
 if [ -z "$NOTARIZE" ] || [ "$NOTARIZE" = "false" ]; then
   ARGS="${ARGS} -c.mac.notarize=false"
+fi
+
+if [ "prerelease" = "$RELEASE_TYPE" ]; then
+  export EP_PRE_RELEASE=true
 fi
 
 if [ -z "$NODE_EXE" ]; then NODE_EXE="node"; fi
