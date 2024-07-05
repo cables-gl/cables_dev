@@ -204,30 +204,34 @@ export default class SharedProjectsUtil extends SharedUtil
         {
             _libs = this.getAssetLibs(project);
         }
-        _libs = _libs.concat(fs.readdirSync(this._cables.getLibsPath()));
+        const libsPath = this._cables.getLibsPath();
         const libs = [];
-        for (let i = 0; i < _libs.length; i++)
+        if (fs.existsSync(libsPath))
         {
-            let skip = false;
-            if (_libs[i].endsWith(".js"))
+            _libs = _libs.concat(fs.readdirSync(this._cables.getLibsPath()));
+            for (let i = 0; i < _libs.length; i++)
             {
-                const libName = path.parse(_libs[i]);
-                if (libName)
+                let skip = false;
+                if (_libs[i].endsWith(".js"))
                 {
-                    let jsonName = path.join(this._cables.getLibsPath(), libName.name);
-                    jsonName += ".json";
-                    if (fs.existsSync(jsonName))
+                    const libName = path.parse(_libs[i]);
+                    if (libName)
                     {
-                        const json = JSON.parse(fs.readFileSync(jsonName));
-                        if (json.hidden)
+                        let jsonName = path.join(this._cables.getLibsPath(), libName.name);
+                        jsonName += ".json";
+                        if (fs.existsSync(jsonName))
                         {
-                            skip = true;
+                            const json = JSON.parse(fs.readFileSync(jsonName));
+                            if (json.hidden)
+                            {
+                                skip = true;
+                            }
                         }
                     }
-                }
-                if (!skip)
-                {
-                    libs.push(_libs[i]);
+                    if (!skip)
+                    {
+                        libs.push(_libs[i]);
+                    }
                 }
             }
         }
@@ -236,14 +240,18 @@ export default class SharedProjectsUtil extends SharedUtil
 
     getCoreLibs()
     {
-        const _coreLibs = fs.readdirSync(this._cables.getCoreLibsPath());
+        const coreLibsPath = this._cables.getCoreLibsPath();
         const coreLibs = [];
-        for (let i = 0; i < _coreLibs.length; i++)
+        if (fs.existsSync(coreLibsPath))
         {
-            const coreFilename = _coreLibs[i];
-            if (coreFilename.endsWith(".js"))
+            const _coreLibs = fs.readdirSync(coreLibsPath);
+            for (let i = 0; i < _coreLibs.length; i++)
             {
-                coreLibs.push(coreFilename.split(".")[0]);
+                const coreFilename = _coreLibs[i];
+                if (coreFilename.endsWith(".js"))
+                {
+                    coreLibs.push(coreFilename.split(".")[0]);
+                }
             }
         }
         return coreLibs;
