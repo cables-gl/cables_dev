@@ -4,7 +4,6 @@ export default class Logger
 {
     constructor(initiator)
     {
-        this._logs = [];
         this.initiator = initiator;
     }
 
