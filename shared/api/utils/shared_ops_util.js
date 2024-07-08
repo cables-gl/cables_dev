@@ -2481,6 +2481,14 @@ export default class SharedOpsUtil extends SharedUtil
         if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
         if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
 
+        const change = {
+            "message": "",
+            "type": "new op",
+            "author": user.username,
+            "date": Date.now()
+        };
+        newJson.changelog.push(change);
+
         jsonfile.writeFileSync(newJsonFile, newJson, {
             "encoding": "utf-8",
             "spaces": 4
