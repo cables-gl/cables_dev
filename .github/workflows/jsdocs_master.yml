@@ -2,9 +2,6 @@ name: docs master
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
 
 env:
   JDOC_APP_ID: "131e893c-eac4-4713-917b-a49fdd10c1c8"
