@@ -1,4 +1,4 @@
-name: jsdocs master
+name: jsdocs develop
 
 on:
   workflow_dispatch:
