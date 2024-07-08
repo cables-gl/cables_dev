@@ -68,7 +68,7 @@
             }
         ],
         "func-names": 0,
-        "max-classes-per-file":100,
+        "max-classes-per-file":0,
         "max-len": [
             0,
             {
