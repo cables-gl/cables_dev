@@ -1,0 +1,32 @@
+name: docs develop
+
+on:
+  workflow_dispatch:
+
+env:
+  JDOC_APP_ID: "fdb282ef-1a12-4ed8-8859-ac16c5ea3390"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: build jsdoc
+      run: |
+        cd jsdoc/
+        npm install --no-save
+        npm run build
+    - name: Deploy jsdocs to netlify
+      uses: netlify/actions/cli@master
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ env.JDOC_APP_ID }}
+      with:
+        args: deploy --dir=jsdoc/dist --prod
+        secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
