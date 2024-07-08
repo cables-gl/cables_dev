@@ -9,5 +9,5 @@ cables development environment
 - [howto create_new_ops](docs/howto_create_new_ops.md)
 - [howto op_new_version](docs/howto_op_new_version.md)
 - [howto jsdoc](docs/howto_jsdoc.md)
-- [howto libaries](docs/howto_libaries.md)
+- [howto libaries](docs/howto_libraries.md)
 - [howto_exe_export](docs/howto_exe_export.md)
