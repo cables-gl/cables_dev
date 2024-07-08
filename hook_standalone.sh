@@ -68,7 +68,6 @@ echo "BUILDING cables_electron"
 cd cables_electron
 git pull
 $NPM_EXE install
-$NPM_EXE run build
 echo "PACKAGING cables_electron"
 $NPM_EXE run dist$BUILD_OS $ARGS
 cd ..
