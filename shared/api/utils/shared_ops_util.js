@@ -2219,6 +2219,13 @@ export default class SharedOpsUtil extends SharedUtil
             newName = "";
         }
 
+        if (oldName && !this.opExists(oldName))
+        {
+            problems.source_does_not_exist = "Source op does not exist.";
+            return problems;
+        }
+
+
         const newNamespace = this.getNamespace(newName);
         const oldNamespace = this.getNamespace(oldName);
         if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
