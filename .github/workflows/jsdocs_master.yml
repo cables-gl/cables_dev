@@ -2,8 +2,8 @@ name: jsdocs master
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'
+#  schedule:
+#    - cron: '0 3 * * *'
 
 env:
   JDOC_APP_ID: "131e893c-eac4-4713-917b-a49fdd10c1c8"
