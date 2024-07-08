@@ -37,6 +37,7 @@ export NOTARIZE=$NOTARIZE
 export NODE_EXE=$NODE_EXE
 export NODE_DIR=$NODE_DIR
 export ARGS=$ARGS
+export USE_HARD_LINKS=false
 
 echo "building with node version `$NODE_EXE --version`, args: $ARGS"
 
