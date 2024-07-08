@@ -1,7 +1,9 @@
-name: docs master
+name: jsdocs master
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
 
 env:
   JDOC_APP_ID: "131e893c-eac4-4713-917b-a49fdd10c1c8"
@@ -10,23 +12,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/cache@v1
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: build jsdoc
-      run: |
-        cd jsdoc/
-        npm install --no-save
-        npm run build
-    - name: Deploy jsdocs to netlify
-      uses: netlify/actions/cli@master
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ env.JDOC_APP_ID }}
-      with:
-        args: deploy --dir=jsdoc/dist --prod
-        secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
+      - uses: actions/checkout@v3
+      - name: checkout cables
+        uses: actions/checkout@v4
+        with:
+          repository: "cables-gl/cables"
+          ref: master
+          token: ${{ secrets.undev_token }}
+          path: "cables/"
+      - name: checkout cables ui
+        uses: actions/checkout@v4
+        with:
+          repository: "cables-gl/cables_ui"
+          ref: master
+          token: ${{ secrets.undev_token }}
+          path: "cables_ui/"
+      - name: checkout cables electron
+        uses: actions/checkout@v4
+        with:
+          repository: "cables-gl/cables_electron"
+          path: "cables_electron/"
+          ref: master
+      - name: build jsdoc
+        run: |
+          cd jsdoc/
+          npm install --no-save
+          npm run build
+      - name: Deploy jsdocs to netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ env.JDOC_APP_ID }}
+        with:
+          args: deploy --dir=jsdoc/dist --prod
+          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
