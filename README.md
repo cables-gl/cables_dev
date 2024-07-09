@@ -14,6 +14,7 @@ cables development environment
   - scroll down to `Windows Subsystem for Linux`, turn it on, reboot
   - run `Windows Terminal` as Administrator
   - enter `wsl --install`, wait, reboot, finish wsl installation (set username, password, ...)
+- start `bash` (windows-key `bash`)
 - continue with [below](#common)
 
 ### common
@@ -42,11 +43,9 @@ cables development environment
 
 ## more...
 - [api_best_practices](docs/api_best_practices.md)
-- [concept_ops](docs/concept_ops.md)
 - [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
 - [howto op_new_version](docs/howto_op_new_version.md)
 - [howto jsdoc](docs/howto_jsdoc.md)
 - [howto libaries](docs/howto_libraries.md)
-- [howto_exe_export](docs/howto_exe_export.md)
 - [install community devenv](docs/install.md)

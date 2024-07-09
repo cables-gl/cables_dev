@@ -1,6 +1,5 @@
 * model files in `models/` should have singular name (i.e. `team.js`)
 * model files should contain all functions that are connected to querying the database (i.e. `findTeamsByProject` or `addCollaborator`)
-* models should be "proper oop", `team.getMembers()`, not `Team.getMembers(team)`, this also counts for creation: `new Team(...)`
 * use `await` and `async` only when really doing asynchronous stuff, in general as little as possible
 
 * endpoints should be placed in `endpoints` and be named `something_endpoint.js`

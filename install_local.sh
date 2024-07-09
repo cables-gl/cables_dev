@@ -6,7 +6,6 @@ then
     COMMUNITY_BUILD=true
 fi
 
-
 CLEAN=false
 if [ "$1" = "clean" ]; then
   echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key or stop here with ctrl-c..."
@@ -48,6 +47,14 @@ else
     fi
 fi
 
+. .env
+CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
+CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
+CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
+CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
+CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
+CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
+
 set -e
 set -o pipefail
 npm install --no-save
@@ -64,7 +71,7 @@ cd ..
 
 echo "INSTALLING CORE..."
 if [ ! -d "cables/" ]; then
-  git clone git@github.com:cables-gl/cables.git
+  git clone ${CABLES_CORE_REPO}
 fi
 cd cables/
 if [ "$CLEAN" = "true" ]; then
@@ -79,7 +86,7 @@ cd ..
 if [ "$COMMUNITY_BUILD" = "true" ]; then
   echo "INSTALLING API..."
   if [ ! -d "cables_api/" ]; then
-    git clone git@github.com:undev-studio/cables_api.git
+    git clone ${CABLES_API_REPO}
   fi
   cd cables_api/
   if [ "$CLEAN" = "true" ]; then
@@ -95,19 +102,19 @@ if [ "$COMMUNITY_BUILD" = "true" ]; then
   if [ "$CLEAN" = "true" ]; then
     echo "  ...deleting default assets";
     rm -rf cables_api/public/assets/library
-    git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
+    git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
   fi
   mkdir -p cables_api/public/assets/library
   if [ -d "cables_api/public/assets/library/.git" ]; then
     git -C cables_api/public/assets/library pull
   else
-    git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
+    git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
   fi
 fi
 
 echo "INSTALLING UI..."
 if [ ! -d "cables_ui/" ]; then
-  git clone git@github.com:cables-gl/cables_ui.git
+  git clone ${CABLES_UI_REPO}
 fi
 cd cables_ui/
 if [ "$CLEAN" = "true" ]; then
@@ -121,7 +128,7 @@ cd ..
 
 echo "INSTALLING ELECTRON..."
 if [ ! -d "cables_electron/" ]; then
-  	git clone git@github.com:cables-gl/cables_electron.git
+  git clone ${CABLES_ELECTRON_REPO}
 fi
 cd cables_electron/
 if [ "$CLEAN" = "true" ]; then
