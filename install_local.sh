@@ -3,7 +3,7 @@
 COMMUNITY_BUILD=false
 if [[ "$*" == *"--community"* ]]
 then
-    $COMMUNITY_BUILD=true
+    COMMUNITY_BUILD=true
 fi
 
 
