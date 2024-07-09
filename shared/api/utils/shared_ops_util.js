@@ -2219,6 +2219,13 @@ export default class SharedOpsUtil extends SharedUtil
             newName = "";
         }
 
+        if (oldName && !this.opExists(oldName))
+        {
+            problems.source_does_not_exist = "Source op does not exist.";
+            return problems;
+        }
+
+
         const newNamespace = this.getNamespace(newName);
         const oldNamespace = this.getNamespace(oldName);
         if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
@@ -2473,6 +2480,14 @@ export default class SharedOpsUtil extends SharedUtil
         if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
         if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
         if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+
+        const change = {
+            "message": "",
+            "type": "new op",
+            "author": user.username,
+            "date": Date.now()
+        };
+        newJson.changelog.push(change);
 
         jsonfile.writeFileSync(newJsonFile, newJson, {
             "encoding": "utf-8",

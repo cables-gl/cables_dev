@@ -1,8 +1,8 @@
 #### build jsdoc
 
 ```
-cd doc/jsdoc/
-npx documentation build ../../../cables/src/core/index.js -f html -o out --theme theme
+cd jsdoc/
+npm run build
 ```
-static html output: out/
+static html output: dist/
 
