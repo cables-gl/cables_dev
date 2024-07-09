@@ -60,7 +60,6 @@ fi
 git checkout develop
 git pull
 npm install --no-save
-npm run build
 cd ..
 
 echo "INSTALLING CORE..."
@@ -75,7 +74,6 @@ fi
 git checkout develop
 git pull
 npm install --no-save
-npm run build
 cd ..
 
 if [ "$COMMUNITY_BUILD" = "true" ]; then
@@ -91,7 +89,6 @@ if [ "$COMMUNITY_BUILD" = "true" ]; then
   git checkout develop
   git pull
   npm install --no-save
-  npm run build
   cd ..
 
   echo "INSTALLING DEFAULT ASSETS...";
@@ -120,7 +117,6 @@ fi
 git checkout develop
 git pull
 npm install --no-save
-npm run build
 cd ..
 
 echo "INSTALLING ELECTRON..."
@@ -135,10 +131,32 @@ fi
 git pull
 git checkout develop
 npm install --no-save
+cd ..
+
+echo "BUILDING EVERYTHING..."
+cd shared/
+npm run build
+cd ..
+cd cables/
+npm run build
+cd ..
+if [ "$COMMUNITY_BUILD" = "true" ]; then
+  cd cables_api/
+  npm run build
+  cd ..
+fi
+cd cables_ui/
+npm run build
+cd ..
+cd cables_electron/
 npm run build
 cd ..
 
+NPM_START_CMD="`npm run start:standalone`"
+if [ "$COMMUNITY_BUILD" = "true" ]; then
+  NPM_START_CMD="`npm run start`"
+fi
 echo ""
-echo -n "BEFORE YOU RUN 'npm run start' MAKE SURE YOUR NODE VERSION MATCHES "
+echo -n "BEFORE YOU RUN ${NPM_START_CMD} MAKE SURE YOUR NODE VERSION MATCHES "
 cat .nvmrc
 echo " BY RUNNING 'node --version'"
