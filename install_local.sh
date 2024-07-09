@@ -159,9 +159,9 @@ cd cables_electron/
 npm run build
 cd ..
 
-NPM_START_CMD="`npm run start:standalone`"
+NPM_START_CMD="'npm run start:standalone'"
 if [ "$COMMUNITY_BUILD" = "true" ]; then
-  NPM_START_CMD="`npm run start`"
+  NPM_START_CMD="'npm run start'"
 fi
 echo ""
 echo -n "BEFORE YOU RUN ${NPM_START_CMD} MAKE SURE YOUR NODE VERSION MATCHES "

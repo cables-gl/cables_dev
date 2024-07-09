@@ -6,16 +6,16 @@ cables development environment
 
 ### mac/linux
 - install [git](https://github.com/git-guides/install-git)
-- continue with [below](#common)
+- continue [below](#common)
 
 ### windows 11
 - install `bash` and `wsl`
   - press windows key, seach for "turn windows features on or off"
   - scroll down to `Windows Subsystem for Linux`, turn it on, reboot
   - run `Windows Terminal` as Administrator
-  - enter `wsl --install`, wait, reboot, finish wsl installation (set username, password, ...)
+  - enter `wsl --install -d Ubuntu`, wait, reboot, finish wsl installation (set username, password, ...)
 - start `bash` (windows-key `bash`)
-- continue with [below](#common)
+- continue [below](#common)
 
 ### common
 - clone [this repository](https://github.com/cables-gl/cables_dev)
