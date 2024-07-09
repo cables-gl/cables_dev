@@ -10,8 +10,14 @@ cables development environment
 - install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script)
     - windows: on plain windows install `nodejs` and `npm` for the version specified in `.nvmrc`
 - close and reopen your terminal, make sure nvm is installed properly, `nvm --version` should output some version number
-- run `. ./install_local.sh` (needs sudo password on linux, NOTICE THE EXTRA DOT AT THE BEGINNING!)
-- make sure your current shell has the proper node version `node --version` (if not, open a new terminal before you start the server, and check again)
+- run `. ./install_local.sh` (NOTICE THE EXTRA DOT AT THE BEGINNING!)
+  - this will:
+    - install the required node version (and set it as default in `nvm`)
+    - check out all needed repositories into subdirectories
+    - `npm install` all dependencies
+    - `npm run build` in all repositories
+- IMPORTANT: make sure your current shell has the proper node version `node --version` before the next step
+  - if not, open a new terminal before you start the server, and check again
 - change directory to `cables_electron/`
 - run `npm run build`
 - use `npm run start` to start the app

@@ -75,6 +75,7 @@ fi
 git checkout develop
 git pull
 npm install --no-save
+npm run build
 cd ..
 
 if [ "$COMMUNITY_BUILD" = "true" ]; then
@@ -90,6 +91,7 @@ if [ "$COMMUNITY_BUILD" = "true" ]; then
   git checkout develop
   git pull
   npm install --no-save
+  npm run build
   cd ..
 
   echo "INSTALLING DEFAULT ASSETS...";
@@ -118,6 +120,7 @@ fi
 git checkout develop
 git pull
 npm install --no-save
+npm run build
 cd ..
 
 echo "INSTALLING ELECTRON..."
@@ -132,6 +135,7 @@ fi
 git pull
 git checkout develop
 npm install --no-save
+npm run build
 cd ..
 
 echo ""
