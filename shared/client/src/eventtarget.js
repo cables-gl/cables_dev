@@ -1,6 +1,9 @@
 import helper from "./helper.js";
 import Logger from "./logger.js";
 
+/**
+ * add eventlistener functionality to classes
+ */
 export default class Events
 {
     constructor()
@@ -15,7 +18,14 @@ export default class Events
         this.off = this.removeEventListener;
     }
 
-    addEventListener(which, cb, idPrefix)
+    /**
+     * add event listener
+     * @param which event name
+     * @param cb callback
+     * @param {string} idPrefix prefix for id, default empty
+     * @return {string} event id
+     */
+    addEventListener(which, cb, idPrefix = "")
     {
         const event =
             {
@@ -31,39 +41,56 @@ export default class Events
         return event.id;
     }
 
-    hasEventListener(which, cb)
+    /**
+     * check event listener registration
+     * @param id event id
+     * @param cb callback - deprecated
+     * @return {boolean}
+     */
+    hasEventListener(id, cb = null)
     {
-        if (which && !cb)
+        if (id && !cb)
         {
             // check by id
-            return !!this._listeners[which];
+            return !!this._listeners[id];
         }
         else
         {
             this._log.warn("old eventtarget function haseventlistener!");
-            if (which && cb)
+            if (id && cb)
             {
-                if (this._eventCallbacks[which])
+                if (this._eventCallbacks[id])
                 {
-                    const idx = this._eventCallbacks[which].indexOf(cb);
+                    const idx = this._eventCallbacks[id].indexOf(cb);
                     return idx !== -1;
                 }
             }
         }
     }
 
+    /**
+     * check event listener by name
+     * @param eventName event name
+     * @return {boolean}
+     */
     hasListenerForEventName(eventName)
     {
         return this._eventCallbacks[eventName] && this._eventCallbacks[eventName].length > 0;
     }
 
-    removeEventListener(which, cb)
+    /**
+     * rempve event listener registration
+     * @param id event id
+     * @param cb callback - deprecated
+     * @return
+     */
+    removeEventListener(id, cb = null)
     {
-        if (which === null || which === undefined) return;
+        if (id === null || id === undefined) return;
 
         if (!cb) // new style, remove by id, not by name/callback
         {
-            const event = this._listeners[which];
+            const event = this._listeners[id];
             if (!event)
             {
                 this._log.log("could not find event...");
@@ -77,7 +104,7 @@ export default class Events
                 let index = -1;
                 for (let i = 0; i < this._eventCallbacks[event.name].length; i++)
                 {
-                    if (this._eventCallbacks[event.name][i].id.indexOf(which) === 0) // this._eventCallbacks[event.name][i].id == which ||
+                    if (this._eventCallbacks[event.name][i].id.indexOf(id) === 0) // this._eventCallbacks[event.name][i].id == which ||
                     {
                         found = true;
                         index = i;
@@ -87,7 +114,7 @@ export default class Events
                 if (index !== -1)
                 {
                     this._eventCallbacks[event.name].splice(index, 1);
-                    delete this._listeners[which];
+                    delete this._listeners[id];
                 }
             }
 
@@ -98,24 +125,41 @@ export default class Events
         this._log.log((new Error()).stack);
 
         let index = null;
-        for (let i = 0; i < this._eventCallbacks[which].length; i++)
-            if (this._eventCallbacks[which][i].cb === cb)
+        for (let i = 0; i < this._eventCallbacks[id].length; i++)
+            if (this._eventCallbacks[id][i].cb === cb)
                 index = i;
 
         if (index !== null)
         {
             delete this._eventCallbacks[index];
         }
-        else this._log.warn("removeEventListener not found " + which);
+        else this._log.warn("removeEventListener not found " + id);
     }
 
-    logEvents(enabled, name)
+    /**
+     * enable/disable logging of events for the class
+     *
+     * @param {boolean} enabled
+     * @param {string} logName
+     */
+    logEvents(enabled, logName)
     {
         this._logEvents = enabled;
-        this._logName = name;
+        this._logName = logName;
     }
 
-    emitEvent(which, param1, param2, param3, param4, param5, param6)
+    /**
+     * emit event
+     *
+     * @param {string} which event name
+     * @param {*} param1
+     * @param {*} param2
+     * @param {*} param3
+     * @param {*} param4
+     * @param {*} param5
+     * @param {*} param6
+     */
+    emitEvent(which, param1 = null, param2 = null, param3 = null, param4 = null, param5 = null, param6 = null)
     {
         if (this._logEvents) this._log.log("[event] ", this._logName, which, this._eventCallbacks);
 

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+COMMUNITY_BUILD=false
+if [[ "$*" == *"--community"* ]]
+then
+    $COMMUNITY_BUILD=true
+fi
+
+
 CLEAN=false
 if [ "$1" = "clean" ]; then
   echo "Attempting a clean install, this will delete stuff, please confirm by pressing any key or stop here with ctrl-c..."
@@ -17,11 +24,13 @@ ls ~/.nvm/nvm.sh > /dev/null 2>&1
 if [ "$?" -eq "0" ]; then
     echo "nvm FOUND...";
     if [[ `uname` == "Darwin" ]]; then
-	echo "DETECTED OSX...";
+	    echo "DETECTED OSX...";
     else
-	echo "ASSUMING LINUX..."
-	echo "TRYING TO INSTALL DEPENDENCIES..."
-    	sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
+      echo "ASSUMING LINUX..."
+      if [ "$COMMUNITY_BUILD" = "true" ]; then
+        echo "TRYING TO INSTALL DEPENDENCIES..."
+        sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
+      fi
     fi
     echo "LOADING nodejs VERSION" `cat .nvmrc`
     source ~/.nvm/nvm.sh
@@ -68,19 +77,34 @@ git pull
 npm install --no-save
 cd ..
 
-echo "INSTALLING API..."
-if [ ! -d "cables_api/" ]; then
-  git clone git@github.com:undev-studio/cables_api.git
+if [ "$COMMUNITY_BUILD" = "true" ]; then
+  echo "INSTALLING API..."
+  if [ ! -d "cables_api/" ]; then
+    git clone git@github.com:undev-studio/cables_api.git
+  fi
+  cd cables_api/
+  if [ "$CLEAN" = "true" ]; then
+    echo "  ...deleting node modules";
+    rm -rf node_modules/
+  fi
+  git checkout develop
+  git pull
+  npm install --no-save
+  cd ..
+
+  echo "INSTALLING DEFAULT ASSETS...";
+  if [ "$CLEAN" = "true" ]; then
+    echo "  ...deleting default assets";
+    rm -rf cables_api/public/assets/library
+    git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
+  fi
+  mkdir -p cables_api/public/assets/library
+  if [ -d "cables_api/public/assets/library/.git" ]; then
+    git -C cables_api/public/assets/library pull
+  else
+    git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
+  fi
 fi
-cd cables_api/
-if [ "$CLEAN" = "true" ]; then
-  echo "  ...deleting node modules";
-  rm -rf node_modules/
-fi
-git checkout develop
-git pull
-npm install --no-save
-cd ..
 
 echo "INSTALLING UI..."
 if [ ! -d "cables_ui/" ]; then
@@ -109,19 +133,6 @@ git pull
 git checkout develop
 npm install --no-save
 cd ..
-
-echo "INSTALLING DEFAULT ASSETS...";
-if [ "$CLEAN" = "true" ]; then
-  echo "  ...deleting default assets";
-  rm -rf cables_api/public/assets/library
-  git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
-fi
-mkdir -p cables_api/public/assets/library
-if [ -d "cables_api/public/assets/library/.git" ]; then
-  git -C cables_api/public/assets/library pull
-else
-  git clone git@github.com:cables-gl/cables-asset-library.git cables_api/public/assets/library
-fi
 
 echo ""
 echo -n "BEFORE YOU RUN 'npm run start' MAKE SURE YOUR NODE VERSION MATCHES "
