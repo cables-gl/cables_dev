@@ -47,7 +47,11 @@ else
     fi
 fi
 
-. .env
+ENV_FILE=.env
+if [ -f $ENV_FILE ]; then
+  source .env
+fi
+
 CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
 CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
 CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
