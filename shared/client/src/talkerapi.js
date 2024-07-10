@@ -2,6 +2,11 @@ import Talker from "../libs/talker.cjs";
 import Events from "./eventtarget.js";
 
 
+/**
+ * wrapper for talkerapi to communicate ui <-> backend even in iframed setups
+ *
+ * @extends {Events}
+ */
 export default class TalkerAPI extends Events
 {
     constructor(target)
@@ -36,6 +41,12 @@ export default class TalkerAPI extends Events
         };
     }
 
+    /**
+     * send message via cables-talkerapi
+     * @param cmd name of the event
+     * @param data payload
+     * @param cb callback
+     */
     send(cmd, data, cb)
     {
         const payload = { "cmd": cmd, "data": data };
