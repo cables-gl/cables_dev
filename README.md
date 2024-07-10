@@ -21,7 +21,7 @@ cables development is spread across for git-repositories
 - continue [below](#common)
 
 ### windows 11
-- install and start `Visual Studio Code`
+- install and start [Visual Studio Code](https://code.visualstudio.com/download)
 - install git (`Ctrl-Shift-G`, `Download Git for Windows`), download, install (make sure to install `Git Bash` as well), restart `Visual Studio Code`
 - clone [this repository](https://github.com/cables-gl/cables_dev) from GitHub (`Ctrl-Shift-G`, `Clone Repository`, `Clone from GitHub`)
 - open new terminal (``Ctrl-Shift-` ``), make sure it's `Git Bash`, not `PowerShell`
@@ -29,7 +29,7 @@ cables development is spread across for git-repositories
 - continue [below](#common)
 
 ### common
-- install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script)
+- install [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script)
 - close and reopen your terminal, make sure nvm is installed properly, `nvm --version` should output some version number
 - run `./install_local.sh`
   - this will:
@@ -37,7 +37,6 @@ cables development is spread across for git-repositories
     - check out all needed repositories into subdirectories
     - `npm install` all dependencies
     - `npm run build` in all repositories
-    - HINT: if you get `GLIBC_2.28' not found (required by node)`, upgrade your linux/wsl-distro (e.g. Ubuntu >= 20) 
 - IMPORTANT: make sure your current shell has the proper node version by running `node --version` before the next step
   - if not, open a new terminal before you start the server, and check again
 - change directory to `cables_electron/`
@@ -52,7 +51,6 @@ cables development is spread across for git-repositories
     - `"path.ops": "../../cables/src/ops/"`
 
 ## more...
-- [working with forks](docs/working_with_forks.md)
 - [api_best_practices](docs/api_best_practices.md)
 - [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
