@@ -3,28 +3,9 @@
 # updates all repositories and merge develop
 #
 
-ENV_FILE=.env
-if [ -f $ENV_FILE ]; then
-  source .env
-fi
-CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
-CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
-CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
-CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
-CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
-CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
-
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 WARNING='\033[0;31m'
 NC='\033[0m' # No Color
-
-# maybe change remote url
-ORIGIN_URL=`git remote get-url origin`
-if [ "$ORIGIN_URL" != "$CABLES_DEV_REPO" ]; then
-  echo "CHANGING ORIGIN: cables_dev TO ${CABLES_DEV_REPO} - confirm by pressing any key, cancel with ctrl-c"
-  while [ true ]; do read -n 1; if [ $? = 0 ]; then break; fi; done
-  git remote set-url origin ${CABLES_DEV_REPO}
-fi
 
 branch=`git rev-parse --abbrev-ref HEAD`
 git fetch || true
@@ -89,14 +70,6 @@ cd $BASEDIR
 echo "UPDATING CORE..."
 cd cables
 
-# maybe change remote url
-ORIGIN_URL=`git remote get-url origin`
-if [ "$ORIGIN_URL" != "$CABLES_CORE_REPO" ]; then
-  echo "CHANGING ORIGIN: cables TO ${CABLES_CORE_REPO} - confirm by pressing any key, cancel with ctrl-c"
-  while [ true ]; do read -n 1; if [ $? = 0 ]; then break; fi; done
-  git remote set-url origin ${CABLES_CORE_REPO}
-fi
-
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
 	git checkout "${1}"
 fi
@@ -151,14 +124,6 @@ if [ -d cables_api ]; then
   echo "UPDATING API..."
   cd cables_api
 
-  # maybe change remote url
-  ORIGIN_URL=`git remote get-url origin`
-  if [ "$ORIGIN_URL" != "$CABLES_API_REPO" ]; then
-    echo "CHANGING ORIGIN: cables_api TO ${CABLES_API_REPO} - confirm by pressing any key, cancel with ctrl-c"
-    while [ true ]; do read -n 1; if [ $? = 0 ]; then break; fi; done
-    git remote set-url origin ${CABLES_API_REPO}
-  fi
-
   if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
     git checkout "${1}"
   fi
@@ -189,14 +154,6 @@ cd $BASEDIR
 echo "UPDATING UI..."
 cd cables_ui
 
-# maybe change remote url
-ORIGIN_URL=`git remote get-url origin`
-if [ "$ORIGIN_URL" != "$CABLES_UI_REPO" ]; then
-  echo "CHANGING ORIGIN: cables_ui TO ${CABLES_UI_REPO} - confirm by pressing any key, cancel with ctrl-c"
-  while [ true ]; do read -n 1; if [ $? = 0 ]; then break; fi; done
-  git remote set-url origin ${CABLES_UI_REPO}
-fi
-
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
 	git checkout "${1}"
 fi
@@ -226,14 +183,6 @@ cd $BASEDIR
 if [ -d cables_electron ]; then
   echo "UPDATING ELECTRON..."
   cd cables_electron
-
-  # maybe change remote url
-  ORIGIN_URL=`git remote get-url origin`
-  if [ "$ORIGIN_URL" != "$CABLES_ELECTRON_REPO" ]; then
-    echo "CHANGING ORIGIN: cables_electron TO ${CABLES_ELECTRON_REPO} - confirm by pressing any key, cancel with ctrl-c"
-    while [ true ]; do read -n 1; if [ $? = 0 ]; then break; fi; done
-    git remote set-url origin ${CABLES_ELECTRON_REPO}
-  fi
 
   if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
     git checkout "${1}"
