@@ -25,7 +25,7 @@ if [ "$?" -eq "0" ]; then
     if [[ `uname` == "Darwin" ]]; then
 	    echo "DETECTED OSX...";
     else
-      echo "ASSUMING LINUX..."
+      echo "ASSUMING LINUX/WSL..."
       if [ "$COMMUNITY_BUILD" = "true" ]; then
         echo "TRYING TO INSTALL DEPENDENCIES..."
         sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm

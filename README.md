@@ -15,6 +15,7 @@ cables development environment
   - run `Windows Terminal` (or `Command Prompt`) as Administrator
   - enter `wsl --install -d Ubuntu`, wait, reboot, finish wsl installation (set username, password, ...)
 - start `bash` (windows-key `bash`)
+- install libraries needed for electron `sudo apt install libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev`
 - continue [below](#common)
 
 ### common
