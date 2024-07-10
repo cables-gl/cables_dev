@@ -12,7 +12,7 @@ cables development environment
 - install `bash` and `wsl`
   - press windows key, seach for "turn windows features on or off"
   - scroll down to `Windows Subsystem for Linux`, turn it on, reboot
-  - run `Windows Terminal` as Administrator
+  - run `Windows Terminal` (or `Command Prompt`) as Administrator
   - enter `wsl --install -d Ubuntu`, wait, reboot, finish wsl installation (set username, password, ...)
 - start `bash` (windows-key `bash`)
 - continue [below](#common)
@@ -24,10 +24,11 @@ cables development environment
 - close and reopen your terminal, make sure nvm is installed properly, `nvm --version` should output some version number
 - run `./install_local.sh`
   - this will:
-    - install the required node version (and set it as default in `nvm`)
+    - install the required node version (and set it as defa ult in `nvm`)
     - check out all needed repositories into subdirectories
     - `npm install` all dependencies
     - `npm run build` in all repositories
+    - HINT: if you get `GLIBC_2.28' not found (required by node)`, upgrade your linux/wsl-distro (e.g. Ubuntu >= 20) 
 - IMPORTANT: make sure your current shell has the proper node version by running `node --version` before the next step
   - if not, open a new terminal before you start the server, and check again
 - change directory to `cables_electron/`
