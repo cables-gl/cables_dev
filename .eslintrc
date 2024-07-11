@@ -41,7 +41,8 @@
         "socketClusterClient": true,
         "incrementStartup": true,
         "mmd": true,
-        "platform": true
+        "platform": true,
+        "Sortable": true
     },
     "env": {
         "browser": true

@@ -5,6 +5,7 @@ import Events from "./eventtarget.js";
 /**
  * wrapper for talkerapi to communicate ui <-> backend even in iframed setups
  *
+ * @name TalkerAPI
  * @extends {Events}
  */
 export default class TalkerAPI extends Events

@@ -8,7 +8,9 @@
     "build": "run-s build:core build:ui build:standalone",
     "build:core": "documentation build ../cables/src/core/index.js --config ../cables/package.json --format html --output dist/ --theme theme/index.js",
     "build:ui": "documentation build ../cables_ui/src/ui/index.js ../shared/client/index.js --config ../cables_ui/package.json  --format html --output dist/ui --theme theme/index.js",
-    "build:standalone": "documentation build ../cables_electron/src/electron/main.js ../shared/api/index.js ../cables_electron/src_client/index_electron.js ../shared/client/index.js --config ../cables_electron/package.json --format html --output dist/electron --theme theme/index.js",
+    "build:standalone": "run-s build:standalone_api build:standalone_client",
+    "build:standalone_api": "documentation build ../cables_electron/src/electron/main.js ../shared/api/index.js --config ../cables_electron/package.json --format html --output dist/standalone --theme theme/index.js",
+    "build:standalone_client": "documentation build ../cables_electron/src_client/index_electron.js ../shared/client/index.js --config ../cables_electron/package.json --format html --output dist/standalone/client --theme theme/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
