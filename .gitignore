@@ -1,3 +1,4 @@
+.env
 assimp2json/
 electron/
 data/

@@ -9,17 +9,20 @@ let commands = [
     {
         "command": "cd shared && npm run build",
         "name": "shared",
-        "prefixColor": "blue"
+        "prefixColor": "blue",
+        "env": { "cables_standalone": standalone }
     },
     {
         "command": "cd cables && npm run start",
         "name": "core",
         "prefixColor": "yellow",
+        "env": { "cables_standalone": standalone }
     },
     {
         "command": "cd cables_ui && npm run start",
         "name": "gui",
         "prefixColor": "green",
+        "env": { "cables_standalone": standalone }
     },
 ];
 
@@ -43,6 +46,7 @@ if (!standalone)
             "command": "cd cables_api && npm run start",
             "name": "api",
             "prefixColor": "cyan",
+            "env": { "cables_standalone": standalone }
         });
     }
     else

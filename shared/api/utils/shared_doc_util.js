@@ -678,20 +678,24 @@ export default class SharedDocUtil extends SharedUtil
     getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false)
     {
         const collectionPath = this._cables.getExtensionOpsPath();
-        const exDirs = fs.readdirSync(collectionPath);
         const extensions = [];
-        exDirs.forEach((extensionName) =>
+        if (collectionPath && fs.existsSync(collectionPath))
         {
-            if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
+            const exDirs = fs.readdirSync(collectionPath);
+            exDirs.forEach((extensionName) =>
             {
-                const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
-                if (extensionOps.length > 0)
+                if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
                 {
-                    const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
-                    if (extDocs) extensions.push(extDocs);
+                    const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
+                    if (extensionOps.length > 0)
+                    {
+                        const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
+                        if (extDocs) extensions.push(extDocs);
+                    }
                 }
-            }
-        });
+            });
+        }
+
         return extensions;
     }
 

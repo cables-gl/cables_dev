@@ -1,5 +1,12 @@
 #!/bin/bash
 
+CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
+CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
+CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
+CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
+CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
+CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
+
 COMMUNITY_BUILD=false
 if [[ "$*" == *"--community"* ]]
 then
@@ -25,7 +32,7 @@ if [ "$?" -eq "0" ]; then
     if [[ `uname` == "Darwin" ]]; then
 	    echo "DETECTED OSX...";
     else
-      echo "ASSUMING LINUX..."
+      echo "ASSUMING LINUX/WSL..."
       if [ "$COMMUNITY_BUILD" = "true" ]; then
         echo "TRYING TO INSTALL DEPENDENCIES..."
         sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
@@ -46,14 +53,6 @@ else
 	exit 1
     fi
 fi
-
-. .env
-CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
-CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
-CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
-CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
-CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
-CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
 
 set -e
 set -o pipefail

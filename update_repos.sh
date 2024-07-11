@@ -65,10 +65,11 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
 else
   echo "no changes in git, skipping update"
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 echo "UPDATING CORE..."
 cd cables
+
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
 	git checkout "${1}"
 fi
@@ -93,7 +94,7 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
 else
   echo "no changes in git, skipping update"
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 echo "UPDATING EXTENSIONS..."
 OPSDIR=cables/src/ops/extensions/
@@ -117,11 +118,12 @@ if [ -d "$OPSDIR" ]; then
 else
   echo "${WARNING}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 if [ -d cables_api ]; then
   echo "UPDATING API..."
   cd cables_api
+
   if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
     git checkout "${1}"
   fi
@@ -147,10 +149,11 @@ if [ -d cables_api ]; then
     echo "no changes in git, skipping update"
   fi
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 echo "UPDATING UI..."
 cd cables_ui
+
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
 	git checkout "${1}"
 fi
@@ -175,11 +178,12 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
 else
   echo "no changes in git, skipping update"
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 if [ -d cables_electron ]; then
   echo "UPDATING ELECTRON..."
   cd cables_electron
+
   if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
     git checkout "${1}"
   fi
@@ -205,6 +209,6 @@ if [ -d cables_electron ]; then
     echo "no changes in git, skipping update"
   fi
 fi
-cd $BASEDIR
+cd "$BASEDIR"
 
 echo "DONE"

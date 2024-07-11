@@ -1,26 +1,35 @@
-# cables_dev
+# cables development environment
 
-cables development environment
+## structure
+
+cables development is spread across for git-repositories
+
+### [cables_dev](https://github.com/cables-gl/cables_dev)
+
+### [cables](https://github.com/cables-gl/cables)
+
+### [cables_ui](https://github.com/cables-gl/cables_ui)
+
+### [cables_electron](https://github.com/cables-gl/cables_electron)
 
 ## set up local environment (for standalone version)
 
 ### mac/linux
 - install [git](https://github.com/git-guides/install-git)
+- clone [this repository](https://github.com/cables-gl/cables_dev)
+- change into the checked out directory (`cd cables_dev/`)
 - continue [below](#common)
 
 ### windows 11
-- install `bash` and `wsl`
-  - press windows key, seach for "turn windows features on or off"
-  - scroll down to `Windows Subsystem for Linux`, turn it on, reboot
-  - run `Windows Terminal` as Administrator
-  - enter `wsl --install -d Ubuntu`, wait, reboot, finish wsl installation (set username, password, ...)
-- start `bash` (windows-key `bash`)
+- install and start [Visual Studio Code](https://code.visualstudio.com/download)
+- install git (`Ctrl-Shift-G`, `Download Git for Windows`), download, install (make sure to install `Git Bash` as well), restart `Visual Studio Code`
+- clone [this repository](https://github.com/cables-gl/cables_dev) from GitHub (`Ctrl-Shift-G`, `Clone Repository`, `Clone from GitHub`)
+- open new terminal (``Ctrl-Shift-` ``), make sure it's `Git Bash`, not `PowerShell`
+- make sure you have a profile file for your shell `touch ~/.bash_profile`
 - continue [below](#common)
 
 ### common
-- clone [this repository](https://github.com/cables-gl/cables_dev)
-- change into the checked out directory (`cd cables_dev/`)
-- install [`nvm`](https://github.com/nvm-sh/nvm#install--update-script)
+- install [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script)
 - close and reopen your terminal, make sure nvm is installed properly, `nvm --version` should output some version number
 - run `./install_local.sh`
   - this will:
