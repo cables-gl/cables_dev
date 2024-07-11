@@ -5,6 +5,7 @@ CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
 CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
 CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
 CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
+CABLES_EXTENSION_OPS_REPO="${CABLES_EXTENSION_OPS_REPO:=git@github.com:cables-gl/cables_extensionops.git}"
 CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
 
 COMMUNITY_BUILD=false
@@ -81,6 +82,19 @@ git checkout develop
 git pull
 npm install --no-save
 cd ..
+
+echo "INSTALLING EXTENSION OPS...";
+if [ "$CLEAN" = "true" ]; then
+  echo "  ...deleting extension ops";
+  rm -rf cables/src/ops/extensions
+  git clone ${CABLES_EXTENSION_OPS_REPO} cables/src/ops/extensions
+fi
+mkdir -p cables/src/ops/extensions
+if [ -d "cables/src/ops/extensions/.git" ]; then
+  git -C cables/src/ops/extensions pull
+else
+  git clone ${CABLES_EXTENSION_OPS_REPO} cables/src/ops/extensions
+fi
 
 if [ "$COMMUNITY_BUILD" = "true" ]; then
   echo "INSTALLING API..."
