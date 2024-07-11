@@ -47,7 +47,6 @@ fi
 branch=`git rev-parse --abbrev-ref HEAD`
 # ignore errors here, since branch might not be on remote
 git fetch || true
-reslog=$(git log HEAD..origin/${branch} --oneline)
 if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
   git pull origin "$branch" || true
   # merge current remote develop if branch is not master
