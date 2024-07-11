@@ -17,7 +17,7 @@
   "license": "MIT",
   "scripts": {
     "build": "run-s api client",
-    "api": "npm --prefix ./api install",
-    "client": "npm --prefix ./client install"
+    "api": "cd ./api && npm install",
+    "client": "cd ./client && npm install"
   }
 }
