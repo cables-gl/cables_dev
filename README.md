@@ -55,6 +55,7 @@ But let's get started:
   - if not, open a new terminal before you start the server, and check again
 - change directory to `cables_electron/`
 - continue with the [cables electron](https://github.com/cables-gl/cables_electron/blob/develop/README.md#Development) development steps
+- if you forked any of the above repos, check out [how to work with forks](docs/howto_working_with_forks.md)
 
 ## More...
 - [howto changelog](docs/howto_changelog.md)
