@@ -1,4 +1,4 @@
-#### build jsdoc
+# How to build JSDocs
 
 ```
 cd jsdoc/

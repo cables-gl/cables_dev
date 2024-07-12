@@ -1,4 +1,6 @@
-### Internal libraries
+# How to create/add libraries to cables-core
+
+## Internal libraries
 If you want to create a library, there are some steps you need to consider:
 
 1. Libraries can be found in `src/core/libs`
@@ -12,7 +14,7 @@ If you want to create a library, there are some steps you need to consider:
 9. use `npm run build` to build the libraries
 10. libraries are coped to `../cables_api/public/libs_core/`
 
-#### Example:
+### Example:
 
 Input structure:
 ```bash
@@ -36,9 +38,9 @@ libs
 ├── cgl_functions.js
 ├── vargetset.js
 ```
-#### Working with internal libraries
+## Working with internal libraries
 
-#### Root level libraries
+### Root level libraries
 1. All libraries have to "provide" and own or use an existing namespace, i.e.:
 
     `libs/cables/math.js`:
@@ -67,7 +69,7 @@ libs
     //   - file:
     //   - CABLES.Math.linearAlgebra;
 
-#### Adding libraries to ops
+### Adding libraries to ops
 
 1. Click the op in the UI
 2. Go to the `Core Libs` tab

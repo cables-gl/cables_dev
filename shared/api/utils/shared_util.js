@@ -1,13 +1,16 @@
 import { UtilProvider } from "./util_provider.js";
 
 /**
+ * abstract class for cables utils
+ *
+ * @param {UtilProvider} utilProvider
  * @abstract
  */
 export default class SharedUtil
 {
     /**
      *
-     * @param {UtilProvider} utilProvider
+     *
      */
     constructor(utilProvider)
     {

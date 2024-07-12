@@ -1,3 +1,5 @@
+# How to create a new version of an Op
+
 - Make sure that the version characters are added correctly. e.g.  `Ops.Array.Array` becomes  `Ops.Array.Array_v2` the next version would be  `Ops.Array.Array_v3`. This removes all previous versions from the op creation menu for users. Old versions can only be found again on the op documentation page.
 - Make sure to copy over all relevant documentation from the previous version as the new op will have none.
 - Make sure that the op has a new example patch, it won't reference the old one.

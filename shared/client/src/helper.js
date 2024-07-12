@@ -1,3 +1,6 @@
+/**
+ * Shared helper methods for cables uis
+ */
 class Helper
 {
     constructor()
@@ -5,6 +8,12 @@ class Helper
         this._simpleIdCounter = 0;
     }
 
+
+    /**
+     * generate a random v4 uuid
+     *
+     * @return {string}
+     */
     uuid()
     {
         let d = new Date().getTime();
@@ -16,15 +25,20 @@ class Helper
         });
     }
 
+    /**
+     * checks value for !isNan and isFinite
+     *
+     * @param n
+     * @return {boolean}
+     */
     isNumeric(n)
     {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
     /**
-     * generate a simple ID
-     * @function simpleId
-     * @memberof Utils
+     * generate a simple ID using an internal counter
+     *
      * @return {Number} new id
      * @static
      */
