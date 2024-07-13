@@ -29,4 +29,4 @@ For `cables_ui`:
 ## Sync with `upstream`, before pull-requests
 - the `update_repos.sh` script will work on your remote, given this setup
 - to update your repository with the changes made in `upstream` do:
-  - `git pull upstream develop` (change branch accordingly if needed)
+  - `git rebase upstream develop` (change branch accordingly if needed)
