@@ -30,35 +30,39 @@ export default class Logger
 
     error(args)
     {
-        console.error("[" + this.initiator + "]", ...arguments);
-        if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "error", arguments);
-    }
-
-    info(args)
-    {
-        console.error("[" + this.initiator + "]", ...arguments);
-        if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "info", arguments);
+        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 2, ...arguments)) || !CABLES.logSilent)
+            console.error("[" + this.initiator + "]", ...arguments);
+        // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "error", arguments);
     }
 
     warn(args)
     {
-        console.warn("[" + this.initiator + "]", ...arguments);
+        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 1, ...arguments)) || !CABLES.logSilent)
+            console.warn("[" + this.initiator + "]", ...arguments);
         // console.log((new Error()).stack);
-        if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "warn", arguments);
+        // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "warn", arguments);
     }
 
     verbose()
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
-        if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "verbose", arguments);
+        // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "verbose", arguments);
     }
+
+    info(args)
+    {
+        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
+            console.error("[" + this.initiator + "]", ...arguments);
+        // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "info", arguments);
+    }
+
 
     log(args)
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
-        if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "log", arguments);
+        // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "log", arguments);
     }
 
     userInteraction(text)

@@ -1,0 +1,24 @@
+{
+  "index": "../cables_electron/README.md",
+  "source": "../",
+  "destination": "dist/standalone",
+  "includes": ["^cables_electron/src/.*\\.js$", "^cables_electron/src_client/.*\\.js$", "^shared/client/index.js$", "^shared/api/index.js$"],
+  "excludes": ["node_modules"],
+  "plugins": [
+    {
+      "name": "@itsjamie/esdoc-standard-plugin"
+    },
+    {
+      "name": "@itsjamie/esdoc-importpath-plugin",
+      "option": {
+        "stripPackageName": true,
+        "replaces": [
+          {"from": "^cables_dev/cables_electron/src/", "to": "./"},
+          {"from": "^cables_dev/cables_electron/src_client/", "to": "./"},
+          {"from": "^cables_dev/shared/client/index.js", "to": "cables-shared-client"},
+          {"from": "^cables_dev/shared/api/index.js", "to": "cables-shared-api"}
+        ]
+      }
+    }
+  ]
+}
