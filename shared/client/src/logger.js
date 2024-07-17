@@ -30,14 +30,14 @@ export default class Logger
         console.groupEnd();
     }
 
-    error(args)
+    error()
     {
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments)) || !CABLES.logSilent)
             console.error("[" + this.initiator + "]", ...arguments);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "error", arguments);
     }
 
-    warn(args)
+    warn()
     {
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)) || !CABLES.logSilent)
             console.warn("[" + this.initiator + "]", ...arguments);
