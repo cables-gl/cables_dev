@@ -15,6 +15,8 @@ export default class Logger
 
     groupCollapsed(t)
     {
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent) console.log("[" + this.initiator + "]", ...arguments);
+
         console.groupCollapsed("[" + this.initiator + "] " + t);
     }
 
@@ -30,14 +32,14 @@ export default class Logger
 
     error(args)
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 2, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments)) || !CABLES.logSilent)
             console.error("[" + this.initiator + "]", ...arguments);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "error", arguments);
     }
 
     warn(args)
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 1, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)) || !CABLES.logSilent)
             console.warn("[" + this.initiator + "]", ...arguments);
         // console.log((new Error()).stack);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "warn", arguments);
@@ -45,22 +47,22 @@ export default class Logger
 
     verbose()
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "verbose", arguments);
     }
 
-    info(args)
+    info()
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
-            console.error("[" + this.initiator + "]", ...arguments);
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
+            console.info("[" + this.initiator + "]", ...arguments);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "info", arguments);
     }
 
 
-    log(args)
+    log()
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.shouldPrint(this.initiator, 0, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
         // if (window.gui) window.gui.emitEvent("coreLogEvent", this.initiator, "log", arguments);
     }
