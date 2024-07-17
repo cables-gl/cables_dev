@@ -47,7 +47,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "info";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -59,7 +59,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "verbose";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -71,7 +71,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "warn";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -83,7 +83,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "error";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -95,7 +95,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "startTime";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -107,7 +107,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "endTime";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -119,7 +119,7 @@ export default class SharedLogger extends SharedUtil
     {
         const initiator = this._initiator;
         const level = "uncaught";
-        const context = this._getContext();
+        const context = this._getContext(args);
         const loggers = this._services.filter((s) => { return s.levels.includes(level); });
         loggers.forEach((l) =>
         {
@@ -163,11 +163,24 @@ export default class SharedLogger extends SharedUtil
         }
     }
 
-    _getContext()
+    _getContext(loggerArguments)
     {
         try
         {
             let err = new Error();
+            if (loggerArguments)
+            {
+                for (let i = 0; i < loggerArguments.length; i++)
+                {
+                    const arg = loggerArguments[i];
+                    if (arg.hasOwnProperty("stack"))
+                    {
+                        err = arg;
+                        break;
+                    }
+                }
+            }
+
             let line = err.stack.split("\n")[4];
             let index = line ? line.indexOf("at ") : "unknown";
             let clean = line ? line.slice(index + 2, line.length).trim() : "unknown";
