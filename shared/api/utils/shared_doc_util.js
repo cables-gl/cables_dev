@@ -1,5 +1,4 @@
 import path from "path";
-import moment from "moment";
 import { marked } from "marked";
 import fs from "fs";
 import jsonfile from "jsonfile";
@@ -522,6 +521,10 @@ export default class SharedDocUtil extends SharedUtil
                 {
                     docObj.caniusequery = js.caniusequery;
                 }
+                if (js.dependencies)
+                {
+                    docObj.dependencies = js.dependencies;
+                }
             }
 
             const mdFile = path.join(this._opsUtil.getOpSourceDir(opname), opname + ".md");
@@ -639,6 +642,7 @@ export default class SharedDocUtil extends SharedUtil
     cleanOpDocData(obj)
     {
         // remove empty strings etc from array:
+        delete obj.name;
         delete obj.collections;
         delete obj.todos;
         if (obj.youtubeids) delete obj.youtubeid;
