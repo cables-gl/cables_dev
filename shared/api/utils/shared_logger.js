@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from "moment-mini";
 import path from "path";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
