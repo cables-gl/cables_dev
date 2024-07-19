@@ -43,7 +43,7 @@ will guide you as much as possible.
 In these steps we will clone the cables default repositories, once that is done, you can start working with your fork,
 if you created one.
 
-The scripts included in these steps and this repository are described in a [separate document](docs/howto_helper_scripts.md). 
+The scripts included in these steps and this repository are described in a [separate document](docs/howto_helper_scripts.md).
 
 But let's get started:
 
