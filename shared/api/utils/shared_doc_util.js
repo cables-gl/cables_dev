@@ -52,7 +52,7 @@ export default class SharedDocUtil extends SharedUtil
         if (!opName) return null;
         if (!this._opsUtil.isOpNameValid(opName)) return null;
 
-        if (this._opsUtil.existingCoreOp(opName))
+        if (this._opsUtil.isCoreOp(opName))
         {
             if (!docs) docs = this.getOpDocs();
             for (let i = 0; i < docs.length; i++)
@@ -66,7 +66,7 @@ export default class SharedDocUtil extends SharedUtil
             if (fromFile) fromFile.name = opName;
             return fromFile;
         }
-        else if (this._opsUtil.opExists(opName))
+        else
         {
             let collectionDocs = [];
             const collection = this._opsUtil.getCollectionName(opName);
@@ -78,12 +78,11 @@ export default class SharedDocUtil extends SharedUtil
                 if (fromFile) fromFile.name = opName;
                 opDocs = fromFile;
             }
+            if (!opDocs)
+            {
+                this._log.warn("could not find opdocs for", opName);
+            }
             return opDocs;
-        }
-        else
-        {
-            this._log.warn("could not find opdocs for", opName);
-            return null;
         }
     }
 

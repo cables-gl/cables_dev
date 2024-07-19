@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import moment from "moment";
 import sizeOfImage from "image-size";
 import sanitizeFileName from "sanitize-filename";
 import { UtilProvider } from "./util_provider.js";
