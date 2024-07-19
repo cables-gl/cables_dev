@@ -2934,10 +2934,13 @@ export default class SharedOpsUtil extends SharedUtil
             xw.writeAttribute("height", "40");
         }
 
+
+        const bgColor = "#333";
+
         xw.startElement("rect");
         xw.writeAttribute("width", width);
         xw.writeAttribute("height", height);
-        xw.writeAttribute("fill", "#333");
+        xw.writeAttribute("fill", bgColor);
 
         if (opDoc.coreLibs && opDoc.coreLibs.indexOf("subpatchop") > -1)
         {
@@ -2950,6 +2953,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (opDoc.layout)
         {
             if (opDoc.layout.portsIn)
+            {
                 for (let i = 0; i < opDoc.layout.portsIn.length; i++)
                 {
                     xw.startElement("rect");
@@ -2960,7 +2964,29 @@ export default class SharedOpsUtil extends SharedUtil
                     xw.endElement();
                 }
 
+                for (let i = 0; i < opDoc.layout.portsIn.length; i++)
+                    if (opDoc.layout.portsIn[i].longPort)
+                    {
+                        xw.startElement("rect");
+                        xw.writeAttribute("x", i * 14 + 14 - 3);
+                        xw.writeAttribute("width", (opDoc.layout.portsIn[i].longPort - 1) * (11 + 3));
+                        xw.writeAttribute("height", "6");
+                        xw.writeAttribute("opacity", 0.7);
+                        xw.writeAttribute("fill", bgColor);
+                        xw.endElement();
+
+                        xw.startElement("rect");
+                        xw.writeAttribute("x", i * 14 + 14 - 3);
+                        xw.writeAttribute("width", (opDoc.layout.portsIn[i].longPort - 1) * (11 + 3));
+                        xw.writeAttribute("opacity", 0.5);
+                        xw.writeAttribute("height", "6");
+                        xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsIn[i].type));
+                        xw.endElement();
+                    }
+            }
+
             if (opDoc.layout.portsOut)
+            {
                 for (let i = 0; i < opDoc.layout.portsOut.length; i++)
                 {
                     xw.startElement("rect");
@@ -2971,6 +2997,29 @@ export default class SharedOpsUtil extends SharedUtil
                     xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsOut[i].type));
                     xw.endElement();
                 }
+
+                for (let i = 0; i < opDoc.layout.portsOut.length; i++)
+                    if (opDoc.layout.portsOut[i].longPort)
+                    {
+                        xw.startElement("rect");
+                        xw.writeAttribute("y", height - 6);
+                        xw.writeAttribute("x", i * 14 + 14 - 3);
+                        xw.writeAttribute("width", (opDoc.layout.portsOut[i].longPort - 1) * (11 + 3));
+                        xw.writeAttribute("height", "6");
+                        xw.writeAttribute("opacity", 0.7);
+                        xw.writeAttribute("fill", bgColor);
+                        xw.endElement();
+
+                        xw.startElement("rect");
+                        xw.writeAttribute("y", height - 6);
+                        xw.writeAttribute("x", i * 14 + 14 - 3);
+                        xw.writeAttribute("width", (opDoc.layout.portsOut[i].longPort - 1) * (11 + 3));
+                        xw.writeAttribute("opacity", 0.5);
+                        xw.writeAttribute("height", "6");
+                        xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsOut[i].type));
+                        xw.endElement();
+                    }
+            }
         }
 
         const shortName = this.getOpShortName(opName);
