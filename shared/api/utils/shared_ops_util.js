@@ -285,25 +285,6 @@ export default class SharedOpsUtil extends SharedUtil
         return info;
     }
 
-    addOpChangeLogMessages(user, opName, messages, type = "")
-    {
-        if (!messages || messages.length === 0) return;
-        const changes = [];
-        messages.forEach((message) =>
-        {
-            const change = {
-                "message": message,
-                "type": type,
-                "author": user.username,
-                "date": Date.now()
-            };
-            changes.push(change);
-            const logStr = "*" + user.username + "* added changelog " + opName + " - https://cables.gl/op/" + opName;
-            this._log.info(logStr);
-        });
-        this._writeOpChangelog(opName, changes, false);
-    }
-
     _writeOpChangelog(opName, changes, update = false)
     {
         const filename = this.getOpAbsoluteJsonFilename(opName);
@@ -2489,13 +2470,16 @@ export default class SharedOpsUtil extends SharedUtil
         if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
         if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
 
-        const change = {
-            "message": "",
-            "type": "new op",
-            "author": user.username,
-            "date": Date.now()
-        };
-        newJson.changelog.push(change);
+        if (this.getOpNameWithoutVersion(oldName) !== this.getOpNameWithoutVersion(newName))
+        {
+            const change = {
+                "message": "op created",
+                "type": "new op",
+                "author": user.username,
+                "date": Date.now()
+            };
+            newJson.changelog.push(change);
+        }
 
         jsonfile.writeFileSync(newJsonFile, newJson, {
             "encoding": "utf-8",
