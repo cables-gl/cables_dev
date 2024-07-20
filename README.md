@@ -6,13 +6,32 @@ cables development is spread across five git-repositories
 
 ### [cables_dev](https://github.com/cables-gl/cables_dev)
 
+the current repository is the "root folder" for all cables development, it holds
+documentation, helper scripts to set up your environment and keep it up to date.
+
+it also contains shared code between the different projects and holds npm commands to run watchers
+for file changes during development (see below).
+
 ### [cables](https://github.com/cables-gl/cables)
+
+the cables repository holds all the core ops of cables, and everything that is needed
+to run cables patches (in the editor, but also in exported patches).
 
 ### [cables_ui](https://github.com/cables-gl/cables_ui)
 
+cables_ui contains all code that makes up the cables editor, the ui. everything that is needed
+to work on patches on cables.gl and in cables standalone lives in this repository.
+
 ### [cables_electron](https://github.com/cables-gl/cables_electron)
 
+the repository to bring all of the above together to have a running version of the cables ui
+with the cables code and ops. runs (and builds/packs) an electron executable that can be
+used to create patches locally, or develop on core and ui features on your local machine.
+
 ### [cables_extensionops](https://github.com/undev-studio/cables_extensionops)
+
+a repository containing all the extensions on cables.gl that are not in the core. it is not
+needed for local development but will give you a few more ops to work with.
 
 ## Set up local environment (for standalone version) - quick start
 
@@ -24,7 +43,7 @@ will guide you as much as possible.
 In these steps we will clone the cables default repositories, once that is done, you can start working with your fork,
 if you created one.
 
-The scripts included in these steps and this repository are described in a [separate document](docs/howto_helper_scripts.md). 
+The scripts included in these steps and this repository are described in a [separate document](docs/howto_helper_scripts.md).
 
 But let's get started:
 
@@ -56,6 +75,46 @@ But let's get started:
 - change directory to `cables_electron/`
 - continue with the [cables electron](https://github.com/cables-gl/cables_electron/blob/develop/README.md#Development) development steps
 - if you forked any of the above repos, check out [how to work with forks](docs/howto_working_with_forks.md)
+
+## Scripts
+
+### build_all.sh
+
+enters all repositories and runs `npm run build`
+
+### install_local.sh
+
+tries to guess your OS, installs dependencies, creates needed directories and files and copies
+`cables_example.json` to `cables.json` if it does not exist
+
+### update_repos.sh
+
+reads the current nodeversion vom .nvmrc and walks the repositories,
+pulls upstream changes and merges develop into the current branch, also rebuilds with npm if there
+are changes in the remore repositories.
+
+if given a branch, like `update_repos.sh develop` tries to switch all the repositories to that
+branch before then merging develop and building.
+
+if given `force` as a first parameter, like `update_repos.sh force`, will rebuild with npm,
+even if there are no changes in git.
+
+### update_ops.sh
+
+* intended for community devenv only
+* updates patchops/userops/teamops/extensionops
+* repositories need to be checked out to cables/src/ops/users, cables/ops/teams, ...
+* pulls `master` and `main` for all repositories
+* runs `npm run opdocs` in cables_api to refresh caches
+
+### update_live.sh
+
+* intended for cables.gl only!
+* makes sure wanted node version is installed
+* makes sure all the repositories are on `master` branch
+* pulls `master` for all repositories
+* runs `npm` to build all the repositories
+* on live: run `pm2 restart all` afterward!
 
 ## More...
 - [howto changelog](docs/howto_changelog.md)
