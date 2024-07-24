@@ -2,6 +2,7 @@
 assimp2json/
 electron/
 data/
+docker-compose.yml
 
 .DS_Store
 .vscode
