@@ -67,4 +67,3 @@ Content and Technology under grant agreement No 101069594. Navigate projects
 - [howto op_new_version](docs/howto_op_new_version.md)
 - [howto jsdoc](docs/howto_jsdoc.md)
 - [howto libraries](docs/howto_libraries.md)
-- [install community devenv](https://github.com/undev-studio/cables_api/blob/develop/docs/install.md)
