@@ -432,6 +432,25 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    replaceOpNameInLookup(oldName, newName)
+    {
+        if (!oldName || !newName) return;
+        if (!this.cachedLookup || !this.cachedLookup.ids || !this.cachedLookup.names)
+        {
+            this._log.warn("no cache of op lookup table during rename!");
+            return;
+        }
+        let opId = null;
+        if (this.cachedLookup.names[oldName]) opId = this.cachedLookup.names[oldName];
+        if (opId)
+        {
+            this.cachedLookup.ids[opId] = newName;
+            delete this.cachedLookup.names[oldName];
+            this.cachedLookup.names[newName] = opId;
+            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
+        }
+    }
+
     buildOpDocs(opname)
     {
         let docObj = null;

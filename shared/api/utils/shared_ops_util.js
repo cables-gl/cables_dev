@@ -2515,6 +2515,31 @@ export default class SharedOpsUtil extends SharedUtil
         };
     }
 
+    renameToCoreOp(oldName, newName, currentUser, removeOld, cb)
+    {
+        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
+    }
+
+    renameToExtensionOp(oldName, newName, currentUser, removeOld, cb)
+    {
+        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
+    }
+
+    renameToTeamOp(oldName, newName, currentUser, removeOld, cb)
+    {
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
+    }
+
+    renameToUserOp(oldName, newName, currentUser, removeOld, cb)
+    {
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
+    }
+
+    renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb)
+    {
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, cb);
+    }
+
     updateOp(user, opName, updates, options = {})
     {
         const opExists = this.opExists(opName);
@@ -3141,6 +3166,165 @@ export default class SharedOpsUtil extends SharedUtil
         xw.endDocument();
 
         return xw.toString();
+    }
+
+    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, cb)
+    {
+        if (!this.isPatchOp(newName))
+        {
+            this._log.verbose("STARTING RENAME");
+            this._log.info("*" + currentUser.username + "* renaming " + oldName + " to " + newName);
+        }
+
+        let log = [];
+
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpSourceDir(newName);
+
+        const oldOpFile = path.join(oldOpDir, oldName + ".js");
+        const newOpFile = path.join(newOpDir, newName + ".js");
+
+        let actionString = "moving";
+        if (!removeOld) actionString = "copying";
+        if (!this.isPatchOp(newName)) this._log.info("*" + currentUser.username + "* " + actionString + " " + oldOpFile + " to " + newOpFile);
+
+        const exists = fs.existsSync(oldOpFile);
+        const existsNew = fs.existsSync(newOpFile);
+
+        if (!this.isPatchOp(newName)) this._log.verbose(oldOpFile);
+        if (!this.isPatchOp(newName)) this._log.verbose("old exists", exists, "new exists", existsNew);
+
+        if (existsNew)
+        {
+            log.push("ERROR: new op already exists!");
+            if (cb) cb("OP_ALREADY_EXISTS", log);
+            return false;
+        }
+
+        log.push("Good: New op does not exist.");
+
+        if (!exists)
+        {
+            log.push("ERROR: old op does not exist!");
+            if (cb) cb("OP_DOES_NOT_EXIST", log);
+            return false;
+        }
+
+        log.push("Good: Old op does exist.");
+
+        if (formatCode)
+        {
+            const code = fs.readFileSync(oldOpFile, "utf8");
+            const format = this.validateAndFormatOpCode(code);
+            if (format.error)
+            {
+                log.push("ERROR: failed to format opcode when moving to base-op!");
+                if (cb) cb("OP_FORMAT_FAILED", log);
+                return false;
+            }
+            else
+            {
+                fs.writeFileSync(oldOpFile, format.formatedCode);
+                log.push("successfully formatted op code");
+            }
+
+            const opFiles = fs.readdirSync(oldOpDir);
+            for (let i = 0; i < opFiles.length; i++)
+            {
+                const opFile = opFiles[i];
+                if (!opFile.startsWith("att_")) continue;
+                if (!opFile.endsWith(".js")) continue;
+                const attFile = path.join(oldOpDir, opFile);
+                const attCode = fs.readFileSync(attFile, "utf8");
+                const attFormat = this.validateAndFormatOpCode(attCode);
+                if (attFormat.error)
+                {
+                    log.push("ERROR: failed to format attachment code: " + opFile);
+                    if (cb) cb("ATT_FORMAT_FAILED", log);
+                    return false;
+                }
+                else
+                {
+                    fs.writeFileSync(attFile, attFormat.formatedCode);
+                    log.push("successfully formatted attachment code: " + opFile);
+                }
+            }
+        }
+
+        mkdirp.sync(newOpDir);
+        fs.copySync(oldOpDir, newOpDir);
+
+        log.push("Renamed path");
+
+        if (!this.isPatchOp(newName)) this._log.verbose("newpath", newOpDir);
+        if (!this.isPatchOp(newName)) this._log.verbose("oldpath", oldOpDir);
+
+        fs.renameSync(path.join(newOpDir, oldName + ".js"), newOpFile);
+
+        if (currentUser.isStaff)
+        {
+            log.push("Renamed JS to " + newOpFile);
+        }
+        else
+        {
+            log.push("Renamed JS");
+        }
+
+        const oldMd = path.join(oldOpDir, oldName + ".md");
+        const newMd = path.join(newOpDir, newName + ".md");
+        if (fs.existsSync(oldMd))
+        {
+            fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
+            log.push("Renamed MD file");
+        }
+
+        const oldJson = path.join(oldOpDir, oldName + ".json");
+        const newJson = path.join(newOpDir, newName + ".json");
+        if (fs.existsSync(oldJson))
+        {
+            fs.renameSync(path.join(newOpDir, oldName + ".json"), newJson);
+            log.push("Renamed JSON file");
+        }
+
+        let jsonChange = false;
+        const newJsonData = jsonfile.readFileSync(newJson);
+
+        if (removeOld)
+        {
+            fs.emptyDirSync(oldOpDir);
+            this._docsUtil.replaceOpNameInLookup(oldName, newName);
+            fs.rmSync(oldOpDir, { "recursive": true });
+        }
+
+        if (!removeOld || newId)
+        {
+            if (newJsonData)
+            {
+                newJsonData.id = uuidv4();
+                this._docsUtil.addOpToLookup(newJsonData.id, newName);
+                jsonChange = true;
+            }
+        }
+
+        if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, { "encoding": "utf-8", "spaces": 4 });
+        if (newName.includes(this.INFIX_DEPRECATED))
+        {
+            this.addOpChangelog(currentUser, newName, { "type": "deprecation", "message": "op " + oldName + " was deprecated" });
+        }
+        else
+        {
+            this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldName + " renamed to " + newName });
+        }
+
+        let updateOld = false;
+        if (removeOld) updateOld = true;
+
+        if (!this.isPatchOp(newName)) this._log.verbose("*" + currentUser.username + " finished rename ");
+
+        if (updateOld) this._docsUtil.updateOpDocs(oldName);
+        this._docsUtil.updateOpDocs(newName);
+        if (cb) cb(null, log, newJsonData);
+        return true;
     }
 }
 
