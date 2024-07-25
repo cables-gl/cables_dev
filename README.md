@@ -37,6 +37,16 @@ used to create patches locally, or develop on core and ui features on your local
 a repository containing all the extensions on cables.gl that are not in the core. it is not
 needed for local development but will give you a few more ops to work with.
 
+## Giving Feedback
+
+### Issue Workflow
+
+- create an issue, pick "Bug report" or "Feature Request" from the templates
+- the issue will be assigned a "new" label
+- we will check on these issues regularly, add them to a milestone and remove the "new" label
+- once we added the feature or fixed the bug in any release (also dev/nightly) we will close the issue
+- stable releases will have a changelog with all the closed issues
+
 ## More...
 - [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
