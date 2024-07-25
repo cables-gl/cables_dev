@@ -1,6 +1,6 @@
 # cables development environment
 
-[cables.gl](https://cables.gl) and [cables standalone](https://cables.gl/download) are mainly developed by [undev](https://undev.studio/),
+[cables.gl](https://cables.gl) and [cables standalone](https://cables.gl/downloads) are mainly developed by [undev](https://undev.studio/),
 with contributions by the [cables community](https://discord.gg/cablesgl) and support by [various other parties and projects](https://cables.gl/credits).
 
 This is the repository that holds the parent directory for cables development. Read up about
