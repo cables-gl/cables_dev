@@ -61,7 +61,7 @@ from the European Commission's [Next Generation Internet](https://www.ngi.eu/) p
 Content and Technology under grant agreement No 101069594. Navigate projects
 
 ## More...
-- [development process](docs/toolchain.md)
+- [tools involved](docs/toolchain.md)
 - [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
 - [howto op_new_version](docs/howto_op_new_version.md)
