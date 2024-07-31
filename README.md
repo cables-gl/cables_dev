@@ -62,8 +62,6 @@ Content and Technology under grant agreement No 101069594.
 
 ## More...
 - [tools involved](docs/toolchain.md)
-- [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
 - [howto op_new_version](docs/howto_op_new_version.md)
-- [howto jsdoc](docs/howto_jsdoc.md)
 - [howto libraries](docs/howto_libraries.md)
