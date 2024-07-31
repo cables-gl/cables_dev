@@ -198,9 +198,12 @@ npm run build
 cd ..
 
 NPM_START_CMD="'npm run start:standalone'"
+echo -e ""
 if [ "$COMMUNITY_BUILD" = "true" ]; then
   NPM_START_CMD="'npm run start'"
+  echo -e "${YELLOW}BEFORE YOU RUN ${NPM_START_CMD} MAKE SURE YOUR NODE VERSION MATCHES" `cat .nvmrc` "BY RUNNING 'node --version'${NC}"
+else
+  echo -e "${YELLOW}BEFORE YOU RUN ${NPM_START_CMD} MAKE SURE YOUR NODE VERSION MATCHES" `cat .nvmrc` "BY RUNNING 'node --version'${NC}"
+  echo -e "${YELLOW}...then change into cables_electron/ and run 'npm run start' to fire up cables standalone for development${NC}"
 fi
-echo -e ""
-echo -e "${YELLOW}BEFORE YOU RUN ${NPM_START_CMD} MAKE SURE YOUR NODE VERSION MATCHES" `cat .nvmrc` "BY RUNNING 'node --version'${NC}"
 echo -e ""
