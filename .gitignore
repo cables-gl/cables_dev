@@ -4,16 +4,14 @@ electron/
 data/
 docker-compose.yml
 
+# misc
+.idea/
 .DS_Store
 .vscode
-
-# misc
-.DS_Store
-.idea/
+docker-compose.yml
 
 # OS generated files #
 ######################
-.DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100

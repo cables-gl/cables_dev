@@ -14,9 +14,11 @@ CABLES_EXTENSION_OPS_REPO="${CABLES_EXTENSION_OPS_REPO:=git@github.com:cables-gl
 CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
 
 COMMUNITY_BUILD=false
+cables_standalone="true";
 if [[ "$*" == *"--community"* ]]
 then
     COMMUNITY_BUILD=true
+    cables_standalone="false";
 fi
 
 CLEAN=false
