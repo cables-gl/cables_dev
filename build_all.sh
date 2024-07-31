@@ -17,6 +17,7 @@ then
     COMMUNITY_BUILD=true
     cables_standalone="false";
 fi
+export cables_standalone;
 
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
 
@@ -43,7 +44,6 @@ echo -e "${GREEN}BUILDING CORE...${NC}"
 cd cables
 npm run build
 cd ..
-exit
 
 echo -e ""
 echo -e "${GREEN}BUILDING UI...${NC}"

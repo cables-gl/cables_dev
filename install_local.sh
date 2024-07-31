@@ -20,6 +20,7 @@ then
     COMMUNITY_BUILD=true
     cables_standalone="false";
 fi
+export cables_standalone;
 
 CLEAN=false
 if [ "$1" = "clean" ]; then
