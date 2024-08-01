@@ -58,12 +58,10 @@ Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporter
 
 This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/entrust/), a fund established by [NLnet](https://nlnet.nl/) with financial support
 from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
-Content and Technology under grant agreement No 101069594. Navigate projects
+Content and Technology under grant agreement No 101069594.
 
 ## More...
 - [tools involved](docs/toolchain.md)
-- [howto changelog](docs/howto_changelog.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
 - [howto op_new_version](docs/howto_op_new_version.md)
-- [howto jsdoc](docs/howto_jsdoc.md)
 - [howto libraries](docs/howto_libraries.md)

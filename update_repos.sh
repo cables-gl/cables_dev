@@ -127,33 +127,35 @@ fi
 cd "$BASEDIR"
 
 if [ -d cables_api ]; then
-  echo -e ""
-  echo -e "${GREEN}UPDATING API...${NC}"
-  cd cables_api
+  if [ -f cables_api/package.json ]; then
+    echo -e ""
+      echo -e "${GREEN}UPDATING API...${NC}"
+      cd cables_api
 
-  if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-    git checkout "${1}"
-  fi
-  # get current branch
-  branch=`git rev-parse --abbrev-ref HEAD`
-  # ignore errors here, since branch might not be on remote
-  git fetch || true
-  reslog=$(git log HEAD..origin/${branch} --oneline)
-  if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
-    git pull origin "$branch" || true
-    # merge current remote develop if branch is not master
-    if [ "master" != "${branch}" ]; then
-        echo -e "merging current state of origin/develop into ${branch}";
-        git merge origin/develop;
-    else
-        echo -e "{$RED}not merging origin/develop into master!${NC}"
-    fi
-    if [ "clean" == "${1}" ]; then
-      rm -rf node_modules/
-    fi
-    npm install --no-save
-  else
-    echo -e "no changes in git, skipping update"
+      if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
+        git checkout "${1}"
+      fi
+      # get current branch
+      branch=`git rev-parse --abbrev-ref HEAD`
+      # ignore errors here, since branch might not be on remote
+      git fetch || true
+      reslog=$(git log HEAD..origin/${branch} --oneline)
+      if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+        git pull origin "$branch" || true
+        # merge current remote develop if branch is not master
+        if [ "master" != "${branch}" ]; then
+            echo -e "merging current state of origin/develop into ${branch}";
+            git merge origin/develop;
+        else
+            echo -e "{$RED}not merging origin/develop into master!${NC}"
+        fi
+        if [ "clean" == "${1}" ]; then
+          rm -rf node_modules/
+        fi
+        npm install --no-save
+      else
+        echo -e "no changes in git, skipping update"
+      fi
   fi
 fi
 cd "$BASEDIR"
