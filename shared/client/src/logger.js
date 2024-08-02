@@ -36,6 +36,11 @@ export default class Logger
             console.error("[" + this.initiator + "]", ...arguments);
     }
 
+    errorGui()
+    {
+        if (CABLES.UI) CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments);
+    }
+
     warn()
     {
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)) || !CABLES.logSilent)
