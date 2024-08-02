@@ -101,31 +101,6 @@ else
 fi
 cd "$BASEDIR"
 
-echo -e ""
-echo -e "${GREEN}UPDATING EXTENSIONS...${NC}"
-OPSDIR=cables/src/ops/extensions/
-if [ -d "$OPSDIR" ]; then
-  cd $OPSDIR
-  if [ -d ".git" ]; then
-      git fetch || true
-      if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-        git checkout "${1}"
-      fi
-      branch=`git rev-parse --abbrev-ref HEAD`
-      reslog=$(git log HEAD..origin/${branch} --oneline)
-      if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
-            git pull
-      else
-        echo -e "no changes in git, skipping update"
-      fi
-  else
-      echo -e "{$RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
-  fi
-else
-  echo -e "{$RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
-fi
-cd "$BASEDIR"
-
 if [ -d cables_api ]; then
   if [ -f cables_api/package.json ]; then
     echo -e ""
@@ -219,6 +194,31 @@ if [ -d cables_electron ]; then
   else
     echo -e "no changes in git, skipping update"
   fi
+fi
+cd "$BASEDIR"
+
+echo -e ""
+echo -e "${GREEN}UPDATING EXTENSIONS...${NC}"
+OPSDIR=cables/src/ops/extensions/
+if [ -d "$OPSDIR" ]; then
+  cd $OPSDIR
+  if [ -d ".git" ]; then
+      git fetch || true
+      if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
+        git checkout "${1}"
+      fi
+      branch=`git rev-parse --abbrev-ref HEAD`
+      reslog=$(git log HEAD..origin/${branch} --oneline)
+      if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+            git pull
+      else
+        echo -e "no changes in git, skipping update"
+      fi
+  else
+      echo -e "{$RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
+  fi
+else
+  echo -e "{$RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
 fi
 cd "$BASEDIR"
 
