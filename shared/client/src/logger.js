@@ -45,7 +45,6 @@ export default class Logger
     {
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)) || !CABLES.logSilent)
             console.warn("[" + this.initiator + "]", ...arguments);
-        // console.log((new Error()).stack);
     }
 
     verbose()
