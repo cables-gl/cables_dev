@@ -63,6 +63,10 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     "ns": "Ops.Array",
                     "summary": "process and manipulate collections (arrays) of data"
+                },
+                {
+                    "ns": "Ops.Array",
+                    "summary": "working with array3 or pointarrays, arrays that contain XYZ coordinate/point data"
                 }
             ];
 
