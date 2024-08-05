@@ -330,20 +330,23 @@ export default class SharedOpsUtil extends SharedUtil
                             delete oldEntry.type;
                         }
                     }
-                    if (newEntry.date)
+                    if (newEntry.hasOwnProperty("date"))
                     {
-                        if (this._helperUtil.isNumeric(newEntry.date))
+                        if (newEntry.date)
                         {
-                            oldEntry.date = Number(newEntry.date) || Date.now();
+                            if (this._helperUtil.isNumeric(newEntry.date))
+                            {
+                                oldEntry.date = Number(newEntry.date) || Date.now();
+                            }
+                            else
+                            {
+                                oldEntry.date = Date.now();
+                            }
                         }
                         else
                         {
                             oldEntry.date = Date.now();
                         }
-                    }
-                    else
-                    {
-                        oldEntry.date = Date.now();
                     }
                 }
                 changes = changelog;
