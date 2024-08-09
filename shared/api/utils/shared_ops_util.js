@@ -33,6 +33,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         this.INFIX_DEPRECATED = ".Deprecated.";
         this.INFIX_DEVOPS = ".Dev.";
+        this.INFIX_STANDALONEOPS = ".Standalone.";
+
         this.SUFFIX_VERSION = "_v";
 
         this.PATCHOPS_ID_REPLACEMENTS = {
@@ -1399,6 +1401,12 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.includes(this.INFIX_DEVOPS);
     }
 
+    isStandaloneOp(opname)
+    {
+        if (!opname) return false;
+        return opname.includes(this.INFIX_STANDALONEOPS);
+    }
+
     isTeamOp(opname)
     {
         if (!opname) return false;
@@ -2357,6 +2365,10 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isDevOp(newName))
         {
             consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
+        }
+        if (this.isStandaloneOp(newName))
+        {
+            consequences.will_be_devop = "You new op will be available ONLY in the cables standalone version.";
         }
         return consequences;
     }
