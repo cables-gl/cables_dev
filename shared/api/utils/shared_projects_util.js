@@ -34,7 +34,7 @@ export default class SharedProjectsUtil extends SharedUtil
         if (!proj || !proj.ops) return [];
         let opDocs = this._docsUtil.getOpDocs();
         let nonCoreOpNames = [];
-        proj.ops.forEach((op) =>
+        if (proj.ops) proj.ops.forEach((op) =>
         {
             const opName = this._opsUtil.getOpNameById(op.opId);
             if (opName && !this._opsUtil.isCoreOp(opName)) nonCoreOpNames.push(opName);
