@@ -33,6 +33,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         this.INFIX_DEPRECATED = ".Deprecated.";
         this.INFIX_DEVOPS = ".Dev.";
+        this.INFIX_STANDALONEOPS = ".Standalone.";
+
         this.SUFFIX_VERSION = "_v";
 
         this.PATCHOPS_ID_REPLACEMENTS = {
@@ -1399,6 +1401,12 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.includes(this.INFIX_DEVOPS);
     }
 
+    isStandaloneOp(opname)
+    {
+        if (!opname) return false;
+        return opname.includes(this.INFIX_STANDALONEOPS);
+    }
+
     isTeamOp(opname)
     {
         if (!opname) return false;
@@ -2358,6 +2366,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
         }
+        if (this.isStandaloneOp(newName))
+        {
+            consequences.will_be_devop = "You new op will be available ONLY in the cables standalone version.";
+        }
         return consequences;
     }
 
@@ -2522,27 +2534,27 @@ export default class SharedOpsUtil extends SharedUtil
         };
     }
 
-    renameToCoreOp(oldName, newName, currentUser, removeOld, cb)
+    renameToCoreOp(oldName, newName, currentUser, removeOld, cb = null)
     {
         return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
     }
 
-    renameToExtensionOp(oldName, newName, currentUser, removeOld, cb)
+    renameToExtensionOp(oldName, newName, currentUser, removeOld, cb = null)
     {
         return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
     }
 
-    renameToTeamOp(oldName, newName, currentUser, removeOld, cb)
+    renameToTeamOp(oldName, newName, currentUser, removeOld, cb = null)
     {
         return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
     }
 
-    renameToUserOp(oldName, newName, currentUser, removeOld, cb)
+    renameToUserOp(oldName, newName, currentUser, removeOld, cb = null)
     {
         return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
     }
 
-    renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb)
+    renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb = null)
     {
         return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, cb);
     }
@@ -3175,7 +3187,7 @@ export default class SharedOpsUtil extends SharedUtil
         return xw.toString();
     }
 
-    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, cb)
+    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, cb = null)
     {
         if (!this.isPatchOp(newName))
         {

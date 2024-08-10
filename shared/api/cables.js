@@ -35,6 +35,11 @@ export default class Cables extends SharedUtil
         this._createDirectories();
     }
 
+    isStandalone()
+    {
+        return false;
+    }
+
     get utilName()
     {
         return UtilProvider.CABLES;
