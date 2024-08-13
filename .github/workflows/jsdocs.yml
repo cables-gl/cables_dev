@@ -9,6 +9,7 @@ on:
       - develop
     paths:
       - "shared/**"
+      - "jsdocs/**"
 
 env:
   JDOC_APP_ID: "fdb282ef-1a12-4ed8-8859-ac16c5ea3390"
@@ -42,7 +43,7 @@ jobs:
       run: |
         cd jsdoc/
         npm install --no-save
-        npm run build
+        npm run build:dev
     - name: Deploy jsdocs to netlify
       uses: netlify/actions/cli@master
       env:

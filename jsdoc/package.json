@@ -6,9 +6,11 @@
   "type": "module",
   "scripts": {
     "build": "run-s build:core build:ui build:standalone",
+    "build:dev": "run-s build build:robots",
     "build:core": "esdoc -c config/core.json",
     "build:ui": "esdoc -c config/ui.json",
-    "build:standalone": "esdoc -c config/standalone.json"
+    "build:standalone": "esdoc -c config/standalone.json",
+    "build:robots": "cp dev_robots.txt dist/robots.txt"
   },
   "engines": {
     "node": "20.13.1"
