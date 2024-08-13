@@ -2258,7 +2258,16 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (newName.match(matchString)) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
 
-        if (newName.toLowerCase().split(this.SUFFIX_VERSION).length > 2) problems.name_contains_illegal_characters = "Op name cannot contain version suffix `_v` more than once.";
+        const versionParts = newName.toLowerCase().split(this.SUFFIX_VERSION);
+        if (versionParts.length > 2) problems.name_contains_illegal_characters = "Op name cannot contain version suffix `_v` more than once.";
+        versionParts.shift();
+        versionParts.forEach((versionPart) =>
+        {
+            if (!this._helperUtil.isNumeric(versionPart))
+            {
+                problems.name_contains_illegal_characters = "Version suffix `_v` can only be followed by numbers. ";
+            }
+        });
 
         const parts = newName.split(".");
         for (let i = 0; i < parts.length; i++) // do not start
