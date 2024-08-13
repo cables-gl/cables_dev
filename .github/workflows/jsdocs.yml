@@ -9,7 +9,7 @@ on:
       - develop
     paths:
       - "shared/**"
-      - "jsdocs/**"
+      - "jsdoc/**"
 
 env:
   JDOC_APP_ID: "fdb282ef-1a12-4ed8-8859-ac16c5ea3390"
