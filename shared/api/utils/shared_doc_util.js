@@ -1,7 +1,7 @@
-import path from "path";
-import { marked } from "marked";
 import fs from "fs";
 import jsonfile from "jsonfile";
+import { marked } from "marked";
+import path from "path";
 
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
@@ -516,7 +516,7 @@ export default class SharedDocUtil extends SharedUtil
                 docObj.libs = js.libs || [];
                 docObj.youtubeids = js.youtubeids || [];
                 docObj.created = js.created;
-
+                docObj.hasPublicRepo = this._opsUtil.isCoreOp(opname) || this._opsUtil.isExtension(opname);
                 docObj.hidden = (this._opsUtil.isDeprecated(opname) || this._opsUtil.isAdminOp(opname));
 
                 if (js.changelog)
