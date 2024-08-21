@@ -1181,6 +1181,8 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
                     if (codePrefix && !dirName.startsWith(codePrefix)) continue;
                 }
+                if (!this._cables.isStandalone() && dirName.includes(this.INFIX_STANDALONEOPS)) continue;
+
                 if (filterDeprecated && this.isDeprecated(dirName)) continue;
                 if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
 
