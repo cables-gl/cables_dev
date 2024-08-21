@@ -3253,7 +3253,6 @@ export default class SharedOpsUtil extends SharedUtil
             else
             {
                 fs.writeFileSync(oldOpFile, format.formatedCode);
-                log.push("successfully formatted op code");
             }
 
             const opFiles = fs.readdirSync(oldOpDir);
@@ -3274,7 +3273,6 @@ export default class SharedOpsUtil extends SharedUtil
                 else
                 {
                     fs.writeFileSync(attFile, attFormat.formatedCode);
-                    log.push("successfully formatted attachment code: " + opFile);
                 }
             }
         }
@@ -3282,28 +3280,16 @@ export default class SharedOpsUtil extends SharedUtil
         mkdirp.sync(newOpDir);
         fs.copySync(oldOpDir, newOpDir);
 
-        log.push("Renamed path");
-
         if (!this.isPatchOp(newName)) this._log.verbose("newpath", newOpDir);
         if (!this.isPatchOp(newName)) this._log.verbose("oldpath", oldOpDir);
 
         fs.renameSync(path.join(newOpDir, oldName + ".js"), newOpFile);
-
-        if (currentUser.isStaff)
-        {
-            log.push("Renamed JS to " + newOpFile);
-        }
-        else
-        {
-            log.push("Renamed JS");
-        }
 
         const oldMd = path.join(oldOpDir, oldName + ".md");
         const newMd = path.join(newOpDir, newName + ".md");
         if (fs.existsSync(oldMd))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
-            log.push("Renamed MD file");
         }
 
         const oldJson = path.join(oldOpDir, oldName + ".json");
@@ -3311,7 +3297,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (fs.existsSync(oldJson))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".json"), newJson);
-            log.push("Renamed JSON file");
         }
 
         let jsonChange = false;
@@ -3351,6 +3336,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
         this._docsUtil.updateOpDocs(newName);
+        log.push("Successfully renamed " + oldName + " to " + newName);
+
         if (cb) cb(null, log, newJsonData);
         return true;
     }
