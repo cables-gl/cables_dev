@@ -709,7 +709,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         const attachmentFiles = [];
         const dirName = this.getOpAbsolutePath(opName);
-
         if (fs.existsSync(dirName))
         {
             try
@@ -2120,6 +2119,31 @@ export default class SharedOpsUtil extends SharedUtil
         jsonfile.writeFileSync(jsonFile, jsonData, { "encoding": "utf-8", "spaces": 4 });
         this.setOpDefaults(opName, author);
         return returnedCode;
+    }
+
+    addAttachment(opName, attName, content)
+    {
+        if (opName &&
+            attName &&
+            attName !== "null" &&
+            attName.indexOf("att_") === 0)
+        {
+            let p = this.getOpAbsolutePath(opName);
+            p += sanitizeFileName(attName);
+
+            if (this.isCoreOp(opName))
+            {
+                if (p.endsWith(".js"))
+                {
+                    const format = this.validateAndFormatOpCode(content);
+                    content = format.formatedCode;
+                }
+            }
+            content = this._helperUtil.removeTrailingSpaces(content);
+            fs.writeFileSync(p, content, "utf8");
+            return p;
+        }
+        return null;
     }
 
     updateAttachment(opName, attName, content, force = false, res = false)
