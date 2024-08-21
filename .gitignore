@@ -21,3 +21,4 @@ Thumbs.db
 
 #Node modules folder
 node_modules
+.external-ecmascript.js
