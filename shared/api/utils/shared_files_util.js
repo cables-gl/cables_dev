@@ -43,6 +43,12 @@ export default class SharedFilesUtil extends SharedUtil
         return UtilProvider.FILES_UTIL;
     }
 
+    isAssetLibraryLocation(filePath)
+    {
+        if (!filePath) return false;
+        return filePath.toLowerCase().includes("/library/");
+    }
+
     getFileAssetLocation(file)
     {
         let assetPath = file.projectId;

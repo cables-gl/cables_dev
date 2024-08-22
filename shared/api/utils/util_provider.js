@@ -27,6 +27,7 @@ UtilProvider.TEAMS_UTIL = "teamsUtil";
 UtilProvider.PROJECTS_UTIL = "projectsUtil";
 UtilProvider.FILES_UTIL = "filesUtil";
 UtilProvider.LIBS_UTIL = "libsUtil";
+UtilProvider.EXPORT_SERVICE = "exportService";
 
 export { UtilProvider };
 export default new UtilProvider();

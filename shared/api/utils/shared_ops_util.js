@@ -115,6 +115,30 @@ export default class SharedOpsUtil extends SharedUtil
         return name.startsWith(this.PREFIX_OPS);
     }
 
+    isVariableSetter(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Vars.VarSet") || opname.startsWith("Ops.Vars.VarTrigger");
+    }
+
+    isCallbackOp(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Cables.Callback");
+    }
+
+    isFunctionOp(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Cables.Function");
+    }
+
+    isSubPatch(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Ui.SubPatch");
+    }
+
     getOpAbsoluteJsonFilename(opName)
     {
         const p = this.getOpAbsolutePath(opName);

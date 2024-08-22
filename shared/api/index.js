@@ -11,6 +11,7 @@ import SharedProjectsUtil from "./utils/shared_projects_util.js";
 import SharedFilesUtil from "./utils/shared_files_util.js";
 import SharedLibsUtil from "./utils/shared_libs_util.js";
 import CablesConstants from "./constants.js";
+import SharedExportService from "./export/shared_export_service.js";
 
 export {
     utilProvider,
@@ -25,5 +26,6 @@ export {
     SharedFilesUtil,
     SharedLibsUtil,
     SharedLogger,
+    SharedExportService,
     CablesConstants
 };
