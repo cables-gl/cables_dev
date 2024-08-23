@@ -949,7 +949,6 @@ export default class SharedOpsUtil extends SharedUtil
         const collections = {};
         opNames.forEach((opName) =>
         {
-            // if (this.isCoreOp(opName)) return;
             const collectionName = this.getCollectionName(opName);
             if (!collections.hasOwnProperty(collectionName)) collections[collectionName] = [];
             collections[collectionName].push(opName);
@@ -981,7 +980,17 @@ export default class SharedOpsUtil extends SharedUtil
                 if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
             });
         });
-        return [...new Set(allOpDocs.map((obj) => { return obj; }))];
+        const newOpDocs = [];
+        const newOps = [];
+        allOpDocs.forEach((opDoc) =>
+        {
+            if (!newOps.includes(opDoc.name))
+            {
+                newOpDocs.push(opDoc);
+                newOps.push(opDoc.name);
+            }
+        });
+        return newOpDocs;
     }
 
 
