@@ -3264,16 +3264,12 @@ export default class SharedOpsUtil extends SharedUtil
             return false;
         }
 
-        log.push("Good: New op does not exist.");
-
         if (!exists)
         {
             log.push("ERROR: old op does not exist!");
             if (cb) cb("OP_DOES_NOT_EXIST", log);
             return false;
         }
-
-        log.push("Good: Old op does exist.");
 
         if (formatCode)
         {
