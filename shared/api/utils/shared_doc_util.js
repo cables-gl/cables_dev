@@ -241,7 +241,7 @@ export default class SharedDocUtil extends SharedUtil
                     "generated": Date.now(),
                     "opDocs": opDocs
                 });
-                this.cachedOpDocs = opDocs;
+                // this.cachedOpDocs = opDocs;
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
