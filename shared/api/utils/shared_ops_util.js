@@ -1190,7 +1190,6 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
                     if (codePrefix && !dirName.startsWith(codePrefix)) continue;
                 }
-                if (!this._cables.isStandalone() && dirName.includes(this.INFIX_STANDALONEOPS)) continue;
 
                 if (filterDeprecated && this.isDeprecated(dirName)) continue;
                 if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
@@ -2409,10 +2408,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isDevOp(newName))
         {
             consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
-        }
-        if (this.isStandaloneOp(newName))
-        {
-            consequences.will_be_devop = "You new op will be available ONLY in the cables standalone version.";
         }
         return consequences;
     }
