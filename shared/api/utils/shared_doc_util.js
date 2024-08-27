@@ -237,11 +237,12 @@ export default class SharedDocUtil extends SharedUtil
                 }
 
                 opDocs = this._opsUtil.addVersionInfoToOps(opDocs, true);
-                jsonfile.writeFileSync(this.opdocsFilename, {
+                const newCache = {
                     "generated": Date.now(),
                     "opDocs": opDocs
-                });
-                // this.cachedOpDocs = opDocs;
+                };
+                jsonfile.writeFileSync(this.opdocsFilename, newCache);
+                this.cachedOpDocs = newCache;
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
