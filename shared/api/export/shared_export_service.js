@@ -372,7 +372,7 @@ export default class SharedExportService extends SharedUtil
                 let libfn = filePathAndName.substr(start, filePathAndName.length - start);
                 libfn = libfn.substr("/assets/library/".length);
 
-                const pathfn = path.join(this._cables.getAssetPath(), "/library/" + libfn);
+                const pathfn = path.join(this._cables.getAssetLibraryPath(), libfn);
                 let assetZipFileName = path.join("assets/library/", libfn);
                 if (this.options.rewriteAssetPorts)
                 {
@@ -386,7 +386,7 @@ export default class SharedExportService extends SharedUtil
                 }
                 else
                 {
-                    this._log.error("does not exist: " + libfn);
+                    this._log.error("does not exist: ", pathfn);
                 }
 
                 if (this.options.rewriteAssetPorts)
@@ -945,7 +945,7 @@ export default class SharedExportService extends SharedUtil
         for (let l = 0; l < coreLibs.length; l++)
         {
             const coreLib = coreLibs[l];
-            coreLibScripts.push({ "name": coreLib, "file": path.join(this._cables.getPublicPath(), "/libs_core/", coreLib + ".js"), "src": this.finalJsPath + coreLib + ".js" });
+            coreLibScripts.push({ "name": coreLib, "file": path.join(this._cables.getCoreLibsPath(), coreLib + ".js"), "src": this.finalJsPath + coreLib + ".js" });
         }
         return coreLibScripts;
     }
