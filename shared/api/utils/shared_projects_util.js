@@ -146,8 +146,6 @@ export default class SharedProjectsUtil extends SharedUtil
         }
 
         if (keepOps) readable.ops = project.ops;
-        if (!project.cachedUsername) this.updateCachedUsername(project);
-
         return readable;
     }
 
