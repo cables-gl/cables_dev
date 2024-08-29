@@ -973,7 +973,6 @@ export default class SharedOpsUtil extends SharedUtil
         const collections = {};
         opNames.forEach((opName) =>
         {
-            // if (this.isCoreOp(opName)) return;
             const collectionName = this.getCollectionName(opName);
             if (!collections.hasOwnProperty(collectionName)) collections[collectionName] = [];
             collections[collectionName].push(opName);
@@ -1005,7 +1004,17 @@ export default class SharedOpsUtil extends SharedUtil
                 if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
             });
         });
-        return [...new Set(allOpDocs.map((obj) => { return obj; }))];
+        const newOpDocs = [];
+        const newOps = [];
+        allOpDocs.forEach((opDoc) =>
+        {
+            if (!newOps.includes(opDoc.name))
+            {
+                newOpDocs.push(opDoc);
+                newOps.push(opDoc.name);
+            }
+        });
+        return newOpDocs;
     }
 
 
@@ -1205,7 +1214,6 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
                     if (codePrefix && !dirName.startsWith(codePrefix)) continue;
                 }
-                if (!this._cables.isStandalone() && dirName.includes(this.INFIX_STANDALONEOPS)) continue;
 
                 if (filterDeprecated && this.isDeprecated(dirName)) continue;
                 if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
@@ -2425,10 +2433,6 @@ export default class SharedOpsUtil extends SharedUtil
         {
             consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
         }
-        if (this.isStandaloneOp(newName))
-        {
-            consequences.will_be_devop = "You new op will be available ONLY in the cables standalone version.";
-        }
         return consequences;
     }
 
@@ -3279,16 +3283,12 @@ export default class SharedOpsUtil extends SharedUtil
             return false;
         }
 
-        log.push("Good: New op does not exist.");
-
         if (!exists)
         {
             log.push("ERROR: old op does not exist!");
             if (cb) cb("OP_DOES_NOT_EXIST", log);
             return false;
         }
-
-        log.push("Good: Old op does exist.");
 
         if (formatCode)
         {
