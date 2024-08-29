@@ -97,8 +97,33 @@ export default class SharedUtil
         return this._utilProvider.getUtil(UtilProvider.HELPER_UTIL);
     }
 
+    /**
+     *
+     * @return {*}
+     * @protected
+     */
     get _projectsUtil()
     {
         return this._utilProvider.getUtil(UtilProvider.PROJECTS_UTIL);
+    }
+
+    /**
+     *
+     * @return {*}
+     * @protected
+     */
+    get _libsUtil()
+    {
+        return this._utilProvider.getUtil(UtilProvider.LIBS_UTIL);
+    }
+
+    /**
+     *
+     * @return {*}
+     * @protected
+     */
+    get _filesUtil()
+    {
+        return this._utilProvider.getUtil(UtilProvider.FILES_UTIL);
     }
 }

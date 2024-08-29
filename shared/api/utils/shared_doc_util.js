@@ -838,5 +838,36 @@ export default class SharedDocUtil extends SharedUtil
 
         return extDocs;
     }
+
+    getProjectLibs(project)
+    {
+        if (!project || !project.ops) return [];
+        let libs = [];
+        let usedOpsNames = {};
+        project.ops.forEach((op) =>
+        {
+            usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
+        });
+        usedOpsNames = Object.values(usedOpsNames);
+        for (let i = 0; i < usedOpsNames.length; i++)
+        {
+            const opName = usedOpsNames[i];
+            if (this._opsUtil.isOpNameValid(opName))
+            {
+                const filename = this._opsUtil.getOpAbsolutePath(opName) + opName + ".json";
+                try
+                {
+                    if (fs.existsSync(filename))
+                    {
+                        const obj = jsonfile.readFileSync(filename);
+                        if (obj.libs)libs = libs.concat(obj.libs);
+                    }
+                }
+                catch (ex) { this._log.error("no ops meta info found", opName, filename); }
+            }
+        }
+        libs = this._helperUtil.uniqueArray(libs);
+        return libs;
+    }
 }
 

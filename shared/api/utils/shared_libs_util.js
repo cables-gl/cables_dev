@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 
 import sanitizeFileName from "sanitize-filename";
 import SharedUtil from "./shared_util.js";
@@ -30,6 +29,11 @@ export default class SharedLibsUtil extends SharedUtil
             existsLib = fs.existsSync(libFilename);
         }
         return existsLib;
+    }
+
+    isAssetLib(fileName)
+    {
+        return (fileName && fileName.startsWith("/assets/") && fileName.endsWith(".js"));
     }
 }
 
