@@ -421,9 +421,10 @@ export default class SharedExportService extends SharedUtil
                     }
                 }
 
-                let fn = filePathAndName.replace("assets/", "");
+                let fn = this._resolveFileName(filePathAndName);
+                let lzipFileName = this._getNameForZipEntry(fn, allFiles, this.options);
 
-                if (fn === "" || !fn)
+                if (!fn)
                 {
                     this.addLogError("unknown filename: " + filePathAndName);
                     break;
@@ -458,17 +459,8 @@ export default class SharedExportService extends SharedUtil
                             this._log.error("ERROR: " + pathfn + " is directory");
                             break;
                         }
-                        else
-                        if (fs.existsSync(pathfn))
+                        else if (fs.existsSync(pathfn))
                         {
-                            if (fn.substr(0, 1) === "/") fn = fn.substr(1);
-                            let fnNew = fn;
-                            if (this.options.flattenAssetNames)
-                            {
-                                fnNew = fn.replace("/", "_");
-                            }
-                            let assetDir = this.finalAssetPath;
-                            let lzipFileName = path.join(assetDir, fnNew);
                             if (allFiles.indexOf(lzipFileName) === -1)
                             {
                                 lzipFileName = this.appendFile(pathfn, lzipFileName, handleAssets);
@@ -480,7 +472,6 @@ export default class SharedExportService extends SharedUtil
                             }
 
                             this.addLog("added file: " + lzipFileName);
-                            filePathAndName = filePathAndName.replace("/assets/" + fn, lzipFileName);
                         }
                         else
                         {
@@ -489,14 +480,18 @@ export default class SharedExportService extends SharedUtil
                     }
                     catch (e)
                     {
-                        this.addLogError("EXC ERROR: could not find file: " + fn);
+                        this.addLogError("EXC ERROR: could not process file: " + fn + ": " + e.message);
                     }
                 }
 
                 if (this.options.rewriteAssetPorts)
                 {
-                    if (!replacements.hasOwnProperty(port.value)) replacements[port.value] = filePathAndName;
-                    port.value = filePathAndName;
+                    const newPortValue = this._getPortValueReplacement(filePathAndName, fn, lzipFileName);
+                    if (!replacements.hasOwnProperty(port.value))
+                    {
+                        replacements[port.value] = newPortValue;
+                    }
+                    port.value = newPortValue;
                 }
             }
         }
@@ -1018,5 +1013,28 @@ export default class SharedExportService extends SharedUtil
         subDir = subDir.replace(this._cables.getOpsPath(), "");
         subDir = path.join("ops/", subDir);
         return subDir;
+    }
+
+    _resolveFileName(filePathAndName)
+    {
+        return filePathAndName.replace("assets/", "");
+    }
+
+    _getNameForZipEntry(fn, allFiles, options)
+    {
+        if (!fn) return "";
+        if (fn.substr(0, 1) === "/") fn = fn.substr(1);
+        let fnNew = fn;
+        if (options.flattenAssetNames)
+        {
+            fnNew = fn.replaceAll("/", "_");
+        }
+        let assetDir = this.finalAssetPath;
+        return path.join(assetDir, fnNew);
+    }
+
+    _getPortValueReplacement(filePathAndName, fn, lzipFileName)
+    {
+        return filePathAndName.replace("/assets/" + fn, lzipFileName);
     }
 }
