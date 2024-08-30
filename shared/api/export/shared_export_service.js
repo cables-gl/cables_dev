@@ -40,6 +40,7 @@ export default class SharedExportService extends SharedUtil
 
         this.options.opDocs = false;
         this.options.rewriteAssetPorts = true;
+        this.options.flattenAssetNames = true;
         this.options.assetsInSubdirs = false;
 
         this.options.coreSrcFile = "js/cables.js";
@@ -374,7 +375,7 @@ export default class SharedExportService extends SharedUtil
 
                 const pathfn = path.join(this._cables.getAssetLibraryPath(), libfn);
                 let assetZipFileName = path.join("assets/library/", libfn);
-                if (this.options.rewriteAssetPorts)
+                if (this.options.flattenAssetNames)
                 {
                     assetZipFileName = this.finalAssetPath + "lib_" + libfn.replace("/", "_");
                 }
@@ -398,7 +399,27 @@ export default class SharedExportService extends SharedUtil
             }
             else
             {
-                if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
+                if (this.options.rewriteAssetPorts)
+                {
+                    if (this.options.assetsInSubdirs)
+                    {
+                        let newAssetPath = this.finalAssetPath;
+                        // cant use path.join here since we need to keep the ./
+                        if (newAssetPath.endsWith(("/")))
+                        {
+                            newAssetPath += proj._id + "/";
+                        }
+                        else
+                        {
+                            newAssetPath = newAssetPath + "/" + proj._id + "/";
+                        }
+                        if (!filePathAndName.startsWith(this.finalAssetPath)) filePathAndName = filePathAndName.replace(pathStr, newAssetPath);
+                    }
+                    else
+                    {
+                        filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
+                    }
+                }
 
                 let fn = filePathAndName.replace("assets/", "");
 
@@ -409,11 +430,11 @@ export default class SharedExportService extends SharedUtil
                 }
                 else
                 {
-                    let pathfn = path.join(this._cables.getAssetPath(), "/" + fn);
+                    let pathfn = path.join(this._cables.getExportAssetTargetPath(), "/" + fn);
 
                     if (!fs.existsSync(pathfn))
                     {
-                        pathfn = path.join(this._cables.getAssetPath(), "/" + proj._id + "/" + fn);
+                        pathfn = path.join(this._cables.getExportAssetTargetPath(), "/" + proj._id + "/" + fn);
                     }
 
                     if (!fs.existsSync(pathfn))
@@ -442,7 +463,7 @@ export default class SharedExportService extends SharedUtil
                         {
                             if (fn.substr(0, 1) === "/") fn = fn.substr(1);
                             let fnNew = fn;
-                            if (this.options.rewriteAssetPorts)
+                            if (this.options.flattenAssetNames)
                             {
                                 fnNew = fn.replace("/", "_");
                             }
