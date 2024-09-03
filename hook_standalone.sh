@@ -72,13 +72,13 @@ $NPM_EXE install
 $NPM_EXE run build
 cd dist/ops/extensions/Ops.Extension.Standalone/
 cd Ops.Extension.Standalone.Ffmpeg/
-npm i --prefix ./ fluent-ffmpeg --no-save
+$NPM_EXE install --prefix ./ fluent-ffmpeg --no-save
 cd ..
 cd Ops.Extension.Standalone.Net.AbletonLink/
-npm i --prefix ./ abletonlink --no-save
+$NPM_EXE install --prefix ./ abletonlink --no-save
 cd ..
 cd  Ops.Extension.Standalone.Net.Osc
-npm i --prefix ./ osc --no-save
+$NPM_EXE install --prefix ./ osc --no-save
 cd ..
 echo "PACKAGING cables_electron"
 $NPM_EXE run dist$BUILD_OS $ARGS
