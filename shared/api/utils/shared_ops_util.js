@@ -964,6 +964,7 @@ export default class SharedOpsUtil extends SharedUtil
         {
             fs.removeSync(collectionFile);
         }
+        this._docsUtil.addOpsToLookup(newOpDocs);
         return newOpDocs;
     }
 
