@@ -75,9 +75,6 @@ cd dist/ops/extensions/Ops.Extension.Standalone/
 cd Ops.Extension.Standalone.Ffmpeg/
 $NPM_EXE install --prefix ./ fluent-ffmpeg --no-save
 cd ..
-cd Ops.Extension.Standalone.Net.AbletonLink/
-$NPM_EXE install --prefix ./ abletonlink --no-save
-cd ..
 cd  Ops.Extension.Standalone.Net.Osc
 $NPM_EXE install --prefix ./ osc --no-save
 cd ..
