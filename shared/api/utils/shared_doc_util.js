@@ -394,44 +394,19 @@ export default class SharedDocUtil extends SharedUtil
     addOpsToLookup(ops, clearFiles = false)
     {
         if (!ops) return;
-        let writeToFile = false;
         if (clearFiles) this._log.info("rewriting caches with", ops.length, "ops");
         if (clearFiles || !this.cachedLookup) this.cachedLookup = {};
         if (clearFiles || !this.cachedLookup.ids) this.cachedLookup.ids = {};
         if (clearFiles || !this.cachedLookup.names) this.cachedLookup.names = {};
         ops.forEach((op) =>
         {
-            if (op.id && op.name)
+            if (op.name && op.id)
             {
-                if (!this.cachedLookup.ids.hasOwnProperty(op.id))
-                {
-                    this.cachedLookup.ids[op.id] = op.name;
-                    writeToFile = true;
-                }
-                else if (this.cachedLookup.ids[op.id] !== op.name)
-                {
-                    this.cachedLookup.ids[op.id] = op.name;
-                    writeToFile = true;
-                }
-                if (op.id)
-                {
-                    if (!this.cachedLookup.names.hasOwnProperty(op.name))
-                    {
-                        this.cachedLookup.names[op.name] = op.id;
-                        writeToFile = true;
-                    }
-                    else if (this.cachedLookup.names[op.name] !== op.id)
-                    {
-                        this.cachedLookup.names[op.name] = op.id;
-                        writeToFile = true;
-                    }
-                }
+                this.cachedLookup.ids[op.id] = op.name;
+                this.cachedLookup.names[op.name] = op.id;
             }
         });
-        if (writeToFile)
-        {
-            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
-        }
+        jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
     }
 
     replaceOpNameInLookup(oldName, newName)
