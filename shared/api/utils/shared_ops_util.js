@@ -2897,10 +2897,10 @@ export default class SharedOpsUtil extends SharedUtil
                     port.name.toLowerCase().indexOf("negx") > -1 ||
                     port.name.toLowerCase().indexOf("negy") > -1 ||
                     port.name.toLowerCase().indexOf("negz") > -1) &&
-                port.value.toLowerCase().indexOf("/assets/") > -1
+                port.value.toLowerCase().indexOf("assets/") > -1
             )
             {
-                if (!port.value.toLowerCase().startsWith("/assets/library"))
+                if (!port.value.toLowerCase().startsWith("assets/library"))
                 {
                     assetPorts.push(port);
                 }
