@@ -423,7 +423,7 @@ export default class SharedExportService extends SharedUtil
                     }
                 }
 
-                let fn = this._resolveFileName(filePathAndName);
+                let fn = this._resolveFileName(filePathAndName, pathStr, proj);
                 let lzipFileName = this._getNameForZipEntry(fn, allFiles);
 
                 if (!fn)
@@ -1017,7 +1017,7 @@ export default class SharedExportService extends SharedUtil
         return subDir;
     }
 
-    _resolveFileName(filePathAndName, pathStr)
+    _resolveFileName(filePathAndName, pathStr, proj)
     {
         if (this.options.rewriteAssetPorts)
         {
