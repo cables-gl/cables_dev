@@ -59,10 +59,12 @@ export default class SharedExportService extends SharedUtil
      * called after export finished without error
      *
      * @param originalProject
+     * @param credentials
+     * @param exportNumber
      * @return originalProject
      * @abstract
      */
-    _doAfterExport(originalProject)
+    _doAfterExport(originalProject, credentials, exportNumber)
     {
         return originalProject;
     }
