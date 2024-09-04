@@ -424,7 +424,7 @@ export default class SharedExportService extends SharedUtil
                 }
 
                 let fn = this._resolveFileName(filePathAndName);
-                let lzipFileName = this._getNameForZipEntry(fn, allFiles, this.options);
+                let lzipFileName = this._getNameForZipEntry(fn, allFiles);
 
                 if (!fn)
                 {
@@ -1017,8 +1017,29 @@ export default class SharedExportService extends SharedUtil
         return subDir;
     }
 
-    _resolveFileName(filePathAndName)
+    _resolveFileName(filePathAndName, pathStr)
     {
+        if (this.options.rewriteAssetPorts)
+        {
+            if (this.options.assetsInSubdirs)
+            {
+                let newAssetPath = this.finalAssetPath;
+                // cant use path.join here since we need to keep the ./
+                if (newAssetPath.endsWith(("/")))
+                {
+                    newAssetPath += proj._id + "/";
+                }
+                else
+                {
+                    newAssetPath = newAssetPath + "/" + proj._id + "/";
+                }
+                if (!filePathAndName.startsWith(this.finalAssetPath)) filePathAndName = filePathAndName.replace(pathStr, newAssetPath);
+            }
+            else
+            {
+                filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
+            }
+        }
         return filePathAndName.replace("assets/", "");
     }
 
