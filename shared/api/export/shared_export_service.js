@@ -801,6 +801,9 @@ export default class SharedExportService extends SharedUtil
                 jsCode += "// end " + lib.src + "\n";
             }
 
+            jsCode = jsCode.replaceAll(/[\u2028]/g, " ");
+            jsCode = jsCode.replaceAll(/[\u2029]/g, " ");
+
             jsCode = this._doAfterCombine(jsCode, options);
 
             this._log.info("append code...", (Date.now() - this.startTimeExport) / 1000);
