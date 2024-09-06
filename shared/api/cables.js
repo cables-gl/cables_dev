@@ -179,7 +179,7 @@ export default class Cables extends SharedUtil
 
     getAssetLibraryPath()
     {
-        return path.join(this.getAssetPath(), "/library");
+        return path.join(this.getAssetPath(), "/library/");
     }
 
     getExportAssetTargetPath()
