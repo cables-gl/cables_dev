@@ -803,6 +803,7 @@ export default class SharedExportService extends SharedUtil
 
             jsCode = jsCode.replaceAll(/[\u2028]/g, " ");
             jsCode = jsCode.replaceAll(/[\u2029]/g, " ");
+            jsCode = jsCode.replaceAll(/[\u00A0]/g, " ");
 
             jsCode = this._doAfterCombine(jsCode, options);
 
