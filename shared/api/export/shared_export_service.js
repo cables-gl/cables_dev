@@ -536,7 +536,7 @@ export default class SharedExportService extends SharedUtil
                     }
 
                     // add assets
-                    this._addAssets(proj, allFiles, options);
+                    let assetPortReplacements = this._addAssets(proj, allFiles, options);
                     this._log.info("done collecting assets...", (Date.now() - this.startTimeExport) / 1000);
 
                     // check if all ops can be found to build code
@@ -548,9 +548,14 @@ export default class SharedExportService extends SharedUtil
                         let opsCode = this._opsUtil.buildFullCode(usedOps, "none", false, false, null, true, options.minifyGlsl);
 
                         // handle asset path and opid replacements for code
-                        let stringReplacements = {}; // replacedOpIds;
-                        // allProjects.forEach((project) => { stringReplacements = { ...stringReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) }; });
-                        opsCode = this._replaceInString(stringReplacements, opsCode);
+                        allProjects.forEach((project) =>
+                        {
+                            if (project._id !== proj._id)
+                            {
+                                assetPortReplacements = { ...assetPortReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) };
+                            }
+                        });
+                        opsCode = this._replaceInString(assetPortReplacements, opsCode);
                         opsCode = this._replaceInString(replacedOpIds, opsCode);
 
                         // add js
@@ -966,7 +971,7 @@ export default class SharedExportService extends SharedUtil
 
     _addAssets(proj, allFiles, options)
     {
-        this._replaceAssetFilePathes(proj, options.handleAssets);
+        const replacements = this._replaceAssetFilePathes(proj, options.handleAssets);
         if (options.handleAssets === "all")
         {
             for (let iaf = 0; iaf < allFiles.length; iaf++)
@@ -985,6 +990,7 @@ export default class SharedExportService extends SharedUtil
                 }
             }
         }
+        return replacements;
     }
 
     _replaceInString(replacements, theString)
