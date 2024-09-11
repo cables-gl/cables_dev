@@ -170,7 +170,6 @@ export default class SharedExportService extends SharedUtil
             ignore = true;
         }
 
-        console.log("R", filePath);
         if (!ignore) this.append(fs.readFileSync(filePath), { "name": zipFilePath });
 
         return zipFilePath;
@@ -372,12 +371,21 @@ export default class SharedExportService extends SharedUtil
 
             if (this._filesUtil.isAssetLibraryLocation(port.value))
             {
-                const start = filePathAndName.indexOf("/assets/library/");
+                let assetLibLocation = "/assets/library/";
+                let start = filePathAndName.indexOf(assetLibLocation);
+                if (start === -1)
+                {
+                    assetLibLocation = "assets/library/";
+                    start = filePathAndName.indexOf(assetLibLocation);
+                }
                 let libfn = filePathAndName.substr(start, filePathAndName.length - start);
-                libfn = libfn.substr("/assets/library/".length);
+
+                libfn = libfn.substr(assetLibLocation.length);
 
                 const pathfn = path.join(this._cables.getAssetLibraryPath(), libfn);
+
                 let assetZipFileName = path.join("assets/library/", libfn);
+
                 if (this.options.flattenAssetNames)
                 {
                     assetZipFileName = this.finalAssetPath + "lib_" + libfn.replace("/", "_");
@@ -402,7 +410,8 @@ export default class SharedExportService extends SharedUtil
             }
             else
             {
-                let fn = this._resolveFileName(filePathAndName, pathStr, proj);
+                if (this.options.flattenAssetNames) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
+                let fn = filePathAndName.replace("assets/", "");
 
                 if (!fn)
                 {
@@ -441,7 +450,14 @@ export default class SharedExportService extends SharedUtil
                         }
                         else if (fs.existsSync(pathfn))
                         {
-                            let lzipFileName = this._getNameForZipEntry(fn, allFiles);
+                            if (fn.substr(0, 1) === "/") fn = fn.substr(1);
+                            let fnNew = fn;
+                            if (this.options.flattenAssetNames)
+                            {
+                                fnNew = fn.replace("/", "_");
+                            }
+                            let assetDir = this.finalAssetPath;
+                            let lzipFileName = path.join(assetDir, fnNew);
                             if (allFiles.indexOf(lzipFileName) === -1)
                             {
                                 lzipFileName = this.appendFile(pathfn, lzipFileName, handleAssets);
@@ -453,7 +469,7 @@ export default class SharedExportService extends SharedUtil
                             }
 
                             this.addLog("added file: " + lzipFileName);
-                            filePathAndName = this._getPortValueReplacement(filePathAndName, fn, lzipFileName);
+                            filePathAndName = filePathAndName.replace("/assets/" + fn, lzipFileName);
                         }
                         else
                         {
