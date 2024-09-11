@@ -170,6 +170,7 @@ export default class SharedExportService extends SharedUtil
             ignore = true;
         }
 
+        console.log("R", filePath);
         if (!ignore) this.append(fs.readFileSync(filePath), { "name": zipFilePath });
 
         return zipFilePath;
