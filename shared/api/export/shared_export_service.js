@@ -441,15 +441,15 @@ export default class SharedExportService extends SharedUtil
 
                     try
                     {
-                        const s = fs.statSync(pathfn);
-                        if (s.isDirectory())
+                        if (fs.existsSync(pathfn))
                         {
-                            this.addLogError("ERROR: " + pathfn + " is directory");
-                            this._log.error("ERROR: " + pathfn + " is directory");
-                            break;
-                        }
-                        else if (fs.existsSync(pathfn))
-                        {
+                            const s = fs.statSync(pathfn);
+                            if (s.isDirectory())
+                            {
+                                this.addLogError("ERROR: " + pathfn + " is directory");
+                                this._log.error("ERROR: " + pathfn + " is directory");
+                                break;
+                            }
                             if (fn.substr(0, 1) === "/") fn = fn.substr(1);
                             let fnNew = fn;
                             if (this.options.flattenAssetNames)
@@ -471,14 +471,10 @@ export default class SharedExportService extends SharedUtil
                             this.addLog("added file: " + lzipFileName);
                             filePathAndName = filePathAndName.replace("/assets/" + fn, lzipFileName);
                         }
-                        else
-                        {
-                            this.addLogError("ERROR: could not find file: " + pathfn);
-                        }
                     }
                     catch (e)
                     {
-                        this.addLogError("EXC ERROR: could not process file: " + pathfn + ": " + e.message);
+                        this.addLogError("EXC ERROR: could not find file: " + pathfn + ": " + e.message);
                     }
                 }
 
@@ -536,7 +532,7 @@ export default class SharedExportService extends SharedUtil
                     }
 
                     // add assets
-                    let assetPortReplacements = this._addAssets(proj, allFiles, options);
+                    this._addAssets(proj, allFiles, options);
                     this._log.info("done collecting assets...", (Date.now() - this.startTimeExport) / 1000);
 
                     // check if all ops can be found to build code
@@ -548,14 +544,9 @@ export default class SharedExportService extends SharedUtil
                         let opsCode = this._opsUtil.buildFullCode(usedOps, "none", false, false, null, true, options.minifyGlsl);
 
                         // handle asset path and opid replacements for code
-                        allProjects.forEach((project) =>
-                        {
-                            if (project._id !== proj._id)
-                            {
-                                assetPortReplacements = { ...assetPortReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) };
-                            }
-                        });
-                        opsCode = this._replaceInString(assetPortReplacements, opsCode);
+                        let stringReplacements = {}; // replacedOpIds;
+                        allProjects.forEach((project) => { stringReplacements = { ...stringReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) }; });
+                        opsCode = this._replaceInString(stringReplacements, opsCode);
                         opsCode = this._replaceInString(replacedOpIds, opsCode);
 
                         // add js
@@ -971,7 +962,7 @@ export default class SharedExportService extends SharedUtil
 
     _addAssets(proj, allFiles, options)
     {
-        const replacements = this._replaceAssetFilePathes(proj, options.handleAssets);
+        this._replaceAssetFilePathes(proj, options.handleAssets);
         if (options.handleAssets === "all")
         {
             for (let iaf = 0; iaf < allFiles.length; iaf++)
@@ -990,7 +981,6 @@ export default class SharedExportService extends SharedUtil
                 }
             }
         }
-        return replacements;
     }
 
     _replaceInString(replacements, theString)
