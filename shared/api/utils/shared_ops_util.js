@@ -677,7 +677,7 @@ export default class SharedOpsUtil extends SharedUtil
 
             for (let i = 0; i < atts.length; i++)
             {
-                if (atts[i].indexOf(".frag"))
+                if (atts[i].indexOf(".frag") > -1)
                 {
                     const opFn = this.getOpAbsolutePath(opname) + atts[i];
                     const att = fs.readFileSync(opFn, "utf8");
