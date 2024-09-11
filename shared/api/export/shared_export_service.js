@@ -410,8 +410,7 @@ export default class SharedExportService extends SharedUtil
             }
             else
             {
-                if (this.options.flattenAssetNames) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
-                let fn = filePathAndName.replace("assets/", "");
+                let fn = this._resolveFileName(filePathAndName, pathStr, proj);
 
                 if (!fn)
                 {
@@ -450,14 +449,8 @@ export default class SharedExportService extends SharedUtil
                                 this._log.error("ERROR: " + pathfn + " is directory");
                                 break;
                             }
-                            if (fn.substr(0, 1) === "/") fn = fn.substr(1);
-                            let fnNew = fn;
-                            if (this.options.flattenAssetNames)
-                            {
-                                fnNew = fn.replace("/", "_");
-                            }
-                            let assetDir = this.finalAssetPath;
-                            let lzipFileName = path.join(assetDir, fnNew);
+
+                            let lzipFileName = this._getNameForZipEntry(fn, allFiles);
                             if (allFiles.indexOf(lzipFileName) === -1)
                             {
                                 lzipFileName = this.appendFile(pathfn, lzipFileName, handleAssets);
@@ -469,7 +462,7 @@ export default class SharedExportService extends SharedUtil
                             }
 
                             this.addLog("added file: " + lzipFileName);
-                            filePathAndName = filePathAndName.replace("/assets/" + fn, lzipFileName);
+                            filePathAndName = this._getPortValueReplacement(filePathAndName, fn, lzipFileName);
                         }
                     }
                     catch (e)
@@ -968,7 +961,7 @@ export default class SharedExportService extends SharedUtil
             for (let iaf = 0; iaf < allFiles.length; iaf++)
             {
                 if (!allFiles[iaf].fileName) continue;
-                const pathfn = path.join(this._cables.getAssetPath(), allFiles[iaf].projectId, allFiles[iaf].fileName);
+                const pathfn = this._getAssetPath(allFiles[iaf]);
 
                 let assetDir = this.finalAssetPath;
                 if (this.options.assetsInSubdirs) assetDir = path.join(assetDir, proj._id);
@@ -1009,29 +1002,9 @@ export default class SharedExportService extends SharedUtil
         return subDir;
     }
 
-    _resolveFileName(filePathAndName, pathStr, proj)
+    _resolveFileName(filePathAndName, pathStr, project)
     {
-        if (this.options.rewriteAssetPorts)
-        {
-            if (this.options.assetsInSubdirs)
-            {
-                let newAssetPath = this.finalAssetPath;
-                // cant use path.join here since we need to keep the ./
-                if (newAssetPath.endsWith(("/")))
-                {
-                    newAssetPath += proj._id + "/";
-                }
-                else
-                {
-                    newAssetPath = newAssetPath + "/" + proj._id + "/";
-                }
-                if (!filePathAndName.startsWith(this.finalAssetPath)) filePathAndName = filePathAndName.replace(pathStr, newAssetPath);
-            }
-            else
-            {
-                filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
-            }
-        }
+        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
         return filePathAndName.replace("assets/", "");
     }
 
@@ -1051,5 +1024,10 @@ export default class SharedExportService extends SharedUtil
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
         return filePathAndName.replace("/assets/" + fn, lzipFileName);
+    }
+
+    _getAssetPath(file)
+    {
+        return path.join(this._cables.getAssetPath(), file.projectId, file.fileName);
     }
 }
