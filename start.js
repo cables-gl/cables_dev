@@ -2,6 +2,7 @@ import concurrently from "concurrently";
 import kill from "tree-kill";
 import fs from "fs";
 
+
 const args = process.argv ? process.argv.slice(2) : [];
 const standalone = args && args[0] === "standalone";
 
