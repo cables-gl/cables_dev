@@ -2888,19 +2888,19 @@ export default class SharedOpsUtil extends SharedUtil
                 port.name &&
                 port.value.length &&
                 (port.display === "file" ||
-                    port.name.toLowerCase().indexOf("file") > -1 ||
-                    port.name.toLowerCase().indexOf("url") > -1 ||
+                    port.name.toLowerCase().includes("file") ||
+                    port.name.toLowerCase().includes("url") ||
                     // port names in cubemapfromtextures !
-                    port.name.toLowerCase().indexOf("posx") > -1 ||
-                    port.name.toLowerCase().indexOf("posy") > -1 ||
-                    port.name.toLowerCase().indexOf("posz") > -1 ||
-                    port.name.toLowerCase().indexOf("negx") > -1 ||
-                    port.name.toLowerCase().indexOf("negy") > -1 ||
-                    port.name.toLowerCase().indexOf("negz") > -1) &&
-                port.value.toLowerCase().indexOf("/assets/") > -1
+                    port.name.toLowerCase().includes("posx") ||
+                    port.name.toLowerCase().includes("posy") ||
+                    port.name.toLowerCase().includes("posz") ||
+                    port.name.toLowerCase().includes("negx") ||
+                    port.name.toLowerCase().includes("negy") ||
+                    port.name.toLowerCase().includes("negz")) &&
+                port.value.toLowerCase().includes("assets/")
             )
             {
-                if (!port.value.toLowerCase().startsWith("/assets/library"))
+                if (!port.value.toLowerCase().includes("assets/library"))
                 {
                     assetPorts.push(port);
                 }
