@@ -549,7 +549,7 @@ export default class SharedExportService extends SharedUtil
 
                         // handle asset path and opid replacements for code
                         let stringReplacements = {}; // replacedOpIds;
-                        allProjects.forEach((project) => { stringReplacements = { ...stringReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) }; });
+                        // allProjects.forEach((project) => { stringReplacements = { ...stringReplacements, ...this._replaceAssetFilePathes(project, options.handleAssets) }; });
                         opsCode = this._replaceInString(stringReplacements, opsCode);
                         opsCode = this._replaceInString(replacedOpIds, opsCode);
 
