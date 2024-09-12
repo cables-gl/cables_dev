@@ -371,12 +371,21 @@ export default class SharedExportService extends SharedUtil
 
             if (this._filesUtil.isAssetLibraryLocation(port.value))
             {
-                const start = filePathAndName.indexOf("/assets/library/");
+                let assetLibLocation = "/assets/library/";
+                let start = filePathAndName.indexOf(assetLibLocation);
+                if (start === -1)
+                {
+                    assetLibLocation = "assets/library/";
+                    start = filePathAndName.indexOf(assetLibLocation);
+                }
                 let libfn = filePathAndName.substr(start, filePathAndName.length - start);
-                libfn = libfn.substr("/assets/library/".length);
+
+                libfn = libfn.substr(assetLibLocation.length);
 
                 const pathfn = path.join(this._cables.getAssetLibraryPath(), libfn);
+
                 let assetZipFileName = path.join("assets/library/", libfn);
+
                 if (this.options.flattenAssetNames)
                 {
                     assetZipFileName = this.finalAssetPath + "lib_" + libfn.replace("/", "_");
@@ -431,15 +440,16 @@ export default class SharedExportService extends SharedUtil
 
                     try
                     {
-                        const s = fs.statSync(pathfn);
-                        if (s.isDirectory())
+                        if (fs.existsSync(pathfn))
                         {
-                            this.addLogError("ERROR: " + pathfn + " is directory");
-                            this._log.error("ERROR: " + pathfn + " is directory");
-                            break;
-                        }
-                        else if (fs.existsSync(pathfn))
-                        {
+                            const s = fs.statSync(pathfn);
+                            if (s.isDirectory())
+                            {
+                                this.addLogError("ERROR: " + pathfn + " is directory");
+                                this._log.error("ERROR: " + pathfn + " is directory");
+                                break;
+                            }
+
                             let lzipFileName = this._getNameForZipEntry(fn, allFiles);
                             if (allFiles.indexOf(lzipFileName) === -1)
                             {
@@ -454,14 +464,10 @@ export default class SharedExportService extends SharedUtil
                             this.addLog("added file: " + lzipFileName);
                             filePathAndName = this._getPortValueReplacement(filePathAndName, fn, lzipFileName);
                         }
-                        else
-                        {
-                            this.addLogError("ERROR: could not find file: " + pathfn);
-                        }
                     }
                     catch (e)
                     {
-                        this.addLogError("EXC ERROR: could not process file: " + pathfn + ": " + e.message);
+                        this.addLogError("EXC ERROR: could not find file: " + pathfn + ": " + e.message);
                     }
                 }
 
@@ -955,7 +961,7 @@ export default class SharedExportService extends SharedUtil
             for (let iaf = 0; iaf < allFiles.length; iaf++)
             {
                 if (!allFiles[iaf].fileName) continue;
-                const pathfn = path.join(this._cables.getAssetPath(), allFiles[iaf].projectId, allFiles[iaf].fileName);
+                const pathfn = this._getAssetPath(allFiles[iaf]);
 
                 let assetDir = this.finalAssetPath;
                 if (this.options.assetsInSubdirs) assetDir = path.join(assetDir, proj._id);
@@ -996,29 +1002,9 @@ export default class SharedExportService extends SharedUtil
         return subDir;
     }
 
-    _resolveFileName(filePathAndName, pathStr, proj)
+    _resolveFileName(filePathAndName, pathStr, project)
     {
-        if (this.options.rewriteAssetPorts)
-        {
-            if (this.options.assetsInSubdirs)
-            {
-                let newAssetPath = this.finalAssetPath;
-                // cant use path.join here since we need to keep the ./
-                if (newAssetPath.endsWith(("/")))
-                {
-                    newAssetPath += proj._id + "/";
-                }
-                else
-                {
-                    newAssetPath = newAssetPath + "/" + proj._id + "/";
-                }
-                if (!filePathAndName.startsWith(this.finalAssetPath)) filePathAndName = filePathAndName.replace(pathStr, newAssetPath);
-            }
-            else
-            {
-                filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
-            }
-        }
+        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
         return filePathAndName.replace("assets/", "");
     }
 
@@ -1037,6 +1023,13 @@ export default class SharedExportService extends SharedUtil
 
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
-        return filePathAndName.replace("/assets/" + fn, lzipFileName);
+        const repl = path.join("/assets/" + fn);
+        const value = filePathAndName.replace(repl, lzipFileName);
+        return value.replace(/^\/+/, "");
+    }
+
+    _getAssetPath(file)
+    {
+        return path.join(this._cables.getAssetPath(), file.projectId, file.fileName);
     }
 }
