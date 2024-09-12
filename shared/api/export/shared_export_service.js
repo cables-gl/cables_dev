@@ -1004,7 +1004,9 @@ export default class SharedExportService extends SharedUtil
 
     _resolveFileName(filePathAndName, pathStr, project)
     {
-        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
+        let finalPath = this.finalAssetPath;
+        if (this.options.assetsInSubdirs && project && project._id) finalPath = path.join(this.finalAssetPath, project._id, "/");
+        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, finalPath);
         return filePathAndName.replace("assets/", "");
     }
 
