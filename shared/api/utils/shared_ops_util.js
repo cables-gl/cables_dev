@@ -920,7 +920,6 @@ export default class SharedOpsUtil extends SharedUtil
 
             if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
 
-            opDoc.newestVersion = null;
             if (opDoc.versions)
             {
                 opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];

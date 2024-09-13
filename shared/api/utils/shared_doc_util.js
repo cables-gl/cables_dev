@@ -668,7 +668,7 @@ export default class SharedDocUtil extends SharedUtil
             delete opDoc.collections;
             if (opDoc.newestVersion && (opDoc.newestVersion.name === opDoc.name))
             {
-                opDoc.newestVersion = null;
+                delete opDoc.newestVersion;
             }
         });
         return cleanDocs;
