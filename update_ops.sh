@@ -12,10 +12,10 @@ cd cables
 cd src/ops/
 BASEDIR=`pwd`
 
-echo "UPDATING USEROPS..."
 OPSDIR=$BASEDIR/users/
 branch="master"
 if [ -d "$OPSDIR" ]; then
+  echo "UPDATING USEROPS..."
   cd $OPSDIR
   if [ -d ".git" ]; then
       git checkout $branch
@@ -27,10 +27,10 @@ else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
 
-echo "UPDATING TEAMOPS..."
 OPSDIR=$BASEDIR/teams/
 branch="main"
 if [ -d "$OPSDIR" ]; then
+  echo "UPDATING TEAMOPS..."
   cd $OPSDIR
   if [ -d ".git" ]; then
       git checkout $branch
@@ -42,10 +42,10 @@ else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
 
-echo "UPDATING EXTENSIONS..."
 OPSDIR=$BASEDIR/extensions/
 branch="main"
 if [ -d "$OPSDIR" ]; then
+  echo "UPDATING EXTENSIONS..."
   cd $OPSDIR
   if [ -d ".git" ]; then
       git checkout $branch
@@ -57,7 +57,14 @@ else
   echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
 fi
 
-cd $CWD/cables_api
-npm run opdocs
+cd $CWD
+if [ -d cables_api ]; then
+  if [ -f cables_api/package.json ]; then
+    echo "UPDATING OPDOCS..."
+    cd $CWD/cables_api
+    npm run opdocs
+  fi
+fi
+cd $CWD
 
 echo "DONE"
