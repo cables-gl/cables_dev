@@ -237,10 +237,12 @@ export default class SharedDocUtil extends SharedUtil
                 }
 
                 opDocs = this._opsUtil.addVersionInfoToOps(opDocs, true);
-                jsonfile.writeFileSync(this.opdocsFilename, {
+                const newCache = {
                     "generated": Date.now(),
                     "opDocs": opDocs
-                });
+                };
+                jsonfile.writeFileSync(this.opdocsFilename, newCache);
+                this.cachedOpDocs = newCache;
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
@@ -392,44 +394,19 @@ export default class SharedDocUtil extends SharedUtil
     addOpsToLookup(ops, clearFiles = false)
     {
         if (!ops) return;
-        let writeToFile = false;
         if (clearFiles) this._log.info("rewriting caches with", ops.length, "ops");
         if (clearFiles || !this.cachedLookup) this.cachedLookup = {};
         if (clearFiles || !this.cachedLookup.ids) this.cachedLookup.ids = {};
         if (clearFiles || !this.cachedLookup.names) this.cachedLookup.names = {};
         ops.forEach((op) =>
         {
-            if (op.id && op.name)
+            if (op.name && op.id)
             {
-                if (!this.cachedLookup.ids.hasOwnProperty(op.id))
-                {
-                    this.cachedLookup.ids[op.id] = op.name;
-                    writeToFile = true;
-                }
-                else if (this.cachedLookup.ids[op.id] !== op.name)
-                {
-                    this.cachedLookup.ids[op.id] = op.name;
-                    writeToFile = true;
-                }
-                if (op.id)
-                {
-                    if (!this.cachedLookup.names.hasOwnProperty(op.name))
-                    {
-                        this.cachedLookup.names[op.name] = op.id;
-                        writeToFile = true;
-                    }
-                    else if (this.cachedLookup.names[op.name] !== op.id)
-                    {
-                        this.cachedLookup.names[op.name] = op.id;
-                        writeToFile = true;
-                    }
-                }
+                this.cachedLookup.ids[op.id] = op.name;
+                this.cachedLookup.names[op.name] = op.id;
             }
         });
-        if (writeToFile)
-        {
-            jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
-        }
+        jsonfile.writeFileSync(this._cables.getOpLookupFile(), this.cachedLookup);
     }
 
     replaceOpNameInLookup(oldName, newName)
@@ -691,7 +668,7 @@ export default class SharedDocUtil extends SharedUtil
             delete opDoc.collections;
             if (opDoc.newestVersion && (opDoc.newestVersion.name === opDoc.name))
             {
-                opDoc.newestVersion = null;
+                delete opDoc.newestVersion;
             }
         });
         return cleanDocs;
@@ -835,6 +812,37 @@ export default class SharedDocUtil extends SharedUtil
         extDocs = { ...extDocs, ...extInfo };
 
         return extDocs;
+    }
+
+    getProjectLibs(project)
+    {
+        if (!project || !project.ops) return [];
+        let libs = [];
+        let usedOpsNames = {};
+        project.ops.forEach((op) =>
+        {
+            usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
+        });
+        usedOpsNames = Object.values(usedOpsNames);
+        for (let i = 0; i < usedOpsNames.length; i++)
+        {
+            const opName = usedOpsNames[i];
+            if (this._opsUtil.isOpNameValid(opName))
+            {
+                const filename = this._opsUtil.getOpAbsolutePath(opName) + opName + ".json";
+                try
+                {
+                    if (fs.existsSync(filename))
+                    {
+                        const obj = jsonfile.readFileSync(filename);
+                        if (obj.libs)libs = libs.concat(obj.libs);
+                    }
+                }
+                catch (ex) { this._log.error("no ops meta info found", opName, filename); }
+            }
+        }
+        libs = this._helperUtil.uniqueArray(libs);
+        return libs;
     }
 }
 

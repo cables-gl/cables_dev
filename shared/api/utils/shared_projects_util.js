@@ -100,6 +100,79 @@ export default class SharedProjectsUtil extends SharedUtil
         return null;
     }
 
+    _makeProjectReadable(project, keepOps = false, allowEdit = false)
+    {
+        if (!project) return null;
+        let readable = {
+            "_id": project._id,
+            "id": project._id,
+            "shortId": project.shortId,
+            "name": project.name,
+            "description": project.description,
+            "link": project.link,
+            "allowEdit": allowEdit,
+            "cachedUsername": project.cachedUsername,
+            "summary": project.summary,
+            "tags": project.tags,
+            "thumbnail": project.thumbnail,
+            "created": project.created,
+            "updated": project.updated,
+            "published": project.published,
+            "updatedByUser": project.updatedByUser,
+            "userId": project.userId,
+            "users": project.users,
+            "usersReadOnly": project.usersReadOnly,
+            "visibility": project.visibility,
+            "views": project.views,
+            "cachedNumComments": project.cachedNumComments,
+            "cachedNumFavs": project.cachedNumFavs
+        };
+
+        if (project.settings)
+        {
+            readable.settings = {};
+            if (project.settings.hasOwnProperty("manualScreenshot")) readable.manualScreenshot = project.settings.manualScreenshot;
+            if (project.settings.hasOwnProperty("licence")) readable.licence = project.settings.licence;
+        }
+
+        if (project.buildInfo)
+        {
+            readable.buildInfo = {
+                "host": project.buildInfo.host,
+                "core": project.buildInfo.core,
+                "ui": project.buildInfo.ui,
+                "api": project.buildInfo.api
+            };
+        }
+
+        if (keepOps) readable.ops = project.ops;
+        return readable;
+    }
+
+    /**
+     *
+     * reduces the object to information that can be sent "over the wire", removes
+     * private information, will add isExample and opExampleFor
+     * information for projects that are marked as an example for ops
+     **
+     * @param ps project or array of projects
+     * @param keepOps do not remove ops from the project (i.e. in export)
+     * @returns {{}|*[]|*} project or array of projects
+     */
+    makeReadable(ps, keepOps = false, allowEdit = false)
+    {
+        if (!ps) return {};
+        if (!(ps instanceof Array)) return this._makeProjectReadable(ps, keepOps, allowEdit);
+
+        const readables = [];
+        ps.forEach((p) =>
+        {
+            const readable = this._makeProjectReadable(p, keepOps, allowEdit);
+            readables.push(readable);
+        });
+        return readables;
+    }
+
     makeExportable(p, keepAlso = [])
     {
         let readable = JSON.parse(JSON.stringify(p));
@@ -293,5 +366,160 @@ export default class SharedProjectsUtil extends SharedUtil
         }
 
         return libs;
+    }
+
+    getCreditsTextArray(proj)
+    {
+        let credits = [];
+        let first = true;
+        if (proj && proj.ops)
+            for (let i = 0; i < proj.ops.length; i++)
+            {
+                const info = this._opsUtil.getOpInfo(this._opsUtil.getOpNameById(proj.ops[i].opId));
+                if (info && info.authorName)
+                {
+                    if (first)
+                    {
+                        credits.push("OP AUTHORS:");
+                        credits.push("");
+                        first = false;
+                    }
+                    credits.push("- ops by cables user " + info.authorName + " (https://cables.gl/user/" + info.authorName + ")");
+                }
+
+                if (info && info.credits)
+                {
+                    for (let j = 0; j < info.credits.length; j++)
+                    {
+                        let str = "- " + info.credits[j].title;
+                        if (info.credits[j].author) str += " by " + info.credits[j].author;
+                        if (info.credits[j].url) str += " (" + info.credits[j].url + ")";
+                        credits.push(str);
+                    }
+                }
+            }
+
+        credits = this._helperUtil.uniqueArray(credits);
+
+        credits.push("");
+        credits.push("cables is build on open source software and community contributions, check https://cables.gl/credits");
+
+        return credits;
+    }
+
+    getLicenceTextArray(proj)
+    {
+        let usedOpsNames = {};
+        proj.ops.forEach((op) =>
+        {
+            usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
+        });
+        usedOpsNames = Object.values(usedOpsNames);
+        const libs = this._docsUtil.getProjectLibs(proj);
+
+        const legal = {};
+
+        for (let i = 0; i < usedOpsNames.length; i++)
+        {
+            const info = this._opsUtil.getOpInfo(usedOpsNames[i]);
+            if (info && info.credits)
+            {
+                for (let j = 0; j < info.credits.length; j++)
+                {
+                    const credit = info.credits[j];
+                    if (credit.licence)
+                    {
+                        if (!legal.hasOwnProperty(credit.licence))
+                        {
+                            legal[credit.licence] = [];
+                        }
+                        if (!legal[credit.licence].find((l) => { return l.url == credit.url; }))
+                        {
+                            legal[credit.licence].push(credit);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < libs.length; i++)
+        {
+            const lib = libs[i];
+            const baseName = path.parse(lib).name;
+            try
+            {
+                if (this._libsUtil.isAssetLib(lib))
+                {
+                    const licence = "uploaded/unknown";
+                    const filename = path.basename(lib);
+                    if (!legal.hasOwnProperty(licence))
+                    {
+                        legal[licence] = [];
+                    }
+                    if (!legal[licence].find((l) => { return l.url === lib; }))
+                    {
+                        legal[licence].push({
+                            "title": filename,
+                            "url": lib
+                        });
+                    }
+                }
+                else
+                {
+                    const filename = path.join(this._cables.getLibsPath(), baseName + ".json");
+                    const libInfo = JSON.parse(fs.readFileSync(filename, "utf8"));
+                    if (libInfo && libInfo.hasOwnProperty("licence"))
+                    {
+                        if (!legal.hasOwnProperty(libInfo.licence))
+                        {
+                            legal[libInfo.licence] = [];
+                        }
+                        if (!legal[libInfo.licence].find((l) => { return l.url === libInfo.url; }))
+                        {
+                            legal[libInfo.licence].push({
+                                "title": libInfo.title,
+                                "url": libInfo.url
+                            });
+                        }
+                    }
+                }
+            }
+            catch (e)
+            {
+                this._log.error("FAILED TO LOAD INFOFILE FOR LIBRARY:", lib);
+            }
+        }
+
+        const legalText = [];
+        legalText.push("All cables core code is licenced under the MIT licence");
+        legalText.push("");
+        legalText.push("Some ops may be using code from contributors or external libraries under different licences.");
+        legalText.push("");
+
+        if (Object.keys(legal).length > 0)
+        {
+            legalText.push("Additional code from contributors and libraries in this export are licenced as follows:");
+            legalText.push("");
+            for (const licence in legal)
+            {
+                legalText.push(licence + ":\n");
+                for (let i = 0; i < legal[licence].length; i++)
+                {
+                    const contrib = legal[licence][i];
+                    let str = "- " + contrib.title;
+                    if (contrib.author) str += " by " + contrib.author;
+                    if (contrib.url) str += " (" + contrib.url + ")";
+                    legalText.push(str);
+                    if (contrib.licenceText)
+                    {
+                        legalText.push("");
+                        legalText.push(contrib.licenceText);
+                    }
+                }
+                legalText.push("");
+            }
+        }
+
+        return legalText;
     }
 }

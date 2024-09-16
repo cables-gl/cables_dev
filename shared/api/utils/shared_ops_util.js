@@ -115,6 +115,30 @@ export default class SharedOpsUtil extends SharedUtil
         return name.startsWith(this.PREFIX_OPS);
     }
 
+    isVariableSetter(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Vars.VarSet") || opname.startsWith("Ops.Vars.VarTrigger");
+    }
+
+    isCallbackOp(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Cables.Callback");
+    }
+
+    isFunctionOp(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Cables.Function");
+    }
+
+    isSubPatch(opname)
+    {
+        if (!opname) return false;
+        return opname.startsWith("Ops.Ui.SubPatch");
+    }
+
     getOpAbsoluteJsonFilename(opName)
     {
         const p = this.getOpAbsolutePath(opName);
@@ -653,7 +677,7 @@ export default class SharedOpsUtil extends SharedUtil
 
             for (let i = 0; i < atts.length; i++)
             {
-                if (atts[i].indexOf(".frag"))
+                if (atts[i].indexOf(".frag") > -1)
                 {
                     const opFn = this.getOpAbsolutePath(opname) + atts[i];
                     const att = fs.readFileSync(opFn, "utf8");
@@ -709,7 +733,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         const attachmentFiles = [];
         const dirName = this.getOpAbsolutePath(opName);
-
         if (fs.existsSync(dirName))
         {
             try
@@ -897,7 +920,6 @@ export default class SharedOpsUtil extends SharedUtil
 
             if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
 
-            opDoc.newestVersion = null;
             if (opDoc.versions)
             {
                 opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];
@@ -941,6 +963,7 @@ export default class SharedOpsUtil extends SharedUtil
         {
             fs.removeSync(collectionFile);
         }
+        this._docsUtil.addOpsToLookup(newOpDocs);
         return newOpDocs;
     }
 
@@ -950,7 +973,6 @@ export default class SharedOpsUtil extends SharedUtil
         const collections = {};
         opNames.forEach((opName) =>
         {
-            // if (this.isCoreOp(opName)) return;
             const collectionName = this.getCollectionName(opName);
             if (!collections.hasOwnProperty(collectionName)) collections[collectionName] = [];
             collections[collectionName].push(opName);
@@ -982,7 +1004,17 @@ export default class SharedOpsUtil extends SharedUtil
                 if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
             });
         });
-        return [...new Set(allOpDocs.map((obj) => { return obj; }))];
+        const newOpDocs = [];
+        const newOps = [];
+        allOpDocs.forEach((opDoc) =>
+        {
+            if (!newOps.includes(opDoc.name))
+            {
+                newOpDocs.push(opDoc);
+                newOps.push(opDoc.name);
+            }
+        });
+        return newOpDocs;
     }
 
 
@@ -1182,6 +1214,7 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
                     if (codePrefix && !dirName.startsWith(codePrefix)) continue;
                 }
+
                 if (filterDeprecated && this.isDeprecated(dirName)) continue;
                 if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
 
@@ -2122,6 +2155,31 @@ export default class SharedOpsUtil extends SharedUtil
         return returnedCode;
     }
 
+    addAttachment(opName, attName, content)
+    {
+        if (opName &&
+            attName &&
+            attName !== "null" &&
+            attName.indexOf("att_") === 0)
+        {
+            let p = this.getOpAbsolutePath(opName);
+            p += sanitizeFileName(attName);
+
+            if (this.isCoreOp(opName))
+            {
+                if (p.endsWith(".js"))
+                {
+                    const format = this.validateAndFormatOpCode(content);
+                    content = format.formatedCode;
+                }
+            }
+            content = this._helperUtil.removeTrailingSpaces(content);
+            fs.writeFileSync(p, content, "utf8");
+            return p;
+        }
+        return null;
+    }
+
     updateAttachment(opName, attName, content, force = false, res = false)
     {
         if (res) res.startTime("sanitizeFileName");
@@ -2374,10 +2432,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isDevOp(newName))
         {
             consequences.will_be_devop = "You new op will be available ONLY on dev.cables.gl.";
-        }
-        if (this.isStandaloneOp(newName))
-        {
-            consequences.will_be_devop = "You new op will be available ONLY in the cables standalone version.";
         }
         return consequences;
     }
@@ -2833,19 +2887,19 @@ export default class SharedOpsUtil extends SharedUtil
                 port.name &&
                 port.value.length &&
                 (port.display === "file" ||
-                    port.name.toLowerCase().indexOf("file") > -1 ||
-                    port.name.toLowerCase().indexOf("url") > -1 ||
+                    port.name.toLowerCase().includes("file") ||
+                    port.name.toLowerCase().includes("url") ||
                     // port names in cubemapfromtextures !
-                    port.name.toLowerCase().indexOf("posx") > -1 ||
-                    port.name.toLowerCase().indexOf("posy") > -1 ||
-                    port.name.toLowerCase().indexOf("posz") > -1 ||
-                    port.name.toLowerCase().indexOf("negx") > -1 ||
-                    port.name.toLowerCase().indexOf("negy") > -1 ||
-                    port.name.toLowerCase().indexOf("negz") > -1) &&
-                port.value.toLowerCase().indexOf("/assets/") > -1
+                    port.name.toLowerCase().includes("posx") ||
+                    port.name.toLowerCase().includes("posy") ||
+                    port.name.toLowerCase().includes("posz") ||
+                    port.name.toLowerCase().includes("negx") ||
+                    port.name.toLowerCase().includes("negy") ||
+                    port.name.toLowerCase().includes("negz")) &&
+                port.value.toLowerCase().includes("assets/")
             )
             {
-                if (!port.value.toLowerCase().startsWith("/assets/library"))
+                if (!port.value.toLowerCase().includes("assets/library"))
                 {
                     assetPorts.push(port);
                 }
@@ -3229,16 +3283,12 @@ export default class SharedOpsUtil extends SharedUtil
             return false;
         }
 
-        log.push("Good: New op does not exist.");
-
         if (!exists)
         {
             log.push("ERROR: old op does not exist!");
             if (cb) cb("OP_DOES_NOT_EXIST", log);
             return false;
         }
-
-        log.push("Good: Old op does exist.");
 
         if (formatCode)
         {
@@ -3253,7 +3303,6 @@ export default class SharedOpsUtil extends SharedUtil
             else
             {
                 fs.writeFileSync(oldOpFile, format.formatedCode);
-                log.push("successfully formatted op code");
             }
 
             const opFiles = fs.readdirSync(oldOpDir);
@@ -3274,7 +3323,6 @@ export default class SharedOpsUtil extends SharedUtil
                 else
                 {
                     fs.writeFileSync(attFile, attFormat.formatedCode);
-                    log.push("successfully formatted attachment code: " + opFile);
                 }
             }
         }
@@ -3282,28 +3330,16 @@ export default class SharedOpsUtil extends SharedUtil
         mkdirp.sync(newOpDir);
         fs.copySync(oldOpDir, newOpDir);
 
-        log.push("Renamed path");
-
         if (!this.isPatchOp(newName)) this._log.verbose("newpath", newOpDir);
         if (!this.isPatchOp(newName)) this._log.verbose("oldpath", oldOpDir);
 
         fs.renameSync(path.join(newOpDir, oldName + ".js"), newOpFile);
-
-        if (currentUser.isStaff)
-        {
-            log.push("Renamed JS to " + newOpFile);
-        }
-        else
-        {
-            log.push("Renamed JS");
-        }
 
         const oldMd = path.join(oldOpDir, oldName + ".md");
         const newMd = path.join(newOpDir, newName + ".md");
         if (fs.existsSync(oldMd))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
-            log.push("Renamed MD file");
         }
 
         const oldJson = path.join(oldOpDir, oldName + ".json");
@@ -3311,7 +3347,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (fs.existsSync(oldJson))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".json"), newJson);
-            log.push("Renamed JSON file");
         }
 
         let jsonChange = false;
@@ -3351,6 +3386,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
         this._docsUtil.updateOpDocs(newName);
+        log.push("Successfully renamed " + oldName + " to " + newName);
+
         if (cb) cb(null, log, newJsonData);
         return true;
     }

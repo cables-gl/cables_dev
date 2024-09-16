@@ -66,11 +66,18 @@ export default class SharedSubPatchOpUtil extends SharedUtil
 
         if (subPatchOps.length > 0)
         {
-            subPatchOps.forEach((subPatchOp) =>
+            try
             {
-                const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(subPatchOp.opId));
-                opsInSubPatch = opsInSubPatch.concat(this._getOpsUsedInSubPatch(attachmentOps));
-            });
+                subPatchOps.forEach((subPatchOp) =>
+                {
+                    const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(subPatchOp.opId));
+                    opsInSubPatch = opsInSubPatch.concat(this._getOpsUsedInSubPatch(attachmentOps));
+                });
+            }
+            catch (e)
+            {
+                this._log.error(e);
+            }
 
             opsInSubPatch = opsInSubPatch.filter((obj, index) => { return opsInSubPatch.findIndex((item) => { return item.opId === obj.opId; }) === index; });
         }

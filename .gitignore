@@ -4,6 +4,12 @@ electron/
 data/
 docker-compose.yml
 
+cables/
+cables_api/
+cables_docs/
+cables_electron/
+cables_ui/
+
 # misc
 .idea/
 .DS_Store
@@ -21,3 +27,4 @@ Thumbs.db
 
 #Node modules folder
 node_modules
+.external-ecmascript.js

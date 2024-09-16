@@ -197,7 +197,7 @@ cd cables_electron/
 npm run build
 cd ..
 
-NPM_START_CMD="'npm run start:standalone'"
+NPM_START_CMD="'npm run watch:standalone'"
 echo -e ""
 if [ "$COMMUNITY_BUILD" = "true" ]; then
   NPM_START_CMD="'npm run start'"

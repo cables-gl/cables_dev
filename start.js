@@ -2,6 +2,7 @@ import concurrently from "concurrently";
 import kill from "tree-kill";
 import fs from "fs";
 
+
 const args = process.argv ? process.argv.slice(2) : [];
 const standalone = args && args[0] === "standalone";
 
@@ -52,7 +53,7 @@ if (!standalone)
     else
     {
         console.warn("FATAL: running `npm run start`, but cables_api/ dir does not exist!");
-        console.info("are you trying to run `npm run start:standalone`?");
+        console.info("are you trying to run `npm run watch:standalone`?");
         process.exit(1);
     }
 }

@@ -1,6 +1,8 @@
 {
     "extends": "airbnb-base",
     "globals": {
+        "GPUBufferUsage":true,
+        "GPUMapMode":true,
         "op": true,
         "ele": true,
         "gui": true,
