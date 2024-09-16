@@ -64,7 +64,6 @@ export default class Cables extends SharedUtil
             }
 
             this._config = JSON.parse(fs.readFileSync(this.configLocation, "utf-8"));
-            this._config.maxFileSizeMb = this._config.maxFileSizeMb || 256;
         }
         return this._config;
     }
