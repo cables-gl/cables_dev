@@ -1121,7 +1121,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (fs.existsSync(opsPath))
         {
             const extensions = fs.readdirSync(opsPath);
-
             for (const i in extensions)
             {
                 if (this.isExtension(extensions[i]))
@@ -1357,19 +1356,22 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opExists(opName)
+    opExists(opName, updateCache = true)
     {
         let p = this.getOpAbsolutePath(opName);
+        let exists = false;
         try
         {
             if (!p || !fs.existsSync(p)) return false;
             p = fs.realpathSync.native(p);
-            return p.includes(opName);
+            exists = p.includes(opName);
         }
         catch (e)
         {
-            return false;
+            exists = false;
         }
+        if (!exists && updateCache) this._docsUtil.removeOpNameFromLookup(opName);
+        return exists;
     }
 
     opNameTaken(opName, caseSensitive = false)
