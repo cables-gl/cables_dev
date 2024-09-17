@@ -318,7 +318,6 @@ export default class SharedDocUtil extends SharedUtil
                     }
 
                     const idsWithNames = Object.keys(idsAndNames);
-                    this._log.startTime("opcache");
                     for (let i = 0; i < idsWithNames.length; i++)
                     {
                         const opId = idsWithNames[i];
@@ -337,7 +336,6 @@ export default class SharedDocUtil extends SharedUtil
                             }
                         }
                     }
-                    this._log.endTime("opcache");
                 }
                 this.cachedLookup = fileLookUp;
                 this.removeOpNamesFromLookup(removeOps);
