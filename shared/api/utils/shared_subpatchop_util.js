@@ -56,7 +56,7 @@ export default class SharedSubPatchOpUtil extends SharedUtil
         return opsInSubPatches;
     }
 
-    _getOpsUsedInSubPatch(subPatch)
+    _getOpsUsedInSubPatch(subPatch, currentOp = null)
     {
         let opsInSubPatch = [];
         if (!subPatch) return [];
@@ -70,8 +70,15 @@ export default class SharedSubPatchOpUtil extends SharedUtil
             {
                 subPatchOps.forEach((subPatchOp) =>
                 {
-                    const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(subPatchOp.opId));
-                    opsInSubPatch = opsInSubPatch.concat(this._getOpsUsedInSubPatch(attachmentOps));
+                    if (!currentOp || (currentOp.opId !== subPatchOp.opId))
+                    {
+                        const attachmentOps = this._opsUtil.getSubPatchOpAttachment(this._opsUtil.getOpNameById(subPatchOp.opId));
+                        opsInSubPatch = opsInSubPatch.concat(this._getOpsUsedInSubPatch(attachmentOps, subPatchOp));
+                    }
+                    else
+                    {
+                        this._log.warn("skipping recursive subpatches", subPatchOp.opId, currentOp.opId);
+                    }
                 });
             }
             catch (e)
