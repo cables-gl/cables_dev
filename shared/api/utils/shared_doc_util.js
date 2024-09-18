@@ -322,15 +322,17 @@ export default class SharedDocUtil extends SharedUtil
                     {
                         const opId = idsWithNames[i];
                         const opNamesForId = idsAndNames[opId];
-                        if (opNamesForId.length > 1)
+                        for (let j = 0; j < opNamesForId.length; j++)
                         {
-                            for (let j = 0; j < opNamesForId.length; j++)
+                            const opName = opNamesForId[j];
+                            if (!this._opsUtil.opExists(opName, false))
                             {
-                                const opName = opNamesForId[j];
-                                if (fileLookUp.ids[opId] !== opName)
-                                {
-                                    removeOps.push(opName);
-                                }
+                                removeOps.push(opName);
+                            }
+
+                            if (fileLookUp.ids[opId] !== opName)
+                            {
+                                removeOps.push(opName);
                             }
                         }
                     }
@@ -428,27 +430,28 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
-    buildOpDocs(opname)
+    buildOpDocs(opName)
     {
         let docObj = null;
-        if (this._opsUtil.isOpNameValid(opname))
+        const opFileName = this._opsUtil.getOpAbsoluteFileName(opName);
+        if (this._opsUtil.opExists(opName) && fs.existsSync(opFileName))
         {
             docObj = {
-                "name": opname,
+                "name": opName,
                 "content": ""
             };
 
-            const dirName = this._opsUtil.getOpSourceDir(opname);
+            const dirName = this._opsUtil.getOpSourceDir(opName);
 
-            docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opname) || [];
+            docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
 
-            const jsonFilename = path.join(dirName, opname + ".json");
+            const jsonFilename = path.join(dirName, opName + ".json");
             const jsonExists = fs.existsSync(jsonFilename);
 
             const screenshotFilename = dirName + "screenshot.png";
             const screenshotExists = fs.existsSync(screenshotFilename);
 
-            const parts = opname.split(".");
+            const parts = opName.split(".");
             const shortName = parts[parts.length - 1];
 
             if (!shortName) this._log.warn("no shortname ?", parts);
@@ -458,7 +461,7 @@ export default class SharedDocUtil extends SharedUtil
 
             if (!jsonExists)
             {
-                this._log.warn("no json", opname, jsonFilename);
+                this._log.warn("no json", opName, jsonFilename);
             }
 
             let js = {};
@@ -468,7 +471,7 @@ export default class SharedDocUtil extends SharedUtil
             }
             catch (e)
             {
-                this._log.warn("failed to read opdocs from file", opname, jsonFilename, e);
+                this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
             }
 
             if (js)
@@ -486,15 +489,15 @@ export default class SharedDocUtil extends SharedUtil
                 docObj.hasExample = !!js.exampleProjectId;
                 docObj.exampleProjectId = js.exampleProjectId || "";
                 docObj.namespace = namespace;
-                docObj.name = opname;
-                docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opname);
+                docObj.name = opName;
+                docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
                 docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
-                docObj.version = this._opsUtil.getVersionFromOpName(opname);
+                docObj.version = this._opsUtil.getVersionFromOpName(opName);
                 docObj.libs = js.libs || [];
                 docObj.youtubeids = js.youtubeids || [];
                 docObj.created = js.created;
-                docObj.hasPublicRepo = this._opsUtil.isCoreOp(opname) || this._opsUtil.isExtension(opname);
-                docObj.hidden = (this._opsUtil.isDeprecated(opname) || this._opsUtil.isAdminOp(opname));
+                docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
+                docObj.hidden = (this._opsUtil.isDeprecated(opName) || this._opsUtil.isAdminOp(opName));
 
                 if (js.changelog)
                 {
@@ -522,13 +525,13 @@ export default class SharedDocUtil extends SharedUtil
                 }
             }
 
-            const mdFile = path.join(this._opsUtil.getOpSourceDir(opname), opname + ".md");
+            const mdFile = path.join(this._opsUtil.getOpSourceDir(opName), opName + ".md");
             const exists = fs.existsSync(mdFile);
             if (exists)
             {
                 let doc = fs.readFileSync(mdFile);
                 doc = this.setOpLinks(marked(doc + "" || ""));
-                doc = (doc + "").replace(/src="/g, "src=\"https://cables.gl/ops/" + opname + "/");
+                doc = (doc + "").replace(/src="/g, "src=\"https://cables.gl/ops/" + opName + "/");
                 docObj.content = doc;
             }
         }
