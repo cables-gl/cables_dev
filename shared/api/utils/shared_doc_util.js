@@ -402,7 +402,7 @@ export default class SharedDocUtil extends SharedUtil
         if (clearFiles || !this.cachedLookup.names) this.cachedLookup.names = {};
         ops.forEach((op) =>
         {
-            if (op.name && op.id)
+            if (op && op.name && op.id)
             {
                 this.cachedLookup.ids[op.id] = op.name;
                 this.cachedLookup.names[op.name] = op.id;

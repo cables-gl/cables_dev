@@ -374,6 +374,7 @@ export default class SharedHelperUtil extends SharedUtil
     {
         if (!dir) dir = baseDir;
         let results = [];
+        if (!fs.existsSync(dir)) return results;
         let list = fs.readdirSync(dir);
         list.forEach((file) =>
         {
