@@ -1000,8 +1000,11 @@ export default class SharedOpsUtil extends SharedUtil
             cacheDocs.forEach((cacheDoc) =>
             {
                 // keep this to update cache during runtime...
-                const cachedName = this.getOpIdByObjName(cacheDoc.name);
-                if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
+                if (cacheDoc)
+                {
+                    const cachedName = this.getOpIdByObjName(cacheDoc.name);
+                    if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
+                }
             });
         });
         const newOpDocs = [];
@@ -2769,12 +2772,14 @@ export default class SharedOpsUtil extends SharedUtil
             return { "problems": ["invalid op name" + opName] };
         }
         let basePath = this.getOpTargetDir(opName);
+        let jsonPath = this.getOpJsonPath(opName);
         if (targetDir)
         {
             basePath = targetDir;
             let opPath = path.join(basePath, this.getOpTargetDir(opName, true));
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(opName));
+            jsonPath = path.join(opPath, this.getOpJsonFilename(opName));
         }
         mkdirp.sync(basePath);
 
@@ -2828,7 +2833,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.coreLibs = newCoreLibNames;
         }
 
-        jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
+        jsonfile.writeFileSync(jsonPath, newJson, {
             "encoding": "utf-8",
             "spaces": 4
         });
@@ -3392,6 +3397,31 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (cb) cb(null, log, newJsonData);
         return true;
+    }
+
+    getScreenshot(opName)
+    {
+        const p = this.getOpAbsolutePath(opName);
+        let buffer = " ";
+
+        try
+        {
+            buffer = fs.readFileSync(p + "screenshot.png", "binary");
+        }
+        catch (ex)
+        {
+            try
+            {
+                let fileName = "placeholder_dark.png";
+                const placeholderPath = path.join(this._cables.getPublicPath(), "/img/", fileName);
+                buffer = fs.readFileSync(placeholderPath);
+            }
+            catch (e)
+            {
+                this._log.error("error loading op screenshot and placeholder", opName);
+            }
+        }
+        return buffer;
     }
 }
 
