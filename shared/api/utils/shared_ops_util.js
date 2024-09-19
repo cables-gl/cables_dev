@@ -2772,7 +2772,8 @@ export default class SharedOpsUtil extends SharedUtil
             return { "problems": ["invalid op name" + opName] };
         }
         let basePath = this.getOpTargetDir(opName);
-        let jsonPath = this.getOpJsonPath(opName);
+        let jsonPath = this.getOpJsonPath(opName, !targetDir);
+
         if (targetDir)
         {
             basePath = targetDir;
@@ -2833,7 +2834,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.coreLibs = newCoreLibNames;
         }
 
-        jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
+        jsonfile.writeFileSync(jsonPath, newJson, {
             "encoding": "utf-8",
             "spaces": 4
         });
