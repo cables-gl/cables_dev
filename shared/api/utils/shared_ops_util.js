@@ -2833,7 +2833,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.coreLibs = newCoreLibNames;
         }
 
-        jsonfile.writeFileSync(jsonPath, newJson, {
+        jsonfile.writeFileSync(this.getOpJsonPath(opName), newJson, {
             "encoding": "utf-8",
             "spaces": 4
         });
