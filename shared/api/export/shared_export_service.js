@@ -11,7 +11,7 @@ import { UtilProvider } from "../utils/util_provider.js";
 
 
 /**
- * abstract class to handle different exports, see implementations like ZipExport
+ * abstract class to handle different exports, see implementations like HtmlExport
  *
  * @abstract
  */
