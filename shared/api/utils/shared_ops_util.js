@@ -2772,7 +2772,8 @@ export default class SharedOpsUtil extends SharedUtil
             return { "problems": ["invalid op name" + opName] };
         }
         let basePath = this.getOpTargetDir(opName);
-        let jsonPath = this.getOpJsonPath(opName);
+        let jsonPath = this.getOpJsonPath(opName, !targetDir);
+
         if (targetDir)
         {
             basePath = targetDir;
