@@ -289,29 +289,29 @@ export default class SharedOpsUtil extends SharedUtil
         else return 0;
     }
 
-    getOpInfo(opname)
+    getOpInfo(opName)
     {
         let info = {};
 
-        const jsonFilename = this.getOpAbsolutePath(opname) + opname + ".json";
-        const screenshotFilename = this.getOpAbsolutePath(opname) + "screenshot.png";
+        const jsonFilename = path.join(this.getOpAbsolutePath(opName), opName + ".json");
+        const screenshotFilename = path.join(this.getOpAbsolutePath(opName), "screenshot.png");
         const jsonExists = fs.existsSync(jsonFilename);
         let screenshotExists = false;
         try
         {
             screenshotExists = fs.existsSync(screenshotFilename);
         }
-        catch (e)
-        {}
+        catch (e) {}
+
 
         if (jsonExists)
         {
             info = jsonfile.readFileSync(jsonFilename);
             info.hasScreenshot = screenshotExists;
-            info.shortName = opname.split(".")[opname.split(".").length - 1];
+            info.shortName = opName.split(".")[opName.split(".").length - 1];
             info.hasExample = !!info.exampleProjectId;
         }
-        info.doc = this._docsUtil.getOpDocMd(opname);
+        info.doc = this._docsUtil.getOpDocMd(opName);
         return info;
     }
 
@@ -510,24 +510,27 @@ export default class SharedOpsUtil extends SharedUtil
         return "";
     }
 
-    getOpCodeWarnings(opname, jsFile = null)
+    getOpCodeWarnings(opName, jsFile = null)
     {
-        const info = this.getOpInfo(opname);
+        const info = this.getOpInfo(opName);
 
         const blendmodeWarning = ": use `{{CGL.BLENDMODES}}` in your shader and remove all manual replace code";
         const srcWarnings = [];
-        const fn = this.getOpAbsoluteFileName(opname);
-        if (this.isCoreOp(opname))
+        const fn = this.getOpAbsoluteFileName(opName);
+        if (!this.isUserOp(opName))
         {
-            const parts = opname.split(".");
+            const parts = opName.split(".");
             for (let i = 0; i < parts.length; i++)
-                if (parts[i].charAt(0) !== parts[i].charAt(0)
-                    .toUpperCase())
+            {
+                if (parts[i].charAt(0) !== parts[i].charAt(0).toUpperCase())
+                {
                     srcWarnings.push({
                         "type": "name",
                         "id": "lowercase",
                         "text": "all namespace parts have to be capitalized"
                     });
+                }
+            }
         }
 
         if (jsFile || fs.existsSync(fn))
@@ -582,7 +585,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": "use `op.inTexture(\"name\")` to create a texture port "
             });
 
-            if (opname.indexOf("Ops.Gl.ImageCompose") >= 0 && code.indexOf("checkOpInEffect") == -1 && opname.indexOf("ImageCompose") == -1) srcWarnings.push({
+            if (opName.indexOf("Ops.Gl.ImageCompose") >= 0 && code.indexOf("checkOpInEffect") == -1 && opName.indexOf("ImageCompose") == -1) srcWarnings.push({
                 "type": "code",
                 "id": "no_check_effect",
                 "text": "every textureEffect op should use `if(!CGL.TextureEffect.checkOpInEffect(op)) return;` in the rendering function to automatically show a warning to the user if he is trying to use it outside of an imageCompose"
@@ -673,13 +676,13 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": "use `op.log`, not `console.log` "
             });
 
-            const atts = this.getAttachmentFiles(opname);
+            const atts = this.getAttachmentFiles(opName);
 
             for (let i = 0; i < atts.length; i++)
             {
                 if (atts[i].indexOf(".frag") > -1)
                 {
-                    const opFn = this.getOpAbsolutePath(opname) + atts[i];
+                    const opFn = this.getOpAbsolutePath(opName) + atts[i];
                     const att = fs.readFileSync(opFn, "utf8");
 
                     if (att.indexOf("gl_FragColor") > -1) srcWarnings.push({
