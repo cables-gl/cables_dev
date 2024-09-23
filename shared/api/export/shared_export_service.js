@@ -587,7 +587,7 @@ export default class SharedExportService extends SharedUtil
                             {
                                 this._doAfterExport(originalProject, credentials, exportNumber);
                                 this.addLog("");
-                                this.addLog("successfully exported to: " + this.constructor.getName());
+                                this.addLog("successfully exported as " + this.constructor.getName());
                             }
                             else if (result.error)
                             {
