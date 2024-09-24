@@ -32,7 +32,6 @@ export default class SharedExportService extends SharedUtil
         this.options.combineJS = exportOptions.combineJS === "true";
         this.options.jsonName = exportOptions.jsonName;
         this.options.removeIndexHtml = exportOptions.removeIndexHtml;
-        this.options.skipBackups = exportOptions.skipBackups;
         this.options.flat = exportOptions.flat;
         this.options.minify = exportOptions.hasOwnProperty("minify") ? exportOptions.minify : "true";
         this.options.sourcemaps = exportOptions.sourcemaps;
@@ -752,15 +751,7 @@ export default class SharedExportService extends SharedUtil
         }
     }
 
-    _addBackups(backupProject, options)
-    {
-        if (!options.skipBackups)
-        {
-            const projectNameVer = sanitizeFileName(backupProject.name).replace(/ /g, "_") + backupProject.exports;
-            backupProject = this._projectsUtil.getBackup(backupProject);
-            this.append(JSON.stringify(backupProject), { "name": this.finalJsPath + projectNameVer + "_backup.json" });
-        }
-    }
+    _addBackups(backupProject, options) {}
 
     _addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options)
     {
@@ -917,11 +908,6 @@ export default class SharedExportService extends SharedUtil
 
         const removeIndexHtml = options.removeIndexHtml || false;
         if (!removeIndexHtml) this.append(indexhtml, { "name": "index.html" });
-
-        if (!options.skipBackups)
-        {
-            this.append(JSON.stringify(proj), { "name": this.finalJsPath + projectNameVer + "_backup_nopath.json" });
-        }
     }
 
     _getLibsUrls(libs)
