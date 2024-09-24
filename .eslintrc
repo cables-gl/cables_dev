@@ -1,6 +1,8 @@
 {
     "extends": "airbnb-base",
     "globals": {
+        "GPUShaderStage":true,
+        "GPUTextureUsage":true,
         "GPUBufferUsage":true,
         "GPUMapMode":true,
         "op": true,
