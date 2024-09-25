@@ -78,6 +78,9 @@ cd ..
 cd  Ops.Extension.Standalone.Net.Osc
 $NPM_EXE install --prefix ./ osc --no-save
 cd ..
+cd Ops.Extension.Standalone.Net.OscSend
+$NPM_EXE install --prefix ./ osc --no-save
+cd ..
 echo "PACKAGING cables_electron"
 $NPM_EXE run dist$BUILD_OS $ARGS
 cd ..
