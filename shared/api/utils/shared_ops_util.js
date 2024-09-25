@@ -318,20 +318,23 @@ export default class SharedOpsUtil extends SharedUtil
     _writeOpChangelog(opName, changes, update = false)
     {
         const filename = this.getOpAbsoluteJsonFilename(opName);
-        const obj = jsonfile.readFileSync(filename);
-        if (obj)
+        if (fs.existsSync(filename))
         {
-            if (update)
+            const obj = jsonfile.readFileSync(filename);
+            if (obj)
             {
-                obj.changelog = changes || [];
+                if (update)
+                {
+                    obj.changelog = changes || [];
+                }
+                else
+                {
+                    obj.changelog = obj.changelog || [];
+                    obj.changelog = obj.changelog.concat(changes);
+                }
+                obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
+                jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
             }
-            else
-            {
-                obj.changelog = obj.changelog || [];
-                obj.changelog = obj.changelog.concat(changes);
-            }
-            obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
-            jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
         }
     }
 
@@ -2304,8 +2307,9 @@ export default class SharedOpsUtil extends SharedUtil
         if (newName.endsWith(".")) problems.name_ends_with_dot = "Op name cannot end with '.'";
         if (!newName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name does not start with '" + this.PREFIX_OPS + "'.";
         if (newName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
-        if (this.opExists(newName)) problems.target_exists = "Op exists already.";
-        if (this.opNameTaken(newName)) problems.name_taken = "Op with same name (ignoring case) exists already.";
+        const opExists = this.opExists(newName);
+        if (opExists) problems.target_exists = "Op exists already.";
+        if (!opExists && this.opNameTaken(newName)) problems.name_taken = "Op with same name (ignoring case) exists already.";
         if (newName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
         if (newName.indexOf("..") !== -1) problems.name_contains_doubledot = "Op name contains '..'.";
         let matchString = "[^abcdefghijklmnopqrstuvwxyz._ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9";
