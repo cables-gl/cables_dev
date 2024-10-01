@@ -2535,18 +2535,20 @@ export default class SharedOpsUtil extends SharedUtil
         let basePath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
 
+        let newJsonFile = this.getOpJsonPath(newName);
+
         if (targetDir)
         {
             basePath = targetDir;
             let opPath = path.join(basePath, this.getOpTargetDir(newName, true));
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(newName));
+            newJsonFile = path.join(opPath, this.getOpJsonFilename(newName));
         }
 
         mkdirp.sync(basePath);
         fs.writeFileSync(fn, code);
 
-        const newJsonFile = this.getOpJsonPath(newName);
         let newJson = {
             "id": uuidv4(),
             "authorName": user.username,
