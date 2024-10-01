@@ -685,7 +685,7 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 if (atts[i].indexOf(".frag") > -1)
                 {
-                    const opFn = this.getOpAbsolutePath(opName) + atts[i];
+                    const opFn = path.join(this.getOpAbsolutePath(opName), atts[i]);
                     const att = fs.readFileSync(opFn, "utf8");
 
                     if (att.indexOf("gl_FragColor") > -1) srcWarnings.push({
