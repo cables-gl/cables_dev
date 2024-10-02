@@ -2535,8 +2535,8 @@ export default class SharedOpsUtil extends SharedUtil
         let basePath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
 
-        let newJsonFile = this.getOpJsonPath(newName);
 
+        let newJsonFile;
         if (targetDir)
         {
             basePath = targetDir;
@@ -2544,6 +2544,10 @@ export default class SharedOpsUtil extends SharedUtil
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(newName));
             newJsonFile = path.join(opPath, this.getOpJsonFilename(newName));
+        }
+        else
+        {
+            newJsonFile = this.getOpJsonPath(newName, true);
         }
 
         mkdirp.sync(basePath);
