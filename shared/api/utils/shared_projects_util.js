@@ -157,6 +157,7 @@ export default class SharedProjectsUtil extends SharedUtil
      **
      * @param ps project or array of projects
      * @param keepOps do not remove ops from the project (i.e. in export)
+     * @param allowEdit
      * @returns {({}|*[]|*)} project or array of projects
      */
     makeReadable(ps, keepOps = false, allowEdit = false)
