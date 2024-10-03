@@ -2535,8 +2535,8 @@ export default class SharedOpsUtil extends SharedUtil
         let basePath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
 
-        let newJsonFile = this.getOpJsonPath(newName);
 
+        let newJsonFile;
         if (targetDir)
         {
             basePath = targetDir;
@@ -2544,6 +2544,10 @@ export default class SharedOpsUtil extends SharedUtil
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(newName));
             newJsonFile = path.join(opPath, this.getOpJsonFilename(newName));
+        }
+        else
+        {
+            newJsonFile = this.getOpJsonPath(newName, true);
         }
 
         mkdirp.sync(basePath);
@@ -2613,27 +2617,37 @@ export default class SharedOpsUtil extends SharedUtil
 
     renameToCoreOp(oldName, newName, currentUser, removeOld, cb = null)
     {
-        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpTargetDir(newName);
+        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, oldOpDir, newOpDir, cb);
     }
 
     renameToExtensionOp(oldName, newName, currentUser, removeOld, cb = null)
     {
-        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, cb);
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpTargetDir(newName);
+        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, oldOpDir, newOpDir, cb);
     }
 
     renameToTeamOp(oldName, newName, currentUser, removeOld, cb = null)
     {
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpTargetDir(newName);
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, oldOpDir, newOpDir, cb);
     }
 
     renameToUserOp(oldName, newName, currentUser, removeOld, cb = null)
     {
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, cb);
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpTargetDir(newName);
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, oldOpDir, newOpDir, cb);
     }
 
     renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb = null)
     {
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, cb);
+        let oldOpDir = this.getOpSourceDir(oldName);
+        let newOpDir = this.getOpTargetDir(newName);
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, oldOpDir, newOpDir, cb);
     }
 
     updateOp(user, opName, updates, options = {})
@@ -3267,7 +3281,7 @@ export default class SharedOpsUtil extends SharedUtil
         return xw.toString();
     }
 
-    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, cb = null)
+    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
     {
         if (!this.isPatchOp(newName))
         {
@@ -3276,9 +3290,6 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         let log = [];
-
-        let oldOpDir = this.getOpSourceDir(oldName);
-        let newOpDir = this.getOpSourceDir(newName);
 
         const oldOpFile = path.join(oldOpDir, oldName + ".js");
         const newOpFile = path.join(newOpDir, newName + ".js");
