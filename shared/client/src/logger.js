@@ -35,9 +35,14 @@ export default class Logger
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments)) || !CABLES.UI)
         {
             console.error("[" + this.initiator + "]", ...arguments);
+        }
 
-            if (!CABLES.UI)
-                CABLES.logErrorConsole("[" + this.initiator + "]", ...arguments);
+        if (!CABLES.UI && CABLES.patch.config.onError)
+        {
+            CABLES.patch.config.onError(this.initiator, ...arguments);
+            // console.log("emitevent onerror...");
+            // CABLES.patch.emitEvent("onError", this.initiator, ...arguments);
+            // CABLES.logErrorConsole("[" + this.initiator + "]", ...arguments);
         }
     }
 
