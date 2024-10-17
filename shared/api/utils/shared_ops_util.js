@@ -2195,7 +2195,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (res) res.startTime("sanitizeFileName");
         let p = this.getOpAbsolutePath(opName);
-        p += sanitizeFileName(attName);
+        p = path.join(p, sanitizeFileName(attName));
         if (res) res.endTime("sanitizeFileName");
 
         if (this.isCoreOp(opName))
