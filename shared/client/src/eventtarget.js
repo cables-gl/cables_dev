@@ -93,7 +93,7 @@ export default class Events
             const event = this._listeners[id];
             if (!event)
             {
-                this._log.log("could not find event...");
+                this._log.log("could not find event...", id, this);
                 return;
             }
 

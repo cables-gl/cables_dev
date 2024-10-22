@@ -11,4 +11,4 @@ cables uses the following tools for developing, building, deploying:
 - [webpack](https://webpack.js.org/) to package bundles to use in other parts of the project
 - [eslint](https://eslint.org/) for linting code in editors
 - [electron](https://www.electronjs.org/) and [electron-builder](https://www.electron.build/) to pack and distribute cables standalone
-- several other open-source [tools and libraries](https://cables.gl/credits), to get things done 
+- several other open-source [tools and libraries](https://cables.gl/support), to get things done

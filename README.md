@@ -1,10 +1,10 @@
 # cables development environment
 
 [cables.gl](https://cables.gl) and [cables standalone](https://cables.gl/standalone) are mainly developed by [undev](https://undev.studio/),
-with contributions by the [cables community](https://discord.gg/cablesgl) and support by [various other parties and projects](https://cables.gl/credits).
+with contributions by the [cables community](https://discord.gg/cablesgl) and support by [various other parties and projects](https://cables.gl/support).
 
 This is the repository that holds the parent directory for cables development. Read up about
-setting up everything for your to start contributing to cables in the section on ["Developing Cables"](https://cables.gl/docs/6_1_developing_cables/developing_cables) 
+setting up everything for your to start contributing to cables in the section on ["Developing Cables"](https://cables.gl/docs/6_1_developing_cables/developing_cables)
 of the official cables documentation.
 
 If you want to learn more about the tools and processes involved, check our ["toolchain"](docs/toolchain.md) guide.
@@ -54,7 +54,7 @@ needed for local development but will give you a few more ops to work with.
 
 ## Appreciation
 
-Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporters](https://cables.gl/credits) for making this possible. If you like this project, think about supporting it on [patreon](https://www.patreon.com/cables_gl).
+Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporters](https://cables.gl/support) for making this possible. If you like this project, think about supporting it on [patreon](https://www.patreon.com/cables_gl).
 
 This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/entrust/), a fund established by [NLnet](https://nlnet.nl/) with financial support
 from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
