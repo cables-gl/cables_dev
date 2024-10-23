@@ -3424,7 +3424,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         try
         {
-            buffer = fs.readFileSync(p + "screenshot.png", "binary");
+            buffer = fs.readFileSync(path.join(p, "screenshot.png"), "binary");
         }
         catch (ex)
         {
