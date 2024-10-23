@@ -355,7 +355,10 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table");
+        if (opNames.length > 0)
+        {
+            this._log.info("removing", opNames.length, "ops from lookup table:", opNames.slice(0, 4).join(","), opNames.length > 5 ? "..." : "");
+        }
         const cachedLookup = this.getCachedOpLookup();
         for (let i = 0; i < opNames.length; i++)
         {
