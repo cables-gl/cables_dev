@@ -3441,5 +3441,58 @@ export default class SharedOpsUtil extends SharedUtil
         }
         return buffer;
     }
+
+    getOpEnvironmentUrls(opIdentifier)
+    {
+        if (!opIdentifier) return [];
+        return [
+            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier),
+            new URL("https://cables.gl/api/doc/ops/" + opIdentifier)
+        ];
+    }
+
+    getOpEnvironmentDocs(opIdentifier, cb)
+    {
+        const envUrls = this.getOpEnvironmentUrls(opIdentifier);
+
+        const promises = [];
+        const myUrl = new URL(this._cables.getConfig().url);
+        envUrls.forEach((envUrl) =>
+        {
+            if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
+        });
+
+        const envDocs = {
+            "id": null,
+            "name": null,
+            "checkedEnvironments": [myUrl.hostname, ...envUrls.map((envUrl) => { return envUrl.hostname; })],
+            "environments": [],
+            "docs": {}
+        };
+
+        Promise.allSettled(promises)
+            .then((results) =>
+            {
+                const successfulRequests = results.filter((result) => { return result.status && result.status === "fulfilled"; });
+                return Promise.all(successfulRequests.map((r) => { return r.value.json(); }));
+            })
+            .then((results) =>
+            {
+                results.forEach((result, i) =>
+                {
+                    if (result.opDocs && result.opDocs.length > 0)
+                    {
+                        const envName = envUrls[i].hostname;
+                        envDocs.environments.push(envName);
+                        const envDoc = result.opDocs[0];
+                        envDocs.docs[envName] = envDoc;
+                        if (!envDocs.id) envDocs.id = envDoc.id;
+                        if (!envDocs.name) envDocs.name = envDoc.name;
+                    }
+                });
+                envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
+                cb(null, envDocs);
+            });
+    }
 }
 
