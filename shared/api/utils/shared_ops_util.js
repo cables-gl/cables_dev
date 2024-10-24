@@ -293,24 +293,27 @@ export default class SharedOpsUtil extends SharedUtil
     {
         let info = {};
 
-        const jsonFilename = path.join(this.getOpAbsolutePath(opName), opName + ".json");
-        const screenshotFilename = path.join(this.getOpAbsolutePath(opName), "screenshot.png");
-        const jsonExists = fs.existsSync(jsonFilename);
-        let screenshotExists = false;
-        try
+        const opPath = this.getOpAbsolutePath(opName);
+        if (opPath)
         {
-            screenshotExists = fs.existsSync(screenshotFilename);
+            const jsonFilename = path.join(opPath, opName + ".json");
+            const screenshotFilename = path.join(opPath, "screenshot.png");
+            const jsonExists = fs.existsSync(jsonFilename);
+            let screenshotExists = false;
+            try
+            {
+                screenshotExists = fs.existsSync(screenshotFilename);
+            }
+            catch (e) {}
+            if (jsonExists)
+            {
+                info = jsonfile.readFileSync(jsonFilename);
+                info.hasScreenshot = screenshotExists;
+                info.shortName = opName.split(".")[opName.split(".").length - 1];
+                info.hasExample = !!info.exampleProjectId;
+            }
         }
-        catch (e) {}
 
-
-        if (jsonExists)
-        {
-            info = jsonfile.readFileSync(jsonFilename);
-            info.hasScreenshot = screenshotExists;
-            info.shortName = opName.split(".")[opName.split(".").length - 1];
-            info.hasExample = !!info.exampleProjectId;
-        }
         info.doc = this._docsUtil.getOpDocMd(opName);
         return info;
     }
@@ -1453,12 +1456,12 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.startsWith(this.PREFIX_TEAMOPS);
     }
 
-    isTeamOpOfTeam(opname, team)
+    isTeamOpOfTeam(opName, team)
     {
-        if (!this.isTeamOp(opname)) return false;
+        if (!this.isTeamOp(opName)) return false;
         if (!team) return false;
         if (!team.namespaces || team.namespaces.length === 0) return false;
-        const namespace = this.getFullTeamNamespaceName(opname);
+        const namespace = this.getFullTeamNamespaceName(opName);
         return team.namespaces.some((ns) => { return ns.startsWith(namespace); });
     }
 
