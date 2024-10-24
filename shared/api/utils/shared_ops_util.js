@@ -1379,7 +1379,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             exists = false;
         }
-        if (!exists && updateCache) this._docsUtil.removeOpNameFromLookup(opName);
+        if (!exists && updateCache)
+        {
+            this._docsUtil.removeOpNameFromLookup(opName);
+        }
         return exists;
     }
 
@@ -1401,13 +1404,6 @@ export default class SharedOpsUtil extends SharedUtil
     namespaceExistsInCore(name, opDocs)
     {
         return opDocs.some((d) => { return d.name.startsWith(name); });
-    }
-
-
-    existingCoreOp(opname)
-    {
-        if (!opname) return false;
-        return this.isCoreOp(opname) && this.opExists(opname);
     }
 
     isOpId(id)
@@ -2292,7 +2288,8 @@ export default class SharedOpsUtil extends SharedUtil
             newName = "";
         }
 
-        if (oldName && !this.opExists(oldName))
+        const oldOpExists = this.opExists(oldName);
+        if (oldName && !oldOpExists)
         {
             problems.source_does_not_exist = "Source op does not exist.";
             return problems;
@@ -2369,7 +2366,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (oldName)
             {
                 if (!this.userHasWriteRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack permissions to " + oldName + ".";
-                if (!this.opExists(oldName)) problems.not_found_source = oldName + " does not exist.";
+                if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
             }
         }
         if (opUsages && checkUsages)
@@ -3427,7 +3424,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         try
         {
-            buffer = fs.readFileSync(p + "screenshot.png", "binary");
+            buffer = fs.readFileSync(path.join(p, "screenshot.png"), "binary");
         }
         catch (ex)
         {

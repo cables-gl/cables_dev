@@ -355,7 +355,10 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        if (opNames.length > 0) this._log.info("removing", opNames.length, "ops from lookup table");
+        if (opNames.length > 0)
+        {
+            this._log.info("removing", opNames.length, "ops from lookup table:", opNames.slice(0, 4).join(","), opNames.length > 5 ? "..." : "");
+        }
         const cachedLookup = this.getCachedOpLookup();
         for (let i = 0; i < opNames.length; i++)
         {
@@ -449,7 +452,7 @@ export default class SharedDocUtil extends SharedUtil
             const jsonFilename = path.join(dirName, opName + ".json");
             const jsonExists = fs.existsSync(jsonFilename);
 
-            const screenshotFilename = dirName + "screenshot.png";
+            const screenshotFilename = path.join(dirName, "screenshot.png");
             const screenshotExists = fs.existsSync(screenshotFilename);
 
             const parts = opName.split(".");
