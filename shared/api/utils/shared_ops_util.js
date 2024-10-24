@@ -1456,6 +1456,14 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.startsWith(this.PREFIX_TEAMOPS);
     }
 
+    isOpOfTeam(opName, team)
+    {
+        if (!opName) return false;
+        if (!team) return false;
+        const namespaces = [...team.namespaces, ...team.extensions];
+        return namespaces.some((ns) => { return opName.startsWith(ns); });
+    }
+
     isTeamOpOfTeam(opName, team)
     {
         if (!this.isTeamOp(opName)) return false;
