@@ -76,10 +76,6 @@ export default class SharedDocUtil extends SharedUtil
                 if (fromFile) fromFile.name = opName;
                 opDocs = fromFile;
             }
-            if (!opDocs)
-            {
-                this._log.warn("could not find opdocs for", opName);
-            }
             return opDocs;
         }
     }
@@ -462,11 +458,6 @@ export default class SharedDocUtil extends SharedUtil
 
             parts.pop();
             const namespace = parts.join(".");
-
-            if (!jsonExists)
-            {
-                this._log.warn("no json", opName, jsonFilename);
-            }
 
             let js = {};
             try

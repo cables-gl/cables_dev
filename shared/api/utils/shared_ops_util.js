@@ -293,24 +293,27 @@ export default class SharedOpsUtil extends SharedUtil
     {
         let info = {};
 
-        const jsonFilename = path.join(this.getOpAbsolutePath(opName), opName + ".json");
-        const screenshotFilename = path.join(this.getOpAbsolutePath(opName), "screenshot.png");
-        const jsonExists = fs.existsSync(jsonFilename);
-        let screenshotExists = false;
-        try
+        const opPath = this.getOpAbsolutePath(opName);
+        if (opPath)
         {
-            screenshotExists = fs.existsSync(screenshotFilename);
+            const jsonFilename = path.join(opPath, opName + ".json");
+            const screenshotFilename = path.join(opPath, "screenshot.png");
+            const jsonExists = fs.existsSync(jsonFilename);
+            let screenshotExists = false;
+            try
+            {
+                screenshotExists = fs.existsSync(screenshotFilename);
+            }
+            catch (e) {}
+            if (jsonExists)
+            {
+                info = jsonfile.readFileSync(jsonFilename);
+                info.hasScreenshot = screenshotExists;
+                info.shortName = opName.split(".")[opName.split(".").length - 1];
+                info.hasExample = !!info.exampleProjectId;
+            }
         }
-        catch (e) {}
 
-
-        if (jsonExists)
-        {
-            info = jsonfile.readFileSync(jsonFilename);
-            info.hasScreenshot = screenshotExists;
-            info.shortName = opName.split(".")[opName.split(".").length - 1];
-            info.hasExample = !!info.exampleProjectId;
-        }
         info.doc = this._docsUtil.getOpDocMd(opName);
         return info;
     }
@@ -1453,12 +1456,20 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.startsWith(this.PREFIX_TEAMOPS);
     }
 
-    isTeamOpOfTeam(opname, team)
+    isOpOfTeam(opName, team)
     {
-        if (!this.isTeamOp(opname)) return false;
+        if (!opName) return false;
+        if (!team) return false;
+        const namespaces = [...team.namespaces, ...team.extensions];
+        return namespaces.some((ns) => { return opName.startsWith(ns); });
+    }
+
+    isTeamOpOfTeam(opName, team)
+    {
+        if (!this.isTeamOp(opName)) return false;
         if (!team) return false;
         if (!team.namespaces || team.namespaces.length === 0) return false;
-        const namespace = this.getFullTeamNamespaceName(opname);
+        const namespace = this.getFullTeamNamespaceName(opName);
         return team.namespaces.some((ns) => { return ns.startsWith(namespace); });
     }
 
@@ -3440,6 +3451,59 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
         return buffer;
+    }
+
+    getOpEnvironmentUrls(opIdentifier)
+    {
+        if (!opIdentifier) return [];
+        return [
+            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier),
+            new URL("https://cables.gl/api/doc/ops/" + opIdentifier)
+        ];
+    }
+
+    getOpEnvironmentDocs(opIdentifier, cb)
+    {
+        const envUrls = this.getOpEnvironmentUrls(opIdentifier);
+
+        const promises = [];
+        const myUrl = new URL(this._cables.getConfig().url);
+        envUrls.forEach((envUrl) =>
+        {
+            if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
+        });
+
+        const envDocs = {
+            "id": null,
+            "name": null,
+            "checkedEnvironments": [myUrl.hostname, ...envUrls.map((envUrl) => { return envUrl.hostname; })],
+            "environments": [],
+            "docs": {}
+        };
+
+        Promise.allSettled(promises)
+            .then((results) =>
+            {
+                const successfulRequests = results.filter((result) => { return result.status && result.status === "fulfilled"; });
+                return Promise.all(successfulRequests.map((r) => { return r.value.json(); }));
+            })
+            .then((results) =>
+            {
+                results.forEach((result, i) =>
+                {
+                    if (result.opDocs && result.opDocs.length > 0)
+                    {
+                        const envName = envUrls[i].hostname;
+                        envDocs.environments.push(envName);
+                        const envDoc = result.opDocs[0];
+                        envDocs.docs[envName] = envDoc;
+                        if (!envDocs.id) envDocs.id = envDoc.id;
+                        if (!envDocs.name) envDocs.name = envDoc.name;
+                    }
+                });
+                envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
+                cb(null, envDocs);
+            });
     }
 }
 
