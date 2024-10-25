@@ -24,7 +24,7 @@ export cables_standalone;
 
 CLEAN=false
 if [ "$1" = "clean" ]; then
-  echo -e "{$RED}Attempting a clean install, this will delete stuff, please confirm by pressing any key or stop here with ctrl-c...${NC}"
+  echo -e "${RED}Attempting a clean install, this will delete stuff, please confirm by pressing any key or stop here with ctrl-c...${NC}"
 	while [ true ] ; do
 		read -t 3 -n 1
 		if [ $? = 0 ] ; then
@@ -56,9 +56,9 @@ if [ "$?" -eq "0" ]; then
 else
     node --version > /dev/null 2>&1
     if [ "$?" -eq "0" ]; then
-    	echo -e "{$RED}nvm NOT FOUND, RUNNING FOUND nodejs WITH VERSION${NC}" `node --version` "{$RED} WANTED${NC}" `cat .nvmrc`;
+    	echo -e "${RED}nvm NOT FOUND, RUNNING FOUND nodejs WITH VERSION${NC}" `node --version` "${RED} WANTED${NC}" `cat .nvmrc`;
     else
-    	echo -e "{$RED}nvm NOT FOUND, nodejs NOT FOUND, PLEASE INSTALL VERSION${NC}" `cat .nvmrc`;
+    	echo -e "${RED}nvm NOT FOUND, nodejs NOT FOUND, PLEASE INSTALL VERSION${NC}" `cat .nvmrc`;
 	exit 1
     fi
 fi
