@@ -2,9 +2,10 @@
 
 export default class Logger
 {
-    constructor(initiator)
+    constructor(initiator, options)
     {
         this.initiator = initiator;
+        this._options = options;
     }
 
     stack(t)
@@ -37,9 +38,9 @@ export default class Logger
             console.error("[" + this.initiator + "]", ...arguments);
         }
 
-        if (!CABLES.UI && CABLES.patch.config.onError)
+        if (!CABLES.UI && this._options && this._options.onError)
         {
-            CABLES.patch.config.onError(this.initiator, ...arguments);
+            this._options.onError(this.initiator, ...arguments);
             // console.log("emitevent onerror...");
             // CABLES.patch.emitEvent("onError", this.initiator, ...arguments);
             // CABLES.logErrorConsole("[" + this.initiator + "]", ...arguments);
