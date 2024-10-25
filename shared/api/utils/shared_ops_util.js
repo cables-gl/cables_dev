@@ -742,17 +742,15 @@ export default class SharedOpsUtil extends SharedUtil
     {
         const attachmentFiles = [];
         const dirName = this.getOpAbsolutePath(opName);
-        if (fs.existsSync(dirName))
+
+        try
         {
-            try
-            {
-                const attFiles = fs.readdirSync(dirName);
-                for (const j in attFiles) if (attFiles[j].indexOf("att_") === 0) attachmentFiles.push(attFiles[j]);
-            }
-            catch (e)
-            {
-                this._log.warn("getattachmentfiles exception ", opName, e.message);
-            }
+            const attFiles = fs.readdirSync(dirName);
+            for (const j in attFiles) if (attFiles[j].indexOf("att_") === 0) attachmentFiles.push(attFiles[j]);
+        }
+        catch (e)
+        {
+            if (fs.existsSync(dirName)) this._log.warn("getattachmentfiles exception ", opName, e.message);
         }
 
         return attachmentFiles;
@@ -1370,7 +1368,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     opExists(opName, updateCache = true)
     {
-        let p = this.getOpAbsolutePath(opName);
+        let p = this.getOpAbsoluteFileName(opName);
         let exists = false;
         try
         {
