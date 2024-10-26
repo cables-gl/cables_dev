@@ -59,7 +59,7 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
       echo -e "merging current state of origin/develop into ${branch}";
       git merge origin/develop;
   else
-      echo -e "{$RED}not merging origin/develop into master!${NC}"
+      echo -e "${RED}not merging origin/develop into master!${NC}"
   fi
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
@@ -90,7 +90,7 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
       echo -e "merging current state of origin/develop into ${branch}";
       git merge origin/develop;
   else
-      echo -e "{$RED}not merging origin/develop into master!${NC}"
+      echo -e "${RED}not merging origin/develop into master!${NC}"
   fi
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
@@ -122,7 +122,7 @@ if [ -d cables_api ]; then
             echo -e "merging current state of origin/develop into ${branch}";
             git merge origin/develop;
         else
-            echo -e "{$RED}not merging origin/develop into master!${NC}"
+            echo -e "${RED}not merging origin/develop into master!${NC}"
         fi
         if [ "clean" == "${1}" ]; then
           rm -rf node_modules/
@@ -154,7 +154,7 @@ if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
       echo -e "merging current state of origin/develop into ${branch}";
       git merge origin/develop;
   else
-      echo -e "{$RED}not merging origin/develop into master!${NC}"
+      echo -e "${RED}not merging origin/develop into master!${NC}"
   fi
   if [ "clean" == "${1}" ]; then
     rm -rf node_modules/
@@ -185,7 +185,7 @@ if [ -d cables_electron ]; then
         echo -e "merging current state of origin/develop into ${branch}";
         git merge origin/develop;
     else
-        echo -e "{$RED}not merging origin/develop into master!${NC}"
+        echo -e "${RED}not merging origin/develop into master!${NC}"
     fi
     if [ "clean" == "${1}" ]; then
       rm -rf node_modules/
@@ -215,10 +215,10 @@ if [ -d "$OPSDIR" ]; then
         echo -e "no changes in git, skipping update"
       fi
   else
-      echo -e "{$RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
+      echo -e "${RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
   fi
 else
-  echo -e "{$RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
+  echo -e "${RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
 fi
 cd "$BASEDIR"
 
