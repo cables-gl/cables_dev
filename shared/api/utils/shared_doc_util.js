@@ -103,16 +103,9 @@ export default class SharedDocUtil extends SharedUtil
 
                 try
                 {
-                    if (fs.existsSync(fn))
-                    {
-                        return fs.readFileSync(fn, "utf8");
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return fs.readFileSync(fn, "utf8");
                 }
-                catch (e) {}
+                catch (e) { return null; }
             }
         }
         return null;
@@ -235,7 +228,9 @@ export default class SharedDocUtil extends SharedUtil
                     "generated": Date.now(),
                     "opDocs": opDocs
                 };
+
                 jsonfile.writeFileSync(this.opdocsFilename, newCache);
+
                 this.cachedOpDocs = newCache;
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
@@ -433,8 +428,7 @@ export default class SharedDocUtil extends SharedUtil
     buildOpDocs(opName)
     {
         let docObj = null;
-        const opFileName = this._opsUtil.getOpAbsoluteFileName(opName);
-        if (this._opsUtil.opExists(opName) && fs.existsSync(opFileName))
+        if (this._opsUtil.opExists(opName))
         {
             docObj = {
                 "name": opName,
@@ -442,14 +436,12 @@ export default class SharedDocUtil extends SharedUtil
             };
 
             const dirName = this._opsUtil.getOpSourceDir(opName);
-
             docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
 
             const jsonFilename = path.join(dirName, opName + ".json");
-            const jsonExists = fs.existsSync(jsonFilename);
 
             const screenshotFilename = path.join(dirName, "screenshot.png");
-            const screenshotExists = fs.existsSync(screenshotFilename);
+            const screenshotExists = true; // fs.existsSync(screenshotFilename);
 
             const parts = opName.split(".");
             const shortName = parts[parts.length - 1];
@@ -462,11 +454,11 @@ export default class SharedDocUtil extends SharedUtil
             let js = {};
             try
             {
-                if (jsonExists) js = jsonfile.readFileSync(jsonFilename);
+                js = jsonfile.readFileSync(jsonFilename);
             }
             catch (e)
             {
-                this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
+                if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
             }
 
             if (js)
@@ -521,14 +513,14 @@ export default class SharedDocUtil extends SharedUtil
             }
 
             const mdFile = path.join(this._opsUtil.getOpSourceDir(opName), opName + ".md");
-            const exists = fs.existsSync(mdFile);
-            if (exists)
+            try
             {
                 let doc = fs.readFileSync(mdFile);
                 doc = this.setOpLinks(marked(doc + "" || ""));
                 doc = (doc + "").replace(/src="/g, "src=\"https://cables.gl/ops/" + opName + "/");
                 docObj.content = doc;
             }
+            catch (e) {}
         }
         return docObj;
     }
@@ -609,11 +601,12 @@ export default class SharedDocUtil extends SharedUtil
         else
         {
             const opsFile = this._opsUtil.getOpAbsoluteJsonFilename(opname);
-            if (fs.existsSync(opsFile))
+            try
             {
                 const otherDocs = jsonfile.readFileSync(opsFile);
                 if (otherDocs && otherDocs.exampleProjectId) return otherDocs.exampleProjectId;
             }
+            catch (e) {}
         }
         return null;
     }
@@ -676,9 +669,14 @@ export default class SharedDocUtil extends SharedUtil
     {
         const collectionPath = this._cables.getExtensionOpsPath();
         const extensions = [];
-        if (collectionPath && fs.existsSync(collectionPath))
+        if (collectionPath)
         {
-            const exDirs = fs.readdirSync(collectionPath);
+            let exDirs = [];
+            try
+            {
+                exDirs = fs.readdirSync(collectionPath);
+            }
+            catch (e) {}
             exDirs.forEach((extensionName) =>
             {
                 if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
@@ -830,13 +828,10 @@ export default class SharedDocUtil extends SharedUtil
                 const filename = this._opsUtil.getOpAbsolutePath(opName) + opName + ".json";
                 try
                 {
-                    if (fs.existsSync(filename))
-                    {
-                        const obj = jsonfile.readFileSync(filename);
-                        if (obj.libs)libs = libs.concat(obj.libs);
-                    }
+                    const obj = jsonfile.readFileSync(filename);
+                    if (obj.libs)libs = libs.concat(obj.libs);
                 }
-                catch (ex) { this._log.error("no ops meta info found", opName, filename); }
+                catch (ex) { if (fs.existsSync(filename)) this._log.error("no ops meta info found", opName, filename); }
             }
         }
         libs = this._helperUtil.uniqueArray(libs);
