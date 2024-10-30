@@ -138,6 +138,7 @@
         "no-continue": 0,
         "no-console": 1,
         "no-else-return": 0,
+        "no-useless-return":0,
         "one-var-declaration-per-line": 0,
         "guard-for-in": 0,
         "no-new": 0,
