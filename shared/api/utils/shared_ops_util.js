@@ -298,19 +298,17 @@ export default class SharedOpsUtil extends SharedUtil
         {
             const jsonFilename = path.join(opPath, opName + ".json");
             const screenshotFilename = path.join(opPath, "screenshot.png");
-            const jsonExists = fs.existsSync(jsonFilename);
             let screenshotExists = false;
+            if (screenshotFilename) screenshotExists = fs.existsSync(screenshotFilename);
             try
-            {
-                screenshotExists = fs.existsSync(screenshotFilename);
-            }
-            catch (e) {}
-            if (jsonExists)
             {
                 info = jsonfile.readFileSync(jsonFilename);
                 info.hasScreenshot = screenshotExists;
                 info.shortName = opName.split(".")[opName.split(".").length - 1];
                 info.hasExample = !!info.exampleProjectId;
+            }
+            catch (e)
+            {
             }
         }
 
