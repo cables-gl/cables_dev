@@ -440,9 +440,6 @@ export default class SharedDocUtil extends SharedUtil
 
             const jsonFilename = path.join(dirName, opName + ".json");
 
-            const screenshotFilename = path.join(dirName, "screenshot.png");
-            const screenshotExists = true; // fs.existsSync(screenshotFilename);
-
             const parts = opName.split(".");
             const shortName = parts[parts.length - 1];
 
@@ -463,6 +460,9 @@ export default class SharedDocUtil extends SharedUtil
 
             if (js)
             {
+                const screenshotFilename = path.join(dirName, "screenshot.png");
+                const screenshotExists = fs.existsSync(screenshotFilename);
+
                 docObj.summary = js.summary || "";
                 docObj.shortName = shortName;
                 docObj.id = js.id;
