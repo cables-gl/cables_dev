@@ -3453,14 +3453,16 @@ export default class SharedOpsUtil extends SharedUtil
     getOpEnvironmentUrls(opIdentifier)
     {
         if (!opIdentifier) return [];
+        const env = this._cables.getEnv();
         return [
-            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier),
-            new URL("https://cables.gl/api/doc/ops/" + opIdentifier)
+            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env),
+            new URL("https://cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env)
         ];
     }
 
     getOpEnvironmentDocs(opIdentifier, cb)
     {
+        if (!opIdentifier) return ("OP_NOT_FOUND", null);
         const envUrls = this.getOpEnvironmentUrls(opIdentifier);
 
         const promises = [];
