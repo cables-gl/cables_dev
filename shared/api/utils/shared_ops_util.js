@@ -3472,6 +3472,8 @@ export default class SharedOpsUtil extends SharedUtil
             if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
         });
 
+        this._log.debug("OPENV URLS", envUrls);
+
         const envDocs = {
             "id": null,
             "name": null,
