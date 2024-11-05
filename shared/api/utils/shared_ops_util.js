@@ -2177,7 +2177,7 @@ export default class SharedOpsUtil extends SharedUtil
             attName.indexOf("att_") === 0)
         {
             let p = this.getOpAbsolutePath(opName);
-            p += sanitizeFileName(attName);
+            p = path.join(p, sanitizeFileName(attName));
 
             if (this.isCoreOp(opName))
             {
@@ -2247,7 +2247,7 @@ export default class SharedOpsUtil extends SharedUtil
         let p = this.getOpAbsolutePath(opName);
         if (p)
         {
-            p += sanitizeFileName(attName);
+            p = path.join(p, sanitizeFileName(attName));
             if (!fs.existsSync(p)) return false;
             fs.unlinkSync(p);
             this._log.info("deleted attachment!", p);
@@ -3418,6 +3418,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
         this._docsUtil.updateOpDocs(newName);
+
         log.push("Successfully renamed " + oldName + " to " + newName);
 
         if (cb) cb(null, log, newJsonData);
