@@ -3462,7 +3462,11 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpEnvironmentDocs(opIdentifier, cb)
     {
-        if (!opIdentifier) return ("OP_NOT_FOUND", null);
+        if (!opIdentifier)
+        {
+            cb("OP_NOT_FOUND", null);
+            return;
+        }
         const envUrls = this.getOpEnvironmentUrls(opIdentifier);
 
         const promises = [];
