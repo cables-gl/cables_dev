@@ -778,7 +778,7 @@ export default class SharedOpsUtil extends SharedUtil
         return attachment;
     }
 
-    userHasWriteRightsOp(user, opName, teams = [], project = null)
+    userHasWriteRightsOp(user, opName, teams = [], project = null, ignoreAdmin = false)
     {
         if (!user) return false;
         if (!opName) return false;
@@ -847,9 +847,9 @@ export default class SharedOpsUtil extends SharedUtil
             }
             return inTeam;
         }
-        if (user.isStaff)
+        if (!ignoreAdmin && user.isStaff)
         {
-            // only staff and admins is allowed to edit everything else on dev
+            // only staff and admins are allowed to edit everything else on dev
             return this._cables.isDevEnv();
         }
         return false;
