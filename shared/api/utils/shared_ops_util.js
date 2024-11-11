@@ -778,7 +778,7 @@ export default class SharedOpsUtil extends SharedUtil
         return attachment;
     }
 
-    userHasWriteRightsOp(user, opName, teams = [], project = null)
+    userHasWriteRightsOp(user, opName, teams = [], project = null, ignoreAdmin = false)
     {
         if (!user) return false;
         if (!opName) return false;
@@ -847,9 +847,9 @@ export default class SharedOpsUtil extends SharedUtil
             }
             return inTeam;
         }
-        if (user.isStaff)
+        if (!ignoreAdmin && user.isStaff)
         {
-            // only staff and admins is allowed to edit everything else on dev
+            // only staff and admins are allowed to edit everything else on dev
             return this._cables.isDevEnv();
         }
         return false;
@@ -2177,7 +2177,7 @@ export default class SharedOpsUtil extends SharedUtil
             attName.indexOf("att_") === 0)
         {
             let p = this.getOpAbsolutePath(opName);
-            p += sanitizeFileName(attName);
+            p = path.join(p, sanitizeFileName(attName));
 
             if (this.isCoreOp(opName))
             {
@@ -2247,7 +2247,7 @@ export default class SharedOpsUtil extends SharedUtil
         let p = this.getOpAbsolutePath(opName);
         if (p)
         {
-            p += sanitizeFileName(attName);
+            p = path.join(p, sanitizeFileName(attName));
             if (!fs.existsSync(p)) return false;
             fs.unlinkSync(p);
             this._log.info("deleted attachment!", p);
@@ -3418,6 +3418,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
         this._docsUtil.updateOpDocs(newName);
+
         log.push("Successfully renamed " + oldName + " to " + newName);
 
         if (cb) cb(null, log, newJsonData);
@@ -3452,14 +3453,20 @@ export default class SharedOpsUtil extends SharedUtil
     getOpEnvironmentUrls(opIdentifier)
     {
         if (!opIdentifier) return [];
+        const env = this._cables.getEnv();
         return [
-            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier),
-            new URL("https://cables.gl/api/doc/ops/" + opIdentifier)
+            new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env),
+            new URL("https://cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env)
         ];
     }
 
     getOpEnvironmentDocs(opIdentifier, cb)
     {
+        if (!opIdentifier)
+        {
+            cb("OP_NOT_FOUND", null);
+            return;
+        }
         const envUrls = this.getOpEnvironmentUrls(opIdentifier);
 
         const promises = [];
