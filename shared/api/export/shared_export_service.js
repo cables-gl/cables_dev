@@ -419,11 +419,10 @@ export default class SharedExportService extends SharedUtil
                 }
                 else
                 {
-                    let pathfn = path.join(this._cables.getExportAssetTargetPath(), "/" + fn);
-
+                    let pathfn = path.join(this._cables.getExportAssetTargetPath(), fn);
                     if (!fs.existsSync(pathfn))
                     {
-                        pathfn = path.join(this._cables.getExportAssetTargetPath(), "/" + proj._id + "/" + fn);
+                        pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
                     }
 
                     if (!fs.existsSync(pathfn))
@@ -918,7 +917,7 @@ export default class SharedExportService extends SharedUtil
         for (let l = 0; l < libs.length; l++)
         {
             const lib = libs[l];
-            let libPath = path.join(this._cables.getLibsPath(), "/", lib);
+            let libPath = path.join(this._cables.getLibsPath(), lib);
             let libSrc = path.join(this.finalJsPath, lib);
             if (this._libsUtil.isAssetLib(lib))
             {
