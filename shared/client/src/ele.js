@@ -75,6 +75,22 @@ class Ele
         return el.options[el.selectedIndex].value || el.options[el.selectedIndex].text;
     }
 
+
+    /**
+     * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
+     * @param  {Object} element
+     * @returns {Object} DOM element
+     */
+    asButton(ele, cb)
+    {
+        if (!ele)
+            return console.log("no ele as button");
+
+        ele.addEventListener("click", cb);
+        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(); });
+    }
+
+
     show(el)
     {
         if (el)el.classList.remove("hidden");
