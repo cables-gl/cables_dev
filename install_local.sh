@@ -5,13 +5,23 @@ YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
-CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
-CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
-CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
-CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
-CABLES_EXTENSION_OPS_REPO="${CABLES_EXTENSION_OPS_REPO:=git@github.com:cables-gl/cables_extensionops.git}"
-CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
+if [ "$1" = "https" ]; then
+  CABLES_DEV_REPO="${CABLES_DEV_REPO:=https://github.com/cables-gl/cables_dev.git}"
+  CABLES_CORE_REPO="${CABLES_CORE_REPO:=https://github.com/cables-gl/cables.git}"
+  CABLES_API_REPO="${CABLES_API_REPO:=https://github.com/undev-studio/cables_api.git}"
+  CABLES_UI_REPO="${CABLES_UI_REPO:=https://github.com/cables-gl/cables_ui.git}"
+  CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=https://github.com/cables-gl/cables_electron.git}"
+  CABLES_EXTENSION_OPS_REPO="${CABLES_EXTENSION_OPS_REPO:=https://github.com/cables-gl/cables_extensionops.git}"
+  CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=https://github.com/cables-gl/cables-asset-library.git}"
+else
+  CABLES_DEV_REPO="${CABLES_DEV_REPO:=git@github.com:cables-gl/cables_dev.git}"
+  CABLES_CORE_REPO="${CABLES_CORE_REPO:=git@github.com:cables-gl/cables.git}"
+  CABLES_API_REPO="${CABLES_API_REPO:=git@github.com:undev-studio/cables_api.git}"
+  CABLES_UI_REPO="${CABLES_UI_REPO:=git@github.com:cables-gl/cables_ui.git}"
+  CABLES_ELECTRON_REPO="${CABLES_ELECTRON_REPO:=git@github.com:cables-gl/cables_electron.git}"
+  CABLES_EXTENSION_OPS_REPO="${CABLES_EXTENSION_OPS_REPO:=git@github.com:cables-gl/cables_extensionops.git}"
+  CABLES_ASSET_LIBRARY_REPO="${CABLES_ASSET_LIBRARY_REPO:=git@github.com:cables-gl/cables-asset-library.git}"
+fi
 
 COMMUNITY_BUILD=false
 cables_standalone="true";
