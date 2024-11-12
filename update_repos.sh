@@ -10,10 +10,20 @@ NC='\033[0m' # No Color
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+FORCE=false
+if [[ "${1}" =~ ^(force|tags/v.*)$ ]] ; then
+  FORCE=true
+fi
+
+CLEAN=false
+if [[ "${1}" =~ ^(clean|tags/v.*)$ ]] ; then
+  CLEAN=true
+fi
+
 branch=`git rev-parse --abbrev-ref HEAD`
 git fetch || true
 reslog=$(git log HEAD..origin/${branch} --oneline)
-if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
   git pull
 fi
 
@@ -36,7 +46,7 @@ set -o pipefail
 
 echo -e ""
 echo -e "${GREEN}UPDATING DEV...${NC}"
-if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
   npm install --no-save
 else
   echo -e "no changes in git, skipping update"
@@ -46,22 +56,25 @@ echo -e ""
 echo -e "${GREEN}UPDATING SHARED...${NC}"
 cd shared
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-	git checkout "${1}"
+	git -c advice.detachedHead=false checkout "${1}"
 fi
+
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
+if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+
 # ignore errors here, since branch might not be on remote
 git fetch || true
-if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
   git pull origin "$branch" || true
-  # merge current remote develop if branch is not master
-  if [ "master" != "${branch}" ]; then
-      echo -e "merging current state of origin/develop into ${branch}";
-      git merge origin/develop;
+  # merge current remote develop if branch is not master or tag
+  if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+    echo -e "${RED}not merging origin/develop into master/tag!${NC}"
   else
-      echo -e "${RED}not merging origin/develop into master!${NC}"
+    echo -e "merging current state of origin/develop into ${branch}";
+    git merge origin/develop;
   fi
-  if [ "clean" == "${1}" ]; then
+  if [ "$CLEAN" = true ]; then
     rm -rf node_modules/
   fi
   npm install --no-save
@@ -76,23 +89,26 @@ echo -e "${GREEN}UPDATING CORE...${NC}"
 cd cables
 
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-	git checkout "${1}"
+	git -c advice.detachedHead=false checkout "${1}"
 fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
+if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+
 # ignore errors here, since branch might not be on remote
 git fetch || true
-reslog=$(git log HEAD..origin/${branch} --oneline)
-if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+
+if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
   git pull origin "$branch" || true
-  # merge current remote develop if branch is not master
-  if [ "master" != "${branch}" ]; then
-      echo -e "merging current state of origin/develop into ${branch}";
-      git merge origin/develop;
+  # merge current remote develop if branch is not master or tag
+  if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+    echo -e "${RED}not merging origin/develop into master/tag!${NC}"
   else
-      echo -e "${RED}not merging origin/develop into master!${NC}"
+    echo -e "merging current state of origin/develop into ${branch}";
+    git merge origin/develop;
   fi
-  if [ "clean" == "${1}" ]; then
+  if [ "$CLEAN" = true ]; then
     rm -rf node_modules/
   fi
   npm install --no-save
@@ -108,23 +124,26 @@ if [ -d cables_api ]; then
       cd cables_api
 
       if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-        git checkout "${1}"
+        git -c advice.detachedHead=false checkout "${1}"
       fi
       # get current branch
       branch=`git rev-parse --abbrev-ref HEAD`
+      if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+
       # ignore errors here, since branch might not be on remote
       git fetch || true
-      reslog=$(git log HEAD..origin/${branch} --oneline)
-      if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+      if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+
+      if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
         git pull origin "$branch" || true
-        # merge current remote develop if branch is not master
-        if [ "master" != "${branch}" ]; then
-            echo -e "merging current state of origin/develop into ${branch}";
-            git merge origin/develop;
+        # merge current remote develop if branch is not master or tag
+        if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+          echo -e "${RED}not merging origin/develop into master/tag!${NC}"
         else
-            echo -e "${RED}not merging origin/develop into master!${NC}"
+          echo -e "merging current state of origin/develop into ${branch}";
+          git merge origin/develop;
         fi
-        if [ "clean" == "${1}" ]; then
+        if [ "$CLEAN" = true ]; then
           rm -rf node_modules/
         fi
         npm install --no-save
@@ -140,23 +159,26 @@ echo -e "${GREEN}UPDATING UI...${NC}"
 cd cables_ui
 
 if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-	git checkout "${1}"
+	git -c advice.detachedHead=false checkout "${1}"
 fi
 # get current branch
 branch=`git rev-parse --abbrev-ref HEAD`
+if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+
 # ignore errors here, since branch might not be on remote
 git fetch || true
-reslog=$(git log HEAD..origin/${branch} --oneline)
-if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+
+if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
   git pull origin "${branch}" || true
-  # merge current remote develop if branch is not master
-  if [ "master" != "${branch}" ]; then
-      echo -e "merging current state of origin/develop into ${branch}";
-      git merge origin/develop;
+  # merge current remote develop if branch is not master or tag
+  if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+    echo -e "${RED}not merging origin/develop into master/tag!${NC}"
   else
-      echo -e "${RED}not merging origin/develop into master!${NC}"
+    echo -e "merging current state of origin/develop into ${branch}";
+    git merge origin/develop;
   fi
-  if [ "clean" == "${1}" ]; then
+  if [ "$CLEAN" = true ]; then
     rm -rf node_modules/
   fi
   npm install --no-save
@@ -171,23 +193,24 @@ if [ -d cables_electron ]; then
   cd cables_electron
 
   if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-    git checkout "${1}"
+    git -c advice.detachedHead=false checkout "${1}"
   fi
   # get current branch
   branch=`git rev-parse --abbrev-ref HEAD`
   # ignore errors here, since branch might not be on remote
   git fetch || true
-  reslog=$(git log HEAD..origin/${branch} --oneline)
-  if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+  if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+
+  if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
     git pull origin "${branch}" || true
-    # merge current remote develop if branch is not master
-    if [ "master" != "${branch}" ]; then
-        echo -e "merging current state of origin/develop into ${branch}";
-        git merge origin/develop;
+    # merge current remote develop if branch is not master or tag
+    if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+      echo -e "${RED}not merging origin/develop into master/tag!${NC}"
     else
-        echo -e "${RED}not merging origin/develop into master!${NC}"
+      echo -e "merging current state of origin/develop into ${branch}";
+      git merge origin/develop;
     fi
-    if [ "clean" == "${1}" ]; then
+    if [ "$CLEAN" = true ]; then
       rm -rf node_modules/
     fi
     npm install --no-save
@@ -204,12 +227,12 @@ if [ -d "$OPSDIR" ]; then
   cd $OPSDIR
   if [ -d ".git" ]; then
       git fetch || true
-      if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-        git checkout "${1}"
+      if ! [[ "${1}" =~ ^(clean|force)$ ]]; then
+        git -c advice.detachedHead=false checkout main
       fi
       branch=`git rev-parse --abbrev-ref HEAD`
       reslog=$(git log HEAD..origin/${branch} --oneline)
-      if [[ "${reslog}" != "" || "force" = "${1}" ]] ; then
+      if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
             git pull
       else
         echo -e "no changes in git, skipping update"
