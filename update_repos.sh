@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 FORCE=false
-if [[ "${1}" =~ ^(force|tags/v.*)$ ]] ; then
+if [ -n "${1}" ] ; then
   FORCE=true
 fi
 
@@ -112,6 +112,7 @@ if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
     rm -rf node_modules/
   fi
   npm install --no-save
+  npm run build
 else
   echo -e "no changes in git, skipping update"
 fi
@@ -147,6 +148,7 @@ if [ -d cables_api ]; then
           rm -rf node_modules/
         fi
         npm install --no-save
+        npm run build
       else
         echo -e "no changes in git, skipping update"
       fi
@@ -182,6 +184,7 @@ if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
     rm -rf node_modules/
   fi
   npm install --no-save
+  npm run build
 else
   echo -e "no changes in git, skipping update"
 fi
