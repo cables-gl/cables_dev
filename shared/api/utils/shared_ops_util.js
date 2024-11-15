@@ -28,7 +28,6 @@ export default class SharedOpsUtil extends SharedUtil
         this.PREFIX_USEROPS = "Ops.User.";
         this.PREFIX_TEAMOPS = "Ops.Team.";
         this.PREFIX_EXTENSIONOPS = "Ops.Extension.";
-        this.PREFIX_ADMINOPS = "Ops.Admin.";
         this.PREFIX_PATCHOPS = "Ops.Patch.P";
 
         this.INFIX_DEPRECATED = ".Deprecated.";
@@ -73,7 +72,6 @@ export default class SharedOpsUtil extends SharedUtil
             ];
 
         this.INVISIBLE_NAMESPACES = [
-            this.PREFIX_ADMINOPS,
             this.PREFIX_USEROPS
         ];
 
@@ -1421,12 +1419,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opname) return false;
         return opname.startsWith(this.PREFIX_USEROPS);
-    }
-
-    isAdminOp(opname)
-    {
-        if (!opname) return false;
-        return opname.startsWith(this.PREFIX_ADMINOPS);
     }
 
     isPrivateOp(opname)

@@ -484,7 +484,7 @@ export default class SharedDocUtil extends SharedUtil
                 docObj.youtubeids = js.youtubeids || [];
                 docObj.created = js.created;
                 docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
-                docObj.hidden = (this._opsUtil.isDeprecated(opName) || this._opsUtil.isAdminOp(opName));
+                docObj.hidden = (this._opsUtil.isDeprecated(opName));
 
                 if (js.changelog)
                 {
