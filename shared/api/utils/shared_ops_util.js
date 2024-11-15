@@ -80,6 +80,7 @@ export default class SharedOpsUtil extends SharedUtil
         this.VISIBILITY_PUBLIC = "public";
         this.VISIBILITY_UNLISTED = "unlisted";
         this.VISIBILITY_PRIVATE = "private";
+        this.VISIBILITY_HIDDEN = "hidden";
         this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
         this.cli = new this._CLIEngine(this._getCLIConfig());
