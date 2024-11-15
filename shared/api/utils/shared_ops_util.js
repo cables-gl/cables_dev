@@ -1437,7 +1437,15 @@ export default class SharedOpsUtil extends SharedUtil
     isDevOp(opname)
     {
         if (!opname) return false;
-        return opname.includes(this.INFIX_DEVOPS);
+        try
+        {
+            return opname.includes(this.INFIX_DEVOPS);
+        }
+        catch (e)
+        {
+            this._log.error("weird opname in cache", opname);
+            return false;
+        }
     }
 
     isStandaloneOp(opname)
