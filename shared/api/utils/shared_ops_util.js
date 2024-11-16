@@ -28,7 +28,6 @@ export default class SharedOpsUtil extends SharedUtil
         this.PREFIX_USEROPS = "Ops.User.";
         this.PREFIX_TEAMOPS = "Ops.Team.";
         this.PREFIX_EXTENSIONOPS = "Ops.Extension.";
-        this.PREFIX_ADMINOPS = "Ops.Admin.";
         this.PREFIX_PATCHOPS = "Ops.Patch.P";
 
         this.INFIX_DEPRECATED = ".Deprecated.";
@@ -73,13 +72,13 @@ export default class SharedOpsUtil extends SharedUtil
             ];
 
         this.INVISIBLE_NAMESPACES = [
-            this.PREFIX_ADMINOPS,
             this.PREFIX_USEROPS
         ];
 
         this.VISIBILITY_PUBLIC = "public";
         this.VISIBILITY_UNLISTED = "unlisted";
         this.VISIBILITY_PRIVATE = "private";
+        this.VISIBILITY_HIDDEN = "hidden";
         this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
         this.cli = new this._CLIEngine(this._getCLIConfig());
@@ -1420,12 +1419,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opname) return false;
         return opname.startsWith(this.PREFIX_USEROPS);
-    }
-
-    isAdminOp(opname)
-    {
-        if (!opname) return false;
-        return opname.startsWith(this.PREFIX_ADMINOPS);
     }
 
     isPrivateOp(opname)
