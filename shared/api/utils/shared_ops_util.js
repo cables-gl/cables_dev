@@ -1976,6 +1976,8 @@ export default class SharedOpsUtil extends SharedUtil
     getCollectionVisibility(name, defaultVisibility = this.VISIBILITY_PUBLIC)
     {
         let visibility = defaultVisibility;
+        if (this.isCoreNamespace(name)) visibility = this.VISIBILITY_PUBLIC;
+
         const docs = this.getCollectionDocs(name);
         if (docs.hasOwnProperty("visibility")) visibility = docs.visibility;
         return visibility;
