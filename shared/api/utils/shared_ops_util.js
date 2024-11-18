@@ -2823,7 +2823,7 @@ export default class SharedOpsUtil extends SharedUtil
         code = code ||
             ""
             + "// welcome to your new op!\n"
-            + "// have a look at the documentation: \n"
+            + "// have a look at the documentation:\n"
             + "// https://cables.gl/docs/5_writing_ops/dev_ops/dev_ops\n"
             + "\n"
             + "const\n"
