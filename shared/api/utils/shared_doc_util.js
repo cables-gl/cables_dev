@@ -484,7 +484,7 @@ export default class SharedDocUtil extends SharedUtil
                 docObj.youtubeids = js.youtubeids || [];
                 docObj.created = js.created;
                 docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
-                docObj.hidden = (this._opsUtil.isDeprecated(opName) || this._opsUtil.isAdminOp(opName));
+                docObj.hidden = (this._opsUtil.isDeprecated(opName));
 
                 if (js.changelog)
                 {
@@ -665,7 +665,7 @@ export default class SharedDocUtil extends SharedUtil
         return cleanDocs;
     }
 
-    getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false)
+    getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false, publicOnly = true)
     {
         const collectionPath = this._cables.getExtensionOpsPath();
         const extensions = [];
@@ -679,7 +679,16 @@ export default class SharedDocUtil extends SharedUtil
             catch (e) {}
             exDirs.forEach((extensionName) =>
             {
-                if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
+                if (!publicOnly)
+                {
+                    const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
+                    if (extensionOps.length > 0)
+                    {
+                        const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
+                        if (extDocs) extensions.push(extDocs);
+                    }
+                }
+                else if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
                 {
                     const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
                     if (extensionOps.length > 0)

@@ -4,7 +4,7 @@
 with contributions by the [cables community](https://discord.gg/cablesgl) and support by [various other parties and projects](https://cables.gl/support).
 
 This is the repository that holds the parent directory for cables development. Read up about
-setting up everything for your to start contributing to cables in the section on ["Developing Cables"](https://cables.gl/docs/6_1_developing_cables/developing_cables)
+setting up everything for you to start contributing to cables in the section on ["Developing Cables"](https://cables.gl/docs/6_1_developing_cables/developing_cables)
 of the official cables documentation.
 
 If you want to learn more about the tools and processes involved, check our ["toolchain"](docs/toolchain.md) guide.
