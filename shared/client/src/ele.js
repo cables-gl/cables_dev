@@ -85,8 +85,8 @@ class Ele
     {
         if (!ele)
         {
-            console.log((new Error()).stack);
-            return console.log("no ele as button");
+            // console.log((new Error()).stack);
+            return; // console.log("no ele as button");
         }
 
 
