@@ -1355,10 +1355,6 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (this.isPatchOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) Patch ops cannot contain ops of other patches.";
         }
-        else
-        {
-            this._log.error("unknown op type", outerName);
-        }
 
         return false;
     }
@@ -1409,16 +1405,16 @@ export default class SharedOpsUtil extends SharedUtil
         return uuidv4.isUUID(id);
     }
 
-    isCoreOp(opname)
+    isCoreOp(opName)
     {
-        if (!opname) return false;
-        return !(this.isUserOp(opname) || this.isTeamOp(opname) || this.isExtensionOp(opname) || this.isPatchOp(opname));
+        if (!opName) return false;
+        return !(this.isUserOp(opName) || this.isTeamOp(opName) || this.isExtensionOp(opName) || this.isPatchOp(opName));
     }
 
-    isUserOp(opname)
+    isUserOp(opName)
     {
-        if (!opname) return false;
-        return opname.startsWith(this.PREFIX_USEROPS);
+        if (!opName) return false;
+        return opName.startsWith(this.PREFIX_USEROPS);
     }
 
     isPrivateOp(opname)
