@@ -1535,6 +1535,18 @@ export default class SharedOpsUtil extends SharedUtil
         return null;
     }
 
+    isUserOpNamespace(name)
+    {
+        if (!name) return false;
+        return name.startsWith(this.PREFIX_USEROPS);
+    }
+
+    isCoreNamespace(namespace)
+    {
+        if (!namespace) return false;
+        return !(this.isUserOpNamespace(namespace) || this.isTeamNamespace(namespace) || this.isExtensionNamespace(namespace) || this.isPatchOpNamespace(namespace));
+    }
+
     isTeamNamespace(name)
     {
         if (!name) return false;
@@ -1976,6 +1988,8 @@ export default class SharedOpsUtil extends SharedUtil
     getCollectionVisibility(name, defaultVisibility = this.VISIBILITY_PUBLIC)
     {
         let visibility = defaultVisibility;
+        if (this.isCoreNamespace(name)) visibility = this.VISIBILITY_PUBLIC;
+
         const docs = this.getCollectionDocs(name);
         if (docs.hasOwnProperty("visibility")) visibility = docs.visibility;
         return visibility;
