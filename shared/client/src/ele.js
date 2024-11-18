@@ -84,7 +84,10 @@ class Ele
     asButton(ele, cb)
     {
         if (!ele)
+        {
+            console.log((new Error()).stack);
             return console.log("no ele as button");
+        }
 
 
         if (ele.getAttribute("tabindex") == null)ele.setAttribute("tabindex", 0);
