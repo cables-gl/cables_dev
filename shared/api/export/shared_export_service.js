@@ -661,7 +661,7 @@ export default class SharedExportService extends SharedUtil
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
             }
 
-            if (subPatchOp.storage && subPatchOp.storage.blueprintVer > 1)
+            if (subPatchOp.storage && subPatchOp.isSubPatchOp())
             {
                 const attBp = this._opsUtil.getSubPatchOpAttachment(opName);
                 if (attBp && attBp.ops && attBp.ops.length > 0)

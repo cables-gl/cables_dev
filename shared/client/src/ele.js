@@ -84,8 +84,13 @@ class Ele
     asButton(ele, cb)
     {
         if (!ele)
-            return console.log("no ele as button");
+        {
+            // console.log((new Error()).stack);
+            return; // console.log("no ele as button");
+        }
 
+
+        if (ele.getAttribute("tabindex") == null)ele.setAttribute("tabindex", 0);
         ele.addEventListener("click", cb);
         ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(); });
     }

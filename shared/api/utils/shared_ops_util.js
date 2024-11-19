@@ -1355,10 +1355,6 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (this.isPatchOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) Patch ops cannot contain ops of other patches.";
         }
-        else
-        {
-            this._log.error("unknown op type", outerName);
-        }
 
         return false;
     }
@@ -1409,16 +1405,16 @@ export default class SharedOpsUtil extends SharedUtil
         return uuidv4.isUUID(id);
     }
 
-    isCoreOp(opname)
+    isCoreOp(opName)
     {
-        if (!opname) return false;
-        return !(this.isUserOp(opname) || this.isTeamOp(opname) || this.isExtensionOp(opname) || this.isPatchOp(opname));
+        if (!opName) return false;
+        return !(this.isUserOp(opName) || this.isTeamOp(opName) || this.isExtensionOp(opName) || this.isPatchOp(opName));
     }
 
-    isUserOp(opname)
+    isUserOp(opName)
     {
-        if (!opname) return false;
-        return opname.startsWith(this.PREFIX_USEROPS);
+        if (!opName) return false;
+        return opName.startsWith(this.PREFIX_USEROPS);
     }
 
     isPrivateOp(opname)
@@ -1533,6 +1529,18 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isTeamNamespace(name)) return this.getTeamNamespaceDir(name, relative);
         if (this.isPatchOpNamespace(name)) return this.getPatchOpDir(name, relative);
         return null;
+    }
+
+    isUserOpNamespace(name)
+    {
+        if (!name) return false;
+        return name.startsWith(this.PREFIX_USEROPS);
+    }
+
+    isCoreNamespace(namespace)
+    {
+        if (!namespace) return false;
+        return !(this.isUserOpNamespace(namespace) || this.isTeamNamespace(namespace) || this.isExtensionNamespace(namespace) || this.isPatchOpNamespace(namespace));
     }
 
     isTeamNamespace(name)
@@ -1976,6 +1984,8 @@ export default class SharedOpsUtil extends SharedUtil
     getCollectionVisibility(name, defaultVisibility = this.VISIBILITY_PUBLIC)
     {
         let visibility = defaultVisibility;
+        if (this.isCoreNamespace(name)) visibility = this.VISIBILITY_PUBLIC;
+
         const docs = this.getCollectionDocs(name);
         if (docs.hasOwnProperty("visibility")) visibility = docs.visibility;
         return visibility;
@@ -2816,7 +2826,7 @@ export default class SharedOpsUtil extends SharedUtil
         code = code ||
             ""
             + "// welcome to your new op!\n"
-            + "// have a look at the documentation: \n"
+            + "// have a look at the documentation:\n"
             + "// https://cables.gl/docs/5_writing_ops/dev_ops/dev_ops\n"
             + "\n"
             + "const\n"
