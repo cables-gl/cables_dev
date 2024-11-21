@@ -38,7 +38,7 @@ export default class Logger
             console.error("[" + this.initiator + "]", ...arguments);
         }
 
-        if (!CABLES.UI && this._options && this._options.onError)
+        if (this._options && this._options.onError)
         {
             this._options.onError(this.initiator, ...arguments);
             // console.log("emitevent onerror...");
