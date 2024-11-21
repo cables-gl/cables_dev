@@ -26,8 +26,11 @@ export default class SharedDocUtil extends SharedUtil
         {
             jsonfile.readFile(this.opdocsFilename, (err, data) =>
             {
-                this._log.info("reloaded opdocs cache json file!");
-                this.cachedOpDocs = data;
+                if (!err && data)
+                {
+                    this._log.info("reloaded opdocs cache json file!");
+                    this.cachedOpDocs = data;
+                }
             });
         });
 
@@ -35,7 +38,7 @@ export default class SharedDocUtil extends SharedUtil
         {
             jsonfile.readFile(this.opLookupFilename, (err, data) =>
             {
-                this.cachedLookup = data;
+                if (!err && data) this.cachedLookup = data;
             });
         });
     }
@@ -299,7 +302,7 @@ export default class SharedDocUtil extends SharedUtil
                 }
                 catch (e)
                 {
-                    this._log.error("error reading oplookup file", this.opLookupFilename, e);
+                    this._log.warn("error reading oplookup file", this.opLookupFilename, e);
                 }
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
