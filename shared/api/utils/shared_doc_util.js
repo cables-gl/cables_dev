@@ -292,7 +292,15 @@ export default class SharedDocUtil extends SharedUtil
             if (fs.existsSync(this.opLookupFilename))
             {
                 let removeOps = [];
-                const fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
+                let fileLookUp = null;
+                try
+                {
+                    fileLookUp = jsonfile.readFileSync(this.opLookupFilename);
+                }
+                catch (e)
+                {
+                    this._log.error("error reading oplookup file", this.opLookupFilename, e);
+                }
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
                     const idsAndNames = {};
