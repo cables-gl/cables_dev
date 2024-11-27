@@ -141,8 +141,8 @@ export default class SharedOpsUtil extends SharedUtil
     isSubPatchOp(op)
     {
         if (!op || !op.storage) return false;
-        if (op.storage.subPatchVer) return true;
-        return op.storage.blueprintVer > 1;
+        if (op.storage.blueprintVer > 1) return true;
+        return !!op.storage.subPatchVer;
     }
 
     getOpAbsoluteJsonFilename(opName)
