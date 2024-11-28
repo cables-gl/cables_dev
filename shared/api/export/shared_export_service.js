@@ -661,7 +661,7 @@ export default class SharedExportService extends SharedUtil
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
             }
 
-            if (subPatchOp.storage && subPatchOp.isSubPatchOp())
+            if (this._opsUtil.isSubPatchOp(subPatchOp))
             {
                 const attBp = this._opsUtil.getSubPatchOpAttachment(opName);
                 if (attBp && attBp.ops && attBp.ops.length > 0)
@@ -937,6 +937,20 @@ export default class SharedExportService extends SharedUtil
             coreLibScripts.push({ "name": coreLib, "file": path.join(this._cables.getCoreLibsPath(), coreLib + ".js"), "src": this.finalJsPath + coreLib + ".js" });
         }
         return coreLibScripts;
+    }
+
+    _getDependencyUrls(dependencies)
+    {
+        const depLibScripts = [];
+        for (let l = 0; l < dependencies.length; l++)
+        {
+            const dep = dependencies[l];
+            const file = this._opsUtil.getOpAbsolutePath(dep.op);
+            const depScript = { "name": dep.name, "src": path.join(this.finalJsPath, dep.src), "type": dep.type };
+            if (dep.src.startsWith("http")) depScript.file = path.join(file, dep.src);
+            depLibScripts.push(depScript);
+        }
+        return depLibScripts;
     }
 
     _addAssets(proj, allFiles, options)

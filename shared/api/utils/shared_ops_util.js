@@ -138,6 +138,13 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.startsWith("Ops.Ui.SubPatch");
     }
 
+    isSubPatchOp(op)
+    {
+        if (!op || !op.storage) return false;
+        if (op.storage.blueprintVer > 1) return true;
+        return !!op.storage.subPatchVer;
+    }
+
     getOpAbsoluteJsonFilename(opName)
     {
         const p = this.getOpAbsolutePath(opName);

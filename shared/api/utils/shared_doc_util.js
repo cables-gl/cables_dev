@@ -145,6 +145,44 @@ export default class SharedDocUtil extends SharedUtil
         return coreLibs;
     }
 
+    getProjectDependencies(project)
+    {
+        if (!project || !project.ops) return [];
+
+        let projectDependencies = {};
+        let usedOpsNames = {};
+        project.ops.forEach((op) =>
+        {
+            usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
+        });
+        usedOpsNames = Object.values(usedOpsNames);
+        const opDocs = this.getOpDocsForCollections(usedOpsNames);
+        for (let i = 0; i < opDocs.length; i++)
+        {
+            const opDoc = opDocs[i];
+            if (opDoc.dependencies)
+            {
+                const opDeps = opDoc.dependencies.filter((dep) => { return dep.type === "commonjs" || dep.type === "module"; });
+                for (let j = 0; j < opDeps.length; j++)
+                {
+                    const lib = opDeps[j];
+                    for (let k = 0; k < lib.src.length; k++)
+                    {
+                        const libName = k ? lib.name + "_" + (k + 1) : lib.name;
+                        const src = lib.src[k];
+                        projectDependencies[libName] = {
+                            "name": libName,
+                            "type": lib.type,
+                            "src": src,
+                            "op": opDoc.name
+                        };
+                    }
+                }
+            }
+        }
+        return Object.values(projectDependencies);
+    }
+
     setOpLinks(str)
     {
         str = str || "";
@@ -508,6 +546,10 @@ export default class SharedDocUtil extends SharedUtil
                 if (js.coreLibs)
                 {
                     docObj.coreLibs = js.coreLibs;
+                }
+                if (js.dependencies)
+                {
+                    docObj.dependencies = js.dependencies;
                 }
                 if (js.issues)
                 {
