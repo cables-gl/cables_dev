@@ -1056,6 +1056,92 @@ export default class SharedOpsUtil extends SharedUtil
         return [];
     }
 
+    addOpDependency(opName, newDependency)
+    {
+        if (!opName || !newDependency) return false;
+        const opDocFile = this.getOpAbsoluteJsonFilename(opName);
+        if (fs.existsSync(opDocFile))
+        {
+            let opDoc = jsonfile.readFileSync(opDocFile);
+            if (opDoc)
+            {
+                const deps = opDoc.dependencies || [];
+                if (newDependency.type === "op" && !this.isOpId(newDependency.src))
+                {
+                    newDependency.src = this.getOpIdByObjName(newDependency.src);
+                }
+                if (!deps.some((d) => { return d.src === newDependency.src && d.type === newDependency.type; }))
+                {
+                    deps.push(newDependency);
+                }
+
+                opDoc.dependencies = deps;
+                opDoc = this._docsUtil.cleanOpDocData(opDoc);
+                jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
+                this._docsUtil.updateOpDocs(opName);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    removeOpDependency(opName, dep)
+    {
+        if (!opName || !dep) return false;
+
+        const opDocFile = this.getOpAbsoluteJsonFilename(opName);
+        if (dep.src && dep.src.startsWith("./"))
+        {
+            const depFile = path.join(this.getOpAbsolutePath(opName), dep.src);
+            if (fs.existsSync(depFile)) fs.unlinkSync(depFile);
+        }
+        if (fs.existsSync(opDocFile))
+        {
+            let opDoc = jsonfile.readFileSync(opDocFile);
+            if (opDoc)
+            {
+                const newDeps = [];
+                const deps = opDoc.dependencies || [];
+                deps.forEach((d) =>
+                {
+                    if (!(d.src === dep.src && d.type === dep.type)) newDeps.push(d);
+                });
+                opDoc.dependencies = newDeps;
+                if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
+                this._docsUtil.updateOpDocs(opName);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    addOpDependencyFile(opName, fileName, buffer)
+    {
+        if (!fileName.startsWith("lib_")) fileName = "lib_" + fileName;
+        fileName = this._filesUtil.realSanitizeFilename(fileName);
+        const opDir = this.getOpAbsolutePath(opName);
+        const absoluteFile = path.join(opDir, fileName);
+        console.log("jeje", fileName, absoluteFile);
+        try
+        {
+            fs.writeFileSync(absoluteFile, buffer);
+            return fileName;
+        }
+        catch (e)
+        {
+            this._log.error("failed to write opdependency file", fileName, e);
+        }
+        return false;
+    }
+
     getPatchOpNamespace(opName)
     {
         if (!opName || !this.isPatchOp(opName)) return null;
