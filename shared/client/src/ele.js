@@ -95,6 +95,14 @@ class Ele
         ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(e); });
     }
 
+    /**
+     * can be used for making element keyboard usable and continue using inline onclick e.g. onkepress="ele.keyClick(event,this)"
+     * @param  {Object} element
+     */
+    keyClick(event, ele)
+    {
+        if (event.keyCode == 13 && ele.onclick)ele.onclick();
+    }
 
     show(el)
     {
