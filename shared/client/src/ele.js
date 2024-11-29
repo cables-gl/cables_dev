@@ -91,8 +91,8 @@ class Ele
 
 
         if (ele.getAttribute("tabindex") == null)ele.setAttribute("tabindex", 0);
-        ele.addEventListener("click", cb);
-        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(); });
+        ele.addEventListener("click", (e) => { cb(e); });
+        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(e); });
     }
 
 
