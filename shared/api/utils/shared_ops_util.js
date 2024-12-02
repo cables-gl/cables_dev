@@ -1129,7 +1129,6 @@ export default class SharedOpsUtil extends SharedUtil
         fileName = this._filesUtil.realSanitizeFilename(fileName);
         const opDir = this.getOpAbsolutePath(opName);
         const absoluteFile = path.join(opDir, fileName);
-        console.log("jeje", fileName, absoluteFile);
         try
         {
             fs.writeFileSync(absoluteFile, buffer);
@@ -3581,8 +3580,6 @@ export default class SharedOpsUtil extends SharedUtil
         const myUrl = new URL(this._cables.getConfig().url);
         envUrls.forEach((envUrl) => { promises.push(fetch(envUrl)); });
 
-        console.log("promises", promises.length);
-
         const envDocs = {
             "id": null,
             "name": null,
@@ -3601,8 +3598,6 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 results.forEach((result, i) =>
                 {
-                    console.log("result", result);
-
                     if (result.opDocs && result.opDocs.length > 0)
                     {
                         const envName = envUrls[i].hostname;
@@ -3613,9 +3608,7 @@ export default class SharedOpsUtil extends SharedUtil
                         if (!envDocs.name) envDocs.name = envDoc.name;
                     }
                 });
-                console.log("envDocs1", envDocs.environments);
                 envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
-                console.log("envDocs2", envDocs.environments);
                 cb(null, envDocs);
             });
     }
