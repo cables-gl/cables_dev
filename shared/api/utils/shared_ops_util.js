@@ -3564,6 +3564,7 @@ export default class SharedOpsUtil extends SharedUtil
             return;
         }
         const envUrls = this.getOpEnvironmentUrls(opIdentifier);
+        console.log("ENV BEFORE", envUrls);
 
         const promises = [];
         const myUrl = new URL(this._cables.getConfig().url);
@@ -3571,6 +3572,8 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
         });
+
+        console.log("promises", promises.length);
 
         const envDocs = {
             "id": null,
@@ -3588,6 +3591,8 @@ export default class SharedOpsUtil extends SharedUtil
             })
             .then((results) =>
             {
+                console.log("results", results.length);
+
                 results.forEach((result, i) =>
                 {
                     if (result.opDocs && result.opDocs.length > 0)
@@ -3600,7 +3605,9 @@ export default class SharedOpsUtil extends SharedUtil
                         if (!envDocs.name) envDocs.name = envDoc.name;
                     }
                 });
+                console.log("envDocs1", envDocs.environments);
                 envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
+                console.log("envDocs2", envDocs.environments);
                 cb(null, envDocs);
             });
     }
