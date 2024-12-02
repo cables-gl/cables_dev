@@ -3550,10 +3550,22 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opIdentifier) return [];
         const env = this._cables.getEnv();
-        return [
+        const myUrl = new URL(this._cables.getConfig().url);
+
+        const envUrls = [
             new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env),
             new URL("https://cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env)
         ];
+        const opEnvUrls = [];
+        envUrls.forEach((envUrl) =>
+        {
+            if (envUrl.hostname !== myUrl.hostname)
+            {
+                opEnvUrls.push(envUrl);
+            }
+        });
+
+        return opEnvUrls;
     }
 
     getOpEnvironmentDocs(opIdentifier, cb)
@@ -3564,20 +3576,11 @@ export default class SharedOpsUtil extends SharedUtil
             return;
         }
         const envUrls = this.getOpEnvironmentUrls(opIdentifier);
-        console.log("ENV BEFORE", envUrls);
 
         const promises = [];
         const myUrl = new URL(this._cables.getConfig().url);
-        envUrls.forEach((envUrl) =>
-        {
-            if (envUrl.hostname !== myUrl.hostname)
-            {
-                console.log("ADDING env", envUrl);
-                promises.push(fetch(envUrl));
-            }
-        });
+        envUrls.forEach((envUrl) => { promises.push(fetch(envUrl)); });
 
-        console.log("ENV AFTER", envUrls);
         console.log("promises", promises.length);
 
         const envDocs = {
@@ -3596,10 +3599,10 @@ export default class SharedOpsUtil extends SharedUtil
             })
             .then((results) =>
             {
-                console.log("results", results.length);
-
                 results.forEach((result, i) =>
                 {
+                    console.log("result", result);
+
                     if (result.opDocs && result.opDocs.length > 0)
                     {
                         const envName = envUrls[i].hostname;
