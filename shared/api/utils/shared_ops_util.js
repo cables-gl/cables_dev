@@ -3570,9 +3570,14 @@ export default class SharedOpsUtil extends SharedUtil
         const myUrl = new URL(this._cables.getConfig().url);
         envUrls.forEach((envUrl) =>
         {
-            if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
+            if (envUrl.hostname !== myUrl.hostname)
+            {
+                console.log("ADDING env", envUrl);
+                promises.push(fetch(envUrl));
+            }
         });
 
+        console.log("ENV AFTER", envUrls);
         console.log("promises", promises.length);
 
         const envDocs = {
