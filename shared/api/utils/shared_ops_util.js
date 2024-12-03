@@ -1129,7 +1129,6 @@ export default class SharedOpsUtil extends SharedUtil
         fileName = this._filesUtil.realSanitizeFilename(fileName);
         const opDir = this.getOpAbsolutePath(opName);
         const absoluteFile = path.join(opDir, fileName);
-        console.log("jeje", fileName, absoluteFile);
         try
         {
             fs.writeFileSync(absoluteFile, buffer);
@@ -3550,10 +3549,22 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opIdentifier) return [];
         const env = this._cables.getEnv();
-        return [
+        const myUrl = new URL(this._cables.getConfig().url);
+
+        const envUrls = [
             new URL("https://dev.cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env),
             new URL("https://cables.gl/api/doc/ops/" + opIdentifier + "?fromEnv=" + env)
         ];
+        const opEnvUrls = [];
+        envUrls.forEach((envUrl) =>
+        {
+            if (envUrl.hostname !== myUrl.hostname)
+            {
+                opEnvUrls.push(envUrl);
+            }
+        });
+
+        return opEnvUrls;
     }
 
     getOpEnvironmentDocs(opIdentifier, cb)
@@ -3567,10 +3578,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         const promises = [];
         const myUrl = new URL(this._cables.getConfig().url);
-        envUrls.forEach((envUrl) =>
-        {
-            if (envUrl.hostname !== myUrl.hostname) promises.push(fetch(envUrl));
-        });
+        envUrls.forEach((envUrl) => { promises.push(fetch(envUrl)); });
 
         const envDocs = {
             "id": null,
