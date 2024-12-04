@@ -3607,6 +3607,18 @@ export default class SharedOpsUtil extends SharedUtil
                         if (!envDocs.id) envDocs.id = envDoc.id;
                         if (!envDocs.name) envDocs.name = envDoc.name;
                     }
+                    else if (result.data && result.data.name)
+                    {
+                        const envName = envUrls[i].hostname;
+                        envDocs.environments.push(envName);
+                        const envDoc = {
+                            "id": result.data.id,
+                            "name": result.data.name
+                        };
+                        envDocs.docs[envName] = envDoc;
+                        if (!envDocs.id) envDocs.id = envDoc.id;
+                        if (!envDocs.name) envDocs.name = envDoc.name;
+                    }
                 });
                 envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
                 cb(null, envDocs);
