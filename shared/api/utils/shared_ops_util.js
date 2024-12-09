@@ -3512,7 +3512,19 @@ export default class SharedOpsUtil extends SharedUtil
         if (!this.isPatchOp(newName)) this._log.verbose("*" + currentUser.username + " finished rename ");
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
-        this._docsUtil.updateOpDocs(newName);
+        const newOpDocs = this._docsUtil.updateOpDocs(newName);
+        console.log("REMOVEOLD", oldName, newName, removeOld);
+        if (removeOld)
+        {
+            const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
+            const opnameWithoutVersion = this.getOpNameWithoutVersion(oldName);
+            console.log("REMOVEOLD", opnameWithoutVersion, newName, versionNumbers);
+            versionNumbers.forEach((version) =>
+            {
+                console.log("UPDATING", version.name);
+                this._docsUtil.updateOpDocs(version.name);
+            });
+        }
 
         log.push("Successfully renamed " + oldName + " to " + newName);
 
