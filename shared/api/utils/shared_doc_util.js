@@ -512,57 +512,17 @@ export default class SharedDocUtil extends SharedUtil
                 const screenshotFilename = path.join(dirName, "screenshot.png");
                 const screenshotExists = fs.existsSync(screenshotFilename);
 
-                docObj.summary = js.summary || "";
+                docObj = { ...docObj, ...this.makeImportable(js) };
+
                 docObj.shortName = shortName;
-                docObj.id = js.id;
-                docObj.layout = js.layout;
-                docObj.ports = js.ports;
-                if (js.credits) docObj.credits = js.credits;
                 docObj.hasScreenshot = screenshotExists;
-                docObj.authorName = js.authorName || "unknown";
-                docObj.docs = js.docs;
-                docObj.license = js.license;
-                docObj.hasExample = !!js.exampleProjectId;
-                docObj.exampleProjectId = js.exampleProjectId || "";
                 docObj.namespace = namespace;
                 docObj.name = opName;
                 docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
                 docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
                 docObj.version = this._opsUtil.getVersionFromOpName(opName);
-                docObj.libs = js.libs || [];
-                docObj.youtubeids = js.youtubeids || [];
-                docObj.created = js.created;
                 docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
                 docObj.hidden = (this._opsUtil.isDeprecated(opName));
-
-                if (js.changelog)
-                {
-                    docObj.changelog = js.changelog;
-                }
-                if (js.todos)
-                {
-                    docObj.todos = js.todos;
-                }
-                if (js.coreLibs)
-                {
-                    docObj.coreLibs = js.coreLibs;
-                }
-                if (js.dependencies)
-                {
-                    docObj.dependencies = js.dependencies;
-                }
-                if (js.issues)
-                {
-                    docObj.issues = js.issues;
-                }
-                if (js.caniusequery)
-                {
-                    docObj.caniusequery = js.caniusequery;
-                }
-                if (js.dependencies)
-                {
-                    docObj.dependencies = js.dependencies;
-                }
             }
 
             const mdFile = path.join(this._opsUtil.getOpSourceDir(opName), opName + ".md");
@@ -724,6 +684,34 @@ export default class SharedDocUtil extends SharedUtil
             }
         });
         return cleanDocs;
+    }
+
+    makeImportable(opDoc)
+    {
+        if (!opDoc) return {};
+        const docObj = {};
+
+        docObj.summary = opDoc.summary || "";
+        docObj.id = opDoc.id;
+        docObj.layout = opDoc.layout;
+        docObj.ports = opDoc.ports;
+        docObj.authorName = opDoc.authorName || "unknown";
+        docObj.docs = opDoc.docs;
+        docObj.license = opDoc.license;
+        docObj.hasExample = !!opDoc.exampleProjectId;
+        docObj.libs = opDoc.libs || [];
+        docObj.youtubeids = opDoc.youtubeids || [];
+        docObj.created = opDoc.created;
+        docObj.exampleProjectId = opDoc.exampleProjectId || "";
+        if (opDoc.credits) docObj.credits = opDoc.credits;
+        if (opDoc.changelog) docObj.changelog = opDoc.changelog;
+        if (opDoc.todos) docObj.todos = opDoc.todos;
+        if (opDoc.coreLibs) docObj.coreLibs = opDoc.coreLibs;
+        if (opDoc.dependencies) docObj.dependencies = opDoc.dependencies;
+        if (opDoc.issues) docObj.issues = opDoc.issues;
+        if (opDoc.caniusequery) docObj.caniusequery = opDoc.caniusequery;
+
+        return docObj;
     }
 
     getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false, publicOnly = true)
