@@ -3496,14 +3496,15 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
 
+        const oldNameChangelog = oldName.replace(this.PREFIX_OPS, "");
         if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, { "encoding": "utf-8", "spaces": 4 });
         if (newName.includes(this.INFIX_DEPRECATED))
         {
-            this.addOpChangelog(currentUser, newName, { "type": "deprecation", "message": "op " + oldName + " was deprecated" });
+            this.addOpChangelog(currentUser, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
         }
         else
         {
-            this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldName + " renamed to " + newName });
+            this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
         }
 
         let updateOld = false;
@@ -3512,7 +3513,15 @@ export default class SharedOpsUtil extends SharedUtil
         if (!this.isPatchOp(newName)) this._log.verbose("*" + currentUser.username + " finished rename ");
 
         if (updateOld) this._docsUtil.updateOpDocs(oldName);
-        this._docsUtil.updateOpDocs(newName);
+        const newOpDocs = this._docsUtil.updateOpDocs(newName);
+        if (removeOld)
+        {
+            const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
+            versionNumbers.forEach((version) =>
+            {
+                this._docsUtil.updateOpDocs(version.name);
+            });
+        }
 
         log.push("Successfully renamed " + oldName + " to " + newName);
 
