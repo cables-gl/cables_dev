@@ -2792,9 +2792,12 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         if (!Array.isArray(newJson.changelog)) newJson.changelog = [];
-        if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
-        if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
-        if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+        if (this.getOpNameWithoutVersion(newName) !== this.getOpNameWithoutVersion(oldName))
+        {
+            if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
+            if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
+            if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+        }
 
         if (this.getOpNameWithoutVersion(oldName) !== this.getOpNameWithoutVersion(newName))
         {
