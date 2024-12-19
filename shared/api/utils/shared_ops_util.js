@@ -40,6 +40,13 @@ export default class SharedOpsUtil extends SharedUtil
             "-": "___"
         };
 
+        this.OP_PORT_TYPE_NUMBER = 0;
+        this.OP_PORT_TYPE_TRIGGER = 1;
+        this.OP_PORT_TYPE_OBJECT = 2;
+        this.OP_PORT_TYPE_ARRAY = 3;
+        this.OP_PORT_TYPE_DYNAMIC = 4;
+        this.OP_PORT_TYPE_STRING = 5;
+
         this.FXHASH_OP_NAME = "Ops.Extension.FxHash.FxHash";
 
         this.SUBPATCH_ATTACHMENT_NAME = "att_subpatch_json";
@@ -1399,6 +1406,126 @@ export default class SharedOpsUtil extends SharedUtil
         return fullCode;
     }
 
+    buildPreviewCode(opNames)
+    {
+        let codeNamespaces = [];
+        let code = "";
+
+        for (const i in opNames)
+        {
+            let opName = opNames[i];
+            const opId = this.getOpIdByObjName(opName);
+            const opJsonFile = this.getOpAbsoluteJsonFilename(opName);
+            try
+            {
+                const opJson = jsonfile.readFileSync(opJsonFile);
+                const opLayout = opJson.layout;
+                if (opLayout)
+                {
+                    let opCode = "";
+                    const codeHead = "\n\n// **************************************************************\n" +
+                        "// \n" +
+                        "// " + opName + "\n" +
+                        "// \n" +
+                        "// **************************************************************\n\n" +
+                        opName + " = function()\n{\nCABLES.Op.apply(this,arguments);\nconst op=this;\n";
+
+                    if (opLayout.portsIn)
+                    {
+                        opLayout.portsIn.forEach((port) =>
+                        {
+                            if (port.name)
+                            {
+                                switch (port.type)
+                                {
+                                case this.OP_PORT_TYPE_TRIGGER:
+                                    opCode += "op.inTrigger(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_OBJECT:
+                                    opCode += "op.inObject(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_ARRAY:
+                                    opCode += "op.inArray(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_DYNAMIC:
+                                    opCode += "op.inDynamic(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_STRING:
+                                    opCode += "op.inString(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_NUMBER:
+                                default:
+                                    opCode += "op.inFloat(\"" + port.name + "\");\n";
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+                    if (opLayout.portsOut)
+                    {
+                        opLayout.portsOut.forEach((port) =>
+                        {
+                            if (port.name)
+                            {
+                                switch (port.type)
+                                {
+                                case this.OP_PORT_TYPE_TRIGGER:
+                                    opCode += "op.outTrigger(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_OBJECT:
+                                    opCode += "op.outObject(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_ARRAY:
+                                    opCode += "op.outArray(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_STRING:
+                                    opCode += "op.outString(\"" + port.name + "\");\n";
+                                    break;
+                                case this.OP_PORT_TYPE_NUMBER:
+                                default:
+                                    opCode += "op.outNumber(\"" + port.name + "\");\n";
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+                    let codeFoot = "\n\n};\n\n" + opName + ".prototype = new CABLES.Op();\n";
+
+                    if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
+                    codeFoot += "\n\n\n";
+
+                    code += codeHead + opCode + codeFoot;
+                }
+                const parts = opName.split(".");
+                for (let k = 1; k < parts.length; k++)
+                {
+                    let partPartname = "";
+                    for (let j = 0; j < k; j++) partPartname += parts[j] + ".";
+
+                    partPartname = partPartname.substr(0, partPartname.length - 1);
+                    codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
+                }
+            }
+            catch (e)
+            {
+                this._log.warn("op layout read error: " + opName, this.getOpAbsoluteJsonFilename(opName), e);
+            }
+        }
+
+        codeNamespaces = this._helperUtil.sortAndReduce(codeNamespaces);
+        let fullCode = this.OPS_CODE_PREFIX;
+        if (codeNamespaces && codeNamespaces.length > 0)
+        {
+            codeNamespaces[0] = "var " + codeNamespaces[0];
+            fullCode += codeNamespaces.join("\n") + "\n\n";
+        }
+
+        fullCode += code;
+        return fullCode;
+    }
+
     validateAndFormatOpCode(code)
     {
         const { results } = this.cli.executeOnText(code);
@@ -2665,9 +2792,12 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         if (!Array.isArray(newJson.changelog)) newJson.changelog = [];
-        if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
-        if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
-        if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+        if (this.getOpNameWithoutVersion(newName) !== this.getOpNameWithoutVersion(oldName))
+        {
+            if (newJson.hasOwnProperty("exampleProjectId")) delete newJson.exampleProjectId;
+            if (newJson.hasOwnProperty("youtubeid")) delete newJson.youtubeid;
+            if (newJson.hasOwnProperty("youtubeids")) delete newJson.youtubeids;
+        }
 
         if (this.getOpNameWithoutVersion(oldName) !== this.getOpNameWithoutVersion(newName))
         {
@@ -3616,7 +3746,7 @@ export default class SharedOpsUtil extends SharedUtil
                         if (!envDocs.id) envDocs.id = envDoc.id;
                         if (!envDocs.name) envDocs.name = envDoc.name;
                     }
-                    else if (result.data && result.data.name)
+                    else if (result.error && result.code === 403 && result.data && result.data.name)
                     {
                         const envName = envUrls[i].hostname;
                         envDocs.environments.push(envName);
