@@ -1,4 +1,5 @@
 
+import { hideToolTip } from "../../../cables_ui/src/ui/elements/tooltips.js";
 import ele from "./ele.js";
 import Events from "./eventtarget.js";
 import Logger from "./logger.js";
@@ -217,7 +218,6 @@ export default class ModalDialog extends Events
 
     show()
     {
-        // this._eleBg.style.display = "block";
         this._bg.show();
 
         this._ele = document.createElement("div");
@@ -249,7 +249,7 @@ export default class ModalDialog extends Events
 
         this._addListeners();
 
-        if (CABLES && CABLES.UI) CABLES.UI.hideToolTip();
+        if (CABLES && CABLES.UI) hideToolTip();
 
         this.emitEvent("onShow", this);
     }

@@ -1719,7 +1719,7 @@ export default class SharedOpsUtil extends SharedUtil
     ownsUserOp(opname, user)
     {
         if (!user) return false;
-        const usernamespace = this.PREFIX_USEROPS + user.usernameLowercase + ".";
+        const usernamespace = defaultOps.PREFIX_USEROPS + user.usernameLowercase + ".";
         if (opname.startsWith(usernamespace)) return true;
         return false;
     }
@@ -1727,26 +1727,26 @@ export default class SharedOpsUtil extends SharedUtil
     isExtension(name)
     {
         if (!name) return false;
-        return name.startsWith(this.PREFIX_EXTENSIONOPS);
+        return name.startsWith(defaultOps.PREFIX_EXTENSIONOPS);
     }
 
     isPatchOpNamespace(name)
     {
         if (!name) return false;
-        return name.startsWith(this.PREFIX_PATCHOPS);
+        return name.startsWith(defaultOps.PREFIX_PATCHOPS);
     }
 
     isCollection(name)
     {
         if (!name) return false;
-        return this.isTeamNamespace(name) || this.isExtensionNamespace(name) || this.isPatchOpNamespace(name);
+        return namespace.isTeamNamespace(name) || namespace.isExtensionNamespace(name) || namespace.isPatchOpNamespace(name);
     }
 
     getCollectionDir(name, relative = false)
     {
-        if (this.isExtensionNamespace(name)) return this.getExtensionDir(name, relative);
-        if (this.isTeamNamespace(name)) return this.getTeamNamespaceDir(name, relative);
-        if (this.isPatchOpNamespace(name)) return this.getPatchOpDir(name, relative);
+        if (namespace.isExtensionNamespace(name)) return namespace.getExtensionDir(name, relative);
+        if (namespace.isTeamNamespace(name)) return namespace.getTeamNamespaceDir(name, relative);
+        if (namespace.isPatchOpNamespace(name)) return namespace.getPatchOpDir(name, relative);
         return null;
     }
 
