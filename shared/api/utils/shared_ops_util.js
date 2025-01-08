@@ -1953,7 +1953,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "UndoManager",
                 "Handlebars",
                 "hljs",
-                "tinysort",
                 "loadjs",
                 "MathParser",
                 "socketClusterClient",
