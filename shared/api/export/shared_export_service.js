@@ -62,7 +62,6 @@ export default class SharedExportService extends SharedUtil
      * @param credentials
      * @param exportNumber
      * @return originalProject
-     * @abstract
      */
     _doAfterExport(originalProject, credentials, exportNumber)
     {
@@ -76,7 +75,6 @@ export default class SharedExportService extends SharedUtil
      * @param jsCode
      * @param options
      * @return jsCode
-     * @abstract
      */
     _doAfterCombine(jsCode, options)
     {
@@ -507,7 +505,7 @@ export default class SharedExportService extends SharedUtil
             this._addInfoFiles(proj, options);
 
             // add subPatchOp ops
-            this._getProjectDependencies(proj, options, (allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode) =>
+            this._getProjectDependencies(proj, options, (allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode, dependencies) =>
             {
                 this.addLog("number of unique ops: " + usedOps.length);
                 this.addLog("");
@@ -543,7 +541,7 @@ export default class SharedExportService extends SharedUtil
 
                         // add js
                         this._log.info("js packaging...", (Date.now() - this.startTimeExport) / 1000);
-                        this._addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options);
+                        this._addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies);
                         const exportContainsOps = this._addProjectOpCode(usedOps, options);
                         if (exportContainsOps)
                         {
@@ -944,10 +942,14 @@ export default class SharedExportService extends SharedUtil
         const depLibScripts = [];
         for (let l = 0; l < dependencies.length; l++)
         {
-            const dep = dependencies[l];
-            const file = this._opsUtil.getOpAbsolutePath(dep.op);
-            const depScript = { "name": dep.name, "src": path.join(this.finalJsPath, dep.src), "type": dep.type };
-            if (dep.src.startsWith("http")) depScript.file = path.join(file, dep.src);
+            let depScript = dependencies[l];
+            const file = this._opsUtil.getOpAbsolutePath(depScript.op);
+            const src = depScript.src;
+            if (!src.startsWith("http"))
+            {
+                depScript.src = path.join(this.finalJsPath, src);
+                depScript.file = path.join(file, src);
+            }
             depLibScripts.push(depScript);
         }
         return depLibScripts;
