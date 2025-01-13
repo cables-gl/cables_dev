@@ -939,10 +939,11 @@ export default class SharedExportService extends SharedUtil
 
     _getDependencyUrls(dependencies)
     {
+        const deps = [...dependencies];
         const depLibScripts = [];
-        for (let l = 0; l < dependencies.length; l++)
+        for (let l = 0; l < deps.length; l++)
         {
-            let depScript = dependencies[l];
+            let depScript = deps[l];
             const file = this._opsUtil.getOpAbsolutePath(depScript.op);
             const src = depScript.src;
             if (!src.startsWith("http"))
