@@ -791,6 +791,14 @@ export default class SharedOpsUtil extends SharedUtil
         return attachment;
     }
 
+    /**
+     * @abstract
+     */
+    userHasReadRightsOp(user, opName, teams = null, project = null, opOwner = null)
+    {
+        throw new Error("not implemented, abstract class");
+    }
+
     userHasWriteRightsOp(user, opName, teams = [], project = null, ignoreAdmin = false)
     {
         if (!user) return false;
@@ -2589,12 +2597,12 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
             {
-                problems.no_rights_target = "You lack permissions to " + newName + ".";
+                problems.no_rights_target = "You lack write permissions to " + newName + ".";
             }
 
             if (oldName)
             {
-                if (!this.userHasWriteRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack permissions to " + oldName + ".";
+                if (!this.userHasReadRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack read permissions to " + oldName + ".";
                 if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
             }
         }
