@@ -149,7 +149,7 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!project || !project.ops) return [];
 
-        let projectDependencies = {};
+        let projectDependencies = [];
         let usedOpsNames = {};
         project.ops.forEach((op) =>
         {
@@ -165,22 +165,21 @@ export default class SharedDocUtil extends SharedUtil
                 const opDeps = opDoc.dependencies.filter((dep) => { return dep.type === "commonjs" || dep.type === "module"; });
                 for (let j = 0; j < opDeps.length; j++)
                 {
-                    const lib = opDeps[j];
-                    for (let k = 0; k < lib.src.length; k++)
+                    const dep = opDeps[j];
+                    if (!projectDependencies.find((projectDependency) => { return projectDependency.src === dep.src; }))
                     {
-                        const libName = k ? lib.name + "_" + (k + 1) : lib.name;
-                        const src = lib.src[k];
-                        projectDependencies[libName] = {
-                            "name": libName,
-                            "type": lib.type,
-                            "src": src,
+                        const opDep = {
+                            "type": dep.type,
+                            "src": dep.src,
                             "op": opDoc.name
                         };
+                        if (dep.export) opDep.export = dep.export;
+                        projectDependencies.push(opDep);
                     }
                 }
             }
         }
-        return Object.values(projectDependencies);
+        return projectDependencies;
     }
 
     setOpLinks(str)
