@@ -75,13 +75,17 @@ class Ele
         return el.options[el.selectedIndex].value || el.options[el.selectedIndex].text;
     }
 
+    asButton(ele, cb)
+    {
+        this.clickable(ele, cb);
+    }
 
     /**
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      * @param  {Object} element
      * @returns {Object} DOM element
      */
-    asButton(ele, cb)
+    clickable(ele, cb)
     {
         if (!ele)
         {
@@ -89,10 +93,23 @@ class Ele
             return; // console.log("no ele as button");
         }
 
-
         if (ele.getAttribute("tabindex") == null)ele.setAttribute("tabindex", 0);
+        ele.classList.add("eleAsButton");
         ele.addEventListener("click", (e) => { cb(e); });
-        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13)cb(e); });
+        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13 || e.keyCode == 32)cb(e); });
+    }
+
+    clickables(parent, query, cb)
+    {
+        const clickEles = parent.querySelectorAll(query);
+
+        for (let i = 0; i < clickEles.length; i++)
+        {
+            ele.clickable(clickEles[i], (e) =>
+            {
+                cb(e, e.currentTarget.dataset);
+            });
+        }
     }
 
     /**
@@ -101,7 +118,7 @@ class Ele
      */
     keyClick(event, ele)
     {
-        if (event.keyCode == 13 && ele.onclick)ele.onclick();
+        if ((event.keyCode == 13 || event.keyCode == 32) && ele.onclick)ele.onclick();
     }
 
     show(el)
