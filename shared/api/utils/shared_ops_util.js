@@ -791,6 +791,14 @@ export default class SharedOpsUtil extends SharedUtil
         return attachment;
     }
 
+    /**
+     * @abstract
+     */
+    userHasReadRightsOp(user, opName, teams = null, project = null, opOwner = null)
+    {
+        throw new Error("not implemented, abstract class");
+    }
+
     userHasWriteRightsOp(user, opName, teams = [], project = null, ignoreAdmin = false)
     {
         if (!user) return false;
@@ -1299,7 +1307,7 @@ export default class SharedOpsUtil extends SharedUtil
         return filename;
     }
 
-    buildCode(basePath, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null)
+    buildCode(basePath, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, preview = false)
     {
         if (filterOldVersions && !opDocs) opDocs = this._docsUtil.getOpDocs(filterOldVersions, filterDeprecated);
         if (!basePath || !fs.existsSync(basePath))
@@ -1326,11 +1334,11 @@ export default class SharedOpsUtil extends SharedUtil
                 const opId = this.getOpIdByObjName(dirName);
                 ops.push({ "objName": dirName, "opId": opId });
             }
-            return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs);
+            return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs, false, false, preview);
         }
     }
 
-    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false, minifyGlsl = false)
+    buildFullCode(ops, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, prepareForExport = false, minifyGlsl = false, preview = false)
     {
         let codeNamespaces = [];
         let code = "";
@@ -1350,52 +1358,60 @@ export default class SharedOpsUtil extends SharedUtil
             }
             if (filterDeprecated && this.isDeprecated(opName)) return false;
             if (filterOldVersions && this.isOpOldVersion(opName, opDocs)) return false;
+            if (!op.objName) op.objName = opName;
             return true;
         });
 
-        for (const i in ops)
+        if (preview)
         {
-            let opName = ops[i].objName;
-            let opId = ops[i].opId;
-            if (!opId)
+            code += this.buildPreviewCode(ops.map((op) => { return op.objName; }));
+        }
+        else
+        {
+            for (const i in ops)
             {
-                opId = this.getOpIdByObjName(opName);
-            }
-            else
-            {
-                opName = this.getOpNameById(opId);
-            }
-
-            let fn = this.getOpAbsoluteFileName(opName);
-
-            try
-            {
-                const parts = opName.split(".");
-                for (let k = 1; k < parts.length; k++)
+                let opName = ops[i].objName;
+                let opId = ops[i].opId;
+                if (!opId)
                 {
-                    let partPartname = "";
-                    for (let j = 0; j < k; j++) partPartname += parts[j] + ".";
-
-                    partPartname = partPartname.substr(0, partPartname.length - 1);
-                    codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
-                }
-                code += this.getOpFullCode(fn, opName, opId, prepareForExport, minifyGlsl);
-            }
-            catch (e)
-            {
-                if (this.isCoreOp(opName))
-                {
-                    this._log.error("op read error:" + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
+                    opId = this.getOpIdByObjName(opName);
                 }
                 else
                 {
-                    this._log.warn("op read error: " + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
+                    opName = this.getOpNameById(opId);
+                }
+
+                let fn = this.getOpAbsoluteFileName(opName);
+
+                try
+                {
+                    const parts = opName.split(".");
+                    for (let k = 1; k < parts.length; k++)
+                    {
+                        let partPartname = "";
+                        for (let j = 0; j < k; j++) partPartname += parts[j] + ".";
+
+                        partPartname = partPartname.substr(0, partPartname.length - 1);
+                        codeNamespaces.push(partPartname + "=" + partPartname + " || {};");
+                    }
+                    code += this.getOpFullCode(fn, opName, opId, prepareForExport, minifyGlsl);
+                }
+                catch (e)
+                {
+                    if (this.isCoreOp(opName))
+                    {
+                        this._log.error("op read error:" + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
+                    }
+                    else
+                    {
+                        this._log.warn("op read error: " + opName, this.getOpAbsoluteFileName(opName), e.stacktrace);
+                    }
                 }
             }
         }
 
-        codeNamespaces = this._helperUtil.sortAndReduce(codeNamespaces);
         let fullCode = this.OPS_CODE_PREFIX;
+        codeNamespaces = this._helperUtil.sortAndReduce(codeNamespaces);
         if (codeNamespaces && codeNamespaces.length > 0)
         {
             codeNamespaces[0] = "var " + codeNamespaces[0];
@@ -1510,7 +1526,7 @@ export default class SharedOpsUtil extends SharedUtil
             }
             catch (e)
             {
-                this._log.warn("op layout read error: " + opName, this.getOpAbsoluteJsonFilename(opName), e);
+                this._log.warn("op layout read error: " + opName, this.getOpAbsoluteJsonFilename(opName));
             }
         }
 
@@ -2588,12 +2604,12 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
             {
-                problems.no_rights_target = "You lack permissions to " + newName + ".";
+                problems.no_rights_target = "You lack write permissions to " + newName + ".";
             }
 
             if (oldName)
             {
-                if (!this.userHasWriteRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack permissions to " + oldName + ".";
+                if (!this.userHasReadRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack read permissions to " + oldName + ".";
                 if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
             }
         }
