@@ -4,30 +4,30 @@ import fs from "fs";
 
 
 const args = process.argv ? process.argv.slice(2) : [];
-const standalone = args && args[0] === "standalone";
+const electron = args && args[0] === "standalone";
 
 let commands = [
     {
         "command": "cd shared && npm run build",
         "name": "shared",
         "prefixColor": "blue",
-        "env": { "cables_standalone": standalone }
+        "env": { "cables_electron": electron }
     },
     {
         "command": "cd cables && npm run start",
         "name": "core",
         "prefixColor": "yellow",
-        "env": { "cables_standalone": standalone }
+        "env": { "cables_electron": electron }
     },
     {
         "command": "cd cables_ui && npm run start",
         "name": "gui",
         "prefixColor": "green",
-        "env": { "cables_standalone": standalone }
+        "env": { "cables_electron": electron }
     },
 ];
 
-if (!standalone)
+if (!electron)
 {
     let apiExists = true;
     try
@@ -47,7 +47,7 @@ if (!standalone)
             "command": "cd cables_api && npm run start",
             "name": "api",
             "prefixColor": "cyan",
-            "env": { "cables_standalone": standalone }
+            "env": { "cables_electron": electron }
         });
     }
     else
