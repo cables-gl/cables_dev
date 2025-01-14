@@ -78,6 +78,9 @@ cd ..
 cd  Ops.Extension.Standalone.Net.Osc/
 $NPM_EXE install --prefix ./ osc --no-save
 cd ..
+cd  Ops.Extension.Standalone.Net.Osc_v2/
+$NPM_EXE install --prefix ./ osc --no-save
+cd ..
 cd Ops.Extension.Standalone.Net.OscSend/
 $NPM_EXE install --prefix ./ osc --no-save
 cd ..
