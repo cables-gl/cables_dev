@@ -72,15 +72,18 @@ $NPM_EXE install
 $NPM_EXE run build
 echo "INSTALLING standalone op-modules"
 cd dist/ops/extensions/Ops.Extension.Standalone/
-cd Ops.Extension.Standalone.Ffmpeg/
-$NPM_EXE install --prefix ./ fluent-ffmpeg --no-save
-cd ..
-cd  Ops.Extension.Standalone.Net.Osc/
-$NPM_EXE install --prefix ./ osc --no-save
-cd ..
-cd Ops.Extension.Standalone.Net.OscSend/
-$NPM_EXE install --prefix ./ osc --no-save
-cd ..
+for dir in `find . -maxdepth 1 -type d -name 'Ops.Extension.Standalone.*'`; do
+    cd $dir;
+    name=`basename $dir`.json;
+    set +e
+    json=`cat $name | jq -r '.dependencies[] | select( .type == "npm") | .src '`
+    set -e
+    for m in $json; do
+        echo "$name: installing $m";
+        npm install --prefix ./ $m --no-save;
+    done
+    cd ..
+done
 echo "PACKAGING cables_electron"
 $NPM_EXE run dist$BUILD_OS $ARGS
 cd ..

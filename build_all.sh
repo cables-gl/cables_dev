@@ -11,13 +11,13 @@ NC='\033[0m' # No Color
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 COMMUNITY_BUILD=false
-cables_standalone="true";
+cables_electron="true";
 if [[ "$*" == *"--community"* ]]
 then
     COMMUNITY_BUILD=true
-    cables_standalone="false";
+    cables_electron="false";
 fi
-export cables_standalone;
+export cables_electron;
 
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
 
