@@ -73,9 +73,13 @@ $NPM_EXE run build
 echo "INSTALLING standalone op-modules"
 cd dist/ops/extensions/Ops.Extension.Standalone/
 for dir in `find . -maxdepth 1 -type d -name 'Ops.Extension.Standalone.*'`; do
-    cd $dir
-    name=`basename $dir`
-    for m in `cat $name.json | jq -r '.dependencies[] | select( .type == npm") | .src '`; do
+    cd $dir;
+    name=`basename $dir`.json;
+    set +e
+    json=`cat $name | jq -r '.dependencies[] | select( .type == "npm") | .src '`
+    set -e
+    for m in $json; do
+        echo "$name: installing $m";
         npm install --prefix ./ $m --no-save;
     done
     cd ..
