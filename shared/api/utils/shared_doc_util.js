@@ -654,7 +654,7 @@ export default class SharedDocUtil extends SharedUtil
                 delete obj.relatedops;
             }
         }
-        if (op.dependencies && op.dependencies.length === 0) delete op.dependencies;
+        if (obj.dependencies && obj.dependencies.length === 0) delete obj.dependencies;
         return this._helperUtil.cleanJson(obj);
     }
 
