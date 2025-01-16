@@ -42,7 +42,9 @@
         "incrementStartup": true,
         "mmd": true,
         "platform": true,
-        "Sortable": true
+        "Sortable": true,
+        "tinysort":true,
+        "marked":true,
     },
     "env": {
         "browser": true

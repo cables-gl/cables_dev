@@ -4,6 +4,6 @@
     "target": "ES6",
     "checkJs":true
   },
-  "include": ["cables_ui/src/**/*","cables/src/core/**/*"]
+  "include": ["shared/client/src/**/*","cables_ui/src/**/*","cables/src/core/**/*"]
 }
 
