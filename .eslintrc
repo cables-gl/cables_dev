@@ -6,8 +6,6 @@
         "GPUBufferUsage":true,
         "GPUMapMode":true,
         "op": true,
-        "ele": true,
-        "gui": true,
         "navigator": true,
         "document": true,
         "BroadcastChannel": true,
@@ -145,7 +143,7 @@
         "no-useless-constructor": 0,
         "import/no-dynamic-require": 0,
         "import/no-cycle": [
-            1,
+            0,
             {
                 "maxDepth": 3
             }
