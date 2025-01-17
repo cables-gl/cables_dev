@@ -176,4 +176,5 @@
         "multiline-comment-style": ["error", "starred-block"],
         "lines-around-comment": ["error", { "beforeBlockComment": true }]
     }
+
 }
