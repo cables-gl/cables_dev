@@ -44,7 +44,7 @@
         "platform": true,
         "Sortable": true,
         "tinysort":true,
-        "marked":true,
+        "marked":true
     },
     "env": {
         "browser": true
