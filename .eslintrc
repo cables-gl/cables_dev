@@ -111,7 +111,7 @@
         "space-in-parens": 1,
         "space-infix-ops": 1,
         "keyword-spacing": 1,
-        "padded-blocks": 1,
+        "padded-blocks": 0,
         "comma-spacing": 1,
         "space-before-blocks": 1,
         "spaced-comment": 1,
@@ -170,8 +170,10 @@
             }
         ],
         "no-return-await": 0,
-        "no-multiple-empty-lines": 0,
+        "no-multiple-empty-lines": 1,
         "no-mixed-operators":0,
-        "no-inner-declarations":0
+        "no-inner-declarations":0,
+        "multiline-comment-style": ["error", "starred-block"],
+        "lines-around-comment": ["error", { "beforeBlockComment": true }]
     }
 }
