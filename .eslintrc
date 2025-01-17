@@ -173,7 +173,7 @@
         "no-multiple-empty-lines": 1,
         "no-mixed-operators":0,
         "no-inner-declarations":0,
-        "multiline-comment-style": ["error", "starred-block"],
+        // "multiline-comment-style": ["error", "starred-block"],
         "lines-around-comment": ["error", { "beforeBlockComment": true }]
     }
 
