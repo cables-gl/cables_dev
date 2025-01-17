@@ -654,6 +654,7 @@ export default class SharedDocUtil extends SharedUtil
                 delete obj.relatedops;
             }
         }
+        if (obj.dependencies && obj.dependencies.length === 0) delete obj.dependencies;
         return this._helperUtil.cleanJson(obj);
     }
 
@@ -698,7 +699,7 @@ export default class SharedDocUtil extends SharedUtil
         if (opDoc.changelog) docObj.changelog = opDoc.changelog;
         if (opDoc.todos) docObj.todos = opDoc.todos;
         if (opDoc.coreLibs) docObj.coreLibs = opDoc.coreLibs;
-        if (opDoc.dependencies) docObj.dependencies = opDoc.dependencies;
+        if (opDoc.dependencies && opDoc.dependencies.length > 0) docObj.dependencies = opDoc.dependencies;
         if (opDoc.issues) docObj.issues = opDoc.issues;
         if (opDoc.caniusequery) docObj.caniusequery = opDoc.caniusequery;
 
