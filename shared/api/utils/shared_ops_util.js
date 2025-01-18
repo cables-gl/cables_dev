@@ -511,8 +511,12 @@ export default class SharedOpsUtil extends SharedUtil
                 "// " + opName + "\n" +
                 "// \n" +
                 "// **************************************************************\n\n" +
-                opName + " = function()\n{\nCABLES.Op.apply(this,arguments);\nconst op=this;\n";
-            let codeFoot = "\n\n};\n\n" + opName + ".prototype = new CABLES.Op();\n";
+                opName + "= class extends CABLES.Op \n" +
+                "{\n" +
+                "constructor()\n" +
+                "{\nsuper(...arguments);\nconst op=this;\n";
+            let codeFoot = "}\n\n};\n\n";
+
 
             if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
             codeFoot += "\n\n\n";
@@ -1439,12 +1443,16 @@ export default class SharedOpsUtil extends SharedUtil
                 if (opLayout)
                 {
                     let opCode = "";
+
                     const codeHead = "\n\n// **************************************************************\n" +
                         "// \n" +
                         "// " + opName + "\n" +
                         "// \n" +
                         "// **************************************************************\n\n" +
-                        opName + " = function()\n{\nCABLES.Op.apply(this,arguments);\nconst op=this;\n";
+                        opName + "= class extends CABLES.Op \n" +
+                        "{\n" +
+                        "constructor()\n" +
+                        "{\nsuper(...arguments);\nconst op=this;\n";
 
                     if (opLayout.portsIn)
                     {
@@ -1507,7 +1515,7 @@ export default class SharedOpsUtil extends SharedUtil
                         });
                     }
 
-                    let codeFoot = "\n\n};\n\n" + opName + ".prototype = new CABLES.Op();\n";
+                    let codeFoot = "}\n\n};\n\n";
 
                     if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
                     codeFoot += "\n\n\n";
