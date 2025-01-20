@@ -1,4 +1,4 @@
-name: 'webhook dev'
+name: 'webhook pull dev'
 
 on:
   workflow_dispatch:
