@@ -2,7 +2,7 @@
   "name": "cables-shared",
   "version": "0.0.1",
   "author": "undefined development",
-  "description": "shared artifacts between the different subprojects of cables_dev",
+  "description": "shared artifacts between the different subproject builds of cables_dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cables-gl/cables_dev.git"
