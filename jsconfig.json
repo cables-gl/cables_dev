@@ -3,7 +3,7 @@
     "module": "CommonJS",
     "target": "ES6",
     "checkJs":true,
-    "typeRoots": ["./cables/node_modules/@webgpu/types", "./shared/types"]
+    "typeRoots": ["./shared/types"]
   },
   "include": ["shared/client/src/**/*","cables_ui/src/**/*","cables/src/core/**/*"]
 }
