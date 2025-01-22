@@ -2,8 +2,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES6",
-    "checkJs":true,
-    "typeRoots": ["./shared/types"]
+    "checkJs":true
   },
   "include": ["shared/client/src/**/*","cables_ui/src/**/*","cables/src/core/**/*"]
 }
