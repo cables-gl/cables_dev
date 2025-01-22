@@ -2,7 +2,7 @@ export default class GPUBuffer extends Events {
     constructor(cgp: any, name: any, data?: any, options?: {});
     id: any;
     _name: any;
-    floatArr: Float32Array;
+    floatArr: Float32Array<ArrayBuffer> | Float32Array<any>;
     _gpuBuffer: any;
     needsUpdate: boolean;
     _length: number;

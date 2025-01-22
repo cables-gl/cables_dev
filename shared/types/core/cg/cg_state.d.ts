@@ -2,7 +2,7 @@ export class CGState extends Events {
     constructor(_patch: any);
     tempData: {};
     frameStore: {};
-    fpsCounter: import("./sg_fpscounter.js").default;
+    fpsCounter: any;
     _identView: any;
     _ident: any;
     _onetimeCallbacks: any[];

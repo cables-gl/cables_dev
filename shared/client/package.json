@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "author": "undefined development",
   "description": "shared client classes between the different subprojects of cables_dev",
+  "types": "./types/index.d.ts",
+  "files": ["./types/*"],
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cables-gl/cables_dev.git"

@@ -187,7 +187,7 @@ export class Port extends Events {
      * @description remove all link from port
      * @param {CABLES.Link} link
      */
-    removeLink(link: typeof Link): void;
+    removeLink(link: CABLES.Link): void;
     /**
      * @function getName
      * @memberof Port

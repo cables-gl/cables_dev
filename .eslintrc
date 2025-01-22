@@ -4,6 +4,8 @@
         "CABLES": true,
         "CABLESUILOADER": true,
         "CGL": true,
+        "gui":true,
+        "CGP":true,
         "Ops":true,
         "op": true,
         "logStartup": true,
@@ -50,7 +52,7 @@
         "browser": true
     },
     "parserOptions": {
-        "ecmaVersion": 2020
+        "ecmaVersion": 2021
     },
     "rules": {
         "no-useless-concat": 0,

@@ -108,7 +108,7 @@ export class Mesh {
      * @param {array} vertIndices
      */
     setVertexIndices(vertIndices: any[]): void;
-    vertIndicesTyped: Uint16Array | Uint32Array | (any[] & Uint32Array) | (any[] & Uint16Array);
+    vertIndicesTyped: Uint16Array<ArrayBuffer> | Uint32Array<ArrayBuffer> | (any[] & Uint32Array<ArrayBuffer>) | (any[] & Uint16Array<ArrayBuffer>);
     /**
      * @function setGeom
      * @memberof Mesh
