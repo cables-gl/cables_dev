@@ -1,1 +1,1 @@
-declare var vec3: String;
+declare var vec3:String;
