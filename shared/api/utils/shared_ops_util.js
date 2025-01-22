@@ -515,8 +515,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "{\n" +
                 "constructor()\n" +
                 "{\nsuper(...arguments);\nconst op=this;\n";
-            let codeFoot = "}\n\n};\n\n";
-
+            let codeFoot = "\n}\n};\n\n";
 
             if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
             codeFoot += "\n\n\n";
@@ -816,7 +815,6 @@ export default class SharedOpsUtil extends SharedUtil
         const validName = this.isOpNameValid(opName);
         if (!validName) return false;
 
-
         if (this.isPatchOpOfProject(opName, project))
         {
             // patchops are allowed to be edited by project collaborators with full access, patch owners
@@ -1049,7 +1047,6 @@ export default class SharedOpsUtil extends SharedUtil
         });
         return newOpDocs;
     }
-
 
     getOpLibs(opName)
     {
@@ -1515,7 +1512,7 @@ export default class SharedOpsUtil extends SharedUtil
                         });
                     }
 
-                    let codeFoot = "}\n\n};\n\n";
+                    let codeFoot = "\n}\n};\n\n";
 
                     if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
                     codeFoot += "\n\n\n";
@@ -2547,7 +2544,6 @@ export default class SharedOpsUtil extends SharedUtil
             return problems;
         }
 
-
         const newNamespace = this.getNamespace(newName);
         const oldNamespace = this.getNamespace(oldName);
         if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
@@ -2783,7 +2779,6 @@ export default class SharedOpsUtil extends SharedUtil
         let fn = this.getOpAbsoluteFileName(newName);
         let basePath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
-
 
         let newJsonFile;
         if (targetDir)
@@ -3308,7 +3303,6 @@ export default class SharedOpsUtil extends SharedUtil
             xw.writeAttribute("height", "40");
         }
 
-
         const bgColor = "#333";
 
         xw.startElement("rect");
@@ -3440,7 +3434,6 @@ export default class SharedOpsUtil extends SharedUtil
             ns.startsWith("Ops.Webaudio") ||
             ns.startsWith("Ops.Html")) return "#9e5289";
 
-
         if (ns.startsWith("Ops.Gl") ||
             ns.startsWith("Ops.Trigger") ||
             ns.startsWith("Ops.Graphics")) return "#f0d165";
@@ -3511,7 +3504,6 @@ export default class SharedOpsUtil extends SharedUtil
             xw.writeAttribute("width", width);
             xw.writeAttribute("height", height);
         }
-
 
         xw.startElement("rect");
         xw.writeAttribute("width", width);
@@ -3787,4 +3779,3 @@ export default class SharedOpsUtil extends SharedUtil
             });
     }
 }
-
