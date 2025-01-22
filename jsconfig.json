@@ -2,7 +2,8 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES6",
-    "checkJs":true
+    "checkJs":true,
+    "typeRoots": ["./cables/node_modules/@webgpu/types", "./shared/types"]
   },
   "include": ["shared/client/src/**/*","cables_ui/src/**/*","cables/src/core/**/*"]
 }
