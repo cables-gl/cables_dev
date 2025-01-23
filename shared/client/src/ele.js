@@ -72,7 +72,6 @@ class Ele
      * runs the callback with all elements that have the given class as first argument
      *
      * @param {String} name
-     * @param {function(Element)} cb
      */
     forEachClass(name, cb)
     {
@@ -99,7 +98,6 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @param {function(Event)} cb
      */
     asButton(el, cb)
     {
@@ -110,7 +108,6 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @param {function(Event)} cb
      * @returns {Object|undefined} DOM element
      */
     clickable(el, cb)
@@ -131,7 +128,6 @@ class Ele
      *
      * @param {Element} parent
      * @param {String} query
-     * @param {function(Event, DOMStringMap)} cb
      */
     clickables(parent, query, cb)
     {
