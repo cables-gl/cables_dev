@@ -43,7 +43,7 @@
         "socketClusterClient": true,
         "incrementStartup": true,
         "mmd": true,
-        "platform": true,
+        "platformLib": true,
         "Sortable": true,
         "tinysort":true,
         "marked":true
