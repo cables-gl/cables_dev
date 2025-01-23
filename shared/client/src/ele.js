@@ -90,7 +90,8 @@ class Ele
      */
     getSelectValue(el)
     {
-        if (!el.options || !el.selectedIndex) return;
+        if (!el.options) return;
+        const selectedIndex = el.selectedIndex || 0;
         return el.options[el.selectedIndex].value || el.options[el.selectedIndex].text;
     }
 
