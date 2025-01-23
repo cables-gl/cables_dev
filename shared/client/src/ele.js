@@ -92,7 +92,7 @@ class Ele
     {
         if (!el.options) return;
         const selectedIndex = el.selectedIndex || 0;
-        return el.options[el.selectedIndex].value || el.options[el.selectedIndex].text;
+        return el.options[selectedIndex].value || el.options[selectedIndex].text;
     }
 
     /**
