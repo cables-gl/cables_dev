@@ -97,35 +97,37 @@ class Ele
     /**
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
-     * @param {Object} element
+     * @param {Object} el
      * @param {function(Event)} cb
      */
-    asButton(element, cb)
+    asButton(el, cb)
     {
-        this.clickable(element, cb);
+        this.clickable(el, cb);
     }
 
     /**
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
-     * @param {Object} element
+     * @param {Object} el
      * @param {function(Event)} cb
      * @returns {Object|undefined} DOM element
      */
-    clickable(element, cb)
+    clickable(el, cb)
     {
-        if (!element)
+        if (!el)
         {
             return;
         }
 
-        if (element.getAttribute("tabindex") == null)element.setAttribute("tabindex", 0);
-        element.classList.add("eleAsButton");
-        element.addEventListener("click", (e) => { cb(e); });
-        element.addEventListener("keydown", (e) => { if (e.keyCode === 13 || e.keyCode === 32)cb(e); });
+        if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", 0);
+        el.classList.add("eleAsButton");
+        el.addEventListener("click", (e) => { cb(e); });
+        el.addEventListener("keydown", (e) => { if (e.keyCode === 13 || e.keyCode === 32)cb(e); });
     }
 
     /**
+     * makes elements matching the query clickable and runs the callback on them when clicked
+     *
      * @param {Element} parent
      * @param {String} query
      * @param {function(Event, DOMStringMap)} cb
@@ -143,17 +145,19 @@ class Ele
     }
 
     /**
-     * can be used for making element keyboard usable and continue using inline onclick e.g. onkepress="ele.keyClick(event,this)"
+     * can be used for making element keyboard usable and continue using inline onclick e.g. onkeypress="ele.keyClick(event,this)"
      *
      * @param {Event} event
      * @param  {Object} element
      */
-    keyClick(event, element)
+    keyClick(event, el)
     {
-        if ((event.keyCode === 13 || event.keyCode === 32) && element.onclick) element.onclick();
+        if ((event.keyCode === 13 || event.keyCode === 32) && el.onclick) el.onclick();
     }
 
     /**
+     * remove class "hidden" from element
+     *
      * @param {Element} el
      */
     show(el)
@@ -162,6 +166,8 @@ class Ele
     }
 
     /**
+     * add class "hidden" to element
+     *
      * @param {Element} el
      */
     hide(el)
@@ -170,6 +176,8 @@ class Ele
     }
 
     /**
+     * remove or add class "hidden" from element
+     *
      * @param {Element} el
      */
     toggle(el)
@@ -185,7 +193,10 @@ class Ele
     }
 
     /**
+     * create element with given tagname
+     *
      * @param {String} n
+     * @return Element
      */
     create(n)
     {
@@ -193,7 +204,10 @@ class Ele
     }
 
     /**
+     * checks if given element is "activeElement"
+     *
      * @param {Element} el
+     * @return boolean
      */
     hasFocus(el)
     {
@@ -201,7 +215,10 @@ class Ele
     }
 
     /**
+     * check if given elements has "display: none" set directly or indirectly
+     *
      * @param {Element} el
+     * @return boolean
      */
     isVisible(el)
     {
@@ -210,12 +227,14 @@ class Ele
     }
 
     /**
-     * @param {Element} element
+     * append the given string to the innerHTML of the given element
+     *
+     * @param {Element} el
      * @param {String} html
      */
-    append(element, html)
+    append(el, html)
     {
-        element.innerHTML += html;
+        el.innerHTML += html;
     }
 }
 
