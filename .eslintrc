@@ -43,7 +43,7 @@
         "socketClusterClient": true,
         "incrementStartup": true,
         "mmd": true,
-        "platform": true,
+        "platformLib": true,
         "Sortable": true,
         "tinysort":true,
         "marked":true
@@ -52,7 +52,7 @@
         "browser": true
     },
     "parserOptions": {
-        "ecmaVersion": 2021
+        "ecmaVersion": 13
     },
     "rules": {
         "no-useless-concat": 0,
@@ -175,8 +175,9 @@
         "no-multiple-empty-lines": 1,
         "no-mixed-operators":0,
         "no-inner-declarations":0,
-        // "multiline-comment-style": ["error", "starred-block"],
-        "lines-around-comment": ["error", { "beforeBlockComment": true }]
+        "lines-around-comment": ["error", { "beforeBlockComment": true }],
+        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }]
+
     }
 
 }

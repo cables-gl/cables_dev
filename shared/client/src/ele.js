@@ -5,9 +5,11 @@
  */
 class Ele
 {
+
     /**
      * shortcut for document.getElementById(id)
-     * @param  {String} id
+     *
+     * @param {String} id
      * @returns {Object} DOM element
      */
     byId(id)
@@ -18,7 +20,8 @@ class Ele
 
     /**
      * shortcut for document.querySelector(id)
-     * @param  {String} q
+     *
+     * @param {String} q
      * @returns {Object} DOM element
      */
     byQuery(q)
@@ -28,7 +31,8 @@ class Ele
 
     /**
      * shortcut for document.querySelectorAll(id)
-     * @param  {String} q
+     *
+     * @param {String} q
      * @returns {Array} DOM elements
      */
     byQueryAll(q)
@@ -38,8 +42,9 @@ class Ele
 
     /**
      * returns the first element with class
-     * @param  {String} name
-     * @returns {Object} DOM element
+     *
+     * @param {String} name
+     * @returns {Object|null} DOM element
      */
     byClass(name)
     {
@@ -51,7 +56,8 @@ class Ele
 
     /**
      * returns the all elements with class
-     * @param  {String} name
+     *
+     * @param {String} name
      * @returns {Array} DOM elements
      */
     byClassAll(name)
@@ -62,6 +68,11 @@ class Ele
         return els;
     }
 
+    /**
+     * runs the callback with all elements that have the given class as first argument
+     *
+     * @param {String} name
+     */
     forEachClass(name, cb)
     {
         if (name && name[0] === ".") console.warn("ele.forEachClass should not contain .");
@@ -70,42 +81,60 @@ class Ele
         for (let i = 0; i < eles.length; i++) cb(eles[i]);
     }
 
+    /**
+     * returns the currently selected value for a <select>-element, or the text, if no value is set
+     *
+     * @param {Element} el
+     * @return {*|undefined}
+     */
     getSelectValue(el)
     {
-        return el.options[el.selectedIndex].value || el.options[el.selectedIndex].text;
-    }
-
-    asButton(ele, cb)
-    {
-        this.clickable(ele, cb);
+        if (!el.options) return;
+        const selectedIndex = el.selectedIndex || 0;
+        return el.options[selectedIndex].value || el.options[selectedIndex].text;
     }
 
     /**
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
-     * @param  {Object} element
-     * @returns {Object} DOM element
+     *
+     * @param {Object} el
      */
-    clickable(ele, cb)
+    asButton(el, cb)
     {
-        if (!ele)
-        {
-            // console.log((new Error()).stack);
-            return; // console.log("no ele as button");
-        }
-
-        if (ele.getAttribute("tabindex") == null)ele.setAttribute("tabindex", 0);
-        ele.classList.add("eleAsButton");
-        ele.addEventListener("click", (e) => { cb(e); });
-        ele.addEventListener("keydown", (e) => { if (e.keyCode == 13 || e.keyCode == 32)cb(e); });
+        this.clickable(el, cb);
     }
 
+    /**
+     * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
+     *
+     * @param {Object} el
+     * @returns {Object|undefined} DOM element
+     */
+    clickable(el, cb)
+    {
+        if (!el)
+        {
+            return;
+        }
+
+        if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", 0);
+        el.classList.add("eleAsButton");
+        el.addEventListener("click", (e) => { cb(e); });
+        el.addEventListener("keydown", (e) => { if (e.keyCode === 13 || e.keyCode === 32)cb(e); });
+    }
+
+    /**
+     * makes elements matching the query clickable and runs the callback on them when clicked
+     *
+     * @param {Element} parent
+     * @param {String} query
+     */
     clickables(parent, query, cb)
     {
         const clickEles = parent.querySelectorAll(query);
-
         for (let i = 0; i < clickEles.length; i++)
         {
-            ele.clickable(clickEles[i], (e) =>
+            this.clickable(clickEles[i], (e) =>
             {
                 cb(e, e.currentTarget.dataset);
             });
@@ -113,24 +142,41 @@ class Ele
     }
 
     /**
-     * can be used for making element keyboard usable and continue using inline onclick e.g. onkepress="ele.keyClick(event,this)"
+     * can be used for making element keyboard usable and continue using inline onclick e.g. onkeypress="ele.keyClick(event,this)"
+     *
+     * @param {Event} event
      * @param  {Object} element
      */
-    keyClick(event, ele)
+    keyClick(event, el)
     {
-        if ((event.keyCode == 13 || event.keyCode == 32) && ele.onclick)ele.onclick();
+        if ((event.keyCode === 13 || event.keyCode === 32) && el.onclick) el.onclick();
     }
 
+    /**
+     * remove class "hidden" from element
+     *
+     * @param {Element} el
+     */
     show(el)
     {
-        if (el)el.classList.remove("hidden");
+        if (el) el.classList.remove("hidden");
     }
 
+    /**
+     * add class "hidden" to element
+     *
+     * @param {Element} el
+     */
     hide(el)
     {
-        if (el)el.classList.add("hidden");
+        if (el) el.classList.add("hidden");
     }
 
+    /**
+     * remove or add class "hidden" from element
+     *
+     * @param {Element} el
+     */
     toggle(el)
     {
         if (el.classList.contains("hidden"))
@@ -143,25 +189,49 @@ class Ele
         }
     }
 
+    /**
+     * create element with given tagname
+     *
+     * @param {String} n
+     * @return Element
+     */
     create(n)
     {
         return document.createElement(n);
     }
 
+    /**
+     * checks if given element is "activeElement"
+     *
+     * @param {Element} el
+     * @return boolean
+     */
     hasFocus(el)
     {
         return document.activeElement == el;
     }
 
+    /**
+     * check if given elements has "display: none" set directly or indirectly
+     *
+     * @param {Element} el
+     * @return boolean
+     */
     isVisible(el)
     {
         let style = window.getComputedStyle(el);
         return !(style.display === "none");
     }
 
-    append(ele, html)
+    /**
+     * append the given string to the innerHTML of the given element
+     *
+     * @param {Element} el
+     * @param {String} html
+     */
+    append(el, html)
     {
-        ele.innerHTML += html;
+        el.innerHTML += html;
     }
 }
 
