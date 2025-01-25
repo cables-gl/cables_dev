@@ -221,14 +221,15 @@ export default class SharedOpsUtil extends SharedUtil
 
         for (let i = 0; i < opDocs.length; i++)
         {
-            if (opDocs[i].nameNoVersion === nameWithoutVersion)
+            const opDoc = opDocs[i];
+            if (opDoc && opDoc.nameNoVersion === nameWithoutVersion)
             {
-                const v = this.getVersionFromOpName(opDocs[i].name);
+                const v = this.getVersionFromOpName(opDoc.name);
                 let vStr = this.SUFFIX_VERSION + v;
                 if (v === 0) vStr = "";
                 versions.push(
                     {
-                        "name": opDocs[i].name,
+                        "name": opDoc.name,
                         "versionString": vStr,
                         "version": v
                     }
