@@ -1083,9 +1083,15 @@ export default class SharedOpsUtil extends SharedUtil
             if (opDoc)
             {
                 const deps = opDoc.dependencies || [];
-                if (newDependency.type === "op" && !this.isOpId(newDependency.src))
+                if (newDependency.type === "op")
                 {
-                    newDependency.src = this.getOpIdByObjName(newDependency.src);
+                    let opIdentifier = newDependency.src;
+                    if (!this.isOpId(opIdentifier))
+                    {
+                        newDependency.src = this.getOpIdByObjName(newDependency.src);
+                    }
+                    const opNameById = this.getOpNameById(newDependency.src);
+                    if (!opNameById) return false;
                 }
                 if (!deps.some((d) => { return d.src === newDependency.src && d.type === newDependency.type; }))
                 {
@@ -1125,7 +1131,7 @@ export default class SharedOpsUtil extends SharedUtil
                 const deps = opDoc.dependencies || [];
                 deps.forEach((d) =>
                 {
-                    if (!(d.src === dep.src && d.type === dep.type)) newDeps.push(d);
+                    if (!(d.src === dep.src)) newDeps.push(d);
                 });
                 opDoc.dependencies = newDeps;
                 if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });

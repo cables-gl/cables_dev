@@ -674,6 +674,13 @@ export default class SharedDocUtil extends SharedUtil
             {
                 delete opDoc.newestVersion;
             }
+            if(opDoc.dependencies) {
+                opDoc.dependencies.forEach((dep) => {
+                    if(dep.type === "op") {
+                        dep.opName = this._opsUtil.getOpNameById(dep.src);
+                    }
+                })
+            }
         });
         return cleanDocs;
     }
