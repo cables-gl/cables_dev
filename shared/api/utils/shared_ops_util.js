@@ -1125,7 +1125,7 @@ export default class SharedOpsUtil extends SharedUtil
                 const deps = opDoc.dependencies || [];
                 deps.forEach((d) =>
                 {
-                    if (!(d.src === dep.src && d.type === dep.type)) newDeps.push(d);
+                    if (!(d.src === dep.src)) newDeps.push(d);
                 });
                 opDoc.dependencies = newDeps;
                 if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
