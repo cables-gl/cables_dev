@@ -1086,17 +1086,18 @@ export default class SharedOpsUtil extends SharedUtil
                 if (newDependency.type === "op")
                 {
                     let opIdentifier = newDependency.src;
-                    if(!this.isOpId(opIdentifier)) {
+                    if (!this.isOpId(opIdentifier))
+                    {
                         newDependency.src = this.getOpIdByObjName(newDependency.src);
                     }
-                    const opName = this.getOpNameById(newDependency.src);
-                    if(!opName) return false;
+                    const opNameById = this.getOpNameById(newDependency.src);
+                    if (!opNameById) return false;
                 }
                 if (!deps.some((d) => { return d.src === newDependency.src && d.type === newDependency.type; }))
                 {
                     deps.push(newDependency);
                 }
-                
+
                 opDoc.dependencies = deps;
                 opDoc = this._docsUtil.cleanOpDocData(opDoc);
                 jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
