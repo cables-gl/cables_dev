@@ -52,7 +52,7 @@
         "browser": true
     },
     "parserOptions": {
-        "ecmaVersion": 13
+        "ecmaVersion": 2022
     },
     "rules": {
         "no-useless-concat": 0,
