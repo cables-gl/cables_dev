@@ -6,9 +6,10 @@ import Logger from "./logger.js";
  */
 export default class Events
 {
+    #eventLog;
     constructor()
     {
-        this._log = new Logger("eventtarget");
+        this.#eventLog = new Logger("eventtarget");
         this._eventCallbacks = {};
         this._logName = "";
         this._logEvents = false;
@@ -56,7 +57,7 @@ export default class Events
         }
         else
         {
-            this._log.warn("old eventtarget function haseventlistener!");
+            this.#eventLog.warn("old eventtarget function haseventlistener!");
             if (id && cb)
             {
                 if (this._eventCallbacks[id])
@@ -93,7 +94,7 @@ export default class Events
             const event = this._listeners[id];
             if (!event)
             {
-                this._log.log("could not find event...", id, this);
+                this.#eventLog.log("could not find event...", id, this);
                 return;
             }
 
@@ -121,8 +122,8 @@ export default class Events
             return;
         }
 
-        this._log.info("[eventtaget] ", "old function signature: removeEventListener! use listener id");
-        this._log.log((new Error()).stack);
+        this.#eventLog.info("[eventtaget] ", "old function signature: removeEventListener! use listener id");
+        this.#eventLog.log((new Error()).stack);
 
         let index = null;
         for (let i = 0; i < this._eventCallbacks[id].length; i++)
@@ -133,7 +134,7 @@ export default class Events
         {
             delete this._eventCallbacks[index];
         }
-        else this._log.warn("removeEventListener not found " + id);
+        else this.#eventLog.warn("removeEventListener not found " + id);
     }
 
     /**
@@ -161,7 +162,7 @@ export default class Events
      */
     emitEvent(which, param1 = null, param2 = null, param3 = null, param4 = null, param5 = null, param6 = null)
     {
-        if (this._logEvents) this._log.log("[event] ", this._logName, which, this._eventCallbacks);
+        if (this._logEvents) this.#eventLog.log("[event] ", this._logName, which, this._eventCallbacks);
 
         if (this._eventCallbacks[which])
         {
@@ -175,8 +176,7 @@ export default class Events
         }
         else
         {
-            if (this._logEvents) this._log.log("[event] has no event callback", which, this._eventCallbacks);
+            if (this._logEvents) this.#eventLog.log("[event] has no event callback", which, this._eventCallbacks);
         }
     }
 }
-

@@ -2,6 +2,11 @@
 
 export default class Logger
 {
+
+    /**
+     * @param {any} initiator
+     * @param {Object} options
+     */
     constructor(initiator, options)
     {
         this.initiator = initiator;

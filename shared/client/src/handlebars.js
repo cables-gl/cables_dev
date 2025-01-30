@@ -48,6 +48,13 @@ class HandlebarsHelper
                 return console.log(context);
             });
 
+            Handlebars.registerHelper("opLayout", (opName) =>
+            {
+
+                return new Handlebars.SafeString(gui.opDocs.getLayoutSvg(opName));
+                // return console.log(context);
+            });
+
             // don't change to arrow-function to keep the right `arguments` for context
             Handlebars.registerHelper("compare", function (left_value, operator, right_value, options)
             {
@@ -146,7 +153,6 @@ class HandlebarsHelper
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + date + "</span>");
             });
 
-
             Handlebars.registerHelper("displaydate", (str) =>
             {
                 if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
@@ -218,4 +224,3 @@ class HandlebarsHelper
     }
 }
 export default new HandlebarsHelper();
-
