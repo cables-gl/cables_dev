@@ -2499,6 +2499,7 @@ export default class SharedOpsUtil extends SharedUtil
             p = path.join(p, sanitizeFileName(attName));
             if (!fs.existsSync(p)) return false;
             fs.unlinkSync(p);
+            this._docsUtil.updateOpDocs(opName);
             this._log.info("deleted attachment!", p);
             return true;
         }
