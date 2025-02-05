@@ -15,7 +15,8 @@ class HandlebarsHelper
             Handlebars.registerHelper("md", (str) =>
             {
                 if (!str) return "";
-                if (marked) str = marked.parse(str);
+                const escaped = Handlebars.escapeExpression(str);
+                if (marked) str = marked.parse(escaped);
                 return new Handlebars.SafeString(str);
             });
 
@@ -52,7 +53,6 @@ class HandlebarsHelper
             {
 
                 return new Handlebars.SafeString(gui.opDocs.getLayoutSvg(opName));
-                // return console.log(context);
             });
 
             // don't change to arrow-function to keep the right `arguments` for context
