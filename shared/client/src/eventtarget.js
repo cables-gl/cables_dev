@@ -84,24 +84,23 @@ export default class Events
     /**
      * rempve event listener registration
      * @param id event id
-     * @param cb callback - deprecated
      * @return
      */
-    removeEventListener(id, cb = null)
+    removeEventListener(id)
     {
         if (id === null || id === undefined)
         {
-            console.log("removeEventListener id null", id);
+            this.#eventLog.warn("removeEventListener id null", id);
             return;
         }
 
-        if (!cb) // new style, remove by id, not by name/callback
+        if (typeof id == "string") // new style, remove by id, not by name/callback
         {
             const event = this._listeners[id];
             if (!event)
             {
-                if (this._countErrorUnknowns == 20) this.#eventLog.log("could not find event...", id);
-                if (this._countErrorUnknowns < 20) this.#eventLog.log("could not find event...", id);
+                if (this._countErrorUnknowns == 20) this.#eventLog.warn("stopped reporting unknown events");
+                if (this._countErrorUnknowns < 20) this.#eventLog.warn("could not find event...", id);
                 this._countErrorUnknowns++;
                 return;
             }
@@ -134,20 +133,10 @@ export default class Events
 
             return;
         }
-
-        this.#eventLog.info("[eventtaget] ", "old function signature: removeEventListener! use listener id");
-        this.#eventLog.log((new Error()).stack);
-
-        let index = null;
-        for (let i = 0; i < this._eventCallbacks[id].length; i++)
-            if (this._eventCallbacks[id][i].cb === cb)
-                index = i;
-
-        if (index !== null)
+        else
         {
-            delete this._eventCallbacks[index];
+            console.log("old function signature: removeEventListener! use listener id");
         }
-        else this.#eventLog.warn("removeEventListener not found " + id);
     }
 
     /**
