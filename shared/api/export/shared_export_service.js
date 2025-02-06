@@ -1091,4 +1091,14 @@ export default class SharedExportService extends SharedUtil
     {
         return path.join(this._cables.getAssetPath(), file.projectId, file.fileName);
     }
+
+    /**
+     * @deprecated use opsUtil.getDependencyUrls
+     * @param dependencies
+     * @private
+     */
+    _getDependencyUrls(dependencies)
+    {
+        return this._opsUtil.getDependencyUrls(dependencies);
+    }
 }
