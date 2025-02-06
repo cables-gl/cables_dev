@@ -3821,6 +3821,7 @@ export default class SharedOpsUtil extends SharedUtil
                 if (src.startsWith("./")) src = src.replace("./", "");
                 let urlPrefix = prefix;
                 if (addOpToUrl) urlPrefix = depScript.opId ? urlPrefix += depScript.opId : urlPrefix += depScript.op;
+                if (!urlPrefix.endsWith("/")) urlPrefix += "/";
                 depScript.src = urlPrefix + src;
                 depScript.file = path.join(file, src);
             }

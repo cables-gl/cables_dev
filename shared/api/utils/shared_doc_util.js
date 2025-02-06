@@ -145,16 +145,6 @@ export default class SharedDocUtil extends SharedUtil
         return coreLibs;
     }
 
-    /**
-     * @deprecated use getProjectOpDependencies
-     * @param project
-     * @return {[]|*[]}
-     */
-    getProjectDependencies(project)
-    {
-        return this.getProjectOpDependencies(project);
-    }
-
     getProjectOpDependencies(project)
     {
         if (!project || !project.ops) return [];
