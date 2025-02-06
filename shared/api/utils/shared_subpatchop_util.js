@@ -91,4 +91,3 @@ export default class SharedSubPatchOpUtil extends SharedUtil
         return opsInSubPatch;
     }
 }
-
