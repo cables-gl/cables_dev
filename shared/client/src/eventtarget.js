@@ -46,8 +46,8 @@ export default class Events
 
     /**
      * check event listener registration
-     * @param id event id
-     * @param cb callback - deprecated
+     * @param {string} id event id
+     * @param {function} cb callback - deprecated
      * @return {boolean}
      */
     hasEventListener(id, cb = null)
