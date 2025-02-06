@@ -176,8 +176,8 @@
         "no-mixed-operators":0,
         "no-inner-declarations":0,
         "lines-around-comment": ["error", { "beforeBlockComment": true }],
-        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }]
-
+        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+        "newline-per-chained-call": 0
     }
 
 }

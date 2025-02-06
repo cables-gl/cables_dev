@@ -3676,7 +3676,7 @@ export default class SharedOpsUtil extends SharedUtil
             });
         }
 
-        log.push("Successfully renamed " + oldName + " to " + newName);
+        log.push("Successfully renamed to " + newName);
 
         if (cb) cb(null, log, newJsonData);
         return true;

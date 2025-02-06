@@ -9,7 +9,6 @@ import CablesConstants from "../constants.js";
 import SharedUtil from "../utils/shared_util.js";
 import { UtilProvider } from "../utils/util_provider.js";
 
-
 /**
  * abstract class to handle different exports, see implementations like HtmlExport
  *
@@ -88,7 +87,6 @@ export default class SharedExportService extends SharedUtil
     {
         throw new Error("not implemented, abstract class");
     }
-
 
     /**
      *
@@ -356,10 +354,12 @@ export default class SharedExportService extends SharedUtil
 
     _replaceAssetFilePathes(proj, handleAssets)
     {
-        const startTime = Date.now();
-        const pathStr = this._projectsUtil.getAssetPathUrl(proj._id);
         const allFiles = [];
         const replacements = {};
+        if (!proj) return replacements;
+
+        const startTime = Date.now();
+        const pathStr = this._projectsUtil.getAssetPathUrl(proj._id);
 
         const assetPorts = this._projectsUtil.getProjectAssetPorts(proj, true);
         for (let i = 0; i < assetPorts.length; i++)
