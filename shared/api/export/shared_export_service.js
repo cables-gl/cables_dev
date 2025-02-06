@@ -825,7 +825,8 @@ export default class SharedExportService extends SharedUtil
         this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
         libScripts = libScripts.concat(this._getCoreLibUrls(coreLibs));
-        libScripts = libScripts.concat(this._opsUtil.getDependencyUrls(dependencies, this.finalJsPath));
+        const depScripts = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type === "commonjs"; }), this.finalJsPath);
+        const depFiles = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type !== "commonjs" && d.type !== "op"; }), this.finalJsPath);
 
         let libsCoreFile = this._cables.getUiDistPath() + "js/libs.core.js";
         const coreFile = path.join(this._cables.getUiDistPath(), options.coreSrcFile);
@@ -855,10 +856,23 @@ export default class SharedExportService extends SharedUtil
                 const lib = libScripts[i];
                 if (lib.file)
                 {
-                    this._log.info("lib.file!", lib.file);
                     jsCode += "// start " + lib.src + "\n";
                     jsCode += fs.readFileSync(lib.file, "utf8");
                     jsCode += "// end " + lib.src + "\n";
+                }
+            }
+
+            for (let i = 0; i < depScripts.length; i++)
+            {
+                const lib = depScripts[i];
+                if (lib.src && !lib.src.startsWith("http"))
+                {
+                    if (lib.file)
+                    {
+                        jsCode += "// start " + lib.src + "\n";
+                        jsCode += fs.readFileSync(lib.file, "utf8");
+                        jsCode += "// end " + lib.src + "\n";
+                    }
                 }
             }
 
@@ -874,6 +888,11 @@ export default class SharedExportService extends SharedUtil
             jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
 
             this.append(jsCode, { "name": this.finalJsPath + "patch.js" });
+
+            for (let f = 0; f < depFiles.length; f++)
+            {
+                if (depFiles[f].file) this.append(fs.readFileSync(depFiles[f].file, "utf8"), { "name": depFiles[f].src });
+            }
         }
         else
         {
@@ -939,7 +958,8 @@ export default class SharedExportService extends SharedUtil
 
             indexhtml = indexhtml.replace("{patchSource}", "patch: CABLES.exportedPatch");
 
-            let libScriptsTags = this._opsUtil.getOpDependenciesScriptTags(dependencies.filter((dep) => { return dep.src && dep.src.startsWith("http"); }), this.finalJsPath);
+            // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
+            let libScriptsTags = this._opsUtil.getOpDependenciesScriptTags(dependencies.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); }), this.finalJsPath);
             indexhtml = indexhtml.replace("<libs/>", libScriptsTags);
             indexhtml = indexhtml.replace("<corelibs/>", "");
         }

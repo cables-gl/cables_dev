@@ -3795,7 +3795,9 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (dep.type === "module")
             {
-                scriptTags += "<script type=\"module\">import * as " + dep.export + " from \"" + dep.src + "\"; window." + dep.export + "=" + dep.export + ";</script>\n";
+                let src = dep.src;
+                if (!src.startsWith("http") && !src.startsWith("/")) src = "./" + src;
+                scriptTags += "<script type=\"module\">import * as " + dep.export + " from \"" + src + "\"; window." + dep.export + "=" + dep.export + ";</script>\n";
             }
             else
             {
@@ -3816,7 +3818,7 @@ export default class SharedOpsUtil extends SharedUtil
             let src = depScript.src;
             if (!src.startsWith("http"))
             {
-                if (src.startsWith("./")) src = src.replace("./", "/");
+                if (src.startsWith("./")) src = src.replace("./", "");
                 let urlPrefix = prefix;
                 if (addOpToUrl) urlPrefix = depScript.opId ? urlPrefix += depScript.opId : urlPrefix += depScript.op;
                 depScript.src = urlPrefix + src;
