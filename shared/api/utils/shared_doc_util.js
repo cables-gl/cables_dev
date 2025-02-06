@@ -145,7 +145,17 @@ export default class SharedDocUtil extends SharedUtil
         return coreLibs;
     }
 
+    /**
+     * @deprecated use getProjectOpDependencies
+     * @param project
+     * @return {[]|*[]}
+     */
     getProjectDependencies(project)
+    {
+        return this.getProjectOpDependencies(project);
+    }
+
+    getProjectOpDependencies(project)
     {
         if (!project || !project.ops) return [];
 
@@ -155,26 +165,64 @@ export default class SharedDocUtil extends SharedUtil
         {
             usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
         });
+        let subPatchOps = this._subPatchOpUtil.getOpsUsedInSubPatches(project);
+        subPatchOps.forEach((op) =>
+        {
+            usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
+        });
         usedOpsNames = Object.values(usedOpsNames);
         const opDocs = this.getOpDocsForCollections(usedOpsNames);
+        let allDocs = null;
         for (let i = 0; i < opDocs.length; i++)
         {
             const opDoc = opDocs[i];
             if (opDoc.dependencies)
             {
-                const opDeps = opDoc.dependencies.filter((dep) => { return dep.type === "commonjs" || dep.type === "module"; });
+                const opDeps = opDoc.dependencies.filter((dep) => { return dep.type && dep.type !== "npm"; });
                 for (let j = 0; j < opDeps.length; j++)
                 {
                     const dep = opDeps[j];
-                    if (!projectDependencies.find((projectDependency) => { return projectDependency.src === dep.src; }))
+                    if (!projectDependencies.some((projectDependency) => { return projectDependency.src === dep.src; }))
                     {
-                        const opDep = {
-                            "type": dep.type,
-                            "src": dep.src,
-                            "op": opDoc.name
-                        };
-                        if (dep.export) opDep.export = dep.export;
-                        projectDependencies.push(opDep);
+                        if (dep.type === "op")
+                        {
+                            const opName = this._opsUtil.getOpNameById(dep.src) || dep.src;
+                            if (this._opsUtil.isOpNameValid(opName))
+                            {
+                                if (!allDocs) allDocs = this.getOpDocs();
+                                const dependencyDoc = this.getDocForOp(opName, allDocs);
+                                if (dependencyDoc && dependencyDoc.dependencies)
+                                {
+                                    // do we need recursion here?!
+                                    dependencyDoc.dependencies.filter((d) => { return d.type && d.type !== "npm" && d.type !== "op"; }).forEach((opDep) =>
+                                    {
+                                        if (!projectDependencies.some((projectDependency) => { return projectDependency.src === opDep.src; }))
+                                        {
+                                            const dependencyDep = {
+                                                "type": opDep.type,
+                                                "src": opDep.src,
+                                                "op": dependencyDoc.name,
+                                                "opId": dependencyDoc.id
+                                            };
+                                            if (opDep.export) dependencyDep.export = opDep.export;
+                                            projectDependencies.push(dependencyDep);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            const opDep = {
+                                "type": dep.type,
+                                "src": dep.src,
+                                "op": opDoc.name,
+                                "opId": opDoc.id
+                            };
+                            if (dep.export) opDep.export = dep.export;
+                            projectDependencies.push(opDep);
+                        }
+
                     }
                 }
             }
@@ -674,12 +722,15 @@ export default class SharedDocUtil extends SharedUtil
             {
                 delete opDoc.newestVersion;
             }
-            if(opDoc.dependencies) {
-                opDoc.dependencies.forEach((dep) => {
-                    if(dep.type === "op") {
+            if (opDoc.dependencies)
+            {
+                opDoc.dependencies.forEach((dep) =>
+                {
+                    if (dep.type === "op")
+                    {
                         dep.opName = this._opsUtil.getOpNameById(dep.src);
                     }
-                })
+                });
             }
         });
         return cleanDocs;
@@ -895,4 +946,3 @@ export default class SharedDocUtil extends SharedUtil
         return libs;
     }
 }
-
