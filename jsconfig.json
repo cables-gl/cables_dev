@@ -1,9 +1,13 @@
 {
-  "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES6",
-    "checkJs":true
-  },
-  "include": ["shared/client/src/**/*","cables_ui/src/**/*","cables/src/core/**/*"]
+    "compilerOptions": {
+        "module": "NodeNext",
+        "target": "ESNext",
+        "checkJs": true,
+        "moduleResolution": "NodeNext"
+    },
+    "include": [
+        "shared/client/src/**/*",
+        "cables_ui/src/**/*",
+        "cables/src/core/**/*"
+    ]
 }
-

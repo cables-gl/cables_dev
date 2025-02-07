@@ -1,5 +1,3 @@
-
-undev.de
-userops
-
-!cables/src/ops/*/*
+!cables/src/ops/patches/*/*
+!cables/src/ops/teams/*/*
+!cables/src/ops/users/*/*
