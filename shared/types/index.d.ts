@@ -1,4 +1,4 @@
-import Core from "./core/index";
+import Core from "./core/index.d.ts";
 
 declare module "cables-shared-types";
 
