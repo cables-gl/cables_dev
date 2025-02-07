@@ -3786,4 +3786,47 @@ export default class SharedOpsUtil extends SharedUtil
                 cb(null, envDocs);
             });
     }
+
+    getOpDependenciesScriptTags(dependencies, prefix = "", addOpToUrl = false)
+    {
+        if (!dependencies) return [];
+        let scriptTags = "";
+        this.getDependencyUrls(dependencies, prefix, addOpToUrl).forEach((dep) =>
+        {
+            if (dep.type === "module")
+            {
+                let src = dep.src;
+                if (!src.startsWith("http") && !src.startsWith("/")) src = "./" + src;
+                scriptTags += "<script type=\"module\">import * as " + dep.export + " from \"" + src + "\"; window." + dep.export + "=" + dep.export + ";</script>\n";
+            }
+            else
+            {
+                scriptTags += "<script type=\"text/javascript\" src=\"" + dep.src + "\"></script>\n";
+            }
+        });
+        return scriptTags;
+    }
+
+    getDependencyUrls(dependencies, prefix = "", addOpToUrl = false)
+    {
+        const deps = [...dependencies];
+        const depUrls = [];
+        for (let l = 0; l < deps.length; l++)
+        {
+            let depScript = { ...deps[l] };
+            const file = this.getOpAbsolutePath(depScript.op);
+            let src = depScript.src;
+            if (!src.startsWith("http"))
+            {
+                if (src.startsWith("./")) src = src.replace("./", "");
+                let urlPrefix = prefix;
+                if (addOpToUrl) urlPrefix = depScript.opId ? urlPrefix += depScript.opId : urlPrefix += depScript.op;
+                if (!urlPrefix.endsWith("/")) urlPrefix += "/";
+                depScript.src = urlPrefix + src;
+                depScript.file = path.join(file, src);
+            }
+            depUrls.push(depScript);
+        }
+        return depUrls;
+    }
 }

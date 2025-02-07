@@ -1,4 +1,5 @@
 import md5File from "md5-file";
+import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
 import fs from "fs";
 import fse from "fs-extra";
@@ -60,7 +61,7 @@ export default class SharedExportService extends SharedUtil
      * @param originalProject
      * @param credentials
      * @param exportNumber
-     * @return originalProject
+     * @return {any} originalProject
      */
     _doAfterExport(originalProject, credentials, exportNumber)
     {
@@ -71,9 +72,9 @@ export default class SharedExportService extends SharedUtil
      *
      * called after jsCode has been combined, if selected
      *
-     * @param jsCode
-     * @param options
-     * @return jsCode
+     * @param {String} jsCode
+     * @param {any} options
+     * @return {String} jsCode modified
      */
     _doAfterCombine(jsCode, options)
     {
@@ -184,6 +185,63 @@ export default class SharedExportService extends SharedUtil
             }
             finishedCallback(folder);
         });
+    }
+
+    createZip(project, files, callbackFinished)
+    {
+        const zipFileName = this.getZipFileName(project);
+        const finalZipPath = path.join(this._cables.getAssetPath(), String(project._id), "/_exports/");
+        const finalZipFileName = finalZipPath + zipFileName;
+
+        mkdirp.sync(finalZipPath);
+        const output = fs.createWriteStream(finalZipFileName);
+
+        this._log.info("finalZipFileName", finalZipFileName);
+
+        output.on("close", () =>
+        {
+            this._log.info("exported file " + finalZipFileName + " / " + this.archive.pointer() / 1000000.0 + " mb");
+
+            const result = {};
+            result.size = this.archive.pointer() / 1000000.0;
+            const assetPathUrl = path.join(this._projectsUtil.getAssetPathUrl(project._id), "/_exports/");
+            const downloadUrl = this._cables.getConfig().sandbox.url + assetPathUrl;
+
+            result.path = assetPathUrl + zipFileName;
+            result.urls = {
+                "downloadUrl": downloadUrl + encodeURIComponent(zipFileName)
+            };
+            result.log = this.exportLog;
+            callbackFinished(result);
+        });
+
+        output.on("error", (outputErr) =>
+        {
+            this._log.error("export error", outputErr);
+            const result = { "error": outputErr };
+            callbackFinished(result);
+        });
+
+        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
+
+        for (const [filename, content] of Object.entries(files))
+        {
+            const options = { "name": filename };
+            if (filename === "/patch.app/Contents/MacOS/Electron")
+            {
+                options.mode = 0o777;
+            }
+            this.archive.append(content, options);
+        }
+
+        this.archive.pipe(output);
+        this.archive.finalize();
+    }
+
+    getZipFileName(project)
+    {
+        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + this.getName() + "_" + project.exports;
+        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
     }
 
     addLog(str)
@@ -377,13 +435,10 @@ export default class SharedExportService extends SharedUtil
                     start = filePathAndName.indexOf(assetLibLocation);
                 }
                 let libfn = filePathAndName.substr(start, filePathAndName.length - start);
-
                 libfn = libfn.substr(assetLibLocation.length);
 
                 const pathfn = path.join(this._cables.getAssetLibraryPath(), libfn);
-
                 let assetZipFileName = path.join("assets/library/", libfn);
-
                 if (this.options.flattenAssetNames)
                 {
                     assetZipFileName = this.finalAssetPath + "lib_" + libfn.replace("/", "_");
@@ -553,7 +608,7 @@ export default class SharedExportService extends SharedUtil
                         // add html
                         let template = options.template || "/patchview/patchview_export.html";
                         this._log.info("exporting with html template from", template);
-                        this._addProjectHtmlCode(proj, options, libs, coreLibs, template);
+                        this._addProjectHtmlCode(proj, options, libs, coreLibs, template, dependencies);
 
                         // add screenshot
                         const proScreenshotPath = this._projectsUtil.getAssetPath(proj._id) + "/_screenshots/screenshot.png";
@@ -626,6 +681,7 @@ export default class SharedExportService extends SharedUtil
 
         let libs = this._docsUtil.getProjectLibs(proj);
         let coreLibs = this._docsUtil.getCoreLibs(proj);
+        let dependencies = this._docsUtil.getProjectOpDependencies(proj);
 
         let allProjects = [];
         const replacedOpIds = {};
@@ -657,6 +713,10 @@ export default class SharedExportService extends SharedUtil
             {
                 if (opDoc.libs) libs = libs.concat(opDoc.libs);
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
+                if (opDoc.dependencies)
+                {
+                    dependencies = dependencies.append(opDoc.dependencies);
+                }
             }
 
             if (this._opsUtil.isSubPatchOp(subPatchOp))
@@ -666,6 +726,8 @@ export default class SharedExportService extends SharedUtil
                 {
                     libs = libs.concat(this._docsUtil.getProjectLibs(attBp));
                     coreLibs = coreLibs.concat(this._docsUtil.getCoreLibs(attBp));
+                    dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies(attBp));
+
                     allProjects.push(attBp);
 
                     if (options.combineJS)
@@ -700,7 +762,7 @@ export default class SharedExportService extends SharedUtil
         allProjects.push(proj);
         libs = this._helperUtil.uniqueArray(libs);
         coreLibs = this._helperUtil.uniqueArray(coreLibs);
-        cb(allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode);
+        cb(allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode, dependencies);
     }
 
     _getProjectJson(proj, replacedOpIds, options)
@@ -750,7 +812,7 @@ export default class SharedExportService extends SharedUtil
 
     _addBackups(backupProject, options) {}
 
-    _addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options)
+    _addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies)
     {
         const projectName = sanitizeFileName(proj.name).replace(/ /g, "_");
         const jsonFilename = sanitizeFileName(options.jsonName || projectName);
@@ -763,6 +825,8 @@ export default class SharedExportService extends SharedUtil
         this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
         libScripts = libScripts.concat(this._getCoreLibUrls(coreLibs));
+        const depScripts = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type === "commonjs"; }), this.finalJsPath);
+        const depFiles = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type !== "commonjs" && d.type !== "op"; }), this.finalJsPath);
 
         let libsCoreFile = this._cables.getUiDistPath() + "js/libs.core.js";
         const coreFile = path.join(this._cables.getUiDistPath(), options.coreSrcFile);
@@ -790,10 +854,26 @@ export default class SharedExportService extends SharedUtil
             for (let i = 0; i < libScripts.length; i++)
             {
                 const lib = libScripts[i];
-                this._log.info("lib.file!", lib.file);
-                jsCode += "// start " + lib.src + "\n";
-                jsCode += fs.readFileSync(lib.file, "utf8");
-                jsCode += "// end " + lib.src + "\n";
+                if (lib.file)
+                {
+                    jsCode += "// start " + lib.src + "\n";
+                    jsCode += fs.readFileSync(lib.file, "utf8");
+                    jsCode += "// end " + lib.src + "\n";
+                }
+            }
+
+            for (let i = 0; i < depScripts.length; i++)
+            {
+                const lib = depScripts[i];
+                if (lib.src && !lib.src.startsWith("http"))
+                {
+                    if (lib.file)
+                    {
+                        jsCode += "// start " + lib.src + "\n";
+                        jsCode += fs.readFileSync(lib.file, "utf8");
+                        jsCode += "// end " + lib.src + "\n";
+                    }
+                }
             }
 
             jsCode = jsCode.replaceAll(/[\u2028]/g, " ");
@@ -808,6 +888,11 @@ export default class SharedExportService extends SharedUtil
             jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
 
             this.append(jsCode, { "name": this.finalJsPath + "patch.js" });
+
+            for (let f = 0; f < depFiles.length; f++)
+            {
+                if (depFiles[f].file) this.append(fs.readFileSync(depFiles[f].file, "utf8"), { "name": depFiles[f].src });
+            }
         }
         else
         {
@@ -825,7 +910,7 @@ export default class SharedExportService extends SharedUtil
 
             for (let f = 0; f < libScripts.length; f++)
             {
-                this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
+                if (libScripts[f].file) this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
             }
         }
 
@@ -856,20 +941,26 @@ export default class SharedExportService extends SharedUtil
         return opsAdded;
     }
 
-    _addProjectHtmlCode(proj, options, libs, coreLibs, template = "/patchview/patchview_export.html")
+    _addProjectHtmlCode(proj, options, libs, coreLibs, template = "/patchview/patchview_export.html", dependencies = [])
     {
         let scriptTagsHtml = "";
         const projectName = sanitizeFileName(proj.name).replace(/ /g, "_");
-        const projectNameVer = sanitizeFileName(proj.name).replace(/ /g, "_") + proj.exports;
         const jsonFilename = sanitizeFileName(options.jsonName || projectName);
 
         let indexhtml = fs.readFileSync(path.join(this._cables.getViewsPath(), template), "utf8");
+        dependencies.forEach((dep) =>
+        {
+            this.addLog("adding dependency of op: " + dep.op + " - " + dep.src);
+        });
         if (options.combineJS)
         {
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "patch.js\" async></script>";
 
             indexhtml = indexhtml.replace("{patchSource}", "patch: CABLES.exportedPatch");
-            indexhtml = indexhtml.replace("<libs/>", "");
+
+            // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
+            let libScriptsTags = this._opsUtil.getOpDependenciesScriptTags(dependencies.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); }), this.finalJsPath);
+            indexhtml = indexhtml.replace("<libs/>", libScriptsTags);
             indexhtml = indexhtml.replace("<corelibs/>", "");
         }
         else
@@ -892,6 +983,8 @@ export default class SharedExportService extends SharedUtil
                 this.addLog("adding core library: " + coreLib.name);
                 coreLibScriptTags += "<script type=\"text/javascript\"  src=\"" + coreLib.src + "\"></script>\n";
             });
+
+            libScriptsTags += this._opsUtil.getOpDependenciesScriptTags(dependencies, this.finalJsPath);
 
             indexhtml = indexhtml.replace("{patchSource}", "patchFile: '" + this.finalJsPath + jsonFilename + ".json'");
             indexhtml = indexhtml.replace("<libs/>", libScriptsTags);
@@ -935,25 +1028,6 @@ export default class SharedExportService extends SharedUtil
             coreLibScripts.push({ "name": coreLib, "file": path.join(this._cables.getCoreLibsPath(), coreLib + ".js"), "src": this.finalJsPath + coreLib + ".js" });
         }
         return coreLibScripts;
-    }
-
-    _getDependencyUrls(dependencies)
-    {
-        const deps = [...dependencies];
-        const depLibScripts = [];
-        for (let l = 0; l < deps.length; l++)
-        {
-            let depScript = deps[l];
-            const file = this._opsUtil.getOpAbsolutePath(depScript.op);
-            const src = depScript.src;
-            if (!src.startsWith("http"))
-            {
-                depScript.src = path.join(this.finalJsPath, src);
-                depScript.file = path.join(file, src);
-            }
-            depLibScripts.push(depScript);
-        }
-        return depLibScripts;
     }
 
     _addAssets(proj, allFiles, options)
@@ -1028,7 +1102,7 @@ export default class SharedExportService extends SharedUtil
 
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
-        const repl = path.join("/assets/" + fn);
+        const repl = path.join("assets/" + fn);
         const value = filePathAndName.replace(repl, lzipFileName);
         return value.replace(/^\/+/, "");
     }
@@ -1037,4 +1111,5 @@ export default class SharedExportService extends SharedUtil
     {
         return path.join(this._cables.getAssetPath(), file.projectId, file.fileName);
     }
+
 }
