@@ -1,14 +1,3 @@
-/**
- * @module CABLES
- * @external "CABLES"
- */
-/**
- * Description placeholder
- *
- * @export
- * @external "CABLES.Op"
- * @extends {Events}
- */
 export class Op extends Events {
     /**
      * Description

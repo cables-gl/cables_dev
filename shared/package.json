@@ -16,7 +16,7 @@
     "type": "module",
     "license": "MIT",
     "scripts": {
-        "build": "run-s api client types",
+        "build": "run-s api client",
         "api": "cd ./api && npm install",
         "client": "cd ./client && npm install",
         "types": "cd ./types && npm install && npm run build"

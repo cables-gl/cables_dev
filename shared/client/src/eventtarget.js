@@ -15,20 +15,17 @@ export default class Events
         this._logEvents = false;
         this._listeners = {};
 
-        this.on = this.addEventListener;
-        this.off = this.removeEventListener;
-
         this._countErrorUnknowns = 0;
     }
 
     /**
      * add event listener
-     * @param which event name
-     * @param cb callback
+     * @param {string} which event name
+     * @param {function} cb callback
      * @param {string} idPrefix prefix for id, default empty
      * @return {string} event id
      */
-    addEventListener(which, cb, idPrefix = "")
+    on(which, cb, idPrefix = "")
     {
         const event =
             {
@@ -42,6 +39,12 @@ export default class Events
         this._listeners[event.id] = event;
 
         return event.id;
+    }
+
+    /** @deprecated */
+    addEventListener(which, cb, idPrefix = "")
+    {
+        return this.on(which, cb, idPrefix);
     }
 
     /**
@@ -81,12 +84,18 @@ export default class Events
         return this._eventCallbacks[eventName] && this._eventCallbacks[eventName].length > 0;
     }
 
+    /** @deprecated */
+    removeEventListener(id)
+    {
+        return this.off(id);
+    }
+
     /**
-     * rempve event listener registration
-     * @param id event id
+     * remove event listener registration
+     * @param {string} id event id
      * @return
      */
-    removeEventListener(id)
+    off(id)
     {
         if (id === null || id === undefined)
         {

@@ -1,6 +1,7 @@
 /**
  * data is coming into and out of ops through input and output ports
  * @namespace external:CABLES#Port
+ * @module Port
  * @class
  * @hideconstructor
  * @param ___op
