@@ -1102,7 +1102,7 @@ export default class SharedExportService extends SharedUtil
 
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
-        const repl = path.join("/assets/" + fn);
+        const repl = path.join("assets/" + fn);
         const value = filePathAndName.replace(repl, lzipFileName);
         return value.replace(/^\/+/, "");
     }
