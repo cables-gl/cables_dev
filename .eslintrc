@@ -20,7 +20,6 @@
         "navigator": true,
         "AudioContext": true,
         "XMLHttpRequest": true,
-        "Raphael": true,
         "ace": true,
         "iziToast": true,
         "vec2": true,

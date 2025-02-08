@@ -1961,7 +1961,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "AudioContext",
                 "CABLES",
                 "XMLHttpRequest",
-                "Raphael",
                 "ace",
                 "logStartup",
                 "attachments",
