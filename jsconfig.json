@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "module": "NodeNext",
+        "module": "ESNext",
         "target": "ESNext",
         "checkJs": true,
-        "moduleResolution": "NodeNext"
+        "moduleResolution": "bundler"
     },
     "include": [
         "shared/client/src/**/*",
