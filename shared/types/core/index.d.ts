@@ -15,6 +15,7 @@ declare namespace CABLES {
     export { LoadingStatus };
     export { now };
     export { internalNow };
+    export let map: (x: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number, _easing: number) => number;
 }
 import { CGL } from "./cgl/index.js";
 import { CG } from "./cg/cg_constants.js";

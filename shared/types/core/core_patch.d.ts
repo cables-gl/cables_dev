@@ -25,7 +25,8 @@ declare class Patch extends Events {
     /** @param {PatchConfig} cfg */
     constructor(cfg: PatchConfig);
     _log: Logger;
-    ops: any[];
+    /** @type {Array<Op>} */
+    ops: Array<Op>;
     settings: {};
     config: any;
     timer: Timer;
@@ -178,13 +179,13 @@ declare class Patch extends Events {
     };
     getOpsByRefId(refId: any): any[];
     getOpById(opid: any): any;
-    getOpsByName(name: any): any[];
-    getOpsByObjName(name: any): any[];
-    getOpsByOpId(opid: any): any[];
+    getOpsByName(name: any): Op[];
+    getOpsByObjName(name: any): Op[];
+    getOpsByOpId(opid: any): Op[];
     loadLib(which: any): void;
-    getSubPatchOpsByName(patchId: any, objName: any): any[];
-    getSubPatchOp(patchId: any, objName: any): any;
-    getFirstSubPatchOpByName(patchId: any, objName: any): any;
+    getSubPatchOpsByName(patchId: any, objName: any): Op[];
+    getSubPatchOp(patchId: any, objName: any): false | Op;
+    getFirstSubPatchOpByName(patchId: any, objName: any): false | Op;
     _addLink(opinid: any, opoutid: any, inName: any, outName: any): false | void | Link;
     deSerialize(obj: any, options: any): void;
     namespace: any;
@@ -261,9 +262,9 @@ declare namespace Patch {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
+import { Op } from "./core_op.js";
 import { Timer } from "./timer.js";
 import { Profiler } from "./core_profiler.js";
 import { LoadingStatus } from "./loadingstatus.js";
 import { Context } from "./cgl/cgl_state.js";
-import { Op } from "./core_op.js";
 import { Link } from "./core_link.js";
