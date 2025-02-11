@@ -1,33 +1,36 @@
 export namespace CONSTANTS {
     namespace ANIM {
-        let EASINGS: string[];
-        let EASING_LINEAR: number;
-        let EASING_ABSOLUTE: number;
-        let EASING_SMOOTHSTEP: number;
-        let EASING_SMOOTHERSTEP: number;
-        let EASING_CUBICSPLINE: number;
-        let EASING_CUBIC_IN: number;
-        let EASING_CUBIC_OUT: number;
-        let EASING_CUBIC_INOUT: number;
-        let EASING_EXPO_IN: number;
-        let EASING_EXPO_OUT: number;
-        let EASING_EXPO_INOUT: number;
-        let EASING_SIN_IN: number;
-        let EASING_SIN_OUT: number;
-        let EASING_SIN_INOUT: number;
-        let EASING_BACK_IN: number;
-        let EASING_BACK_OUT: number;
-        let EASING_BACK_INOUT: number;
-        let EASING_ELASTIC_IN: number;
-        let EASING_ELASTIC_OUT: number;
-        let EASING_BOUNCE_IN: number;
-        let EASING_BOUNCE_OUT: number;
-        let EASING_QUART_IN: number;
-        let EASING_QUART_OUT: number;
-        let EASING_QUART_INOUT: number;
-        let EASING_QUINT_IN: number;
-        let EASING_QUINT_OUT: number;
-        let EASING_QUINT_INOUT: number;
+        export namespace ANIM_1 {
+            let EASINGS: string[];
+            let EASING_LINEAR: number;
+            let EASING_ABSOLUTE: number;
+            let EASING_SMOOTHSTEP: number;
+            let EASING_SMOOTHERSTEP: number;
+            let EASING_CUBICSPLINE: number;
+            let EASING_CUBIC_IN: number;
+            let EASING_CUBIC_OUT: number;
+            let EASING_CUBIC_INOUT: number;
+            let EASING_EXPO_IN: number;
+            let EASING_EXPO_OUT: number;
+            let EASING_EXPO_INOUT: number;
+            let EASING_SIN_IN: number;
+            let EASING_SIN_OUT: number;
+            let EASING_SIN_INOUT: number;
+            let EASING_BACK_IN: number;
+            let EASING_BACK_OUT: number;
+            let EASING_BACK_INOUT: number;
+            let EASING_ELASTIC_IN: number;
+            let EASING_ELASTIC_OUT: number;
+            let EASING_BOUNCE_IN: number;
+            let EASING_BOUNCE_OUT: number;
+            let EASING_QUART_IN: number;
+            let EASING_QUART_OUT: number;
+            let EASING_QUART_INOUT: number;
+            let EASING_QUINT_IN: number;
+            let EASING_QUINT_OUT: number;
+            let EASING_QUINT_INOUT: number;
+        }
+        export { ANIM_1 as ANIM };
     }
     namespace OP {
         let OP_PORT_TYPE_VALUE: number;

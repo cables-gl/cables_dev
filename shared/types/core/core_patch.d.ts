@@ -172,7 +172,7 @@ declare class Patch extends Events {
      * @param {boolean} lowerCase
      * @param {boolean} fromDeserialize
      */
-    link(op1: Op, port1Name: string, op2: Op, port2Name: string, lowerCase?: boolean, fromDeserialize?: boolean): false | void | Link;
+    link(op1: Op, port1Name: string, op2: Op, port2Name: string, lowerCase?: boolean, fromDeserialize?: boolean): any;
     serialize(options: any): string | {
         ops: any[];
         settings: {};
@@ -186,7 +186,7 @@ declare class Patch extends Events {
     getSubPatchOpsByName(patchId: any, objName: any): Op[];
     getSubPatchOp(patchId: any, objName: any): false | Op;
     getFirstSubPatchOpByName(patchId: any, objName: any): false | Op;
-    _addLink(opinid: any, opoutid: any, inName: any, outName: any): false | void | Link;
+    _addLink(opinid: any, opoutid: any, inName: any, outName: any): any;
     deSerialize(obj: any, options: any): void;
     namespace: any;
     name: any;
@@ -267,4 +267,3 @@ import { Timer } from "./timer.js";
 import { Profiler } from "./core_profiler.js";
 import { LoadingStatus } from "./loadingstatus.js";
 import { Context } from "./cgl/cgl_state.js";
-import { Link } from "./core_link.js";

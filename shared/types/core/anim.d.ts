@@ -1,6 +1,3 @@
-export namespace ANIM {
-    export { Key };
-}
 /**
  * Keyframed interpolated animation.
  *
@@ -50,8 +47,9 @@ export namespace ANIM {
  * anim.setValue(10,1); // set value 1 at 10 seconds
  * anim.getValue(5);    // get value at 5 seconds - this returns 0.5
  */
-export class Anim extends Events {
+declare class Anim extends Events {
     constructor(cfg: any);
+    id: string;
     keys: any[];
     onChange: any;
     stayInTimeline: boolean;
@@ -83,7 +81,10 @@ export class Anim extends Events {
      * @function
      */
     hasEnded(time: number): boolean;
-    isRising(time: any): boolean;
+    /**
+     * @param {number} time
+     */
+    isRising(time: number): boolean;
     /**
      * remove all keys from animation before time
      * @param {Number} time
@@ -101,8 +102,13 @@ export class Anim extends Events {
      */
     clear(time?: number): void;
     sortKeys(): void;
+    hasDuplicates(): boolean;
+    removeDuplicates(): void;
     getLength(): any;
-    getKeyIndex(time: any): number;
+    /**
+     * @param {number} time
+     */
+    getKeyIndex(time: number): number;
     /**
      * set value at time
      * @function setValue
@@ -113,16 +119,35 @@ export class Anim extends Events {
      * @param {Function} cb callback
      */
     setValue(time: number, value: number, cb?: Function): any;
-    setKeyEasing(index: any, e: any): void;
-    getSerialized(): {
-        keys: any[];
-        loop: boolean;
-    };
-    getKey(time: any): any;
-    getNextKey(time: any): any;
-    isFinished(time: any): boolean;
-    isStarted(time: any): boolean;
-    remove(k: any): void;
+    /**
+     * @param {number} index
+     * @param {number} easing
+     */
+    setKeyEasing(index: number, easing: number): void;
+    /**
+     * @returns {object}
+     */
+    getSerialized(): object;
+    /**
+     * @param {number} time
+     */
+    getKey(time: number): any;
+    /**
+     * @param {number} time
+     */
+    getNextKey(time: number): any;
+    /**
+     * @param {number} time
+     */
+    isFinished(time: number): boolean;
+    /**
+     * @param {number} time
+     */
+    isStarted(time: number): boolean;
+    /**
+     * @param {AnimKey} k
+     */
+    remove(k: AnimKey): void;
     /**
      * get value at time
      * @function getValue
@@ -133,13 +158,17 @@ export class Anim extends Events {
      */
     getValue(time?: number): number;
     _updateLastIndex(): void;
-    addKey(k: any): void;
-    easingFromString(str: any): number;
+    /**
+     * @param {AnimKey} k
+     */
+    addKey(k: AnimKey): void;
+    easingFromString(str: any): any;
     createPort(op: any, title: any, cb: any): any;
 }
-export namespace Anim {
+declare namespace Anim {
     function slerpQuaternion(time: any, q: any, animx: any, animy: any, animz: any, animw: any): any;
 }
-import { Key } from "./anim_key.js";
+export default Anim;
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
+import AnimKey from "./anim_key.js";

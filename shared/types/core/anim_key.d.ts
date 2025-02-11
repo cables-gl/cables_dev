@@ -1,10 +1,34 @@
-export function easeExpoIn(t: any): number;
-export function easeExpoOut(t: any): any;
-export function easeExpoInOut(t: any): any;
-export function easeCubicIn(t: any): any;
-export function easeCubicOut(t: any): any;
-export function easeCubicInOut(t: any): any;
-export class Key {
+export default class AnimKey {
+    static cubicSpline(perc: any, key1: any, key2: any): number;
+    static easeCubicSpline(perc: any, key2: any): number;
+    static linear(perc: any, key1: any, key2: any): number;
+    static easeLinear(perc: any, key2: any): number;
+    static easeAbsolute(perc: any, key2: any): any;
+    static easeExpoIn(t: any): number;
+    static easeExpoOut(t: any): any;
+    static easeExpoInOut(t: any): any;
+    static easeSinIn(t: any, key2: any): number;
+    static easeSinOut(t: any, key2: any): number;
+    static easeSinInOut(t: any, key2: any): number;
+    static easeCubicIn(t: any): any;
+    static easeInQuint(t: any, key2: any): number;
+    static easeOutQuint(t: any, key2: any): number;
+    static easeInOutQuint(t: any, key2: any): number;
+    static easeInQuart(t: any, key2: any): number;
+    static easeOutQuart(t: any, key2: any): number;
+    static easeInOutQuart(t: any, key2: any): number;
+    static bounce(t: any): any;
+    static easeInBounce(t: any, key2: any): number;
+    static easeOutBounce(t: any, key2: any): number;
+    static easeInElastic(t: any, key2: any): number;
+    static easeOutElastic(t: any, key2: any): number;
+    static easeInBack(t: any, key2: any): number;
+    static easeOutBack(t: any, key2: any): number;
+    static easeInOutBack(t: any, key2: any): number;
+    static easeCubicOut(t: any, key2: any): number;
+    static easeCubicInOut(t: any): any;
+    static easeSmoothStep(perc: any, key2: any): number;
+    static easeSmootherStep(perc: any, key2: any): number;
     constructor(obj: any);
     time: number;
     value: number;
@@ -24,36 +48,4 @@ export class Key {
         e: number;
     };
     getEasing(): number;
-}
-export namespace Key {
-    function cubicSpline(perc: any, key1: any, key2: any): number;
-    function easeCubicSpline(perc: any, key2: any): number;
-    function linear(perc: any, key1: any, key2: any): number;
-    function easeLinear(perc: any, key2: any): number;
-    function easeAbsolute(perc: any, key2: any): any;
-    function easeExpoIn(t: any, key2: any): number;
-    function easeExpoOut(t: any, key2: any): number;
-    function easeExpoInOut(t: any, key2: any): number;
-    function easeSinIn(t: any, key2: any): number;
-    function easeSinOut(t: any, key2: any): number;
-    function easeSinInOut(t: any, key2: any): number;
-    function easeCubicIn(t: any, key2: any): number;
-    function easeInQuint(t: any, key2: any): number;
-    function easeOutQuint(t: any, key2: any): number;
-    function easeInOutQuint(t: any, key2: any): number;
-    function easeInQuart(t: any, key2: any): number;
-    function easeOutQuart(t: any, key2: any): number;
-    function easeInOutQuart(t: any, key2: any): number;
-    function bounce(t: any): any;
-    function easeInBounce(t: any, key2: any): number;
-    function easeOutBounce(t: any, key2: any): number;
-    function easeInElastic(t: any, key2: any): number;
-    function easeOutElastic(t: any, key2: any): number;
-    function easeInBack(t: any, key2: any): number;
-    function easeOutBack(t: any, key2: any): number;
-    function easeInOutBack(t: any, key2: any): number;
-    function easeCubicOut(t: any, key2: any): number;
-    function easeCubicInOut(t: any, key2: any): number;
-    function easeSmoothStep(perc: any, key2: any): number;
-    function easeSmootherStep(perc: any, key2: any): number;
 }

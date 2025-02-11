@@ -8,7 +8,6 @@ class Helper
         this._simpleIdCounter = 0;
     }
 
-
     /**
      * generate a random v4 uuid
      *
@@ -28,12 +27,13 @@ class Helper
     /**
      * checks value for !isNan and isFinite
      *
-     * @param n
+     * @param {string} n
      * @return {boolean}
      */
     isNumeric(n)
     {
-        return !isNaN(parseFloat(n)) && isFinite(n);
+        const nn = parseFloat(n);
+        return !isNaN(nn) && isFinite(nn);
     }
 
     /**
@@ -48,29 +48,5 @@ class Helper
         return this._simpleIdCounter;
     }
 
-    deletePropertyByPath(obj, path)
-    {
-        if (!obj || !path)
-        {
-            return;
-        }
-
-        if (typeof path === "string")
-        {
-            path = path.split(".");
-        }
-
-        for (let i = 0; i < path.length - 1; i++)
-        {
-            obj = obj[path[i]];
-
-            if (typeof obj === "undefined")
-            {
-                return;
-            }
-        }
-
-        delete obj[path.pop()];
-    }
 }
 export default new Helper();

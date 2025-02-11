@@ -21,16 +21,16 @@ export function generateUUID(): string;
 /**
  * @see http://stackoverflow.com/q/7616461/940217
  * @memberof Utils
- * @param str
- * @param prefix
+ * @param {string} str
+ * @param {string} prefix
  * @return {string}
  */
-export function prefixedHash(str: any, prefix?: string): string;
+export function prefixedHash(str: string, prefix?: string): string;
 export function simpleId(): number;
 export function smoothStep(perc: number): number;
 export function smootherStep(perc: number): number;
 export function clamp(value: number, min: number, max: number): number;
-export function map(x: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number, _easing: number): number;
+export function map(x: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number, _easing?: number): number;
 export function cacheBust(url?: string): string;
 export function copyArray(src: any[], dst: any[]): any[];
 export function basename(url: string): string;
@@ -64,10 +64,9 @@ export namespace UTILS {
     /**
      * returns true if parameter is array
      * @function isArray
-     * @param {Any} v value Value to check
-     * @memberof Utils
+     * @param {any} v value Value to check
      * @return {Boolean}
      * @static
      */
-    function isArray(v: Any): boolean;
+    function isArray(v: any): boolean;
 }

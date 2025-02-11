@@ -12,6 +12,7 @@
  * const myPort=op.inString("String Port");
  */
 export class Port extends Events {
+    static TYPE_STRING: number;
     constructor(___op: any, name: any, type: any, uiAttribs: any);
     data: {};
     _log: Logger;
@@ -24,25 +25,23 @@ export class Port extends Events {
      */
     direction: number;
     id: string;
-    /**
-     * @type {Op}
-     */
+    /** @type {Op} */
     _op: Op;
     /** @type {Array<Link>} */
     links: Array<Link>;
-    value: number;
+    /** @type {any} */
+    value: any;
     name: any;
     type: any;
     uiAttribs: any;
     /** @type {Anim} */
     anim: Anim;
-    _oldAnimVal: number;
     defaultValue: any;
     _uiActiveState: boolean;
     ignoreValueSerialize: boolean;
     onLinkChanged: any;
     crashed: boolean;
-    _valueBeforeLink: number;
+    _valueBeforeLink: any;
     _lastAnimFrame: number;
     _animated: boolean;
     onValueChanged: any;
@@ -58,8 +57,8 @@ export class Port extends Events {
     get parent(): Op;
     get title(): any;
     get op(): Op;
-    set val(v: number);
-    get val(): number;
+    set val(v: any);
+    get val(): any;
     /**
      * copy over a uiattrib from an external connected port to another port
      * @function copyLinkedUiAttrib
@@ -75,7 +74,7 @@ export class Port extends Events {
      *  };
      */
     copyLinkedUiAttrib(which: string, port: Port): void;
-    getValueForDisplay(): number;
+    getValueForDisplay(): any;
     /**
      * change listener for input value ports, overwrite to react to changes
      * @function onChange
@@ -144,7 +143,7 @@ export class Port extends Events {
      * @instance
      * @description get value of port
      */
-    get(): number;
+    get(): any;
     setRef(v: any): void;
     /**
      * @function setValue
@@ -303,6 +302,7 @@ export class Port extends Events {
      * @deprecated
      */
     hidePort(): void;
+    #private;
 }
 export namespace Port {
     /**
@@ -319,4 +319,4 @@ import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
 import { Op } from "./core_op.js";
 import { Link } from "./core_link.js";
-import { Anim } from "./anim.js";
+import Anim from "./anim.js";
