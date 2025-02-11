@@ -8,6 +8,7 @@ export class Key {
     constructor(obj: any);
     time: number;
     value: number;
+    selected: boolean;
     onChange: any;
     _easing: number;
     cb: any;

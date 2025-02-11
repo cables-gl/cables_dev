@@ -1,3 +1,10 @@
+/**
+ * Description placeholder
+ *
+ * @export
+ * @class Op
+ * @extends {Events}
+ */
 export class Op extends Events {
     /**
      * Description
@@ -479,20 +486,20 @@ export class Op extends Events {
      * @function setUiError
      * @instance
      * @memberof Op
-     * @param {id} error id
-     * @param {txt} text message
-     * @param {level} level
+     * @param {string} id error id
+     * @param {string} txt text message
+     * @param {Integer} level level
      */
-    setUiError(id: any, txt: any, level: any): void;
+    setUiError(id: string, txt: string, level: Integer): void;
     setError(id: any, txt: any): void;
     /**
      * enable/disable op
      * @function
      * @instance
      * @memberof Op
-     * @param {boolean}
+     * @param {boolean} b
      */
-    setEnabled(b: any): void;
+    setEnabled(b: boolean): void;
     /**
      * organize ports into a group
      * @function
