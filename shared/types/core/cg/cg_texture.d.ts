@@ -1,6 +1,6 @@
 declare class CgTexture {
     constructor(options?: {});
-    id: any;
+    id: string;
     width: number;
     height: number;
     name: any;

@@ -7,17 +7,17 @@ export class Op extends Events {
     */
     constructor(_patch: Patch, _name: string, _id?: string);
     opId: string;
-    data: {};
-    storage: {};
     /** @type {Array<Port>} */
     portsOut: Array<Port>;
+    /** @type {Patch} */
+    patch: Patch;
+    data: {};
+    storage: {};
     /** @type {Array<Port>} */
     portsIn: Array<Port>;
     portsInData: any[];
     uiAttribs: {};
     enabled: boolean;
-    /** @type {Patch} */
-    patch: Patch;
     preservedPortTitles: {};
     preservedPortValues: {};
     preservedPortLinks: {};
@@ -28,8 +28,8 @@ export class Op extends Events {
     };
     shouldWork: {};
     hasUiErrors: boolean;
-    _uiErrors: {};
-    _hasAnimPort: boolean;
+    uiErrors: {};
+    hasAnimPort: boolean;
     id: string;
     onAddPort: any;
     onCreate: any;
@@ -165,10 +165,10 @@ export class Op extends Events {
      * @memberof Op
      * @instance
      * @param {String} name
-     * @param {Number} value
+     * @param {Number} v
      * @return {Port} created port
      */
-    inFloat(name: string, v: any): Port;
+    inFloat(name: string, v: number): Port;
     /**
      * @deprecated
      */
@@ -447,11 +447,18 @@ export class Op extends Events {
      * @function getPort
      * @instance
      * @memberof Op
-     * @param {String} portName
+     * @param {String} name
+     * @param {boolean} lowerCase
      * @return {Port}
      */
-    getPort(name: any, lowerCase: any): Port;
-    getPortByName(name: any, lowerCase: any): Port;
+    getPort(name: string, lowerCase: boolean): Port;
+    /**
+     * Description
+     * @param {string} name
+     * @param {boolean} lowerCase
+     * @returns {Port}
+     */
+    getPortByName(name: string, lowerCase: boolean): Port;
     /**
      * return port by the name id
      * @function getPortById

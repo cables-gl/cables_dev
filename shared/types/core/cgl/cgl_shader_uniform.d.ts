@@ -83,6 +83,6 @@ export class Uniform extends CgUniform {
     setValueT(v: any): void;
 }
 export namespace Uniform {
-    function glslTypeString(t: any): "bool" | "float" | "int" | "ivec2" | "vec2" | "vec3" | "vec4" | "mat4" | "sampler2D" | "samplerCube";
+    function glslTypeString(t: any): "float" | "bool" | "int" | "ivec2" | "vec2" | "vec3" | "vec4" | "mat4" | "sampler2D" | "samplerCube";
 }
 import CgUniform from "../cg/cg_uniform.js";
