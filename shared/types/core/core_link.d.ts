@@ -11,7 +11,7 @@ export class Link extends Events {
     constructor(p: {
         Patch: any;
     });
-    id: any;
+    id: number;
     /**
      * @type {Port}
      */

@@ -1,5 +1,5 @@
-import Core from "./core/index.d.ts";
+import Types from "./core/index.d.ts";
 
 export {
-    Core
+    Types
 };

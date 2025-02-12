@@ -8,7 +8,7 @@ export default class GPUBuffer extends Events {
      * @param {Object} options={}
      */
     constructor(cgp: WebGpuContext, name: string, data?: any[], options?: any);
-    id: any;
+    id: string;
     floatArr: any;
     needsUpdate: boolean;
     presentationFormat: any;

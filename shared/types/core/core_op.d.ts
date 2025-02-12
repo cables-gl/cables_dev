@@ -1,49 +1,35 @@
-/**
- * Description placeholder
- *
- * @export
- * @class Op
- * @extends {Events}
- */
 export class Op extends Events {
     /**
      * Description
      * @param {Patch} _patch
      * @param {String} _name
      * @param {String} _id=null
-     */
+    */
     constructor(_patch: Patch, _name: string, _id?: string);
-    /**
-     * @private
-     */
-    private _log;
+    opId: string;
+    /** @type {Array<Port>} */
+    portsOut: Array<Port>;
+    /** @type {Patch} */
+    patch: Patch;
     data: {};
     storage: {};
-    __objName: string;
-    portsOut: any[];
-    portsIn: any[];
+    /** @type {Array<Port>} */
+    portsIn: Array<Port>;
     portsInData: any[];
-    opId: string;
     uiAttribs: {};
     enabled: boolean;
-    /**
-     * @type {Patch}
-     */
-    patch: Patch;
-    _name: string;
     preservedPortTitles: {};
     preservedPortValues: {};
     preservedPortLinks: {};
-    _linkTimeRules: {
+    linkTimeRules: {
         needsLinkedToWork: any[];
         needsStringToWork: any[];
         needsParentOp: any;
     };
     shouldWork: {};
     hasUiErrors: boolean;
-    _uiErrors: {};
-    _hasAnimPort: boolean;
-    _shortOpName: any;
+    uiErrors: {};
+    hasAnimPort: boolean;
     id: string;
     onAddPort: any;
     onCreate: any;
@@ -80,12 +66,11 @@ export class Op extends Events {
      * @param {number} layer.scale current scaling of patchfield view
      */
     renderVizLayer: any;
-    set name(n: any);
-    get name(): any;
+    set name(n: string);
+    get name(): string;
     set _objName(on: any);
     get objName(): string;
-    get shortName(): any;
-    clearUiAttrib(name: any): void;
+    get shortName(): string;
     /**
      * op.require
      *
@@ -94,8 +79,12 @@ export class Op extends Events {
      */
     require(name: string): any;
     checkMainloopExists(): void;
-    getTitle(): any;
-    setTitle(title: any): void;
+    /** @returns {string} */
+    getTitle(): string;
+    /**
+     * @param {string} title
+     */
+    setTitle(title: string): void;
     setStorage(newAttribs: any): void;
     isSubPatchOp(): any;
     /**
@@ -127,7 +116,10 @@ export class Op extends Events {
      */
     private _setUiAttrib;
     getName(): any;
-    addOutPort(p: any): any;
+    /**
+     * @param {Port} p
+     */
+    addOutPort(p: Port): Port;
     hasDynamicPort(): boolean;
     addInPort(p: any): Port;
     /**
@@ -173,10 +165,10 @@ export class Op extends Events {
      * @memberof Op
      * @instance
      * @param {String} name
-     * @param {Number} value
+     * @param {Number} v
      * @return {Port} created port
      */
-    inFloat(name: string, v: any): Port;
+    inFloat(name: string, v: number): Port;
     /**
      * @deprecated
      */
@@ -191,40 +183,52 @@ export class Op extends Events {
      * @return {Port} created port
      */
     inBool(name: string, v: any): Port;
-    inMultiPort(name: any, type: any): MultiPort;
+    /**
+     * @param {string} name
+     * @param {number} type
+     */
+    inMultiPort(name: string, type: number): MultiPort;
     outMultiPort(name: any, type: any, uiAttribsPort?: {}): MultiPort;
-    inValueString(name: any, v: any): Port;
+    /**
+     * @param {string} name
+     * @param {string} v
+     */
+    inValueString(name: string, v: string): Port;
     /**
      * create a String value input port
      * @function inString
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {String} value default value
+     * @param {String} v default value
      * @return {Port} created port
      */
-    inString(name: string, v: any): Port;
+    inString(name: string, v: string): Port;
     /**
      * create a String value input port displayed as TextArea
      * @function inValueText
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {String} value default value
+     * @param {String} v default value
      * @return {Port} created port
      */
-    inValueText(name: string, v: any): Port;
-    inTextarea(name: any, v: any): Port;
+    inValueText(name: string, v: string): Port;
+    /**
+     * @param {string} name
+     * @param {string} v
+     */
+    inTextarea(name: string, v: string): Port;
     /**
      * create a String value input port displayed as editor
      * @function inStringEditor
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {String} value default value
+     * @param {String} v default value
      * @return {Port} created port
      */
-    inStringEditor(name: string, v: any, syntax: any, hideFormatButton?: boolean): Port;
+    inStringEditor(name: string, v: string, syntax: any, hideFormatButton?: boolean): Port;
     /**
      * @deprecated
      */
@@ -240,10 +244,10 @@ export class Op extends Events {
      * @memberof Op
      * @param {String} name
      * @param {Array} values
-     * @param {String} value default value
+     * @param {String} v default value
      * @return {Port} created port
      */
-    inDropDown(name: string, values: any[], v: any, noindex: any): Port;
+    inDropDown(name: string, values: any[], v: string, noindex: any): Port;
     /**
      * create a string switch box
      * @function inSwitch
@@ -251,10 +255,10 @@ export class Op extends Events {
      * @memberof Op
      * @param {String} name
      * @param {Array} values
-     * @param {String} value default value
+     * @param {String} v default value
      * @return {Port} created port
      */
-    inSwitch(name: string, values: any[], v: any, noindex: any): Port;
+    inSwitch(name: string, values: any[], v: string, noindex: any): Port;
     /**
      * @deprecated
      */
@@ -275,9 +279,11 @@ export class Op extends Events {
      * @instance
      * @memberof Op
      * @param {String} name
+     * @param {String} filter
+     * @param {String} v
      * @return {Port} created port
      */
-    inFile(name: string, filter: any, v: any): Port;
+    inFile(name: string, filter: string, v: string): Port;
     /**
      * @deprecated
      */
@@ -300,17 +306,22 @@ export class Op extends Events {
      * @return {Port} created port
      */
     inObject(name: string, v: any, objType: any): Port;
-    inGradient(name: any, v: any): Port;
+    /**
+     * @param {string} name
+     * @param {string} v
+     */
+    inGradient(name: string, v: string): Port;
     getPortVisibleIndex(p: any): number;
     /**
      * create a array input port
      * @function inArray
-     * @instance
      * @memberof Op
      * @param {String} name
+     * @param {array} v
+     * @param {number} stride
      * @return {Port} created port
      */
-    inArray(name: string, v: any, stride: any): Port;
+    inArray(name: string, v: any[], stride: number): Port;
     /**
      * @deprecated
      */
@@ -321,12 +332,12 @@ export class Op extends Events {
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {number} defaultvalue
+     * @param {number} v
      * @param {number} min
      * @param {number} max
      * @return {Port} created port
      */
-    inFloatSlider(name: string, v: any, min: number, max: number): Port;
+    inFloatSlider(name: string, v: number, min: number, max: number): Port;
     /**
      * @deprecated
      */
@@ -350,10 +361,10 @@ export class Op extends Events {
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {number} default value
+     * @param {number} v default value
      * @return {Port} created port
      */
-    outNumber(name: string, v: any): Port;
+    outNumber(name: string, v: number): Port;
     /**
      * @deprecated
      */
@@ -365,9 +376,10 @@ export class Op extends Events {
      * @instance
      * @memberof Op
      * @param {String} name
+     * @param {boolean} v default value
      * @return {Port} created port
      */
-    outBool(name: string, v: any): Port;
+    outBool(name: string, v: boolean): Port;
     /**
      * create output boolean port,value will be converted to 0 or 1
      * @function outBoolNum
@@ -380,7 +392,7 @@ export class Op extends Events {
     /**
      * @deprecated
      */
-    outValueString(name: any, v: any): any;
+    outValueString(name: any, v: any): Port;
     /**
      * create output string port
      * @function outString
@@ -428,18 +440,25 @@ export class Op extends Events {
         portsIn: any[];
         portsOut: any[];
     };
-    getFirstOutPortByType(type: any): any;
-    getFirstInPortByType(type: any): any;
+    getFirstOutPortByType(type: any): Port;
+    getFirstInPortByType(type: any): Port;
     /**
      * return port by the name portName
      * @function getPort
      * @instance
      * @memberof Op
-     * @param {String} portName
+     * @param {String} name
+     * @param {boolean} lowerCase
      * @return {Port}
      */
-    getPort(name: any, lowerCase: any): Port;
-    getPortByName(name: any, lowerCase: any): any;
+    getPort(name: string, lowerCase: boolean): Port;
+    /**
+     * Description
+     * @param {string} name
+     * @param {boolean} lowerCase
+     * @returns {Port}
+     */
+    getPortByName(name: string, lowerCase: boolean): Port;
     /**
      * return port by the name id
      * @function getPortById
@@ -565,8 +584,9 @@ export class Op extends Events {
      * @returns {Boolean} - is current ui op
      */
     isCurrentUiOp(): boolean;
+    #private;
 }
 import { Events } from "cables-shared-client";
-import Patch from "./core_patch.js";
 import { Port } from "./core_port.js";
+import Patch from "./core_patch.js";
 import { MultiPort } from "./core_port_multi.js";

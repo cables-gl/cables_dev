@@ -1,10 +1,4 @@
-export function easeExpoIn(t: any): number;
-export function easeExpoOut(t: any): any;
-export function easeExpoInOut(t: any): any;
-export function easeCubicIn(t: any): any;
-export function easeCubicOut(t: any): any;
-export function easeCubicInOut(t: any): any;
-export class Key {
+declare class AnimKey {
     constructor(obj: any);
     time: number;
     value: number;
@@ -25,7 +19,7 @@ export class Key {
     };
     getEasing(): number;
 }
-export namespace Key {
+declare namespace AnimKey {
     function cubicSpline(perc: any, key1: any, key2: any): number;
     function easeCubicSpline(perc: any, key2: any): number;
     function linear(perc: any, key1: any, key2: any): number;
@@ -57,3 +51,10 @@ export namespace Key {
     function easeSmoothStep(perc: any, key2: any): number;
     function easeSmootherStep(perc: any, key2: any): number;
 }
+export default AnimKey;
+export function easeExpoIn(t: any): number;
+export function easeExpoOut(t: any): any;
+export function easeExpoInOut(t: any): any;
+export function easeCubicIn(t: any): any;
+export function easeCubicOut(t: any): any;
+export function easeCubicInOut(t: any): any;
