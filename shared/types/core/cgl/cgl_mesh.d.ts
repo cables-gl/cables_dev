@@ -17,9 +17,9 @@ export class Mesh extends CgMesh {
     /**
      * @param {Context} _cgl cgl
      * @param {Geometry} __geom geometry
-     * @param {Number} _options glPrimitive
+     * @param {Object} _options
      */
-    constructor(_cgl: Context, __geom: Geometry, _options: number);
+    constructor(_cgl: Context, __geom: Geometry, _options?: any);
     _cgl: Context;
     _log: Logger;
     _bufVertexAttrib: {
@@ -149,6 +149,5 @@ export namespace MESH {
     let lastMesh: any;
 }
 import CgMesh from "../cg/cg_mesh.js";
-import { Context } from "./cgl_state.js";
 import { Logger } from "cables-shared-client";
 import { Geometry } from "../cg/cg_geom.js";

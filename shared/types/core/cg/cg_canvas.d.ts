@@ -9,6 +9,8 @@ export class CgCanvas {
     _oldWidthRp: number;
     _oldHeightRp: number;
     get canvasEle(): any;
+    setWhyCompile(why: any): void;
+    _compileReason: any;
     /**
      * @param {Number} w
      * @param {Number} h

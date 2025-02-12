@@ -1,4 +1,4 @@
-export class MultiPort extends Port {
+export default class MultiPort extends Port {
     constructor(__parent: any, name: any, type: any, dir: any, uiAttribs: any, uiAttribsPorts: any);
     ports: any[];
     direction: any;

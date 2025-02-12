@@ -1,22 +1,24 @@
 declare class AnimKey {
-    constructor(obj: any);
+    constructor(obj: any, an: any);
+    id: string;
     time: number;
     value: number;
     selected: boolean;
+    anim: any;
     onChange: any;
     _easing: number;
     cb: any;
     cbTriggered: boolean;
+    delete(): void;
     setEasing(e: any): void;
-    ease: any;
+    ease: ((perc: any, key2: any) => number) | ((perc: any, key2: any) => any) | ((perc: any, key2: any) => number) | ((perc: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((perc: any, key2: any) => number);
     trigger(): void;
     setValue(v: any): void;
     set(obj: any): void;
-    getSerialized(): {
-        t: number;
-        v: number;
-        e: number;
-    };
+    /**
+     * @returns {Object}
+     */
+    getSerialized(): any;
     getEasing(): number;
 }
 declare namespace AnimKey {

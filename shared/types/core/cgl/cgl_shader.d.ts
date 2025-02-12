@@ -20,7 +20,6 @@ export class Shader extends CgShader {
     _program: any;
     _uniforms: any[];
     _drawBuffers: boolean[];
-    _compileReason: string;
     ignoreMissingUniforms: boolean;
     _projMatrixUniform: any;
     _mvMatrixUniform: any;
@@ -68,7 +67,6 @@ export class Shader extends CgShader {
     enableExtension(name: any): void;
     getAttrVertexPos(): number;
     hasTextureUniforms(): boolean;
-    setWhyCompile(why: any): void;
     /**
      * copy all uniform values from another shader
      * @function copyUniforms

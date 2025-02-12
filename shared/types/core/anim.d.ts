@@ -39,9 +39,9 @@ declare class Anim extends Events {
     static EASING_QUINT_INOUT: number;
     static EASINGNAMES: string[];
     /**
-     * @param {object} cfg
+     * @param {Object} cfg
      */
-    constructor(cfg: object);
+    constructor(cfg: any);
     id: string;
     keys: any[];
     onChange: any;
@@ -118,9 +118,9 @@ declare class Anim extends Events {
      */
     setKeyEasing(index: number, easing: number): void;
     /**
-     * @returns {object}
+     * @returns {Object}
      */
-    getSerialized(): object;
+    getSerialized(): any;
     /**
      * @param {number} time
      */
@@ -168,7 +168,15 @@ declare class Anim extends Events {
     createPort(op: Op, title: string, cb: Function): Port;
 }
 declare namespace Anim {
-    function slerpQuaternion(time: any, q: any, animx: any, animy: any, animz: any, animw: any): any;
+    /**
+     * @param {number} time
+     * @param {number} q
+     * @param {number} animx
+     * @param {number} animy
+     * @param {number} animz
+     * @param {number} animw
+     */
+    function slerpQuaternion(time: number, q: number, animx: number, animy: number, animz: number, animw: number): number;
 }
 export default Anim;
 import { Events } from "cables-shared-client";

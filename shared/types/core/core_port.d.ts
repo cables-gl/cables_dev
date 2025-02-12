@@ -11,9 +11,23 @@
  * @example
  * const myPort=op.inString("String Port");
  */
-export class Port extends Events {
+declare class Port extends Events {
+    static TYPE_VALUE: number;
+    static TYPE_NUMBER: number;
+    static TYPE_FUNCTION: number;
+    static TYPE_TRIGGER: number;
+    static TYPE_OBJECT: number;
+    static TYPE_TEXTURE: number;
+    static TYPE_ARRAY: number;
+    static TYPE_DYNAMIC: number;
     static TYPE_STRING: number;
-    constructor(___op: any, name: any, type: any, uiAttribs: any);
+    /**
+     * @param {Op} ___op
+     * @param {string} name
+     * @param {number} type
+     * @param {Object} uiAttribs
+     */
+    constructor(___op: Op, name: string, type: number, uiAttribs: any);
     data: {};
     _log: Logger;
     /**
@@ -31,8 +45,9 @@ export class Port extends Events {
     links: Array<Link>;
     /** @type {any} */
     value: any;
-    name: any;
-    type: any;
+    name: string;
+    /** @type {number} */
+    type: number;
     uiAttribs: any;
     /** @type {Anim} */
     anim: Anim;
@@ -166,7 +181,7 @@ export class Port extends Events {
     deSerializeSettings(objPort: any): void;
     setInitialValue(v: any): void;
     getSerialized(): {
-        name: any;
+        name: string;
     };
     shouldLink(): boolean;
     /**
@@ -181,16 +196,16 @@ export class Port extends Events {
      * @memberof Port
      * @instance
      * @description remove all link from port
-     * @param {CABLES.Link} link
+     * @param {Link} link
      */
-    removeLink(link: typeof Link): void;
+    removeLink(link: Link): void;
     /**
      * @function getName
      * @memberof Port
      * @instance
      * @description return port name
      */
-    getName(): any;
+    getName(): string;
     /**
      * @function getTitle
      * @memberof Port
@@ -240,17 +255,20 @@ export class Port extends Events {
     _varChangeListenerId: any;
     _handleNoTriggerOpAnimUpdates(a: any): void;
     _notriggerAnimUpdate: any;
-    setAnimated(a: any): void;
+    /**
+     * @param {boolean} a
+     */
+    setAnimated(a: boolean): void;
     toggleAnim(): void;
     /**
      * <pre>
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_VALUE = 0;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_FUNCTION = 1;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_OBJECT = 2;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_TEXTURE = 2;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_ARRAY = 3;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_DYNAMIC = 4;
-     * CABLES.CONSTANTS.OP.OP_PORT_TYPE_STRING = 5;
+     * CABLES.Port.TYPE_VALUE = 0;
+     * CABLES.Port.TYPE_FUNCTION = 1;
+     * CABLES.Port.TYPE_OBJECT = 2;
+     * CABLES.Port.TYPE_TEXTURE = 2;
+     * CABLES.Port.TYPE_ARRAY = 3;
+     * CABLES.Port.TYPE_DYNAMIC = 4;
+     * CABLES.Port.TYPE_STRING = 5;
      * </pre>
      * @function getType
      * @memberof Port
@@ -304,7 +322,7 @@ export class Port extends Events {
     hidePort(): void;
     #private;
 }
-export namespace Port {
+declare namespace Port {
     /**
      * Returns the port type string, e.g. "value" based on the port type number
      * @function portTypeNumberToString
@@ -315,6 +333,7 @@ export namespace Port {
      */
     function portTypeNumberToString(type: number): string;
 }
+export default Port;
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
 import Op from "./core_op.js";

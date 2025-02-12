@@ -11,7 +11,7 @@ export namespace BLENDS {
  * @namespace external:CGL
  * @hideconstructor
  */
-export class Context extends CGState {
+export default class CglContext extends CGState {
     constructor(_patch: any);
     gApi: number;
     pushMvMatrix: () => void;
@@ -156,25 +156,25 @@ export class Context extends CGState {
      * @function pushGlFrameBuffer
      * @memberof Context
      * @instance
-     * @param {Framebuffer} fb framebuffer
+     * @param {Framebuffer2} fb framebuffer
      */
-    pushFrameBuffer(fb: Framebuffer): void;
+    pushFrameBuffer(fb: Framebuffer2): void;
     /**
      * pop framebuffer stack
      * @function popFrameBuffer
      * @memberof Context
      * @instance
-     * @returns {Framebuffer} current framebuffer or null
+     * @returns {Framebuffer2} current framebuffer or null
      */
-    popFrameBuffer(): Framebuffer;
+    popFrameBuffer(): Framebuffer2;
     /**
      * get current framebuffer
      * @function getCurrentFrameBuffer
      * @memberof Context
      * @instance
-     * @returns {Framebuffer} current framebuffer or null
+     * @returns {Framebuffer2} current framebuffer or null
      */
-    getCurrentFrameBuffer(): Framebuffer;
+    getCurrentFrameBuffer(): Framebuffer2;
     renderStart(cgl: any, identTranslate: any, identTranslateView: any): void;
     renderEnd(cgl: any): void;
     getTexture(slot: any): any;
@@ -199,7 +199,7 @@ export class Context extends CGState {
      * @memberof Context
      * @instance
      */
-    pushDepthTest(b: any): void;
+    pushDepthTest(enabled: boolean): void;
     /**
      * current state of depth testing
      * @function stateCullFace
@@ -241,11 +241,11 @@ export class Context extends CGState {
     /**
      * push face culling face enabled state
      * @function pushCullFace
-     * @param {Boolean} b enabled
+     * @param {Boolean} enabled
      * @memberof Context
      * @instance
      */
-    pushCullFace(b: boolean): void;
+    pushCullFace(enabled: boolean): void;
     /**
      * current state of face culling
      * @function stateCullFace
@@ -397,3 +397,4 @@ import { CGState } from "../cg/cg_state.js";
 import { ProfileData } from "./cgl_profiledata.js";
 import { Logger } from "cables-shared-client";
 import { Shader } from "./cgl_shader.js";
+import Framebuffer2 from "./cgl_framebuffer2.js";

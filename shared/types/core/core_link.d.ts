@@ -4,7 +4,7 @@
  * @hideconstructor
  * @class
  */
-export class Link extends Events {
+declare class Link extends Events {
     /**
      * @param {{Patch}} p
      */
@@ -54,13 +54,13 @@ export class Link extends Events {
      */
     link(p1: Port, p2: Port): boolean;
     getSerialized(): {
-        portIn: any;
-        portOut: any;
+        portIn: string;
+        portOut: string;
         objIn: string;
         objOut: string;
     };
 }
-export namespace Link {
+declare namespace Link {
     /**
      * @function canLinkText
      * @memberof Link
@@ -81,6 +81,7 @@ export namespace Link {
      */
     function canLink(p1: Port, p2: Port): boolean;
 }
+export default Link;
 import { Events } from "cables-shared-client";
 import Port from "./core_port.js";
 import Patch from "./core_patch.js";

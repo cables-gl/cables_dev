@@ -1,4 +1,4 @@
-export class SwitchPort extends Port {
+export default class SwitchPort extends Port {
     constructor(__parent: any, name: any, type: any, uiAttribs: any, indexPort: any);
     indexPort: any;
     lastTime: number;

@@ -10,7 +10,6 @@ export default class CgpShader extends CgShader {
     _name: string;
     _uniforms: any[];
     compute: any;
-    _compileReason: string;
     gpuShaderModule: any;
     bindingCounter: number;
     bindCountlastFrame: number;
@@ -37,7 +36,6 @@ export default class CgpShader extends CgShader {
     get isValid(): boolean;
     get uniforms(): any[];
     getName(): string;
-    setWhyCompile(why: any): void;
     getNewBindingIndex(): number;
     setSource(src: any): void;
     _replaceMods(vs: any): any;
