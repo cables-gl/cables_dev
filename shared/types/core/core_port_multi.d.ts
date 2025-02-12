@@ -14,4 +14,4 @@ export class MultiPort extends Port {
     incDec: (incDir: any) => void;
     toggleManual: () => void;
 }
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";

@@ -4,4 +4,4 @@ export class SwitchPort extends Port {
     lastTime: number;
     setUiAttribs(attribs: any): void;
 }
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";

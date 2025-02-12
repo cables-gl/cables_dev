@@ -174,5 +174,5 @@ export default Anim;
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
 import AnimKey from "./anim_key.js";
-import { Op } from "./core_op.js";
-import { Port } from "./core_port.js";
+import Op from "./core_op.js";
+import Port from "./core_port.js";

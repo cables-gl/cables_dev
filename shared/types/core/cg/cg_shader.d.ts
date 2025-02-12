@@ -56,4 +56,4 @@ export class CgShader extends Events {
     replaceModuleSrc(): void;
 }
 import { Events } from "cables-shared-client";
-import { Port } from "../core_port.js";
+import Port from "../core_port.js";

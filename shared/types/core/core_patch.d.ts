@@ -262,8 +262,8 @@ declare namespace Patch {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import { Op } from "./core_op.js";
+import Op from "./core_op.js";
 import { Timer } from "./timer.js";
-import { Profiler } from "./core_profiler.js";
-import { LoadingStatus } from "./loadingstatus.js";
+import Profiler  from "./core_profiler.js";
+import LoadingStatus  from "./loadingstatus.js";
 import { Context } from "./cgl/cgl_state.js";

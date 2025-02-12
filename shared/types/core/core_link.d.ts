@@ -82,5 +82,5 @@ export namespace Link {
     function canLink(p1: Port, p2: Port): boolean;
 }
 import { Events } from "cables-shared-client";
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";
 import Patch from "./core_patch.js";

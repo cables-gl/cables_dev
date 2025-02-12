@@ -317,6 +317,6 @@ export namespace Port {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import { Op } from "./core_op.js";
-import { Link } from "./core_link.js";
+import Op from "./core_op.js";
+import Link from "./core_link.js";
 import Anim from "./anim.js";

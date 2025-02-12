@@ -587,6 +587,6 @@ export class Op extends Events {
     #private;
 }
 import { Events } from "cables-shared-client";
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";
 import Patch from "./core_patch.js";
-import { MultiPort } from "./core_port_multi.js";
+import MultiPort from "./core_port_multi.js";
