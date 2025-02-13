@@ -12,12 +12,13 @@ class HandlebarsHelper
                 return new Handlebars.SafeString(encodeURIComponent(str));
             });
 
-            Handlebars.registerHelper("md", (str) =>
+            Handlebars.registerHelper("md", (str, setOpLinks = false, linkTarget = "") =>
             {
                 if (!str) return "";
-                const escaped = Handlebars.escapeExpression(str);
-                if (marked) str = marked.parse(escaped);
-                return new Handlebars.SafeString(str);
+                let escaped = Handlebars.escapeExpression(str);
+                if (marked) escaped = marked.parse(escaped);
+                if (setOpLinks) escaped = this.setOpLinks(escaped, linkTarget);
+                return new Handlebars.SafeString(escaped);
             });
 
             Handlebars.registerHelper("round", (str) =>
@@ -221,6 +222,19 @@ class HandlebarsHelper
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
         }
+    }
+
+    setOpLinks(html, linkTarget = "")
+    {
+        html = html || "";
+        let link = "/op/";
+        if (CABLES && CABLES.platform) link = CABLES.platform.getCablesUrl() + link;
+        // eslint-disable-next-line no-useless-escape
+        const urlPattern = /\b(?:Ops\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+        let replaceValue = "<a href=\"" + link + "$&\">$&</a>";
+        if (linkTarget) replaceValue = "<a href=\"" + link + "$&\" target=\"" + linkTarget + "\">$&</a>";
+        html = html.replace(urlPattern, replaceValue);
+        return html;
     }
 }
 export default new HandlebarsHelper();
