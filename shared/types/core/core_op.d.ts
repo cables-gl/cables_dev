@@ -20,6 +20,7 @@ export default class Op extends Events {
     /** @type {Object} */
     uiAttribs: any;
     enabled: boolean;
+    onAnimFrame: any;
     preservedPortTitles: {};
     preservedPortValues: {};
     preservedPortLinks: {};
@@ -134,11 +135,11 @@ export default class Op extends Events {
      * @function inTrigger
      * @instance
      * @memberof Op
-     * @param {String} name
+     * @param {String} v
      * @return {Port} created port
      *
      */
-    inTrigger(name: string, v: any): Port;
+    inTrigger(name: any, v: string): Port;
     /**
      * @deprecated
      */
@@ -149,10 +150,10 @@ export default class Op extends Events {
      * @memberof Op
      * @instance
      * @param {String} name
-     * @param {Array} names
+     * @param {Array} v
      * @return {Port} created port
      */
-    inTriggerButton(name: string, v: any): Port;
+    inTriggerButton(name: string, v: any[]): Port;
     inUiTriggerButtons(name: any, v: any): Port;
     /**
      * @deprecated
@@ -182,10 +183,10 @@ export default class Op extends Events {
      * @instance
      * @memberof Op
      * @param {String} name
-     * @param {Boolean} value
+     * @param {Boolean|number} v
      * @return {Port} created port
      */
-    inBool(name: string, v: any): Port;
+    inBool(name: string, v: boolean | number): Port;
     /**
      * @param {string} name
      * @param {number} type
@@ -399,10 +400,10 @@ export default class Op extends Events {
      * @function outString
      * @instance
      * @memberof Op
-     * @param {String} name
+     * @param {String} v
      * @return {Port} created port
      */
-    outString(name: string, v: any): Port;
+    outString(name: any, v: string): Port;
     /**
      * create output object port
      * @function outObject
@@ -494,12 +495,10 @@ export default class Op extends Events {
     /**
      * return true if op has this error message id
      * @function hasUiError
-     * @instance
-     * @memberof Op
-     * @param {id} error id
+     * @param {String} id
      * @returns {Boolean} - has id
      */
-    hasUiError(id: any): boolean;
+    hasUiError(id: string): boolean;
     /**
      * show op error message - set message to null to remove error message
      * @function setUiError
@@ -533,11 +532,11 @@ export default class Op extends Events {
      * @function
      * @instance
      * @memberof Op
-     * @param {Port} portX
-     * @param {Port} portY
-     * @param {Port} portZ
+     * @param {Port} px
+     * @param {Port} py
+     * @param {Port} pz
      */
-    setUiAxisPorts(px: any, py: any, pz: any): void;
+    setUiAxisPorts(px: Port, py: Port, pz: Port): void;
     /**
      * remove port from op
      * @function removePort

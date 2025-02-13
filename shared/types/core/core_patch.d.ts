@@ -22,6 +22,12 @@ export type PatchConfig = any;
  * });
  */
 declare class Patch extends Events {
+    static EVENT_OP_DELETED: string;
+    static EVENT_OP_ADDED: string;
+    static EVENT_PAUSE: string;
+    static EVENT_RESUME: string;
+    static EVENT_PATCHLOADEND: string;
+    static EVENT_VARIABLES_CHANGED: string;
     /** @param {PatchConfig} cfg */
     constructor(cfg: PatchConfig);
     _log: Logger;

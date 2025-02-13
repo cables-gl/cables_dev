@@ -1,6 +1,12 @@
-/** @type {function} */
+/** @type {function}
+ * @deprecated
+*/
 export const Marker: Function;
-/** @type {function} */
+/** @type {function}
+ * @deprecated
+*/
 export const WirePoint: Function;
-/** @type {function} */
+/** @type {function}
+ * @deprecated
+*/
 export const WireCube: Function;
