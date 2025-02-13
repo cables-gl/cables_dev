@@ -10,7 +10,7 @@ class Ele
      * shortcut for document.getElementById(id)
      *
      * @param {String} id
-     * @returns {Object} DOM element
+     * @returns {HTMLElement} DOM element
      */
     byId(id)
     {
@@ -22,7 +22,7 @@ class Ele
      * shortcut for document.querySelector(id)
      *
      * @param {String} q
-     * @returns {Object} DOM element
+     * @returns {HTMLElement} DOM element
      */
     byQuery(q)
     {
@@ -33,7 +33,7 @@ class Ele
      * shortcut for document.querySelectorAll(id)
      *
      * @param {String} q
-     * @returns {Array} DOM elements
+     * @returns {NodeListOf<HTMLElement>} DOM elements
      */
     byQueryAll(q)
     {
@@ -44,7 +44,7 @@ class Ele
      * returns the first element with class
      *
      * @param {String} name
-     * @returns {Object|null} DOM element
+     * @returns {HTMLElement|null|Element} DOM element
      */
     byClass(name)
     {
@@ -58,7 +58,7 @@ class Ele
      * returns the all elements with class
      *
      * @param {String} name
-     * @returns {Array} DOM elements
+     * @returns {HTMLCollectionOf<Element>|Array} DOM elements
      */
     byClassAll(name)
     {
@@ -84,8 +84,8 @@ class Ele
     /**
      * returns the currently selected value for a <select>-element, or the text, if no value is set
      *
-     * @param {Element} el
-     * @return {*|undefined}
+     * @param {HTMLElement} el
+     * @return {any}
      */
     getSelectValue(el)
     {
@@ -98,6 +98,7 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
+     * @param {Function} cb
      */
     asButton(el, cb)
     {
@@ -108,14 +109,11 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @returns {Object|undefined} DOM element
+     * @param {Function} cb
      */
     clickable(el, cb)
     {
-        if (!el)
-        {
-            return;
-        }
+        if (!el) return;
 
         if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", 0);
         el.classList.add("eleAsButton");
@@ -126,8 +124,9 @@ class Ele
     /**
      * makes elements matching the query clickable and runs the callback on them when clicked
      *
-     * @param {Element} parent
+     * @param {HTMLElement} parent
      * @param {String} query
+     * @param {Function} cb
      */
     clickables(parent, query, cb)
     {
@@ -144,18 +143,18 @@ class Ele
     /**
      * can be used for making element keyboard usable and continue using inline onclick e.g. onkeypress="ele.keyClick(event,this)"
      *
-     * @param {Event} event
-     * @param  {Object} element
+     * @param {KeyboardEvent} event
+     * @param  {HTMLElement} el
      */
     keyClick(event, el)
     {
-        if ((event.keyCode === 13 || event.keyCode === 32) && el.onclick) el.onclick();
+        if ((event.keyCode === 13 || event.keyCode === 32) && el.onclick) el.click();
     }
 
     /**
      * remove class "hidden" from element
      *
-     * @param {Element} el
+     * @param {HTMLElement} el
      */
     show(el)
     {
@@ -165,7 +164,7 @@ class Ele
     /**
      * add class "hidden" to element
      *
-     * @param {Element} el
+     * @param {HTMLElement} el
      */
     hide(el)
     {
@@ -175,7 +174,7 @@ class Ele
     /**
      * remove or add class "hidden" from element
      *
-     * @param {Element} el
+     * @param {HTMLElement} el
      */
     toggle(el)
     {
@@ -193,7 +192,7 @@ class Ele
      * create element with given tagname
      *
      * @param {String} n
-     * @return Element
+     * @return {HTMLElement}
      */
     create(n)
     {
@@ -203,36 +202,14 @@ class Ele
     /**
      * checks if given element is "activeElement"
      *
-     * @param {Element} el
-     * @return boolean
+     * @param {HTMLElement} el
+     * @return {boolean}
      */
     hasFocus(el)
     {
         return document.activeElement == el;
     }
 
-    /**
-     * check if given elements has "display: none" set directly or indirectly
-     *
-     * @param {Element} el
-     * @return boolean
-     */
-    isVisible(el)
-    {
-        let style = window.getComputedStyle(el);
-        return !(style.display === "none");
-    }
-
-    /**
-     * append the given string to the innerHTML of the given element
-     *
-     * @param {Element} el
-     * @param {String} html
-     */
-    append(el, html)
-    {
-        el.innerHTML += html;
-    }
 }
 
 export default new Ele();

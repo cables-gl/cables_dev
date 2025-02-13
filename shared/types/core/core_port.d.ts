@@ -12,6 +12,8 @@
  * const myPort=op.inString("String Port");
  */
 declare class Port extends Events {
+    static DIR_IN: number;
+    static DIR_OUT: number;
     static TYPE_VALUE: number;
     static TYPE_NUMBER: number;
     static TYPE_FUNCTION: number;
