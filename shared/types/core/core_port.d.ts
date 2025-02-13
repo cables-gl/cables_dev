@@ -1,13 +1,28 @@
 /**
+ * @typedef {Object} PortUiAttribs
+ * @property  {String} [title=''] overwrite title of port (by default this is portname)
+ * @property  {Boolean} [greyout=false] port paramater will appear greyed out, can not be
+ * @property  {Boolean} [hidePort] port will be hidden from op
+ * @property  {Boolean} [hideParam] port params will be hidden from parameter panel
+ * @property  {Boolean} [showIndex] only for dropdowns - show value index (e.g. `0 - normal` )
+ * @property  {String} [editorSyntax] set syntax highlighting theme for editor port
+ * @property  {Boolean} [ignoreObjTypeErrors] do not auto check object types
+ * @property  {string} [group] do not set manually - group ports, usually set by op.setPortGroup...
+ * @property  {Boolean} [isAnimated] internal: do not set manually
+ * @property  {Boolean} [useVariable] internal: do not set manually
+ * @property  {string} [variableName] internal: do not set manually
+ * @property  {Number} [order] internal: do not set manually
+ * @property  {Boolean} [expose] internal: do not set manually
+ * @property  {Boolean} [multiPortManual] internal: do not set manually
+ * @property  {Number} [multiPortNum] internal: do not set manually
+ * @property  {String} [display] internal: do not set manually
+ *
+ */
+/**
  * data is coming into and out of ops through input and output ports
  * @namespace external:CABLES#Port
  * @module Port
  * @class
- * @hideconstructor
- * @param ___op
- * @param name
- * @param type
- * @param uiAttribs
  * @example
  * const myPort=op.inString("String Port");
  */
@@ -27,9 +42,9 @@ declare class Port extends Events {
      * @param {Op} ___op
      * @param {string} name
      * @param {number} type
-     * @param {Object} uiAttribs
+     * @param {PortUiAttribs} uiAttribs
      */
-    constructor(___op: Op, name: string, type: number, uiAttribs: any);
+    constructor(___op: Op, name: string, type: number, uiAttribs: PortUiAttribs);
     data: {};
     _log: Logger;
     /**
@@ -50,7 +65,7 @@ declare class Port extends Events {
     name: string;
     /** @type {number} */
     type: number;
-    uiAttribs: any;
+    uiAttribs: PortUiAttribs;
     /** @type {Anim} */
     anim: Anim;
     defaultValue: any;
@@ -71,8 +86,10 @@ declare class Port extends Events {
     apf: number;
     activityCounterStartFrame: number;
     _tempLastUiValue: any;
+    canLink: any;
+    checkLinkTimeWarnings: any;
     get parent(): Op;
-    get title(): any;
+    get title(): string;
     get op(): Op;
     set val(v: any);
     get val(): any;
@@ -119,20 +136,12 @@ declare class Port extends Events {
      * @function setUiAttribs
      * @memberof Port
      * @instance
-     * @param {Object} newAttribs
-     * <pre>
-     * title - overwrite title of port (by default this is portname)
-     * greyout - port paramater will appear greyed out, can not be
-     * hidePort - port will be hidden from op
-     * hideParam - port params will be hidden from parameter panel
-     * showIndex - only for dropdowns - show value index (e.g. `0 - normal` )
-     * editorSyntax - set syntax highlighting theme for editor port
-     * ignoreObjTypeErrors - do not auto check object types
-     * </pre>
+     * @param {PortUiAttribs} newAttribs
+
      * @example
      * myPort.setUiAttribs({greyout:true});
      */
-    setUiAttribs(newAttribs: any): void;
+    setUiAttribs(newAttribs: PortUiAttribs): void;
     /**
      * get ui attributes
      * @function getUiAttribs
@@ -140,7 +149,7 @@ declare class Port extends Events {
      * @example
      * myPort.getUiAttribs();
      */
-    getUiAttribs(): any;
+    getUiAttribs(): PortUiAttribs;
     /**
      * get ui attribute
      * @function getUiAttrib
@@ -214,7 +223,7 @@ declare class Port extends Events {
      * @instance
      * @description return port name or title
      */
-    getTitle(): any;
+    getTitle(): string;
     addLink(l: any): void;
     /**
      * @function getLinkTo
@@ -336,6 +345,72 @@ declare namespace Port {
     function portTypeNumberToString(type: number): string;
 }
 export default Port;
+export type PortUiAttribs = {
+    /**
+     * overwrite title of port (by default this is portname)
+     */
+    title?: string;
+    /**
+     * port paramater will appear greyed out, can not be
+     */
+    greyout?: boolean;
+    /**
+     * port will be hidden from op
+     */
+    hidePort?: boolean;
+    /**
+     * port params will be hidden from parameter panel
+     */
+    hideParam?: boolean;
+    /**
+     * only for dropdowns - show value index (e.g. `0 - normal` )
+     */
+    showIndex?: boolean;
+    /**
+     * set syntax highlighting theme for editor port
+     */
+    editorSyntax?: string;
+    /**
+     * do not auto check object types
+     */
+    ignoreObjTypeErrors?: boolean;
+    /**
+     * do not set manually - group ports, usually set by op.setPortGroup...
+     */
+    group?: string;
+    /**
+     * internal: do not set manually
+     */
+    isAnimated?: boolean;
+    /**
+     * internal: do not set manually
+     */
+    useVariable?: boolean;
+    /**
+     * internal: do not set manually
+     */
+    variableName?: string;
+    /**
+     * internal: do not set manually
+     */
+    order?: number;
+    /**
+     * internal: do not set manually
+     */
+    expose?: boolean;
+    /**
+     * internal: do not set manually
+     */
+    multiPortManual?: boolean;
+    /**
+     * internal: do not set manually
+     */
+    multiPortNum?: number;
+    /**
+     * internal: do not set manually
+     */
+    display?: string;
+};
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
 import Op from "./core_op.js";

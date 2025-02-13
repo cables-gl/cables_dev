@@ -47,5 +47,4 @@ export function filename(url: string): string;
 export function ajaxSync(url: any, cb: any, method: any, post: any, contenttype: any): void;
 export function ajax(url: any, cb: any, method: any, post: any, contenttype: any, jsonP: any, headers?: {}, options?: {}): void;
 export function request(options: any): void;
-export function keyCodeToName(keyCode: any): any;
 export function logErrorConsole(initiator: any, ...args: any[]): void;

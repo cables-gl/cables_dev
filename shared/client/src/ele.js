@@ -84,7 +84,7 @@ class Ele
     /**
      * returns the currently selected value for a <select>-element, or the text, if no value is set
      *
-     * @param {HTMLElement} el
+     * @param {HTMLElement|Element} el
      * @return {any}
      */
     getSelectValue(el)
@@ -124,7 +124,7 @@ class Ele
     /**
      * makes elements matching the query clickable and runs the callback on them when clicked
      *
-     * @param {HTMLElement} parent
+     * @param {HTMLElement|Element} parent
      * @param {String} query
      * @param {Function} cb
      */
@@ -154,7 +154,7 @@ class Ele
     /**
      * remove class "hidden" from element
      *
-     * @param {HTMLElement} el
+     * @param {HTMLElement|Element} el
      */
     show(el)
     {
@@ -164,7 +164,7 @@ class Ele
     /**
      * add class "hidden" to element
      *
-     * @param {HTMLElement} el
+     * @param {HTMLElement|Element} el
      */
     hide(el)
     {
@@ -174,7 +174,7 @@ class Ele
     /**
      * remove or add class "hidden" from element
      *
-     * @param {HTMLElement} el
+     * @param {HTMLElement|Element} el
      */
     toggle(el)
     {
@@ -202,7 +202,7 @@ class Ele
     /**
      * checks if given element is "activeElement"
      *
-     * @param {HTMLElement} el
+     * @param {HTMLElement|Element} el
      * @return {boolean}
      */
     hasFocus(el)

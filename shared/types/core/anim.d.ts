@@ -1,4 +1,10 @@
 /**
+ * configuration object for loading a patch
+ * @typedef {Object} AnimCfg
+ * @property {number} [defaultEasing] use easing index as default
+ * @property {string} [name] anim name
+ */
+/**
  * Keyframed interpolated animation.
  *
  * @class
@@ -39,9 +45,9 @@ declare class Anim extends Events {
     static EASING_QUINT_INOUT: number;
     static EASINGNAMES: string[];
     /**
-     * @param {Object} cfg
+     * @param {AnimCfg} cfg
      */
-    constructor(cfg: any);
+    constructor(cfg: AnimCfg);
     id: string;
     keys: any[];
     onChange: any;
@@ -50,11 +56,8 @@ declare class Anim extends Events {
     _log: Logger;
     _lastKeyIndex: number;
     _cachedIndex: number;
-    name: any;
+    name: string;
     /**
-     * @member defaultEasing
-     * @memberof Anim
-     * @instance
      * @type {Number}
      */
     defaultEasing: number;
@@ -179,6 +182,19 @@ declare namespace Anim {
     function slerpQuaternion(time: number, q: number, animx: number, animy: number, animz: number, animw: number): number;
 }
 export default Anim;
+/**
+ * configuration object for loading a patch
+ */
+export type AnimCfg = {
+    /**
+     * use easing index as default
+     */
+    defaultEasing?: number;
+    /**
+     * anim name
+     */
+    name?: string;
+};
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
 import AnimKey from "./anim_key.js";

@@ -36,7 +36,6 @@ declare namespace CABLES {
     export let ajaxSync: (url: any, cb: any, method: any, post: any, contenttype: any) => void;
     export let ajax: (url: any, cb: any, method: any, post: any, contenttype: any, jsonP: any, headers?: {}, options?: {}) => void;
     export let request: (options: any) => void;
-    export let keyCodeToName: (keyCode: any) => any;
     export let logErrorConsole: (initiator: any, ...args: any[]) => void;
     export let isNumeric: typeof utils.isNumeric;
     export let isArray: typeof utils.isArray;

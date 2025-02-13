@@ -1,3 +1,23 @@
+export type CglMeshAttributeOptions = {
+    instanced?: number;
+    cb?: Function;
+    type?: Function;
+};
+export type CglMeshOptions = {
+    glPrimitive?: number;
+    opId?: string;
+};
+/**
+ * @typedef {Object} CglMeshAttributeOptions
+ * @property {Number} [instanced]
+ * @property {Function} [cb]
+ * @property {Function} [type]
+ */
+/**
+ * @typedef {Object} CglMeshOptions
+ * @property {Number} [glPrimitive]
+ * @property {String} [opId]
+ */
 /**
  * webgl renderable 3d object
  * @class
@@ -15,17 +35,17 @@
  */
 export class Mesh extends CgMesh {
     /**
-     * @param {Context} _cgl cgl
+     * @param {CgCanvas} _cgl cgl
      * @param {Geometry} __geom geometry
-     * @param {Object} _options
+     * @param {CglMeshOptions|Number} _options
      */
-    constructor(_cgl: Context, __geom: Geometry, _options?: any);
-    _cgl: Context;
+    constructor(_cgl: CgCanvas, __geom: Geometry, _options?: CglMeshOptions | number);
+    _cgl: CgCanvas;
     _log: Logger;
     _bufVertexAttrib: {
         buffer: any;
         name: string;
-        cb: any;
+        cb: Function;
         itemSize: number;
         numItems: number;
         startItem: number;
@@ -81,9 +101,9 @@ export class Mesh extends CgMesh {
      * @param {String} name
      * @param {Array} array
      * @param {Number} itemSize Integer
-     * @param {Object} options
+     * @param {CglMeshAttributeOptions} options
      */
-    setAttribute(name: string, array: any[], itemSize: number, options: any): any;
+    setAttribute(name: string, array: any[], itemSize: number, options?: CglMeshAttributeOptions): any;
     getAttributes(): any[];
     /**
      * @function updateTexCoords
@@ -149,5 +169,6 @@ export namespace MESH {
     let lastMesh: any;
 }
 import CgMesh from "../cg/cg_mesh.js";
+import { CgCanvas } from "../cg/cg_canvas.js";
 import { Logger } from "cables-shared-client";
 import { Geometry } from "../cg/cg_geom.js";

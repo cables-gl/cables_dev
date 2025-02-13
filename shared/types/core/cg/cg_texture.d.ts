@@ -1,5 +1,14 @@
+/**
+ * @typedef {Object} CglTextureOptions
+ * @property {number} [width]
+ * @property {number} [height]
+ * @property {string} [pixelformat]
+ */
 declare class CgTexture {
-    constructor(options?: {});
+    /**
+     * @param {CglTextureOptions} options={}
+     */
+    constructor(options?: CglTextureOptions);
     id: string;
     width: number;
     height: number;
@@ -36,3 +45,8 @@ declare namespace CgTexture {
     let PIXELFORMATS: string[];
 }
 export default CgTexture;
+export type CglTextureOptions = {
+    width?: number;
+    height?: number;
+    pixelformat?: string;
+};

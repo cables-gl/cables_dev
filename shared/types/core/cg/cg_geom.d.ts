@@ -37,8 +37,11 @@
  *
  */
 export class Geometry {
-    constructor(name: any);
-    name: any;
+    /**
+     * @param {String} name
+     */
+    constructor(name: string);
+    name: string;
     _log: Logger;
     faceVertCount: number;
     glPrimitive: any;

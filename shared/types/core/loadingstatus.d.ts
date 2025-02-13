@@ -7,7 +7,10 @@
  * @param patch
  */
 export default class LoadingStatus extends Events {
-    constructor(patch: any);
+    /**
+     * @param {Patch} patch
+     */
+    constructor(patch: Patch);
     _log: Logger;
     _loadingAssets: {};
     _cbFinished: any[];
@@ -17,7 +20,7 @@ export default class LoadingStatus extends Events {
     _countFinished: number;
     _order: number;
     _startTime: number;
-    _patch: any;
+    _patch: Patch;
     _wasFinishedPrinted: boolean;
     _loadingAssetTaskCb: boolean;
     setOnFinishedLoading(cb: any): void;
@@ -42,3 +45,4 @@ export default class LoadingStatus extends Events {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
+import Patch from "./core_patch.js";

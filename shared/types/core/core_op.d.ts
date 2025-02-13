@@ -1,3 +1,14 @@
+/**
+ * configuration object for loading a patch
+ * @typedef {Object} OpUiAttribs
+ * @property {string} [title] overwrite op title
+ * @property  {String} [title=''] overwrite title of port (by default this is portname)
+ * @property {object} [storage] internal - do not use manualy
+ * @property {boolean} [working] internal - do not use manualy
+ * @property {object} [uierrors] internal - do not use manualy - use op.setUiError
+ * @property {string} [color]
+ * @property {string} [comment]
+ */
 export default class Op extends Events {
     static OP_VERSION_PREFIX: string;
     /**
@@ -17,8 +28,8 @@ export default class Op extends Events {
     /** @type {Array<Port>} */
     portsIn: Array<Port>;
     portsInData: any[];
-    /** @type {Object} */
-    uiAttribs: any;
+    /** @type {OpUiAttribs} */
+    uiAttribs: OpUiAttribs;
     enabled: boolean;
     onAnimFrame: any;
     preservedPortTitles: {};
@@ -72,6 +83,22 @@ export default class Op extends Events {
     renderVizLayer: any;
     set name(n: string);
     get name(): string;
+    /**
+     * @param {string} id
+     * @param {string} txt
+     * @param {number} level
+     */
+    setUiError(id: string, txt: string, level: number): void;
+    /**
+     * show op error message - set message to null to remove error message
+     * @function setUiError
+     * @instance
+     * @memberof Op
+     * @param {string} id error id
+     * @param {string} txt text message
+     * @param {number} level level
+     */
+    setUiError(id: string, txt: string, level: number): void;
     set _objName(on: any);
     get objName(): string;
     get shortName(): string;
@@ -100,13 +127,13 @@ export default class Op extends Events {
      * extendTitle - op title extension, e.g. [ + ]
      * </pre>
      * @function setUiAttrib
-     * @param {Object} newAttribs, e.g. {"attrib":value}
+     * @param {OpUiAttribs} newAttribs, e.g. {"attrib":value}
      * @memberof Op
      * @instance
      * @example
      * op.setUiAttrib({"extendTitle":str});
      */
-    setUiAttrib(newAttribs: any): void;
+    setUiAttrib(newAttribs: OpUiAttribs): void;
     /**
      *  @deprecated
      */
@@ -116,9 +143,9 @@ export default class Op extends Events {
      */
     uiAttr(a: any): void;
     /**
-     *  @private
+     * @param {OpUiAttribs} newAttribs
      */
-    private _setUiAttrib;
+    _setUiAttrib(newAttribs: OpUiAttribs): void;
     getName(): any;
     /**
      * @param {Port} p
@@ -499,16 +526,6 @@ export default class Op extends Events {
      * @returns {Boolean} - has id
      */
     hasUiError(id: string): boolean;
-    /**
-     * show op error message - set message to null to remove error message
-     * @function setUiError
-     * @instance
-     * @memberof Op
-     * @param {string} id error id
-     * @param {string} txt text message
-     * @param {number} level level
-     */
-    setUiError(id: string, txt: string, level: number): void;
     setError(id: any, txt: any): void;
     /**
      * enable/disable op
@@ -585,6 +602,29 @@ export default class Op extends Events {
     isCurrentUiOp(): boolean;
     #private;
 }
+/**
+ * configuration object for loading a patch
+ */
+export type OpUiAttribs = {
+    /**
+     * overwrite op title
+     */
+    title?: string;
+    /**
+     * internal - do not use manualy
+     */
+    storage?: object;
+    /**
+     * internal - do not use manualy
+     */
+    working?: boolean;
+    /**
+     * internal - do not use manualy - use op.setUiError
+     */
+    uierrors?: object;
+    color?: string;
+    comment?: string;
+};
 import { Events } from "cables-shared-client";
 import Port from "./core_port.js";
 import Patch from "./core_patch.js";
