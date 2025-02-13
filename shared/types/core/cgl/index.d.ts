@@ -35,7 +35,7 @@ export const CGL: {
     Shader: typeof Shader;
     Uniform: typeof Uniform;
     MESHES: typeof MESHES;
-    Context: typeof Context;
+    Context: typeof CglContext;
     Texture: typeof Texture;
     TextureEffect: typeof TextureEffect;
     isWindows: any;
@@ -55,7 +55,7 @@ import { ShaderLibMods } from "./cgl_shader_lib.js";
 import { Shader } from "./cgl_shader.js";
 import { Uniform } from "./cgl_shader_uniform.js";
 import { MESHES } from "./cgl_simplerect.js";
-import { Context } from "./cgl_state.js";
+import CglContext from "./cgl_state.js";
 import { Texture } from "./cgl_texture.js";
 import { TextureEffect } from "./cgl_textureeffect.js";
 import { ProfileData } from "./cgl_profiledata.js";

@@ -1,4 +1,4 @@
-export class MultiPort extends Port {
+export default class MultiPort extends Port {
     constructor(__parent: any, name: any, type: any, dir: any, uiAttribs: any, uiAttribsPorts: any);
     ports: any[];
     direction: any;
@@ -14,4 +14,4 @@ export class MultiPort extends Port {
     incDec: (incDir: any) => void;
     toggleManual: () => void;
 }
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";

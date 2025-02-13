@@ -64,7 +64,7 @@ declare class Patch extends Events {
     _variables: {};
     _variableListeners: any[];
     vars: any;
-    cgl: Context;
+    cgl: CglContext;
     cgp: any;
     _subpatchOpCache: {};
     isPlaying(): boolean;
@@ -221,14 +221,10 @@ declare class Patch extends Events {
     getVar(name: string): Variable;
     deleteVar(name: any): void;
     /**
-     * @function getVars
-     * @memberof Patch
-     * @instance
-     * @param t
-     * @return {Array<Variable>} variables
-     * @function
+     * @param {number} t
+     * @returns {any}
      */
-    getVars(t: any): Array<Variable>;
+    getVars(t: number): any;
     /**
      * @function preRenderOps
      * @memberof Patch
@@ -262,8 +258,8 @@ declare namespace Patch {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import { Op } from "./core_op.js";
+import Op from "./core_op.js";
 import { Timer } from "./timer.js";
-import { Profiler } from "./core_profiler.js";
-import { LoadingStatus } from "./loadingstatus.js";
-import { Context } from "./cgl/cgl_state.js";
+import Profiler from "./core_profiler.js";
+import LoadingStatus from "./loadingstatus.js";
+import CglContext from "./cgl/cgl_state.js";

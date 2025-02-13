@@ -1,16 +1,13 @@
 export default PatchVariable;
-/**
- * @type {Object}
- * @name PatchVariable
- * @param {String} name
- * @param {String|Number} value
- * @memberof Patch
- * @constructor
- */
 declare class PatchVariable extends Events {
-    constructor(name: any, val: any, type: any);
-    _name: any;
-    type: any;
+    /**
+     * @param {String} name
+     * @param {String|Number} val
+     * @param {number} type
+     */
+    constructor(name: string, val: string | number, type: number);
+    _name: string;
+    type: number;
     /**
      * keeping this for backwards compatibility in older
      * exports before using eventtarget
@@ -37,10 +34,10 @@ declare class PatchVariable extends Events {
      * @memberof PatchVariable
      * @instance
      * @param v
-     * @returns {String|Number|Boolean}
+     * @returns {any}
      * @function
      */
-    setValue(v: any): string | number | boolean;
+    setValue(v: any): any;
     _v: any;
 }
 import { Events } from "cables-shared-client";

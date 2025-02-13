@@ -18,7 +18,7 @@
  *
  * @namespace external:CGL
  * @class
- * @param {Shader} shader
+ * @param {CgShader} shader
  * @param {String} [type=f]
  * @param {String} name
  * @param {Number|Port} value  can be a Number,Matrix or Port

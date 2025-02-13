@@ -31,26 +31,8 @@ export function uniqueArray(arr: Array<any>): any[];
 export function getShortOpName(fullname: string): string;
 export function shuffleArray(array: any[] | Float32Array): any[] | Float32Array;
 export function shortId(): string;
-/**
- * generate a UUID
- * @function uuid
- * @return {String} generated UUID
- * @static
- */
 export function uuid(): string;
-/**
- * generate a UUID
- * @function uuid
- * @return {String} generated UUID
- * @static
- */
 export function generateUUID(): string;
-/**
- * @see http://stackoverflow.com/q/7616461/940217
- * @param {string} str
- * @param {string} prefix
- * @return {string}
- */
 export function prefixedHash(str: string, prefix?: string): string;
 export function simpleId(): number;
 export function smoothStep(perc: number): number;

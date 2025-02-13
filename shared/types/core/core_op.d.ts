@@ -1,4 +1,5 @@
-export class Op extends Events {
+export default class Op extends Events {
+    static OP_VERSION_PREFIX: string;
     /**
      * Description
      * @param {Patch} _patch
@@ -16,7 +17,8 @@ export class Op extends Events {
     /** @type {Array<Port>} */
     portsIn: Array<Port>;
     portsInData: any[];
-    uiAttribs: {};
+    /** @type {Object} */
+    uiAttribs: any;
     enabled: boolean;
     preservedPortTitles: {};
     preservedPortValues: {};
@@ -28,7 +30,8 @@ export class Op extends Events {
     };
     shouldWork: {};
     hasUiErrors: boolean;
-    uiErrors: {};
+    /** @type {Object} */
+    uiErrors: any;
     hasAnimPort: boolean;
     id: string;
     onAddPort: any;
@@ -314,8 +317,6 @@ export class Op extends Events {
     getPortVisibleIndex(p: any): number;
     /**
      * create a array input port
-     * @function inArray
-     * @memberof Op
      * @param {String} name
      * @param {array} v
      * @param {number} stride
@@ -453,12 +454,11 @@ export class Op extends Events {
      */
     getPort(name: string, lowerCase: boolean): Port;
     /**
-     * Description
      * @param {string} name
      * @param {boolean} lowerCase
      * @returns {Port}
      */
-    getPortByName(name: string, lowerCase: boolean): Port;
+    getPortByName(name: string, lowerCase?: boolean): Port;
     /**
      * return port by the name id
      * @function getPortById
@@ -507,9 +507,9 @@ export class Op extends Events {
      * @memberof Op
      * @param {string} id error id
      * @param {string} txt text message
-     * @param {Integer} level level
+     * @param {number} level level
      */
-    setUiError(id: string, txt: string, level: Integer): void;
+    setUiError(id: string, txt: string, level: number): void;
     setError(id: any, txt: any): void;
     /**
      * enable/disable op
@@ -587,6 +587,6 @@ export class Op extends Events {
     #private;
 }
 import { Events } from "cables-shared-client";
-import { Port } from "./core_port.js";
+import Port from "./core_port.js";
 import Patch from "./core_patch.js";
-import { MultiPort } from "./core_port_multi.js";
+import MultiPort from "./core_port_multi.js";

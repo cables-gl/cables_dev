@@ -5,6 +5,9 @@ export class CgShader extends Events {
     _moduleNames: any[];
     _modules: any[];
     _moduleNumId: number;
+    _needsRecompile: boolean;
+    _compileReason: string;
+    setWhyCompile(reason: any): void;
     /**
      * easily enable/disable a define without a value
      * @param {String} name
@@ -14,10 +17,9 @@ export class CgShader extends Events {
     /**
      * add a define to a shader, e.g.  #define DO_THIS_THAT 1
      * @param {String} name
-     * @param {String} value (can be empty)
+     * @param {any} value (can be empty)
      */
-    define(name: string, value: string): void;
-    _needsRecompile: boolean;
+    define(name: string, value?: any): void;
     getDefines(): any[];
     getDefine(name: any): any;
     /**
@@ -56,4 +58,4 @@ export class CgShader extends Events {
     replaceModuleSrc(): void;
 }
 import { Events } from "cables-shared-client";
-import { Port } from "../core_port.js";
+import Port from "../core_port.js";

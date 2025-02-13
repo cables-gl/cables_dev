@@ -33,4 +33,4 @@ declare class CgUniform {
     updateFromPort(): void;
 }
 import { Logger } from "cables-shared-client";
-import { Port } from "../core_port.js";
+import Port from "../core_port.js";

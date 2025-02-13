@@ -2,7 +2,7 @@
  * A Texture
  * @namespace external:CGL
  * @class
- * @param {Context} __cgl cgl
+ * @param {CGState} __cgl cgl
  * @param {Object} options
  * @hideconstructor
  * @example
@@ -86,7 +86,7 @@ export class Texture extends CgTexture {
      * @param {Object} img image
      * @param {Number} filter
      */
-    initTexture(img: any, filter: number): void;
+    initTexture(img: any, filter?: number): void;
     /**
      * delete texture. use this when texture is no longer needed
      * @function delete
@@ -127,31 +127,31 @@ export namespace Texture {
      * @static
      * @memberof Texture
      * @description load an image from an url
-     * @param {Context} cgl
+     * @param {CGState} cgl
      * @param {String} url
      * @param {Function} finishedCallback
      * @param {Object} settings
      * @return {Texture}
      */
-    function load(cgl: Context, url: string, finishedCallback: Function, settings: any): Texture;
+    function load(cgl: CGState, url: string, finishedCallback: Function, settings: any): Texture;
     /**
      * @static
      * @function getTempTexture
      * @memberof Texture
      * @description returns the default temporary texture (grey diagonal stipes)
-     * @param {Context} cgl
+     * @param {CGState} cgl
      * @return {Texture}
      */
-    function getTempTexture(cgl: Context): Texture;
+    function getTempTexture(cgl: CGState): Texture;
     /**
      * @static
      * @function getErrorTexture
      * @memberof Texture
      * @description returns the default temporary texture (grey diagonal stipes)
-     * @param {Context} cgl
+     * @param {CGState} cgl
      * @return {Texture}
      */
-    function getErrorTexture(cgl: Context): Texture;
+    function getErrorTexture(cgl: CGState): Texture;
     /**
      * @function getEmptyTexture
      * @memberof Texture
@@ -214,11 +214,11 @@ export namespace Texture {
      * @function createFromImage
      * @memberof Texture
      * @description create texturem from image data (e.g. image or canvas)
-     * @param {Context} cgl
+     * @param {CGState} cgl
      * @param {Object} img image
      * @param {Object} options
      */
-    function createFromImage(cgl: Context, img: any, options: any): Texture;
+    function createFromImage(cgl: CGState, img: any, options: any): Texture;
     function fromImage(cgl: any, img: any, filter: any, wrap: any): Texture;
     /**
      * @static
@@ -255,3 +255,4 @@ export namespace Texture {
 }
 import CgTexture from "../cg/cg_texture.js";
 import { Logger } from "cables-shared-client";
+import { CGState } from "../cg/cg_state.js";

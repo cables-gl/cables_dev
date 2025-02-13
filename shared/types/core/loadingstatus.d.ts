@@ -6,7 +6,7 @@
  * @class
  * @param patch
  */
-export class LoadingStatus extends Events {
+export default class LoadingStatus extends Events {
     constructor(patch: any);
     _log: Logger;
     _loadingAssets: {};
