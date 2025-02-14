@@ -31,7 +31,7 @@ export const CGL: {
     MatrixStack: typeof MatrixStack;
     Mesh: typeof Mesh;
     MESH: typeof MESH;
-    ShaderLibMods: typeof ShaderLibMods;
+    ShaderLibMods: any;
     Shader: typeof Shader;
     Uniform: typeof Uniform;
     MESHES: typeof MESHES;
@@ -51,7 +51,6 @@ import { BoundingBox } from "../cg/cg_boundingbox.js";
 import { MatrixStack } from "../cg/cg_matrixstack.js";
 import { Mesh } from "./cgl_mesh.js";
 import { MESH } from "./cgl_mesh.js";
-import { ShaderLibMods } from "./cgl_shader_lib.js";
 import { Shader } from "./cgl_shader.js";
 import { Uniform } from "./cgl_shader_uniform.js";
 import { MESHES } from "./cgl_simplerect.js";

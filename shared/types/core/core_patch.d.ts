@@ -1,7 +1,4 @@
 export default Patch;
-/**
- * configuration object for loading a patch
- */
 export type PatchConfig = any;
 /**
  * Patch class, contains all operators,values,links etc. manages loading and running of the whole patch
@@ -21,7 +18,33 @@ export type PatchConfig = any;
  *     glslPrecision:'highp'
  * });
  */
+/**
+ * @typedef {Object} PatchConfig
+ * @hideconstructor
+ * @property {String} [prefixAssetPath=''] prefix for path to assets
+ * @property {String} [assetPath=''] path to assets
+ * @property {String} [jsPath=''] path to javascript files
+ * @property {String} [glCanvasId='glcanvas'] dom element id of canvas element
+ * @property {Function} [onError=null] called when an error occurs
+ * @property {Function} [onFinishedLoading=null] called when patch finished loading all assets
+ * @property {Function} [onFirstFrameRendered=null] called when patch rendered it's first frame
+ * @property {Boolean} [glCanvasResizeToWindow=false] resize canvas automatically to window size
+ * @property {Boolean} [doRequestAnimation=true] do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
+ * @property {Boolean} [clearCanvasColor=true] clear canvas in transparent color every frame
+ * @property {Boolean} [clearCanvasDepth=true] clear depth every frame
+ * @property {Boolean} [glValidateShader=true] enable/disable validation of shaders *
+ * @property {Boolean} [silent=false]
+ * @property {Number} [fpsLimit=0] 0 for maximum possible frames per second
+ * @property {String} [glslPrecision='mediump'] default precision for glsl shader
+ *
+ */
 declare class Patch extends Events {
+    static EVENT_OP_DELETED: string;
+    static EVENT_OP_ADDED: string;
+    static EVENT_PAUSE: string;
+    static EVENT_RESUME: string;
+    static EVENT_PATCHLOADEND: string;
+    static EVENT_VARIABLES_CHANGED: string;
     /** @param {PatchConfig} cfg */
     constructor(cfg: PatchConfig);
     _log: Logger;

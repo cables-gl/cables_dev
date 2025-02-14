@@ -1,1 +1,2 @@
-export const ShaderLibMods: typeof ShaderLibMods;
+/** @type {Object} */
+export const ShaderLibMods: any;

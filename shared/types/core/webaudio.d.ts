@@ -71,14 +71,14 @@ export namespace WEBAUDIO {
     function createAudioParamInPort(op: Types.Op, portName: string, audioNode: any, options: any, defaultValue: any): (typeof import("./core_port.js").default | undefined);
     /**
      * Loads an audio file and updates the loading indicators when cables is run in the editor.
-     * @param {CABLES.Patch} patch - The cables patch, when called from inside an op this is `op.patch`
+     * @param {Patch} patch - The cables patch, when called from inside an op this is `op.patch`
      * @param {string} url - The url of the audio file to load
      * @param {function} onFinished - The callback to be called when the loading is finished, passes the AudioBuffer
      * @param {function} onError - The callback when there was an error loading the file, the rror message is passed
      * @param loadingTask
      * @see {@link https://developer.mozilla.org/de/docs/Web/API/AudioContext/decodeAudioData}
      */
-    function loadAudioFile(patch: typeof import("./core_patch.js").default, url: string, onFinished: Function, onError: Function, loadingTask: any): void;
+    function loadAudioFile(patch: Patch, url: string, onFinished: Function, onError: Function, loadingTask: any): void;
     /**
      * Checks if the passed time is a valid time to be used in any of the Tone.js ops.
      * @param {(string|number)} t - The time to check
@@ -92,3 +92,4 @@ export namespace WEBAUDIO {
      */
     function isValidToneNote(note: string): boolean;
 }
+import Patch from "./core_patch.js";

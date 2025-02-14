@@ -152,6 +152,12 @@ export default class SharedOpsUtil extends SharedUtil
         return !!op.storage.subPatchVer;
     }
 
+    hasSubPatchOpAttachment(opDoc)
+    {
+        if (!opDoc || !opDoc.attachmentFiles) return false;
+        return opDoc.attachmentFiles.includes(this.SUBPATCH_ATTACHMENT_NAME);
+    }
+
     getOpAbsoluteJsonFilename(opName)
     {
         const p = this.getOpAbsolutePath(opName);

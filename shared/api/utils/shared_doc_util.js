@@ -1,6 +1,5 @@
 import fs from "fs";
 import jsonfile from "jsonfile";
-import { marked } from "marked";
 import path from "path";
 
 import SharedUtil from "./shared_util.js";
@@ -218,15 +217,6 @@ export default class SharedDocUtil extends SharedUtil
             }
         }
         return projectDependencies;
-    }
-
-    setOpLinks(str)
-    {
-        str = str || "";
-        // eslint-disable-next-line no-useless-escape
-        const urlPattern = /\b(?:Ops\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
-        str = str.replace(urlPattern, "<a href=\"/op/$&\" target=\"_blank\">$&</a>");
-        return str;
     }
 
     getOpDocs(filterOldVersions, filterDeprecated)
@@ -565,10 +555,15 @@ export default class SharedDocUtil extends SharedUtil
             const mdFile = path.join(this._opsUtil.getOpSourceDir(opName), opName + ".md");
             try
             {
-                let doc = fs.readFileSync(mdFile);
-                doc = this.setOpLinks(marked(doc + "" || ""));
-                doc = (doc + "").replace(/src="/g, "src=\"https://cables.gl/ops/" + opName + "/");
-                docObj.content = doc;
+                const mdFileContent = fs.readFileSync(mdFile);
+                if (mdFileContent)
+                {
+                    docObj.content = mdFileContent.toString();
+                }
+                else
+                {
+                    docObj.content = "";
+                }
             }
             catch (e) {}
         }
