@@ -165,6 +165,7 @@ export default class SharedDocUtil extends SharedUtil
         for (let i = 0; i < opDocs.length; i++)
         {
             const opDoc = opDocs[i];
+            if (!opDoc.name || !usedOpsNames.includes(opDoc.name)) continue;
             if (opDoc.dependencies)
             {
                 const opDeps = opDoc.dependencies.filter((dep) => { return dep.type && dep.type !== "npm"; });
