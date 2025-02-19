@@ -825,8 +825,9 @@ export default class SharedExportService extends SharedUtil
         this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
         libScripts = libScripts.concat(this._getCoreLibUrls(coreLibs));
+
         const depScripts = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type === "commonjs"; }), this.finalJsPath);
-        const depFiles = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type !== "commonjs" && d.type !== "op"; }), this.finalJsPath);
+        const depFiles = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type !== "npm" && d.type !== "op"; }), this.finalJsPath);
 
         let libsCoreFile = this._cables.getUiDistPath() + "js/libs.core.js";
         const coreFile = path.join(this._cables.getUiDistPath(), options.coreSrcFile);
@@ -891,7 +892,8 @@ export default class SharedExportService extends SharedUtil
 
             for (let f = 0; f < depFiles.length; f++)
             {
-                if (depFiles[f].file) this.append(fs.readFileSync(depFiles[f].file, "utf8"), { "name": depFiles[f].src });
+                const fileData = depFiles[f];
+                if (fileData.file && fileData.type !== "commonjs") this.append(fs.readFileSync(fileData.file, "utf8"), { "name": fileData.src });
             }
         }
         else
@@ -908,9 +910,10 @@ export default class SharedExportService extends SharedUtil
             opsCode += "});\n";
             this.append(opsCode, { "name": this.finalJsPath + "ops.js" });
 
-            for (let f = 0; f < libScripts.length; f++)
+            for (let f = 0; f < depFiles.length; f++)
             {
-                if (libScripts[f].file) this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
+                const fileData = depFiles[f];
+                if (fileData.file) this.append(fs.readFileSync(fileData.file, "utf8"), { "name": fileData.src });
             }
         }
 
