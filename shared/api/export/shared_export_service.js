@@ -14,13 +14,46 @@ import { UtilProvider } from "../utils/util_provider.js";
  * abstract class to handle different exports, see implementations like HtmlExport
  *
  * @abstract
+ *
+ * @param {UtilProvider} utilProvider
+ * @param {Object} exportOptions
+ * @param {"true"|"false"} exportOptions.hideMadeWithCables
+ * @param {"true"|"false"} exportOptions.combineJS
+ * @param {String} exportOptions.jsonName
+ * @param {"true"|"false"} exportOptions.removeIndexHtml
+ * @param {"true"|"false"} exportOptions.minify
+ * @param {"true"|"false"} exportOptions.sourcemaps
+ * @param {String} exportOptions.assets
+ * @param {"true"|"false"} exportOptions.minifyGlsl
+ * @param {Object} user
+ *
+ * @property {Object} options
+ * @property {Boolean} [ignoreBackupBeforeExport=false]
+ * @property {Boolean} options.hideMadeWithCables
+ * @property {Boolean} options.combineJS
+ * @property {String} options.jsonName
+ * @property {Boolean} options.removeIndexHtml
+ * @property {Boolean} options.flat
+ * @property {Boolean} [options.minify=true]
+ * @property {Boolean} options.sourcemaps
+ * @property {"auto"|"all"|"none"} [options.handleAssets="auto"]
+ * @property {String} options.minifyGlsl
+ * @property {Boolean} options.opDocs
+ * @property {Boolean} options.rewriteAssetPorts
+ * @property {Boolean} options.flattenAssetNames
+ * @property {Boolean} options.assetsInSubdirs
+ * @property {String} [options.coreSrcFile="js/cables.js"]
+ * @property {String} [options.coreSrcMapFile="js/cables.js.map"]
+ * @property {String} [options.template="/patchview/patchview_export.html"]
+ *
  */
 export default class SharedExportService extends SharedUtil
 {
-    constructor(utilProvider, exportOptions)
+    constructor(utilProvider, exportOptions, user)
     {
         super(utilProvider);
 
+        this.user = user;
         this.exportLog = [];
         this.assetInfos = [];
         this.finalAssetPath = "assets/";
@@ -38,13 +71,16 @@ export default class SharedExportService extends SharedUtil
         this.options.handleAssets = exportOptions.assets || "auto";
         this.options.minifyGlsl = exportOptions.minifyGlsl;
 
+        this.options.ignoreBackupBeforeExport = exportOptions.ignoreBackupBeforeExport || false;
+
+        this.options.template = "/patchview/patchview_export.html";
+        this.options.coreSrcFile = "js/cables.js";
+        this.options.coreSrcMapFile = "js/cables.js.map";
+
         this.options.opDocs = false;
         this.options.rewriteAssetPorts = true;
         this.options.flattenAssetNames = true;
         this.options.assetsInSubdirs = false;
-
-        this.options.coreSrcFile = "js/cables.js";
-        this.options.coreSrcMapFile = "js/cables.js.map";
 
         this.startTimeExport = Date.now();
     }
@@ -189,25 +225,35 @@ export default class SharedExportService extends SharedUtil
 
     createZip(project, files, callbackFinished)
     {
+        if (!this.archive)
+        {
+            const outputErr = "no archiver found in subclass: " + this.getName();
+            this._log.error("export error", outputErr);
+            const result = { "error": outputErr };
+            callbackFinished(result);
+            return;
+        }
+
         const zipFileName = this.getZipFileName(project);
         const finalZipPath = path.join(this._cables.getAssetPath(), String(project._id), "/_exports/");
-        const finalZipFileName = finalZipPath + zipFileName;
+        const zipLocation = path.join(finalZipPath, zipFileName);
 
         mkdirp.sync(finalZipPath);
-        const output = fs.createWriteStream(finalZipFileName);
+        const output = fs.createWriteStream(zipLocation);
 
-        this._log.info("finalZipFileName", finalZipFileName);
+        this._log.info("zipLocation", zipLocation);
 
         output.on("close", () =>
         {
-            this._log.info("exported file " + finalZipFileName + " / " + this.archive.pointer() / 1000000.0 + " mb");
+            this._log.info("exported file " + zipLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
 
             const result = {};
-            result.size = this.archive.pointer() / 1000000.0;
+            result.size = this.archive.pointer() / 1024.0 / 1024.0;
             const assetPathUrl = path.join(this._projectsUtil.getAssetPathUrl(project._id), "/_exports/");
             const downloadUrl = this._cables.getConfig().sandbox.url + assetPathUrl;
 
             result.path = assetPathUrl + zipFileName;
+            result.zipLocation = zipLocation;
             result.urls = {
                 "downloadUrl": downloadUrl + encodeURIComponent(zipFileName)
             };
@@ -606,7 +652,7 @@ export default class SharedExportService extends SharedUtil
                         }
 
                         // add html
-                        let template = options.template || "/patchview/patchview_export.html";
+                        let template = options.template;
                         this._log.info("exporting with html template from", template);
                         this._addProjectHtmlCode(proj, options, libs, coreLibs, template, dependencies);
 
@@ -775,7 +821,14 @@ export default class SharedExportService extends SharedUtil
             "service": this.constructor.getName(),
             "exportNumber": exportNumber
         };
-        proJson = JSON.stringify(proJson);
+        if (options.minify && options.minify !== "false")
+        {
+            proJson = JSON.stringify(proJson);
+        }
+        else
+        {
+            proJson = JSON.stringify(proJson, null, 4);
+        }
         return proJson;
     }
 
