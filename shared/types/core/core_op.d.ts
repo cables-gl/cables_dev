@@ -8,6 +8,8 @@
  * @property {object} [uierrors] internal - do not use manualy - use op.setUiError
  * @property {string} [color]
  * @property {string} [comment]
+ * @property {object} [translate]
+ * @property {string} [subpatch]
  */
 export default class Op extends Events {
     static OP_VERSION_PREFIX: string;
@@ -83,22 +85,6 @@ export default class Op extends Events {
     renderVizLayer: any;
     set name(n: string);
     get name(): string;
-    /**
-     * @param {string} id
-     * @param {string} txt
-     * @param {number} level
-     */
-    setUiError(id: string, txt: string, level: number): void;
-    /**
-     * show op error message - set message to null to remove error message
-     * @function setUiError
-     * @instance
-     * @memberof Op
-     * @param {string} id error id
-     * @param {string} txt text message
-     * @param {number} level level
-     */
-    setUiError(id: string, txt: string, level: number): void;
     set _objName(on: any);
     get objName(): string;
     get shortName(): string;
@@ -135,13 +121,15 @@ export default class Op extends Events {
      */
     setUiAttrib(newAttribs: OpUiAttribs): void;
     /**
-     *  @deprecated
+     * @deprecated
+     * @param {OpUiAttribs} a
      */
-    setUiAttribs(a: any): void;
+    setUiAttribs(a: OpUiAttribs): void;
     /**
-     *  @deprecated
+     * @deprecated
+     * @param {OpUiAttribs} a
      */
-    uiAttr(a: any): void;
+    uiAttr(a: OpUiAttribs): void;
     /**
      * @param {OpUiAttribs} newAttribs
      */
@@ -526,6 +514,16 @@ export default class Op extends Events {
      * @returns {Boolean} - has id
      */
     hasUiError(id: string): boolean;
+    /**
+     * show op error message - set message to null to remove error message
+     * @function setUiError
+     * @instance
+     * @memberof Op
+     * @param {string} id error id
+     * @param {string} txt text message
+     * @param {number} level level
+     */
+    setUiError(id: string, txt: string, level?: number): void;
     setError(id: any, txt: any): void;
     /**
      * enable/disable op
@@ -624,6 +622,8 @@ export type OpUiAttribs = {
     uierrors?: object;
     color?: string;
     comment?: string;
+    translate?: object;
+    subpatch?: string;
 };
 import { Events } from "cables-shared-client";
 import Port from "./core_port.js";

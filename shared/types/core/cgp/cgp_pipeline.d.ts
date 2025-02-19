@@ -2,7 +2,7 @@ export default class Pipeline {
     static DEPTH_COMPARE_FUNCS_STRINGS: string[];
     /**
      * Description
-     * @param {WebGpuContext} _cgp
+     * @param {CgpContext} _cgp
      * @param {String} name
      */
     constructor(_cgp: WebGpuContext, name: string);

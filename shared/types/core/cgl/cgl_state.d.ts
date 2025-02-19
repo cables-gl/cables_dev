@@ -374,7 +374,11 @@ export default class CglContext extends CGState {
      */
     shouldDrawHelpers(op: any): any;
     _setBlendMode(blendMode: any, premul: any): void;
-    createMesh(geom: any, options: any): any;
+    /**
+     * @param {any} geom
+     * @param {CglMeshOptions} options
+     */
+    createMesh(geom: any, options: CglMeshOptions): Mesh;
     /**
      * set cursor
      * @function setCursor
@@ -398,3 +402,5 @@ import { ProfileData } from "./cgl_profiledata.js";
 import { Logger } from "cables-shared-client";
 import { Shader } from "./cgl_shader.js";
 import Framebuffer2 from "./cgl_framebuffer2.js";
+import { CglMeshOptions } from "./cgl_mesh.js";
+import { Mesh } from "./cgl_mesh.js";

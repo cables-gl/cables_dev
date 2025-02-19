@@ -1,6 +1,6 @@
 declare class Texture extends CgTexture {
     /**
-    * @param {WebGpuContext} _cgp
+    * @param {CgpContext} _cgp
     * @param {Object} options={}
     */
     constructor(_cgp: WebGpuContext, options?: any);

@@ -1,7 +1,7 @@
 export default class Binding {
     /**
      * Description
-     * @param {WebGpuContext} cgp
+     * @param {CgpContext} cgp
      * @param {String} name
      * @param {Object} options={}
      */
@@ -50,7 +50,7 @@ export default class Binding {
     };
     _createCgpuBuffer(inst: any): void;
     /**
-     * @param {WebGpuContext} cgp
+     * @param {CgpContext} cgp
      * @param {Number} bindingIndex
      */
     update(cgp: WebGpuContext, bindingIndex: number): void;

@@ -3,7 +3,8 @@
         "module": "ESNext",
         "target": "ESNext",
         "checkJs": true,
-        "moduleResolution": "bundler"
+        "moduleResolution": "bundler",
+        "typeRoots": ["cables/node_modules/@webgpu/types"]
     },
     "include": [
         "shared/client/src/**/*",

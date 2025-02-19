@@ -1,6 +1,6 @@
 export default class WebGpuCanvasAttachment {
     /**
-     * @param {WebGpuContext} cgp
+     * @param {CgpContext} cgp
      */
     constructor(cgp: WebGpuContext);
     get canvas(): canvas;
