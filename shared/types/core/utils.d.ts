@@ -31,8 +31,8 @@ export function uniqueArray(arr: Array<any>): any[];
 export function getShortOpName(fullname: string): string;
 export function shuffleArray(array: any[] | Float32Array): any[] | Float32Array;
 export function shortId(): string;
-export function uuid(): string;
-export function generateUUID(): string;
+export function uuid(): UUID;
+export function generateUUID(): UUID;
 export function prefixedHash(str: string, prefix?: string): string;
 export function simpleId(): number;
 export function smoothStep(perc: number): number;
@@ -48,3 +48,4 @@ export function ajaxSync(url: any, cb: any, method: any, post: any, contenttype:
 export function ajax(url: any, cb: any, method: any, post: any, contenttype: any, jsonP: any, headers?: {}, options?: {}): void;
 export function request(options: any): void;
 export function logErrorConsole(initiator: any, ...args: any[]): void;
+export type UUID = string;

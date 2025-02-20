@@ -18,7 +18,7 @@ export namespace CG {
     export { FpsCounter };
     export { CgCanvas };
 }
-import { Geometry } from "./cg_geom.js";
+import Geometry from "./cg_geom.js";
 import { BoundingBox } from "./cg_boundingbox.js";
 import FpsCounter from "./cg_fpscounter.js";
 import { CgCanvas } from "./cg_canvas.js";

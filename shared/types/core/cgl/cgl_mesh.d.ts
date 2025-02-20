@@ -1,12 +1,3 @@
-export type CglMeshAttributeOptions = {
-    instanced?: number;
-    cb?: Function;
-    type?: Function;
-};
-export type CglMeshOptions = {
-    glPrimitive?: number;
-    opId?: string;
-};
 /**
  * @typedef {Object} CglMeshAttributeOptions
  * @property {Number} [instanced]
@@ -14,10 +5,18 @@ export type CglMeshOptions = {
  * @property {Function} [type]
  */
 /**
- * @typedef {Object} CglMeshOptions
+ * @interface
+ * @hideconstructor
  * @property {Number} [glPrimitive]
  * @property {String} [opId]
  */
+export class CglMeshOptions {
+}
+export type CglMeshAttributeOptions = {
+    instanced?: number;
+    cb?: Function;
+    type?: Function;
+};
 /**
  * webgl renderable 3d object
  * @class
@@ -35,12 +34,12 @@ export type CglMeshOptions = {
  */
 export class Mesh extends CgMesh {
     /**
-     * @param {CgCanvas} _cgl cgl
+     * @param {CgCanvas|CglContext} _cgl cgl
      * @param {Geometry} __geom geometry
      * @param {CglMeshOptions|Number} _options
      */
-    constructor(_cgl: CgCanvas, __geom: Geometry, _options?: CglMeshOptions | number);
-    _cgl: CgCanvas;
+    constructor(_cgl: CgCanvas | CglContext, __geom: Geometry, _options?: CglMeshOptions | number);
+    _cgl: any;
     _log: Logger;
     _bufVertexAttrib: {
         buffer: any;
@@ -99,11 +98,11 @@ export class Mesh extends CgMesh {
     addAttribute(name: string, array: any[], itemSize: number, options: any): void;
     /**
      * @param {String} name
-     * @param {Array} array
+     * @param {Array<Number>|Float32Array} array
      * @param {Number} itemSize Integer
      * @param {CglMeshAttributeOptions} options
      */
-    setAttribute(name: string, array: any[], itemSize: number, options?: CglMeshAttributeOptions): any;
+    setAttribute(name: string, array: Array<number> | Float32Array, itemSize: number, options?: CglMeshAttributeOptions): any;
     getAttributes(): any[];
     /**
      * @function updateTexCoords
@@ -169,6 +168,6 @@ export namespace MESH {
     let lastMesh: any;
 }
 import CgMesh from "../cg/cg_mesh.js";
-import { CgCanvas } from "../cg/cg_canvas.js";
 import { Logger } from "cables-shared-client";
 import { Geometry } from "../cg/cg_geom.js";
+import { CgCanvas } from "../cg/cg_canvas.js";

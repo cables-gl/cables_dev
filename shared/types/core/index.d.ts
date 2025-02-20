@@ -18,13 +18,13 @@ declare namespace CABLES {
     export { Anim };
     export { AnimKey };
     export let shortId: () => string;
-    export let uuid: () => string;
+    export let uuid: () => UUID;
     export let getShortOpName: (fullname: string) => string;
     export let simpleId: () => number;
     export let clamp: (value: number, min: number, max: number) => number;
     export let map: (x: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number, _easing?: number) => number;
     export let shuffleArray: (array: any[] | Float32Array) => any[] | Float32Array;
-    export let generateUUID: () => string;
+    export let generateUUID: () => UUID;
     export let prefixedHash: (str: string, prefix?: string) => string;
     export let smoothStep: (perc: number) => number;
     export let smootherStep: (perc: number) => number;

@@ -1,6 +1,6 @@
 export default class CgpShader extends CgShader {
     /**
-     * @param {WebGpuContext} _cgp
+     * @param {CgpContext} _cgp
      * @param {String} _name
      * @param {Object} options={}
      */

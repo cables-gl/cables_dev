@@ -2,7 +2,7 @@
 export default class GPUBuffer extends Events {
     /**
      * Description
-     * @param {WebGpuContext} cgp
+     * @param {CgpContext} cgp
      * @param {String} name
      * @param {Array} data=null
      * @param {Object} options={}

@@ -126,18 +126,12 @@ declare class Patch extends Events {
     resume(): void;
     /**
      * set volume [0-1]
-     * @function setVolume
      * @param {Number} v volume
-     * @memberof Patch
-     * @instance
      */
     setVolume(v: number): void;
     /**
      * get asset path
-     * @function getAssetPath
-     * @memberof Patch
      * @param patchId
-     * @instance
      */
     getAssetPath(patchId?: any): any;
     /**
@@ -203,9 +197,18 @@ declare class Patch extends Events {
     getOpsByRefId(refId: any): any[];
     getOpById(opid: any): any;
     getOpsByName(name: any): Op[];
-    getOpsByObjName(name: any): Op[];
-    getOpsByOpId(opid: any): Op[];
-    loadLib(which: any): void;
+    /**
+     * @param {String} name
+     */
+    getOpsByObjName(name: string): Op[];
+    /**
+     * @param {UUID} opid
+     */
+    getOpsByOpId(opid: UUID): Op[];
+    /**
+     * @param {String} which
+     */
+    loadLib(which: string): void;
     getSubPatchOpsByName(patchId: any, objName: any): Op[];
     getSubPatchOp(patchId: any, objName: any): false | Op;
     getFirstSubPatchOpByName(patchId: any, objName: any): false | Op;
