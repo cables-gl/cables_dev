@@ -1,3 +1,12 @@
+export type CglMeshAttributeOptions = {
+    instanced?: number;
+    cb?: Function;
+    type?: Function;
+};
+export type CglMeshOptions = {
+    glPrimitive?: number;
+    opId?: string;
+};
 /**
  * @typedef {Object} CglMeshAttributeOptions
  * @property {Number} [instanced]
@@ -5,18 +14,11 @@
  * @property {Function} [type]
  */
 /**
- * @interface
- * @hideconstructor
+ * @type Object
+ * @typedef CglMeshOptions
  * @property {Number} [glPrimitive]
  * @property {String} [opId]
  */
-export class CglMeshOptions {
-}
-export type CglMeshAttributeOptions = {
-    instanced?: number;
-    cb?: Function;
-    type?: Function;
-};
 /**
  * webgl renderable 3d object
  * @class
@@ -34,12 +36,12 @@ export type CglMeshAttributeOptions = {
  */
 export class Mesh extends CgMesh {
     /**
-     * @param {CgCanvas|CglContext} _cgl cgl
+     * @param {CglContext} _cgl cgl
      * @param {Geometry} __geom geometry
-     * @param {CglMeshOptions|Number} _options
+     * @param {CglMeshOptions} _options
      */
-    constructor(_cgl: CgCanvas | CglContext, __geom: Geometry, _options?: CglMeshOptions | number);
-    _cgl: any;
+    constructor(_cgl: CglContext, __geom: Geometry, _options?: CglMeshOptions);
+    _cgl: CglContext;
     _log: Logger;
     _bufVertexAttrib: {
         buffer: any;
@@ -57,8 +59,8 @@ export class Mesh extends CgMesh {
     _attribLocs: {};
     _lastShader: any;
     _numInstances: number;
-    _glPrimitive: any;
-    opId: any;
+    _glPrimitive: number;
+    opId: string;
     _preWireframeGeom: Geometry;
     addVertexNumbers: boolean;
     feedBackAttributes: any[];
@@ -83,6 +85,7 @@ export class Mesh extends CgMesh {
     setAttributePointer(attrName: any, name: any, stride: any, offset: any): void;
     getAttribute(name: any): any;
     setAttributeRange(attr: any, array: any, start: any, end: any): void;
+    warned: boolean;
     _resizeAttr(array: any, attr: any): void;
     _bufferArray(array: any, attr: any): void;
     /**
@@ -98,11 +101,11 @@ export class Mesh extends CgMesh {
     addAttribute(name: string, array: any[], itemSize: number, options: any): void;
     /**
      * @param {String} name
-     * @param {Array<Number>|Float32Array} array
+     * @param {Array} array
      * @param {Number} itemSize Integer
      * @param {CglMeshAttributeOptions} options
      */
-    setAttribute(name: string, array: Array<number> | Float32Array, itemSize: number, options?: CglMeshAttributeOptions): any;
+    setAttribute(name: string, array: any[], itemSize: number, options?: CglMeshAttributeOptions): any;
     getAttributes(): any[];
     /**
      * @function updateTexCoords
@@ -167,7 +170,7 @@ export class Mesh extends CgMesh {
 export namespace MESH {
     let lastMesh: any;
 }
-import CgMesh from "../cg/cg_mesh.js";
+import { CgMesh } from "../cg/cg_mesh.js";
+import { CglContext } from "./cgl_state.js";
 import { Logger } from "cables-shared-client";
 import { Geometry } from "../cg/cg_geom.js";
-import { CgCanvas } from "../cg/cg_canvas.js";

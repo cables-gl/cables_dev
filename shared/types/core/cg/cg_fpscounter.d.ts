@@ -1,4 +1,4 @@
-export default class FpsCounter extends Events {
+export class FpsCounter extends Events {
     _timeStartFrame: number;
     _timeStartSecond: number;
     _fpsCounter: number;

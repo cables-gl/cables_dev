@@ -1,8 +1,8 @@
-export default class WebGpuCanvasAttachment {
+export class WebGpuCanvasAttachment {
     /**
      * @param {CgpContext} cgp
      */
-    constructor(cgp: WebGpuContext);
+    constructor(cgp: CgpContext);
     get canvas(): canvas;
     /**
      * @param {function} cb
@@ -10,4 +10,3 @@ export default class WebGpuCanvasAttachment {
     render(cb: Function): void;
     #private;
 }
-import { WebGpuContext } from "./cgp_state.js";

@@ -1,4 +1,4 @@
-declare class AnimKey {
+export class AnimKey {
     constructor(obj: any, an: any);
     id: string;
     time: number;
@@ -21,7 +21,7 @@ declare class AnimKey {
     getSerialized(): any;
     getEasing(): number;
 }
-declare namespace AnimKey {
+export namespace AnimKey {
     function cubicSpline(perc: any, key1: any, key2: any): number;
     function easeCubicSpline(perc: any, key2: any): number;
     function linear(perc: any, key1: any, key2: any): number;
@@ -53,7 +53,6 @@ declare namespace AnimKey {
     function easeSmoothStep(perc: any, key2: any): number;
     function easeSmootherStep(perc: any, key2: any): number;
 }
-export default AnimKey;
 export function easeExpoIn(t: any): number;
 export function easeExpoOut(t: any): any;
 export function easeExpoInOut(t: any): any;

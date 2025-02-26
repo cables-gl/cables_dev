@@ -1,5 +1,24 @@
-export default Patch;
-export type PatchConfig = any;
+/**
+ * @typedef PatchConfig
+ * @property {String} [prefixAssetPath=''] prefix for path to assets
+ * @property {String} [assetPath=''] path to assets
+ * @property {String} [jsPath=''] path to javascript files
+ * @property {String} [glCanvasId='glcanvas'] dom element id of canvas element
+ * @property {Function} [onError=null] called when an error occurs
+ * @property {Function} [onFinishedLoading=null] called when patch finished loading all assets
+ * @property {Function} [onFirstFrameRendered=null] called when patch rendered it's first frame
+ * @property {Boolean} [glCanvasResizeToWindow=false] resize canvas automatically to window size
+ * @property {Boolean} [doRequestAnimation=true] do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
+ * @property {Boolean} [clearCanvasColor=true] clear canvas in transparent color every frame
+ * @property {Boolean} [clearCanvasDepth=true] clear depth every frame
+ * @property {Boolean} [glValidateShader=true] enable/disable validation of shaders *
+ * @property {Boolean} [silent=false]
+ * @property {Number} [fpsLimit=0] 0 for maximum possible frames per second
+ * @property {String} [glslPrecision='mediump'] default precision for glsl shader
+ * @property {String} [prefixJsPath]
+ * @property {Function} [onPatchLoaded]
+ *
+ */
 /**
  * Patch class, contains all operators,values,links etc. manages loading and running of the whole patch
  *
@@ -18,27 +37,7 @@ export type PatchConfig = any;
  *     glslPrecision:'highp'
  * });
  */
-/**
- * @typedef {Object} PatchConfig
- * @hideconstructor
- * @property {String} [prefixAssetPath=''] prefix for path to assets
- * @property {String} [assetPath=''] path to assets
- * @property {String} [jsPath=''] path to javascript files
- * @property {String} [glCanvasId='glcanvas'] dom element id of canvas element
- * @property {Function} [onError=null] called when an error occurs
- * @property {Function} [onFinishedLoading=null] called when patch finished loading all assets
- * @property {Function} [onFirstFrameRendered=null] called when patch rendered it's first frame
- * @property {Boolean} [glCanvasResizeToWindow=false] resize canvas automatically to window size
- * @property {Boolean} [doRequestAnimation=true] do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
- * @property {Boolean} [clearCanvasColor=true] clear canvas in transparent color every frame
- * @property {Boolean} [clearCanvasDepth=true] clear depth every frame
- * @property {Boolean} [glValidateShader=true] enable/disable validation of shaders *
- * @property {Boolean} [silent=false]
- * @property {Number} [fpsLimit=0] 0 for maximum possible frames per second
- * @property {String} [glslPrecision='mediump'] default precision for glsl shader
- *
- */
-declare class Patch extends Events {
+export class Patch extends Events {
     static EVENT_OP_DELETED: string;
     static EVENT_OP_ADDED: string;
     static EVENT_PAUSE: string;
@@ -51,17 +50,17 @@ declare class Patch extends Events {
     /** @type {Array<Op>} */
     ops: Array<Op>;
     settings: {};
-    config: any;
+    /** @type {PatchConfig} */
+    config: PatchConfig;
     timer: Timer;
     freeTimer: Timer;
     animFrameOps: any[];
     animFrameCallbacks: any[];
     gui: boolean;
-    silent: any;
+    silent: boolean;
     profiler: Profiler;
     aborted: boolean;
     _crashedOps: any[];
-    _renderOneFrame: boolean;
     _animReq: any;
     _opIdCache: {};
     _triggerStack: any[];
@@ -80,28 +79,17 @@ declare class Patch extends Events {
     _frameWasdelayed: boolean;
     tempData: {};
     frameStore: {};
-    deSerialized: boolean;
     reqAnimTimeStamp: number;
     cgCanvas: any;
-    _isLocal: boolean;
     _variables: {};
-    _variableListeners: any[];
     vars: any;
     cgl: CglContext;
     cgp: any;
     _subpatchOpCache: {};
     isPlaying(): boolean;
-    isRenderingOneFrame(): boolean;
     /** @deprecated */
     renderOneFrame(): void;
-    /**
-     * current number of frames per second
-     * @function getFPS
-     * @memberof Patch
-     * @instance
-     * @return {Number} fps
-     */
-    getFPS(): number;
+    _renderOneFrame: boolean;
     /**
      * returns true if patch is opened in editor/gui mode
      * @function isEditorMode
@@ -126,21 +114,27 @@ declare class Patch extends Events {
     resume(): void;
     /**
      * set volume [0-1]
+     * @function setVolume
      * @param {Number} v volume
+     * @memberof Patch
+     * @instance
      */
     setVolume(v: number): void;
     /**
      * get asset path
+     * @function getAssetPath
+     * @memberof Patch
      * @param patchId
+     * @instance
      */
-    getAssetPath(patchId?: any): any;
+    getAssetPath(patchId?: any): string;
     /**
      * get js path
      * @function getJsPath
      * @memberof Patch
      * @instance
      */
-    getJsPath(): any;
+    getJsPath(): string;
     /**
      * get url/filepath for a filename
      * this uses prefixAssetpath in exported patches
@@ -152,22 +146,27 @@ declare class Patch extends Events {
      */
     getFilePath(filename: string): string;
     clear(): void;
-    createOp(identifier: any, id: any, opName?: any): Op;
+    /**
+     * @param {string} identifier
+     * @param {string} id
+     * @param {string} [opName]
+     */
+    createOp(identifier: string, id: string, opName?: string): Op;
     /**
      * create a new op in patch
      * @function addOp
      * @memberof Patch
      * @instance
      * @param {string} opIdentifier uuid or name, e.g. Ops.Math.Sum
-     * @param {Object} uiAttribs Attributes
+     * @param {OpUiAttribs} uiAttribs Attributes
      * @param {string} id
-     * @param {boolean} fromDeserialize
-     * @param {string} opName e.g. Ops.Math.Sum
+     * @param {boolean} [fromDeserialize]
+     * @param {string} [opName] e.g. Ops.Math.Sum
      * @example
      * // add invisible op
      * patch.addOp('Ops.Math.Sum', { showUiAttribs: false });
      */
-    addOp(opIdentifier: string, uiAttribs: any, id: string, fromDeserialize: boolean, opName: string): Op;
+    addOp(opIdentifier: string, uiAttribs: OpUiAttribs, id: string, fromDeserialize?: boolean, opName?: string): Op;
     addOnAnimFrame(op: any): void;
     removeOnAnimFrame(op: any): void;
     addOnAnimFrameCallback(cb: any): void;
@@ -189,14 +188,13 @@ declare class Patch extends Events {
      * @param {boolean} lowerCase
      * @param {boolean} fromDeserialize
      */
-    link(op1: Op, port1Name: string, op2: Op, port2Name: string, lowerCase?: boolean, fromDeserialize?: boolean): any;
+    link(op1: Op, port1Name: string, op2: Op, port2Name: string, lowerCase?: boolean, fromDeserialize?: boolean): false | void | Link;
     serialize(options: any): string | {
         ops: any[];
         settings: {};
     };
     getOpsByRefId(refId: any): any[];
     getOpById(opid: any): any;
-    getOpsByName(name: any): Op[];
     /**
      * @param {String} name
      */
@@ -212,7 +210,7 @@ declare class Patch extends Events {
     getSubPatchOpsByName(patchId: any, objName: any): Op[];
     getSubPatchOp(patchId: any, objName: any): false | Op;
     getFirstSubPatchOpByName(patchId: any, objName: any): false | Op;
-    _addLink(opinid: any, opoutid: any, inName: any, outName: any): any;
+    _addLink(opinid: any, opoutid: any, inName: any, outName: any): false | void | Link;
     deSerialize(obj: any, options: any): void;
     namespace: any;
     name: any;
@@ -277,15 +275,78 @@ declare class Patch extends Events {
      * @return {Object} document
      */
     getDocument(): any;
+    #private;
 }
-declare namespace Patch {
+export namespace Patch {
     function getOpClass(objName: any): Window;
     function replaceOpIds(json: any, options: any): any;
 }
+export type PatchConfig = {
+    /**
+     * prefix for path to assets
+     */
+    prefixAssetPath?: string;
+    /**
+     * path to assets
+     */
+    assetPath?: string;
+    /**
+     * path to javascript files
+     */
+    jsPath?: string;
+    /**
+     * dom element id of canvas element
+     */
+    glCanvasId?: string;
+    /**
+     * called when an error occurs
+     */
+    onError?: Function;
+    /**
+     * called when patch finished loading all assets
+     */
+    onFinishedLoading?: Function;
+    /**
+     * called when patch rendered it's first frame
+     */
+    onFirstFrameRendered?: Function;
+    /**
+     * resize canvas automatically to window size
+     */
+    glCanvasResizeToWindow?: boolean;
+    /**
+     * do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
+     */
+    doRequestAnimation?: boolean;
+    /**
+     * clear canvas in transparent color every frame
+     */
+    clearCanvasColor?: boolean;
+    /**
+     * clear depth every frame
+     */
+    clearCanvasDepth?: boolean;
+    /**
+     * enable/disable validation of shaders *
+     */
+    glValidateShader?: boolean;
+    silent?: boolean;
+    /**
+     * 0 for maximum possible frames per second
+     */
+    fpsLimit?: number;
+    /**
+     * default precision for glsl shader
+     */
+    glslPrecision?: string;
+    prefixJsPath?: string;
+    onPatchLoaded?: Function;
+};
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import Op from "./core_op.js";
+import { Op } from "./core_op.js";
 import { Timer } from "./timer.js";
-import Profiler from "./core_profiler.js";
-import LoadingStatus from "./loadingstatus.js";
-import CglContext from "./cgl/cgl_state.js";
+import { Profiler } from "./core_profiler.js";
+import { LoadingStatus } from "./loadingstatus.js";
+import { CglContext } from "./cgl/cgl_state.js";
+import { Link } from "./core_link.js";

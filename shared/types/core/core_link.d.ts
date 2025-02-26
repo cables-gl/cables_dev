@@ -4,13 +4,11 @@
  * @hideconstructor
  * @class
  */
-declare class Link extends Events {
+export class Link extends Events {
     /**
-     * @param {{Patch}} p
+     * @param {Patch} p
      */
-    constructor(p: {
-        Patch: any;
-    });
+    constructor(p: Patch);
     id: number;
     /**
      * @type {Port}
@@ -60,7 +58,7 @@ declare class Link extends Events {
         objOut: string;
     };
 }
-declare namespace Link {
+export namespace Link {
     /**
      * @function canLinkText
      * @memberof Link
@@ -81,7 +79,6 @@ declare namespace Link {
      */
     function canLink(p1: Port, p2: Port): boolean;
 }
-export default Link;
 import { Events } from "cables-shared-client";
-import Port from "./core_port.js";
-import Patch from "./core_patch.js";
+import { Port } from "./core_port.js";
+import { Patch } from "./core_patch.js";

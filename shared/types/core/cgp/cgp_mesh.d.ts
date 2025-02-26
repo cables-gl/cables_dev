@@ -1,8 +1,8 @@
-export default class CgpMesh extends CgMesh {
+export class CgpMesh extends CgMesh {
     constructor(_cgp: any, __geom: any);
     needsPipelineUpdate: boolean;
     _cgp: any;
-    _geom: any;
+    _geom: Geometry;
     numIndex: number;
     instances: number;
     _pipe: Pipeline;
@@ -17,10 +17,9 @@ export default class CgpMesh extends CgMesh {
      * @instance
      * @description set geometry for mesh
      * @param {Geometry} geom geometry
-     * @param {boolean} removeRef
      */
-    setGeom(geom: Geometry, removeRef: boolean): void;
-    _numIndices: any;
+    setGeom(geom: Geometry): void;
+    _numIndices: number;
     _indicesBuffer: any;
     _disposeAttributes(): void;
     dispose(): void;
@@ -39,8 +38,13 @@ export default class CgpMesh extends CgMesh {
         name: string;
         instanced: boolean;
     };
-    render(shader: any): void;
+    /**
+     * @param {CgpShader} shader
+     */
+    render(shader: CgpShader): void;
     #private;
 }
-import CgMesh from "../cg/cg_mesh.js";
-import Pipeline from "./cgp_pipeline.js";
+import { CgMesh } from "../cg/cg_mesh.js";
+import { Geometry } from "../cg/cg_geom.js";
+import { Pipeline } from "./cgp_pipeline.js";
+import { CgpShader } from "./cgp_shader.js";
