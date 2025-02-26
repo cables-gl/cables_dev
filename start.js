@@ -2,7 +2,6 @@ import concurrently from "concurrently";
 import kill from "tree-kill";
 import fs from "fs";
 
-
 const args = process.argv ? process.argv.slice(2) : [];
 const electron = args && args[0] === "standalone";
 
@@ -47,6 +46,12 @@ if (!electron)
             "command": "cd cables_api && npm run start",
             "name": "api",
             "prefixColor": "cyan",
+            "env": { "cables_electron": electron }
+        });
+        commands.splice(2, 0, {
+            "command": "cd cables_api && npm run start:socketcluster",
+            "name": "socketcluster",
+            "prefixColor": "magenta",
             "env": { "cables_electron": electron }
         });
     }
