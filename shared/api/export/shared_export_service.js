@@ -761,7 +761,7 @@ export default class SharedExportService extends SharedUtil
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
                 if (opDoc.dependencies)
                 {
-                    dependencies = dependencies.append(opDoc.dependencies);
+                    dependencies = dependencies.concat(opDoc.dependencies);
                 }
             }
 
