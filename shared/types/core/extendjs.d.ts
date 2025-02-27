@@ -1,1 +1,1 @@
-export default function extendJs(): void;
+export function extendJs(): void;

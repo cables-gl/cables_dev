@@ -1,5 +1,4 @@
 /**
- * @typedef {Object} PortUiAttribs
  * @property  {String} [title=''] overwrite title of port (by default this is portname)
  * @property  {Boolean} [greyout=false] port paramater will appear greyed out, can not be
  * @property  {Boolean} [hidePort] port will be hidden from op
@@ -16,8 +15,9 @@
  * @property  {Boolean} [multiPortManual] internal: do not set manually
  * @property  {Number} [multiPortNum] internal: do not set manually
  * @property  {String} [display] internal: do not set manually
- *
  */
+export class PortUiAttribs {
+}
 /**
  * data is coming into and out of ops through input and output ports
  * @namespace external:CABLES#Port
@@ -26,7 +26,7 @@
  * @example
  * const myPort=op.inString("String Port");
  */
-declare class Port extends Events {
+export class Port extends Events {
     static DIR_IN: number;
     static DIR_OUT: number;
     static TYPE_VALUE: number;
@@ -69,27 +69,20 @@ declare class Port extends Events {
     /** @type {Anim} */
     anim: Anim;
     defaultValue: any;
-    _uiActiveState: boolean;
     ignoreValueSerialize: boolean;
     onLinkChanged: any;
     crashed: boolean;
-    _valueBeforeLink: any;
-    _lastAnimFrame: number;
-    _animated: boolean;
     onValueChanged: any;
     onTriggered: () => void;
-    onUiActiveStateChange: any;
     changeAlways: boolean;
     forceRefChange: boolean;
-    _useVariableName: any;
     activityCounter: number;
     apf: number;
     activityCounterStartFrame: number;
-    _tempLastUiValue: any;
     canLink: any;
     checkLinkTimeWarnings: any;
     get parent(): Op;
-    get title(): string;
+    get title(): any;
     get op(): Op;
     set val(v: any);
     get val(): any;
@@ -170,6 +163,7 @@ declare class Port extends Events {
      * @description get value of port
      */
     get(): any;
+    lastAnimFrame: number;
     setRef(v: any): void;
     /**
      * @function setValue
@@ -223,7 +217,7 @@ declare class Port extends Events {
      * @instance
      * @description return port name or title
      */
-    getTitle(): string;
+    getTitle(): any;
     addLink(l: any): void;
     /**
      * @function getLinkTo
@@ -296,9 +290,6 @@ declare class Port extends Events {
     isLinked(): boolean;
     isBoundToVar(): boolean;
     /**
-     * @function isAnimated
-     * @memberof Port
-     * @instance
      * @return {Boolean} true if port is animated
      */
     isAnimated(): boolean;
@@ -317,10 +308,6 @@ declare class Port extends Events {
      * @description set callback, which will be executed when port was triggered (usually output port)
      */
     _onTriggered(a: Function): void;
-    _onSetProfiling(v: any): void;
-    _onTriggeredProfiling(): void;
-    getUiActiveState(): boolean;
-    setUiActiveState(onoff: any): void;
     /**
      * @deprecated
      * @param {function} cb
@@ -333,7 +320,7 @@ declare class Port extends Events {
     hidePort(): void;
     #private;
 }
-declare namespace Port {
+export namespace Port {
     /**
      * Returns the port type string, e.g. "value" based on the port type number
      * @function portTypeNumberToString
@@ -344,75 +331,8 @@ declare namespace Port {
      */
     function portTypeNumberToString(type: number): string;
 }
-export default Port;
-export type PortUiAttribs = {
-    /**
-     * overwrite title of port (by default this is portname)
-     */
-    title?: string;
-    /**
-     * port paramater will appear greyed out, can not be
-     */
-    greyout?: boolean;
-    /**
-     * port will be hidden from op
-     */
-    hidePort?: boolean;
-    /**
-     * port params will be hidden from parameter panel
-     */
-    hideParam?: boolean;
-    /**
-     * only for dropdowns - show value index (e.g. `0 - normal` )
-     */
-    showIndex?: boolean;
-    /**
-     * set syntax highlighting theme for editor port
-     */
-    editorSyntax?: string;
-    /**
-     * do not auto check object types
-     */
-    ignoreObjTypeErrors?: boolean;
-    /**
-     * do not set manually - group ports, usually set by op.setPortGroup...
-     */
-    group?: string;
-    /**
-     * internal: do not set manually
-     */
-    isAnimated?: boolean;
-    /**
-     * internal: do not set manually
-     */
-    useVariable?: boolean;
-    /**
-     * internal: do not set manually
-     */
-    variableName?: string;
-    /**
-     * internal: do not set manually
-     */
-    order?: number;
-    /**
-     * internal: do not set manually
-     */
-    expose?: boolean;
-    /**
-     * internal: do not set manually
-     */
-    multiPortManual?: boolean;
-    /**
-     * internal: do not set manually
-     */
-    multiPortNum?: number;
-    /**
-     * internal: do not set manually
-     */
-    display?: string;
-};
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import Op from "./core_op.js";
-import Link from "./core_link.js";
-import Anim from "./anim.js";
+import { Op } from "./core_op.js";
+import { Link } from "./core_link.js";
+import { Anim } from "./anim.js";

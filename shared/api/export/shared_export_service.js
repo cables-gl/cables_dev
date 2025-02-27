@@ -761,7 +761,7 @@ export default class SharedExportService extends SharedUtil
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
                 if (opDoc.dependencies)
                 {
-                    dependencies = dependencies.append(opDoc.dependencies);
+                    dependencies = dependencies.concat(opDoc.dependencies);
                 }
             }
 
@@ -882,7 +882,6 @@ export default class SharedExportService extends SharedUtil
         const depScripts = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type === "commonjs"; }), this.finalJsPath);
         const depFiles = this._opsUtil.getDependencyUrls(dependencies.filter((d) => { return d.type && d.type !== "npm" && d.type !== "op"; }), this.finalJsPath);
 
-        let libsCoreFile = this._cables.getUiDistPath() + "js/libs.core.js";
         const coreFile = path.join(this._cables.getUiDistPath(), options.coreSrcFile);
 
         if (options.combineJS)
@@ -938,7 +937,6 @@ export default class SharedExportService extends SharedUtil
 
             this._log.info("append code...", (Date.now() - this.startTimeExport) / 1000);
 
-            jsCode = fs.readFileSync(libsCoreFile, "utf8") + "\n" + jsCode;
             jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
 
             this.append(jsCode, { "name": this.finalJsPath + "patch.js" });
@@ -952,7 +950,6 @@ export default class SharedExportService extends SharedUtil
         else
         {
             this.append(proJson, { "name": this.finalJsPath + jsonFilename + ".json" });
-            this.append(fs.readFileSync(libsCoreFile, "utf8"), { "name": this.finalJsPath + "libs.core.js" });
             this.append(fs.readFileSync(coreFile, "utf8"), { "name": this.finalJsPath + "cables.js" });
 
             opsCode += jsCode;
@@ -1021,7 +1018,6 @@ export default class SharedExportService extends SharedUtil
         }
         else
         {
-            scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "libs.core.js\"></script>\n";
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "cables.js\"></script>\n";
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "ops.js\"></script>\n";
 

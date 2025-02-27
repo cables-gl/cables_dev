@@ -4,13 +4,14 @@
  * @namespace external:CGP
  * @hideconstructor
  */
-export class WebGpuContext extends CGState {
+export class CgpContext extends CgContext {
+    branchProfiler: any;
     lastErrorMsg: string;
     _log: Logger;
     gApi: number;
     _viewport: number[];
     _shaderStack: any[];
-    _simpleShader: Shader;
+    _simpleShader: CgpShader;
     frame: number;
     catchErrors: boolean;
     _stackCullFaceFacing: any[];
@@ -23,6 +24,10 @@ export class WebGpuContext extends CGState {
     _stackErrorScopeLogs: any[];
     currentPipeDebug: any;
     canvasAttachments: any[];
+    /** @type {GPUDevice} */
+    device: GPUDevice;
+    /** @type {GPURenderPassEncoder} */
+    passEncoder: GPURenderPassEncoder;
     _defaultBlend: {
         color: {
             operation: string;
@@ -56,7 +61,12 @@ export class WebGpuContext extends CGState {
      * @returns {Array} array [x,y,w,h]
      */
     getViewPort(): any[];
-    createMesh(geom: any, glPrimitive: any): any;
+    /**
+     * @param {Geometry} geom
+     * @param {any} glPrimitive
+     * @returns {CgpMesh}
+     */
+    createMesh(geom: Geometry, glPrimitive: any): CgpMesh;
     /**
      * @function popViewPort
      * @memberof Context
@@ -93,13 +103,27 @@ export class WebGpuContext extends CGState {
      */
     popShader(): void;
     getShader(): any;
-    setDevice(device: any): void;
-    device: any;
+    /**
+     * @param {GPUDevice} device
+     */
+    setDevice(device: GPUDevice): void;
     _emptyTexture: any;
     _defaultTexture: any;
     _errorTexture: any;
-    pushErrorScope(name: any, options?: {}): void;
-    popErrorScope(cb: any): void;
+    /** @typedef ErrorScoprOptions
+     * @property {string} scope
+     */
+    /**
+     * @param {String} name
+     * @param {ErrorScoprOptions} options
+     */
+    pushErrorScope(name: string, options?: {
+        scope: string;
+    }): void;
+    /**
+     * @param {Function} [cb]
+     */
+    popErrorScope(cb?: Function): void;
     /**
      * push depth testing enabled state
      * @function pushDepthTest
@@ -227,6 +251,8 @@ export class WebGpuContext extends CGState {
      */
     screenShot(cb: Function, doScreenshotClearAlpha: boolean, mimeType: string, quality: number): void;
 }
-import { CGState } from "../cg/cg_state.js";
+import { CgContext } from "../cg/cg_state.js";
 import { Logger } from "cables-shared-client";
-import Shader from "./cgp_shader.js";
+import { CgpShader } from "./cgp_shader.js";
+import { Geometry } from "../cg/cg_geom.js";
+import { CgpMesh } from "./cgp_mesh.js";

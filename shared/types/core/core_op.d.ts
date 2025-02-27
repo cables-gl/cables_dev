@@ -1,17 +1,18 @@
 /**
  * configuration object for loading a patch
- * @typedef {Object} OpUiAttribs
+ * @typedef OpUiAttribs
  * @property {string} [title] overwrite op title
- * @property  {String} [title=''] overwrite title of port (by default this is portname)
+ * @property {String} [title=''] overwrite title of port (by default this is portname)
  * @property {object} [storage] internal - do not use manualy
  * @property {boolean} [working] internal - do not use manualy
+ * @property {boolean} [bookmarked] internal - do not use manualy
  * @property {object} [uierrors] internal - do not use manualy - use op.setUiError
  * @property {string} [color]
  * @property {string} [comment]
  * @property {object} [translate]
  * @property {string} [subpatch]
  */
-export default class Op extends Events {
+export class Op extends Events {
     static OP_VERSION_PREFIX: string;
     /**
      * Description
@@ -20,9 +21,10 @@ export default class Op extends Events {
      * @param {String} _id=null
     */
     constructor(_patch: Patch, _name: string, _id?: string);
+    _log: Logger;
     opId: string;
-    /** @type {Array<Port>} */
-    portsOut: Array<Port>;
+    /** @type {Array<CABLES.Port>} */
+    portsOut: Array<typeof Port>;
     /** @type {Patch} */
     patch: Patch;
     data: {};
@@ -102,6 +104,9 @@ export default class Op extends Events {
      * @param {string} title
      */
     setTitle(title: string): void;
+    /**
+     * @param {Object} newAttribs
+     */
     setStorage(newAttribs: any): void;
     isSubPatchOp(): any;
     /**
@@ -155,10 +160,6 @@ export default class Op extends Events {
      *
      */
     inTrigger(name: any, v: string): Port;
-    /**
-     * @deprecated
-     */
-    inFunctionButton(name: any, v: any): Port;
     /**
      * create multiple UI trigger buttons
      * @function inTriggerButton
@@ -224,16 +225,6 @@ export default class Op extends Events {
      */
     inString(name: string, v: string): Port;
     /**
-     * create a String value input port displayed as TextArea
-     * @function inValueText
-     * @instance
-     * @memberof Op
-     * @param {String} name
-     * @param {String} v default value
-     * @return {Port} created port
-     */
-    inValueText(name: string, v: string): Port;
-    /**
      * @param {string} name
      * @param {string} v
      */
@@ -245,9 +236,11 @@ export default class Op extends Events {
      * @memberof Op
      * @param {String} name
      * @param {String} v default value
+     * @param {String} syntax language
+     * @param {Boolean} hideFormatButton
      * @return {Port} created port
      */
-    inStringEditor(name: string, v: string, syntax: any, hideFormatButton?: boolean): Port;
+    inStringEditor(name: string, v: string, syntax: string, hideFormatButton?: boolean): Port;
     /**
      * @deprecated
      */
@@ -446,6 +439,9 @@ export default class Op extends Events {
      * @return {Port} created port
      */
     outTexture(name: string, v: any): Port;
+    /**
+     * @deprecated
+     */
     inDynamic(name: any, filter: any, options: any, v: any): Port;
     removeLinks(): void;
     getSerialized(): {
@@ -457,7 +453,7 @@ export default class Op extends Events {
         portsIn: any[];
         portsOut: any[];
     };
-    getFirstOutPortByType(type: any): Port;
+    getFirstOutPortByType(type: any): typeof Port;
     getFirstInPortByType(type: any): Port;
     /**
      * return port by the name portName
@@ -502,11 +498,9 @@ export default class Op extends Events {
     verbose(...args: any[]): void;
     logVerbose(...args: any[]): void;
     profile(): void;
-    findParent(objName: any): any;
     cleanUp(): void;
     instanced(triggerPort: any): boolean;
     initInstancable(): void;
-    setValues(obj: any): void;
     /**
      * return true if op has this error message id
      * @function hasUiError
@@ -524,7 +518,6 @@ export default class Op extends Events {
      * @param {number} level level
      */
     setUiError(id: string, txt: string, level?: number): void;
-    setError(id: any, txt: any): void;
     /**
      * enable/disable op
      * @function
@@ -617,6 +610,10 @@ export type OpUiAttribs = {
      */
     working?: boolean;
     /**
+     * internal - do not use manualy
+     */
+    bookmarked?: boolean;
+    /**
      * internal - do not use manualy - use op.setUiError
      */
     uierrors?: object;
@@ -626,6 +623,7 @@ export type OpUiAttribs = {
     subpatch?: string;
 };
 import { Events } from "cables-shared-client";
-import Port from "./core_port.js";
-import Patch from "./core_patch.js";
-import MultiPort from "./core_port_multi.js";
+import { Logger } from "cables-shared-client";
+import { Port } from "./core_port.js";
+import { Patch } from "./core_patch.js";
+import { MultiPort } from "./core_port_multi.js";

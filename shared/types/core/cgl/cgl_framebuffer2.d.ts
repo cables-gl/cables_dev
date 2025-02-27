@@ -1,4 +1,4 @@
-export default class Framebuffer2 {
+export class Framebuffer2 {
     constructor(cgl: any, w: any, h: any, options: any);
     _log: Logger;
     Framebuffer2DrawTargetsDefault: any[];

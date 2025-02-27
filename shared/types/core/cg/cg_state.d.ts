@@ -1,4 +1,6 @@
-export class CGState extends Events {
+export class CgContext extends Events {
+    static API_WEBGL: number;
+    static API_WEBGPU: number;
     /**
      * Description
      * @param {Patch} _patch
@@ -6,7 +8,7 @@ export class CGState extends Events {
     constructor(_patch: Patch);
     tempData: {};
     frameStore: {};
-    fpsCounter: import("./cg_fpscounter.js").default;
+    fpsCounter: import("./cg_fpscounter.js").FpsCounter;
     _identView: any;
     _ident: any;
     _onetimeCallbacks: any[];
@@ -156,6 +158,6 @@ export class CGState extends Events {
     saveScreenshot(filename: any, cb: any, pw: any, ph: any, noclearalpha: any): void;
 }
 import { Events } from "cables-shared-client";
-import Patch from "../core_patch.js";
+import { Patch } from "../core_patch.js";
 import { MatrixStack } from "./cg_matrixstack.js";
 import { CgCanvas } from "./cg_canvas.js";

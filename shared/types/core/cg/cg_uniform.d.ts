@@ -1,29 +1,35 @@
-export default CgUniform;
-declare class CgUniform {
-    constructor(__shader: any, __type: any, __name: any, _value: any, _port2: any, _port3: any, _port4: any, _structUniformName: any, _structName: any, _propertyName: any);
+export class CgUniform {
+    /**
+     * Description
+     * @param {CgShader} __shader
+     * @param {string} __type
+     * @param {string} __name
+     * @param {Number|Port} _value
+     * @param {Port} _port2
+     * @param {Port} _port3
+     * @param {Port} _port4
+     */
+    constructor(__shader: CgShader, __type: string, __name: string, _value: number | Port, _port2: Port, _port3: Port, _port4: Port);
     _log: Logger;
-    _type: any;
-    _name: any;
-    _shader: any;
+    _type: string;
+    _name: string;
+    _shader: CgShader;
     _value: any;
     _oldValue: any;
     _port: Port;
-    _structName: any;
-    _structUniformName: any;
-    _propertyName: any;
     needsUpdate: boolean;
     shaderType: any;
     comment: any;
     set: any;
     setValue: any;
     updateValue: any;
-    _port2: any;
-    _port3: any;
-    _port4: any;
-    getType(): any;
-    get type(): any;
-    get name(): any;
-    getName(): any;
+    _port2: Port;
+    _port3: Port;
+    _port4: Port;
+    getType(): string;
+    get type(): string;
+    get name(): string;
+    getName(): string;
     getValue(): any;
     getShaderType(): any;
     isStructMember(): boolean;
@@ -33,4 +39,5 @@ declare class CgUniform {
     updateFromPort(): void;
 }
 import { Logger } from "cables-shared-client";
-import Port from "../core_port.js";
+import { CgShader } from "./cg_shader.js";
+import { Port } from "../core_port.js";

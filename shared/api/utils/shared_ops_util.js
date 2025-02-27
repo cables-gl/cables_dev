@@ -415,8 +415,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "date": Date.now()
             };
             changes.push(change);
-            const logStr = "*" + user.username + "* added changelog " + opName + " - https://cables.gl/op/" + opName;
-            this._log.info(logStr);
         }
         this._writeOpChangelog(opName, changes, update);
     }

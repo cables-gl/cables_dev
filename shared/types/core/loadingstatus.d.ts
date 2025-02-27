@@ -6,7 +6,7 @@
  * @class
  * @param patch
  */
-export default class LoadingStatus extends Events {
+export class LoadingStatus extends Events {
     /**
      * @param {Patch} patch
      */
@@ -45,4 +45,4 @@ export default class LoadingStatus extends Events {
 }
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import Patch from "./core_patch.js";
+import { Patch } from "./core_patch.js";

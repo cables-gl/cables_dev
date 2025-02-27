@@ -1,4 +1,4 @@
-export default class Profiler {
+export class Profiler {
     /**
      * @param {Patch} patch
      */
@@ -15,4 +15,4 @@ export default class Profiler {
     add(type: any, object: any): void;
     print(): void;
 }
-import Patch from "./core_patch.js";
+import { Patch } from "./core_patch.js";

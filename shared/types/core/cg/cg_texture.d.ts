@@ -4,7 +4,7 @@
  * @property {number} [height]
  * @property {string} [pixelformat]
  */
-declare class CgTexture {
+export class CgTexture {
     /**
      * @param {CglTextureOptions} options={}
      */
@@ -15,7 +15,7 @@ declare class CgTexture {
     name: any;
     pixelFormat: any;
 }
-declare namespace CgTexture {
+export namespace CgTexture {
     function getDefaultTextureData(name: any, size: any, options?: {}): any;
     let FILTER_NEAREST: number;
     let FILTER_LINEAR: number;
@@ -44,7 +44,6 @@ declare namespace CgTexture {
     let PFORMATSTR_DEPTH: string;
     let PIXELFORMATS: string[];
 }
-export default CgTexture;
 export type CglTextureOptions = {
     width?: number;
     height?: number;

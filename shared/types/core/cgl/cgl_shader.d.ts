@@ -1,3 +1,4 @@
+export { CglShader as Shader };
 /**
  * @class
  * @namespace external:CGL
@@ -9,7 +10,7 @@
  * var shader=new CGL.Shader(cgl,'MinimalMaterial');
  * shader.setSource(attachments.shader_vert,attachments.shader_frag);
  */
-export class Shader extends CgShader {
+declare class CglShader extends CgShader {
     constructor(_cgl: any, _name: any, _op: any);
     _log: Logger;
     _cgl: any;
@@ -58,13 +59,9 @@ export class Shader extends CgShader {
     getCgl(): any;
     getName(): any;
     /**
-     * enable an extension for the shader
-     * @function enableExtension
-     * @memberof Shader
-     * @instance
-     * @param name extension name
+     * @param {string} name
      */
-    enableExtension(name: any): void;
+    enableExtension(name: string): void;
     getAttrVertexPos(): number;
     hasTextureUniforms(): boolean;
     /**
@@ -82,7 +79,7 @@ export class Shader extends CgShader {
      * @instance
      * @returns newShader
      */
-    copy(): Shader;
+    copy(): CglShader;
     /**
      * set shader source code
      * @function setSource
@@ -90,9 +87,9 @@ export class Shader extends CgShader {
      * @instance
      * @param {String} srcVert
      * @param {String} srcFrag
-     * @param {Bool} fromUserInteraction
+     * @param {Boolean} fromUserInteraction
      */
-    setSource(srcVert: string, srcFrag: string, fromUserInteraction: Bool): void;
+    setSource(srcVert: string, srcFrag: string, fromUserInteraction?: boolean): void;
     _addLibs(src: any): any;
     createStructUniforms(): string[];
     _injectedStringsFrag: {};
@@ -109,14 +106,12 @@ export class Shader extends CgShader {
     compile(): void;
     finalShaderFrag: string;
     finalShaderVert: string;
-    hasChanged(): boolean;
     bind(): true;
     _inverseProjMatrixUniform: any;
     _materialIdUniform: any;
     _objectIdUniform: any;
     unBind(): void;
     dispose(): void;
-    needsRecompile(): boolean;
     setDrawBuffers(arr: any): void;
     getUniforms(): any[];
     getUniform(name: any): any;
@@ -222,8 +217,15 @@ export class Shader extends CgShader {
      * ]);
      */
     addUniformStructBoth(structName: string, uniformName: string, members: any[]): any;
-    hasUniform(name: any): boolean;
-    _createProgram(vstr: any, fstr: any): any;
+    /**
+     * @param {String} name
+     */
+    hasUniform(name: string): boolean;
+    /**
+     * @param {String} vstr
+     * @param {String} fstr
+     */
+    _createProgram(vstr: string, fstr: string): any;
     vshader: any;
     fshader: any;
     hasErrors(): boolean;
@@ -271,13 +273,13 @@ export class Shader extends CgShader {
     getMaterialId(): number;
     getInfo(): {
         name: any;
-        defines: any[];
+        defines: string[][];
         hasErrors: boolean;
     };
     getDefaultFragmentShader(r: any, g: any, b: any, a: any): string;
     getDefaultVertexShader(): any;
 }
-export namespace Shader {
+declare namespace CglShader {
     export { getDefaultVertexShader };
     export { getDefaultFragmentShader };
     export function getErrorFragmentShader(): string;
@@ -287,4 +289,3 @@ import { CgShader } from "../cg/cg_shader.js";
 import { Logger } from "cables-shared-client";
 declare function getDefaultVertexShader(): any;
 declare function getDefaultFragmentShader(r: any, g: any, b: any): string;
-export {};
