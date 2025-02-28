@@ -519,7 +519,7 @@ export default class SharedExportService extends SharedUtil
                 else
                 {
                     let pathfn = path.join(this._cables.getExportAssetTargetPath(), fn);
-                    if (!fs.existsSync(pathfn))
+                    if (proj._id && !fs.existsSync(pathfn))
                     {
                         pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
                     }
