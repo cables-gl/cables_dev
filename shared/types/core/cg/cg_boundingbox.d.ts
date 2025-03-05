@@ -91,4 +91,3 @@ export class BoundingBox {
     mulMat4(m: any): void;
     render(cgl: any, shader: any, op: any): void;
 }
-import Geometry from "./cg_geom.js";

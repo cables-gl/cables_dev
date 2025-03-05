@@ -1,18 +1,24 @@
-/** GPUBuffer */
-export default class GPUBuffer extends Events {
+/** @typedef GPUBufferOptions
+ * @property {number} length
+ * @property {GPUBufferDescriptor} [buffCfg]
+*/
+export class CgpGguBuffer extends Events {
+    static BINDINGTYPE_STORAGE: string;
+    static BINDINGTYPE_UNIFORM: string;
+    static BINDINGTYPE_READONLY_STORAGE: string;
     /**
      * Description
      * @param {CgpContext} cgp
      * @param {String} name
      * @param {Array} data=null
-     * @param {Object} options={}
+     * @param {GPUBufferOptions} options={}
      */
-    constructor(cgp: WebGpuContext, name: string, data?: any[], options?: any);
+    constructor(cgp: CgpContext, name: string, data?: any[], options?: GPUBufferOptions);
+    /** @type {GPUBufferDescriptor} */
+    buffCfg: GPUBufferDescriptor;
     id: string;
     floatArr: any;
     needsUpdate: boolean;
-    presentationFormat: any;
-    _buffCfg: any;
     /**
      * @param {Array} arr
      */
@@ -21,14 +27,19 @@ export default class GPUBuffer extends Events {
      * @param {number} s
      */
     setLength(s: number): void;
-    updateGpuBuffer(cgp: any): void;
-    _cgp: any;
+    /** @param {CgpContext} cgp */
+    updateGpuBuffer(cgp?: CgpContext): void;
     get name(): string;
-    get gpuBuffer(): any;
+    /** @returns {GPUBuffer} */
+    get gpuBuffer(): GPUBuffer;
     get length(): number;
     getSizeBytes(): number;
     dispose(): void;
     #private;
 }
+export type GPUBufferOptions = {
+    length: number;
+    buffCfg?: GPUBufferDescriptor;
+};
 import { Events } from "cables-shared-client";
-import { WebGpuContext } from "./cgp_state.js";
+import { CgpContext } from "./cgp_state.js";

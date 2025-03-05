@@ -11,7 +11,7 @@ export namespace BLENDS {
  * @namespace external:CGL
  * @hideconstructor
  */
-export default class CglContext extends CGState {
+export class CglContext extends CgContext {
     constructor(_patch: any);
     gApi: number;
     pushMvMatrix: () => void;
@@ -107,16 +107,20 @@ export default class CglContext extends CGState {
     logStackError(str: any): void;
     getShader(): any;
     getDefaultShader(): Shader;
-    setShader(s: any): void;
+    /**
+     * @deprecated
+     * @param {CgShader|Shader} s
+     */
+    setShader(s: CgShader | Shader): void;
     /**
      * push a shader to the shader stack
      * @function pushShader
      * @memberof Context
      * @instance
-     * @param {Object} shader
+     * @param {CglShader} shader
      * @function
      */
-    pushShader(shader: any): void;
+    pushShader(shader: CglShader): void;
     popShader(): void;
     /**
      * pop current used shader from shader stack
@@ -375,10 +379,10 @@ export default class CglContext extends CGState {
     shouldDrawHelpers(op: any): any;
     _setBlendMode(blendMode: any, premul: any): void;
     /**
-     * @param {any} geom
+     * @param {Geometry} options
      * @param {CglMeshOptions} options
      */
-    createMesh(geom: any, options: CglMeshOptions): Mesh;
+    createMesh(geom: any, options: Geometry): Mesh;
     /**
      * set cursor
      * @function setCursor
@@ -397,10 +401,11 @@ export default class CglContext extends CGState {
      */
     enableExtension(name: string): any;
 }
-import { CGState } from "../cg/cg_state.js";
+import { CgContext } from "../cg/cg_state.js";
 import { ProfileData } from "./cgl_profiledata.js";
 import { Logger } from "cables-shared-client";
 import { Shader } from "./cgl_shader.js";
-import Framebuffer2 from "./cgl_framebuffer2.js";
-import { CglMeshOptions } from "./cgl_mesh.js";
+import { CgShader } from "../cg/cg_shader.js";
+import { Framebuffer2 } from "./cgl_framebuffer2.js";
+import { Geometry } from "../cg/cg_geom.js";
 import { Mesh } from "./cgl_mesh.js";

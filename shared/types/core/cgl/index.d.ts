@@ -45,7 +45,7 @@ export const CGL: {
     ProfileData: typeof ProfileData;
     UniColorShader: typeof UniColorShader;
 };
-import Framebuffer2 from "./cgl_framebuffer2.js";
+import { Framebuffer2 } from "./cgl_framebuffer2.js";
 import { Geometry } from "../cg/cg_geom.js";
 import { BoundingBox } from "../cg/cg_boundingbox.js";
 import { MatrixStack } from "../cg/cg_matrixstack.js";
@@ -54,7 +54,7 @@ import { MESH } from "./cgl_mesh.js";
 import { Shader } from "./cgl_shader.js";
 import { Uniform } from "./cgl_shader_uniform.js";
 import { MESHES } from "./cgl_simplerect.js";
-import CglContext from "./cgl_state.js";
+import { CglContext } from "./cgl_state.js";
 import { Texture } from "./cgl_texture.js";
 import { TextureEffect } from "./cgl_textureeffect.js";
 import { ProfileData } from "./cgl_profiledata.js";

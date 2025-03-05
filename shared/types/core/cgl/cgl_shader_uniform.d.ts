@@ -33,6 +33,7 @@
  *
  */
 export class Uniform extends CgUniform {
+    constructor(__shader: any, __type: any, __name: any, _value: any, _port2: any, _port3: any, _port4: any, _structUniformName: any, _structName: any, _propertyName: any);
     _loc: number;
     _cgl: any;
     copy(newShader: any): Uniform;
@@ -85,4 +86,4 @@ export class Uniform extends CgUniform {
 export namespace Uniform {
     function glslTypeString(t: any): "float" | "bool" | "int" | "ivec2" | "vec2" | "vec3" | "vec4" | "mat4" | "sampler2D" | "samplerCube";
 }
-import CgUniform from "../cg/cg_uniform.js";
+import { CgUniform } from "../cg/cg_uniform.js";

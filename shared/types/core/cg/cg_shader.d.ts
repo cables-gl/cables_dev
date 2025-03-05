@@ -1,13 +1,43 @@
+export type ShaderModule = {
+    title: string;
+    id: number;
+    numId: number;
+    group: string;
+    prefix: string;
+    priority: number;
+    srcBodyFrag: string;
+    srcBodyVert: string;
+};
+/**
+ * @typedef ShaderModule
+ * @property {String} title
+ * @property {Number} id
+ * @property {Number} numId
+ * @property {String} group
+ * @property {String} prefix
+ * @property {Number} priority
+ * @property {String} srcBodyFrag
+ * @property {String} srcBodyVert
+ */
 export class CgShader extends Events {
     id: number;
     _isValid: boolean;
-    _defines: any[];
-    _moduleNames: any[];
-    _modules: any[];
+    /** @type {Array<Array<String>>} */
+    _defines: Array<Array<string>>;
+    /** @type {Array<String>} */
+    _moduleNames: Array<string>;
     _moduleNumId: number;
     _needsRecompile: boolean;
     _compileReason: string;
-    setWhyCompile(reason: any): void;
+    /** @type {Array<ShaderModule>} */
+    _modules: Array<ShaderModule>;
+    _compileCount: number;
+    /**
+     * @param {string} reason
+     */
+    setWhyCompile(reason: string): void;
+    getWhyCompile(): string;
+    needsRecompile(): boolean;
     /**
      * easily enable/disable a define without a value
      * @param {String} name
@@ -20,8 +50,11 @@ export class CgShader extends Events {
      * @param {any} value (can be empty)
      */
     define(name: string, value?: any): void;
-    getDefines(): any[];
-    getDefine(name: any): any;
+    getDefines(): string[][];
+    /**
+     * @param {string} name
+     */
+    getDefine(name: string): string;
     /**
      * return true if shader has define
      * @function hasDefine
@@ -36,26 +69,28 @@ export class CgShader extends Events {
      * @param {string} name
      */
     removeDefine(name: string): void;
+    /**
+     * @param {any} modId
+     */
     hasModule(modId: any): boolean;
-    setModules(names: any): void;
+    /**
+     *
+     * @param {Array<String>} names
+     */
+    setModules(names: Array<string>): void;
     /**
      * remove a module from shader
      * @param {ShaderModule} mod the module to be removed
      */
     removeModule(mod: ShaderModule): void;
     getNumModules(): number;
-    getCurrentModules(): any[];
+    getCurrentModules(): ShaderModule[];
     /**
      * add a module
-     * @param {shaderModule} mod the module to be added
-     * @param {shaderModule} [sibling] sibling module, new module will share the same group
+     * @param {ShaderModule} mod the module to be added
+     * @param {ShaderModule} [sibling] sibling module, new module will share the same group
      */
-    addModule(mod: shaderModule, sibling?: shaderModule): shaderModule;
-    getAttributeSrc(mod: any, srcHeadVert: any, srcVert: any): {
-        srcHeadVert: any;
-        srcVert: any;
-    };
-    replaceModuleSrc(): void;
+    addModule(mod: ShaderModule, sibling?: ShaderModule): ShaderModule;
 }
 import { Events } from "cables-shared-client";
-import Port from "../core_port.js";
+import { Port } from "../core_port.js";

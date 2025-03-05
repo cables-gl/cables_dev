@@ -2,7 +2,7 @@
  * A Texture
  * @namespace external:CGL
  * @class
- * @param {CGState} __cgl cgl
+ * @param {CglContext} __cgl cgl
  * @param {Object} options
  * @hideconstructor
  * @example
@@ -17,7 +17,6 @@
  */
 export class Texture extends CgTexture {
     constructor(__cgl: any, options?: {});
-    _log: Logger;
     _cgl: any;
     tex: any;
     loading: boolean;
@@ -253,6 +252,4 @@ export namespace Texture {
     function isPixelFormatFloat(pxlFrmtStr: any): any;
     function isPixelFormatHalfFloat(pxlFrmtStr: any): any;
 }
-import CgTexture from "../cg/cg_texture.js";
-import { Logger } from "cables-shared-client";
-import { CGState } from "../cg/cg_state.js";
+import { CgTexture } from "../cg/cg_texture.js";

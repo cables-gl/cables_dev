@@ -1,9 +1,9 @@
-declare class Texture extends CgTexture {
+export class Texture extends CgTexture {
     /**
     * @param {CgpContext} _cgp
     * @param {Object} options={}
     */
-    constructor(_cgp: WebGpuContext, options?: any);
+    constructor(_cgp: CgpContext, options?: any);
     gpuTexture: any;
     gpuTextureDescriptor: any;
     name: string;
@@ -47,7 +47,7 @@ declare class Texture extends CgTexture {
     setFilter(v: any): void;
     #private;
 }
-declare namespace Texture {
+export namespace Texture {
     /**
      * @function load
      * @static
@@ -61,6 +61,5 @@ declare namespace Texture {
      */
     function load(cgp: Context, url: string, onFinished: Function, settings: any): Texture;
 }
-export default Texture;
-import CgTexture from "../cg/cg_texture.js";
-import { WebGpuContext } from "./cgp_state.js";
+import { CgTexture } from "../cg/cg_texture.js";
+import { CgpContext } from "./cgp_state.js";

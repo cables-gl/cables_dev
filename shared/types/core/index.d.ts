@@ -1,4 +1,5 @@
 export default CABLES;
+export { bla as Op };
 declare namespace CABLES {
     export { CGL };
     export { CG };
@@ -41,24 +42,26 @@ declare namespace CABLES {
     export let isArray: typeof utils.isArray;
     export let float32Concat: typeof utils.float32Concat;
     export let uniqueArray: typeof utils.uniqueArray;
-    export { CGState };
+    export { CgContext as CGState };
+    export { CgContext };
 }
+declare const bla: typeof Op;
 import { CGL } from "./cgl/index.js";
 import { CG } from "./cg/cg_constants.js";
 import { CGP } from "./cgp/index.js";
 import { EMBED } from "./embedding.js";
-import Link from "./core_link.js";
-import Port from "./core_port.js";
-import Op from "./core_op.js";
-import Profiler from "./core_profiler.js";
-import Patch from "./core_patch.js";
+import { Link } from "./core_link.js";
+import { Port } from "./core_port.js";
+import { Op } from "./core_op.js";
+import { Profiler } from "./core_profiler.js";
+import { Patch } from "./core_patch.js";
 import { Timer } from "./timer.js";
 import { WEBAUDIO } from "./webaudio.js";
 import { Variable } from "./sessionvar.js";
-import LoadingStatus from "./loadingstatus.js";
+import { LoadingStatus } from "./loadingstatus.js";
 import { now } from "./timer.js";
 import { internalNow } from "./timer.js";
-import Anim from "./anim.js";
-import AnimKey from "./anim_key.js";
+import { Anim } from "./anim.js";
+import { AnimKey } from "./anim_key.js";
 import * as utils from "./utils.js";
-import { CGState } from "./cg/cg_state.js";
+import { CgContext } from "./cg/cg_state.js";

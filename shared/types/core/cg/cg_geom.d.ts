@@ -46,17 +46,13 @@ export class Geometry {
     faceVertCount: number;
     glPrimitive: any;
     _attributes: {};
-    /** @type {Array<Number>|Float32Array} */
-    _vertices: Array<number> | Float32Array;
+    /** @type {Array|Float32Array} */
+    _vertices: any[] | Float32Array;
     verticesIndices: any[];
     isGeometry: boolean;
     morphTargets: any[];
-    /**
-     * @param {Array<Number>|Float32Array} v
-     */
-    set vertices(v: Array<number> | Float32Array);
-    /** @type {Array<Number>|Float32Array} */
-    get vertices(): Array<number> | Float32Array;
+    set vertices(v: any[] | Float32Array<ArrayBuffer>);
+    get vertices(): any[] | Float32Array<ArrayBuffer>;
     set texCoords(v: any);
     get texCoords(): any;
     set vertexNormals(v: any);
@@ -186,6 +182,8 @@ export class Geometry {
     mapTexCoords2d(): void;
     getInfoOneLine(): string;
     getInfo(): {
+        name: string;
+        class: any;
         numFaces: number;
         indices: number;
         numVerts: number;

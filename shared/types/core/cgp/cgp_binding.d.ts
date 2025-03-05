@@ -1,63 +1,85 @@
-export default class Binding {
+/**
+     * @typedef CgpBindingOptions
+     * @property {string} bindingType  "uniform", "storage", "read-only-storage","read-write-storage",
+     * @property {string} [define]
+     * @property {CgpShader} shader
+     * @property {number} stage
+     * @property {number} index
+     */
+export class Binding {
     /**
      * Description
      * @param {CgpContext} cgp
      * @param {String} name
-     * @param {Object} options={}
+     * @param {CgpBindingOptions} [options]
      */
-    constructor(cgp: WebGpuContext, name: string, options?: any);
-    /** @type {Array<Uniform>} */
-    uniforms: Array<Uniform>;
-    /** @type {Array<GPUBuffer>} */
-    cGpuBuffers: Array<GPUBuffer>;
-    /** @type {Shader} */
-    shader: Shader;
-    bindingInstances: any[];
-    stageStr: string;
+    constructor(cgp: CgpContext, name: string, options?: CgpBindingOptions);
+    /** @type {Array<CgpUniform>} */
+    uniforms: Array<CgpUniform>;
+    /** @type {Array<CgpGguBuffer>} */
+    cGpuBuffers: Array<CgpGguBuffer>;
+    /** @type {Array<GPUBindGroupEntry>} */
+    bindingInstances: Array<GPUBindGroupEntry>;
     bindingType: string;
     isValid: boolean;
     changed: number;
     define: string;
     _log: Logger;
-    stage: any;
+    stage: number;
+    getStageString(): "unknown" | "fragment" | "vertex" | "compute";
+    getInfo(): {
+        class: any;
+        name: string;
+        id: number;
+        stage: string;
+        bindingType: string;
+        numUniforms: number;
+        bindingIndex: number;
+        numInstances: number;
+    };
+    getBindingIndex(): number;
     isStruct(): boolean;
     /**
-     * @param {Shader} newShader
+     * @param {CgpShader} newShader
      * @returns {Binding}
      */
-    copy(newShader: Shader): Binding;
+    copy(newShader: CgpShader): Binding;
     /**
-     * @param {Uniform} uni
+     * @param {CgpUniform} uni
      */
-    addUniform(uni: Uniform): void;
+    addUniform(uni: CgpUniform): void;
     getSizeBytes(): number;
     getShaderHeaderCode(): string;
-    getBindingGroupLayoutEntry(): {
-        label: string;
-        binding: number;
-        visibility: any;
-        size: number;
-    };
+    /** @returns {GPUBindGroupLayoutEntry} */
+    getBindingGroupLayoutEntry(): GPUBindGroupLayoutEntry;
     get isActive(): boolean;
     /**
      * @param {number} inst
+     * @returns {GPUBindGroupEntry}
      */
-    getBindingGroupEntry(inst: number): {
-        label: string;
-        binding: number;
-        size: number;
-        visibility: any;
-    };
+    getBindingGroupEntry(inst: number): GPUBindGroupEntry;
+    /**
+     * @param {any} inst
+     */
     _createCgpuBuffer(inst: any): void;
     /**
-     * @param {CgpContext} cgp
-     * @param {Number} bindingIndex
+     * @param {Number} inst
      */
-    update(cgp: WebGpuContext, bindingIndex: number): void;
+    update(inst: number): void;
     #private;
 }
-import Uniform from "./cgp_uniform.js";
-import GPUBuffer from "./cgp_gpubuffer.js";
-import Shader from "./cgp_shader.js";
+export type CgpBindingOptions = {
+    /**
+     * "uniform", "storage", "read-only-storage","read-write-storage",
+     */
+    bindingType: string;
+    define?: string;
+    shader: CgpShader;
+    stage: number;
+    index: number;
+};
+import { CgpUniform } from "./cgp_uniform.js";
+import { CgpGguBuffer } from "./cgp_gpubuffer.js";
 import { Logger } from "cables-shared-client";
-import { WebGpuContext } from "./cgp_state.js";
+import { CgpShader } from "./cgp_shader.js";
+import { CgpContext } from "./cgp_state.js";

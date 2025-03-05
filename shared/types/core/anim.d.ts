@@ -15,7 +15,7 @@
  * anim.setValue(10,1); // set value 1 at 10 seconds
  * anim.getValue(5);    // get value at 5 seconds - this returns 0.5
  */
-declare class Anim extends Events {
+export class Anim extends Events {
     static EASING_LINEAR: number;
     static EASING_ABSOLUTE: number;
     static EASING_SMOOTHSTEP: number;
@@ -170,7 +170,7 @@ declare class Anim extends Events {
      */
     createPort(op: Op, title: string, cb: Function): Port;
 }
-declare namespace Anim {
+export namespace Anim {
     /**
      * @param {number} time
      * @param {number} q
@@ -181,7 +181,6 @@ declare namespace Anim {
      */
     function slerpQuaternion(time: number, q: number, animx: number, animy: number, animz: number, animw: number): number;
 }
-export default Anim;
 /**
  * configuration object for loading a patch
  */
@@ -197,6 +196,6 @@ export type AnimCfg = {
 };
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
-import AnimKey from "./anim_key.js";
-import Op from "./core_op.js";
-import Port from "./core_port.js";
+import { AnimKey } from "./anim_key.js";
+import { Op } from "./core_op.js";
+import { Port } from "./core_port.js";

@@ -1,5 +1,4 @@
-export default PatchVariable;
-declare class PatchVariable extends Events {
+export class PatchVariable extends Events {
     /**
      * @param {String} name
      * @param {String|Number} val

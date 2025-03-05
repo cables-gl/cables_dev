@@ -55,7 +55,7 @@ export namespace WEBAUDIO {
      * @param {AudioNode} audioNode - The audio node to link to the port
      * @returns {(CABLES.Port|undefined)} - The newly created audio out port or `undefined` if there was an error
      */
-    function createAudioOutPort(op: Types.Op, portName: string, audioNode: AudioNode): (typeof import("./core_port.js").default | undefined);
+    function createAudioOutPort(op: Types.Op, portName: string, audioNode: AudioNode): (typeof import("./core_port.js").Port | undefined);
     /**
      * Creates an audio param in port for the op with name portName.
      * The port accepts other audio nodes as signals as well as values (numbers)
@@ -68,7 +68,7 @@ export namespace WEBAUDIO {
      * @param defaultValue
      * @returns {(CABLES.Port|undefined)} - The newly created port, which takes care of (dis-)connecting on its own, or `undefined` if there was an error
      */
-    function createAudioParamInPort(op: Types.Op, portName: string, audioNode: any, options: any, defaultValue: any): (typeof import("./core_port.js").default | undefined);
+    function createAudioParamInPort(op: Types.Op, portName: string, audioNode: any, options: any, defaultValue: any): (typeof import("./core_port.js").Port | undefined);
     /**
      * Loads an audio file and updates the loading indicators when cables is run in the editor.
      * @param {Patch} patch - The cables patch, when called from inside an op this is `op.patch`
@@ -92,4 +92,4 @@ export namespace WEBAUDIO {
      */
     function isValidToneNote(note: string): boolean;
 }
-import Patch from "./core_patch.js";
+import { Patch } from "./core_patch.js";

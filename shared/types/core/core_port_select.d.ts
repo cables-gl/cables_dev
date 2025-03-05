@@ -1,3 +1,3 @@
-export default class ValueSelectPort extends SwitchPort {
+export class ValueSelectPort extends SwitchPort {
 }
-import SwitchPort from "./core_port_switch.js";
+import { SwitchPort } from "./core_port_switch.js";
