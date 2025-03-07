@@ -576,8 +576,6 @@ export default class SharedExportService extends SharedUtil
                 }
             }
         }
-        const used = Date.now() - startTime;
-        this._log.info("used", used / 1000);
         return replacements;
     }
 
