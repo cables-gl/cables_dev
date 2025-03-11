@@ -30,6 +30,22 @@ class HandlebarsHelper
                 return str;
             });
 
+            Handlebars.registerHelper("twoDigits", (str) =>
+            {
+                if (!str) return "0.00";
+                let parsed = parseFloat(str);
+                if (!parsed) return "0.00";
+                return parsed.toFixed(2);
+            });
+
+            Handlebars.registerHelper("toInt", (str) =>
+            {
+                if (!str) return "0";
+                let parsed = parseInt(value);
+                if (!parsed) return "0";
+                return parsed;
+            });
+
             Handlebars.registerHelper("json", (context) =>
             {
                 let str = "";
