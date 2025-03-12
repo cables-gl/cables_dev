@@ -145,9 +145,10 @@ export default class SharedOpsUtil extends SharedUtil
         return opname.startsWith("Ops.Ui.SubPatch");
     }
 
-    isSubPatchOp(op)
+    isSubPatchOp(op, parentOnly = true)
     {
         if (!op || !op.storage) return false;
+        if (parentOnly && (!op.storage.subPatchVer || op.storage.subPatchVer < 2)) return false;
         if (op.storage.blueprintVer > 1) return true;
         return !!op.storage.subPatchVer;
     }

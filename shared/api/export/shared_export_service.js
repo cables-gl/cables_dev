@@ -975,7 +975,7 @@ export default class SharedExportService extends SharedUtil
         usedOps.forEach((op) =>
         {
             const opName = this._opsUtil.getOpNameById(op.opId);
-            if (includeAllOps || (!this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName)))
+            if (includeAllOps || this._opsUtil.isSubPatchOp(op) || (!this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName)))
             {
                 const sourceDir = this._opsUtil.getOpSourceDir(opName);
                 const targetDir = this._getOpExportSubdir(opName);
