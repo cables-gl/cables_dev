@@ -523,7 +523,6 @@ export default class SharedExportService extends SharedUtil
             else
             {
                 let fn = this._resolveFileName(filePathAndName, pathStr, proj);
-
                 if (!fn)
                 {
                     this.addLogError("unknown filename: " + filePathAndName);
@@ -1173,7 +1172,7 @@ export default class SharedExportService extends SharedUtil
 
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
-        const repl = path.join("assets/" + fn);
+        const repl = path.join("assets/", fn);
         const value = filePathAndName.replace(repl, lzipFileName);
         return value.replace(/^\/+/, "").replace(path.win32.sep, path.posix.sep);
     }
