@@ -60,7 +60,7 @@ export default class SharedExportService extends SharedUtil
         this.finalJsPath = "js/";
         this.files = {};
 
-        this.options = {};
+        this.options = exportOptions || {};
         this.options.hideMadeWithCables = exportOptions.hideMadeWithCables === "true";
         this.options.combineJS = exportOptions.combineJS === "true";
         this.options.jsonName = exportOptions.jsonName;
