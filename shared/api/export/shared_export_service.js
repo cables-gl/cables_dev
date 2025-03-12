@@ -6,6 +6,7 @@ import fse from "fs-extra";
 import path from "path";
 import os from "os";
 import moment from "moment-mini";
+import { fileURLToPath } from "url";
 import CablesConstants from "../constants.js";
 import SharedUtil from "../utils/shared_util.js";
 import { UtilProvider } from "../utils/util_provider.js";
@@ -475,7 +476,6 @@ export default class SharedExportService extends SharedUtil
         const replacements = {};
         if (!proj) return replacements;
 
-        const startTime = Date.now();
         const pathStr = this._projectsUtil.getAssetPathUrl(proj._id);
 
         const assetPorts = this._projectsUtil.getProjectAssetPorts(proj, true);
@@ -527,6 +527,7 @@ export default class SharedExportService extends SharedUtil
                 if (!fn)
                 {
                     this.addLogError("unknown filename: " + filePathAndName);
+                    this._log.error("unknown filename:" + filePathAndName);
                     break;
                 }
                 else
@@ -539,6 +540,7 @@ export default class SharedExportService extends SharedUtil
 
                     if (!fs.existsSync(pathfn))
                     {
+
                         const parts = path.parse(pathfn);
                         if (parts && parts.ext.includes("?"))
                         {
@@ -1148,10 +1150,12 @@ export default class SharedExportService extends SharedUtil
 
     _resolveFileName(filePathAndName, pathStr, project)
     {
+        let result = filePathAndName || "";
+        if (result.startsWith("file:/")) result = fileURLToPath(filePathAndName);
         let finalPath = this.finalAssetPath;
         if (this.options.assetsInSubdirs && project && project._id) finalPath = path.join(this.finalAssetPath, project._id, "/");
-        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, finalPath);
-        return filePathAndName.replace("assets/", "");
+        if (this.options.rewriteAssetPorts) result = result.replace(pathStr, finalPath);
+        return result.replace("assets/", "");
     }
 
     _getNameForZipEntry(fn, allFiles)
@@ -1171,7 +1175,7 @@ export default class SharedExportService extends SharedUtil
     {
         const repl = path.join("assets/" + fn);
         const value = filePathAndName.replace(repl, lzipFileName);
-        return value.replace(/^\/+/, "");
+        return value.replace(/^\/+/, "").replace(path.win32.sep, path.posix.sep);
     }
 
     _getAssetPath(file)
