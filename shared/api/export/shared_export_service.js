@@ -667,7 +667,7 @@ export default class SharedExportService extends SharedUtil
                         this._addProjectHtmlCode(proj, options, libs, coreLibs, template, dependencies);
 
                         // add screenshot
-                        const proScreenshotPath = this._projectsUtil.getAssetPath(proj._id) + "/_screenshots/screenshot.png";
+                        const proScreenshotPath = path.join(this._projectsUtil.getAssetPath(proj._id), "_screenshots", "screenshot.png");
                         if (fs.existsSync(proScreenshotPath)) this.append(fs.readFileSync(proScreenshotPath), { "name": "screenshot.png" });
 
                         // done adding everything, delegate to service for packaging, then return here to finish things up
@@ -968,6 +968,11 @@ export default class SharedExportService extends SharedUtil
             opsCode += "document.dispatchEvent(CABLES.jsLoaded);\n";
             opsCode += "});\n";
             this.append(opsCode, { "name": this.finalJsPath + "ops.js" });
+
+            for (let f = 0; f < libScripts.length; f++)
+            {
+                this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
+            }
 
             for (let f = 0; f < depFiles.length; f++)
             {
