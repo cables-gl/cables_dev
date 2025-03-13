@@ -101,7 +101,7 @@ export default class SharedDocUtil extends SharedUtil
             const opPath = this._opsUtil.getOpAbsolutePath(opname);
             if (opPath)
             {
-                const fn = opPath + opname + ".md";
+                const fn = path.join(opPath, opname + ".md");
 
                 try
                 {
@@ -128,7 +128,7 @@ export default class SharedDocUtil extends SharedUtil
             const opName = usedOpsNames[i];
             if (this._opsUtil.isOpNameValid(opName))
             {
-                const filename = this._opsUtil.getOpAbsolutePath(opName) + opName + ".json";
+                const filename = this._opsUtil.getOpJsonPath(opName);
                 try
                 {
                     if (fs.existsSync(filename))
@@ -919,7 +919,7 @@ export default class SharedDocUtil extends SharedUtil
             const opName = usedOpsNames[i];
             if (this._opsUtil.isOpNameValid(opName))
             {
-                const filename = this._opsUtil.getOpAbsolutePath(opName) + opName + ".json";
+                const filename = this._opsUtil.getOpJsonPath(opName);
                 try
                 {
                     const obj = jsonfile.readFileSync(filename);

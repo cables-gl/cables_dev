@@ -8,16 +8,17 @@ import { UtilProvider } from "./util_provider.js";
  */
 export default class SharedUtil
 {
+
     /**
      *
      *
      */
-    constructor(utilProvider)
+    constructor(utilProvider, register = true)
     {
         if (utilProvider)
         {
             this._utilProvider = utilProvider;
-            this._utilProvider.register(this.utilName, this);
+            if (register) this._utilProvider.register(this.utilName, this);
         }
     }
 

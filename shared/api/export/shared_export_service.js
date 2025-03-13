@@ -6,6 +6,7 @@ import fse from "fs-extra";
 import path from "path";
 import os from "os";
 import moment from "moment-mini";
+import { fileURLToPath } from "url";
 import CablesConstants from "../constants.js";
 import SharedUtil from "../utils/shared_util.js";
 import { UtilProvider } from "../utils/util_provider.js";
@@ -51,7 +52,7 @@ export default class SharedExportService extends SharedUtil
 {
     constructor(utilProvider, exportOptions, user)
     {
-        super(utilProvider);
+        super(utilProvider, false);
 
         this.user = user;
         this.exportLog = [];
@@ -61,6 +62,7 @@ export default class SharedExportService extends SharedUtil
         this.files = {};
 
         this.options = exportOptions || {};
+        this.options.logLevel = exportOptions.logLevel ? exportOptions.logLevel : "debug";
         this.options.hideMadeWithCables = exportOptions.hideMadeWithCables === "true";
         this.options.combineJS = exportOptions.combineJS === "true";
         this.options.jsonName = exportOptions.jsonName;
@@ -225,6 +227,56 @@ export default class SharedExportService extends SharedUtil
 
     createZip(project, files, callbackFinished)
     {
+        const zipFileName = this.getExportFileName(project);
+        const zipPath = this.getExportTargetPath(project);
+        const zipLocation = path.join(zipPath, zipFileName);
+
+        mkdirp.sync(zipPath);
+        this._doZip(files, zipLocation, (result) =>
+        {
+            const assetPathUrl = path.join(this._projectsUtil.getAssetPathUrl(project._id), "/_exports/");
+            const downloadUrl = this._cables.getConfig().sandbox.url + assetPathUrl;
+            result.path = assetPathUrl + zipFileName;
+            result.urls = {
+                "downloadUrl": downloadUrl + encodeURIComponent(zipFileName)
+            };
+            callbackFinished(result);
+        });
+    }
+
+    getExportTargetPath(project)
+    {
+        return path.join(this._projectsUtil.getAssetPath(project._id), "/_exports/");
+    }
+
+    getExportFileName(project)
+    {
+        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + this.getName() + "_" + project.exports;
+        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
+    }
+
+    addLog(str, level = "info")
+    {
+        const logEntry = {
+            "text": str,
+            "level": level
+        };
+        this.exportLog.push(logEntry);
+    }
+
+    addLogError(str)
+    {
+        const logEntry = {
+            "text": str,
+            "level": "error"
+        };
+        this.exportLog.unshift(logEntry);
+    }
+
+    /* private */
+
+    _doZip(files, exportTargetLocation, callbackFinished)
+    {
         if (!this.archive)
         {
             const outputErr = "no archiver found in subclass: " + this.getName();
@@ -234,29 +286,16 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
-        const zipFileName = this.getZipFileName(project);
-        const finalZipPath = path.join(this._cables.getAssetPath(), String(project._id), "/_exports/");
-        const zipLocation = path.join(finalZipPath, zipFileName);
-
-        mkdirp.sync(finalZipPath);
-        const output = fs.createWriteStream(zipLocation);
-
-        this._log.info("zipLocation", zipLocation);
-
+        const output = fs.createWriteStream(exportTargetLocation);
+        this._log.info("finalZipFileName", exportTargetLocation);
         output.on("close", () =>
         {
-            this._log.info("exported file " + zipLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
+            this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
 
             const result = {};
-            result.size = this.archive.pointer() / 1024.0 / 1024.0;
-            const assetPathUrl = path.join(this._projectsUtil.getAssetPathUrl(project._id), "/_exports/");
-            const downloadUrl = this._cables.getConfig().sandbox.url + assetPathUrl;
-
-            result.path = assetPathUrl + zipFileName;
-            result.zipLocation = zipLocation;
-            result.urls = {
-                "downloadUrl": downloadUrl + encodeURIComponent(zipFileName)
-            };
+            result.zipLocation = exportTargetLocation;
+            result.size = this.archive.pointer() / 1000000.0;
+            result.path = exportTargetLocation;
             result.log = this.exportLog;
             callbackFinished(result);
         });
@@ -283,31 +322,6 @@ export default class SharedExportService extends SharedUtil
         this.archive.pipe(output);
         this.archive.finalize();
     }
-
-    getZipFileName(project)
-    {
-        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + this.getName() + "_" + project.exports;
-        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
-    }
-
-    addLog(str)
-    {
-        const logEntry = {
-            "text": str,
-        };
-        this.exportLog.push(logEntry);
-    }
-
-    addLogError(str, level = "error")
-    {
-        const logEntry = {
-            "text": str,
-            "level": level
-        };
-        this.exportLog.unshift(logEntry);
-    }
-
-    /* private */
 
     _embeddingDoc(proj)
     {
@@ -425,7 +439,7 @@ export default class SharedExportService extends SharedUtil
 
     _getCredits(project)
     {
-        this.addLog("compiling credits.txt");
+        this.addLog("compiling credits.txt", "debug");
         return this._projectsUtil.getCreditsTextArray(project);
     }
 
@@ -462,7 +476,6 @@ export default class SharedExportService extends SharedUtil
         const replacements = {};
         if (!proj) return replacements;
 
-        const startTime = Date.now();
         const pathStr = this._projectsUtil.getAssetPathUrl(proj._id);
 
         const assetPorts = this._projectsUtil.getProjectAssetPorts(proj, true);
@@ -493,7 +506,7 @@ export default class SharedExportService extends SharedUtil
                 if (fs.existsSync(pathfn))
                 {
                     assetZipFileName = this.appendFile(pathfn, assetZipFileName, handleAssets);
-                    this.addLog("added library file: " + libfn);
+                    this.addLog("added library file: " + libfn, "debug");
                 }
                 else
                 {
@@ -510,10 +523,10 @@ export default class SharedExportService extends SharedUtil
             else
             {
                 let fn = this._resolveFileName(filePathAndName, pathStr, proj);
-
                 if (!fn)
                 {
                     this.addLogError("unknown filename: " + filePathAndName);
+                    this._log.error("unknown filename:" + filePathAndName);
                     break;
                 }
                 else
@@ -526,6 +539,7 @@ export default class SharedExportService extends SharedUtil
 
                     if (!fs.existsSync(pathfn))
                     {
+
                         const parts = path.parse(pathfn);
                         if (parts && parts.ext.includes("?"))
                         {
@@ -556,10 +570,10 @@ export default class SharedExportService extends SharedUtil
                             }
                             else
                             {
-                                this.addLog("skipped duplicate " + lzipFileName);
+                                this.addLog("skipped duplicate " + lzipFileName, "debug");
                             }
 
-                            this.addLog("added file: " + lzipFileName);
+                            this.addLog("added file: " + lzipFileName, "debug");
                             filePathAndName = this._getPortValueReplacement(filePathAndName, fn, lzipFileName);
                         }
                     }
@@ -607,7 +621,6 @@ export default class SharedExportService extends SharedUtil
             this._getProjectDependencies(proj, options, (allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode, dependencies) =>
             {
                 this.addLog("number of unique ops: " + usedOps.length);
-                this.addLog("");
 
                 this._log.info("export core file is", options.coreSrcFile);
                 this._log.info("collect assets...", (Date.now() - this.startTimeExport) / 1000);
@@ -655,7 +668,7 @@ export default class SharedExportService extends SharedUtil
                         this._addProjectHtmlCode(proj, options, libs, coreLibs, template, dependencies);
 
                         // add screenshot
-                        const proScreenshotPath = this._projectsUtil.getAssetPath(proj._id) + "/_screenshots/screenshot.png";
+                        const proScreenshotPath = path.join(this._projectsUtil.getAssetPath(proj._id), "_screenshots", "screenshot.png");
                         if (fs.existsSync(proScreenshotPath)) this.append(fs.readFileSync(proScreenshotPath), { "name": "screenshot.png" });
 
                         // done adding everything, delegate to service for packaging, then return here to finish things up
@@ -681,14 +694,13 @@ export default class SharedExportService extends SharedUtil
                             if (!result.error)
                             {
                                 this._doAfterExport(originalProject, credentials, exportNumber);
-                                this.addLog("");
                                 this.addLog("successfully exported as " + this.constructor.getName());
                             }
                             else if (result.error)
                             {
                                 this.addLogError("<b>ERROR exporting to " + this.constructor.getName() + ":</b> " + result.message + " (" + result.code + " - " + result.name + ")");
                             }
-                            result.log = this.exportLog;
+                            result.log = this._filterLog(this.exportLog, this.options.logLevel);
                             next(null, result);
                         });
                     }
@@ -759,7 +771,7 @@ export default class SharedExportService extends SharedUtil
                 if (opDoc.coreLibs) coreLibs = coreLibs.concat(opDoc.coreLibs);
                 if (opDoc.dependencies)
                 {
-                    dependencies = dependencies.concat(opDoc.dependencies);
+                    dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies({ "ops": [{ "opId": opDoc.id }] }));
                 }
             }
 
@@ -836,7 +848,7 @@ export default class SharedExportService extends SharedUtil
         const varDocs = this._embeddingDoc(proj);
         if (varDocs.length > 0)
         {
-            this.addLog("compiling doc.md");
+            this.addLog("compiling doc.md", "debug");
             this.append(varDocs, { "name": "doc.md" });
         }
 
@@ -856,7 +868,7 @@ export default class SharedExportService extends SharedUtil
         const legal = this._projectsUtil.getLicenceTextArray(proj);
         if (legal.length > 0)
         {
-            this.addLog("compiling legal.txt");
+            this.addLog("compiling legal.txt", "debug");
             this.append(legal.join("\n"), { "name": "legal.txt" });
         }
     }
@@ -871,7 +883,7 @@ export default class SharedExportService extends SharedUtil
         this._log.info("json...", (Date.now() - this.startTimeExport) / 1000);
 
         const proJson = this._getProjectJson(proj, replacedOpIds, options);
-        if (proJson.indexOf("/assets/") > -1) this.addLog("WARNING: not all assets found!");
+        if (proJson.indexOf("/assets/") > -1) this.addLogError("WARNING: not all assets found!");
 
         this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
@@ -958,6 +970,11 @@ export default class SharedExportService extends SharedUtil
             opsCode += "});\n";
             this.append(opsCode, { "name": this.finalJsPath + "ops.js" });
 
+            for (let f = 0; f < libScripts.length; f++)
+            {
+                this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
+            }
+
             for (let f = 0; f < depFiles.length; f++)
             {
                 const fileData = depFiles[f];
@@ -975,7 +992,8 @@ export default class SharedExportService extends SharedUtil
         usedOps.forEach((op) =>
         {
             const opName = this._opsUtil.getOpNameById(op.opId);
-            if (includeAllOps || (!this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName)))
+            let includeOp = !this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName);
+            if (includeAllOps || includeOp)
             {
                 const sourceDir = this._opsUtil.getOpSourceDir(opName);
                 const targetDir = this._getOpExportSubdir(opName);
@@ -1001,7 +1019,7 @@ export default class SharedExportService extends SharedUtil
         let indexhtml = fs.readFileSync(path.join(this._cables.getViewsPath(), template), "utf8");
         dependencies.forEach((dep) =>
         {
-            this.addLog("adding dependency of op: " + dep.op + " - " + dep.src);
+            this.addLog("adding dependency of op: " + dep.op + " - " + dep.src, "debug");
         });
         if (options.combineJS)
         {
@@ -1023,14 +1041,14 @@ export default class SharedExportService extends SharedUtil
             let libScriptsTags = "";
             this._getLibsUrls(libs).forEach((lib) =>
             {
-                this.addLog("adding library: " + lib.name);
+                this.addLog("adding library: " + lib.name, "debug");
                 libScriptsTags += "<script type=\"text/javascript\"  src=\"" + lib.src + "\"></script>\n";
             });
 
             let coreLibScriptTags = "";
             this._getCoreLibUrls(coreLibs).forEach((coreLib) =>
             {
-                this.addLog("adding core library: " + coreLib.name);
+                this.addLog("adding core library: " + coreLib.name, "debug");
                 coreLibScriptTags += "<script type=\"text/javascript\"  src=\"" + coreLib.src + "\"></script>\n";
             });
 
@@ -1131,10 +1149,12 @@ export default class SharedExportService extends SharedUtil
 
     _resolveFileName(filePathAndName, pathStr, project)
     {
+        let result = filePathAndName || "";
+        if (result.startsWith("file:/")) result = fileURLToPath(filePathAndName);
         let finalPath = this.finalAssetPath;
         if (this.options.assetsInSubdirs && project && project._id) finalPath = path.join(this.finalAssetPath, project._id, "/");
-        if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, finalPath);
-        return filePathAndName.replace("assets/", "");
+        if (this.options.rewriteAssetPorts) result = result.replace(pathStr, finalPath);
+        return result.replace("assets/", "");
     }
 
     _getNameForZipEntry(fn, allFiles)
@@ -1152,9 +1172,9 @@ export default class SharedExportService extends SharedUtil
 
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
-        const repl = path.join("assets/" + fn);
+        const repl = path.join("assets/", fn);
         const value = filePathAndName.replace(repl, lzipFileName);
-        return value.replace(/^\/+/, "");
+        return value.replace(/^\/+/, "").replace(path.win32.sep, path.posix.sep);
     }
 
     _getAssetPath(file)
@@ -1162,4 +1182,20 @@ export default class SharedExportService extends SharedUtil
         return path.join(this._cables.getAssetPath(), file.projectId, file.fileName);
     }
 
+    _filterLog(exportLog = [], logLevel = "debug")
+    {
+        const filteredLog = [];
+        if (exportLog)
+        {
+            for (let i = 0; i < exportLog.length; i++)
+            {
+                const logEntry = exportLog[i];
+                const entryLevel = logEntry.level || "info";
+                if (entryLevel === "debug" && logLevel !== "debug") continue;
+                if (entryLevel === "info" && logLevel === "error") continue;
+                filteredLog.push(logEntry);
+            }
+        }
+        return filteredLog;
+    }
 }
