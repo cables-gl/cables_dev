@@ -77,7 +77,7 @@ export default class SharedProjectsUtil extends SharedUtil
                     const p = this._opsUtil.getOpAbsolutePath(op);
                     if (p && fs.existsSync(p))
                     {
-                        const fn = p + "screenshot." + ext;
+                        const fn = path.join(p, "screenshot." + ext);
                         this._log.verbose("save op screenshot to", fn);
                         fs.writeFileSync(fn, bitmap);
                     }
