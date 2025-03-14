@@ -463,7 +463,7 @@ export default class SharedDocUtil extends SharedUtil
         this.removeOpNamesFromLookup([opName]);
     }
 
-    addOpsToLookup(ops, clearFiles = false)
+    addOpsToLookup(ops, clearFiles = false, haltOnError = false)
     {
         if (!ops) return;
         if (clearFiles) this._log.info("rewriting caches with", ops.length, "ops");
@@ -475,6 +475,18 @@ export default class SharedDocUtil extends SharedUtil
         {
             if (op && op.name && op.id)
             {
+                let error = false;
+                if (cachedLookup.ids[op.id] && cachedLookup.ids[op.id] !== op.name)
+                {
+                    this._log.error("DUPLICATE OP ID", op.id, op.name, cachedLookup.ids[op.id]);
+                    error = true;
+                }
+                if (cachedLookup.names[op.name] && cachedLookup.names[op.name] !== op.id)
+                {
+                    this._log.error("DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.names]);
+                    error = true;
+                }
+                if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!");
                 cachedLookup.ids[op.id] = op.name;
                 cachedLookup.names[op.name] = op.id;
             }
@@ -795,7 +807,7 @@ export default class SharedDocUtil extends SharedUtil
         return this._getNamespaceDocs(extensionName, shortName, null, extensionOps, filterOldVersions, filterDeprecated);
     }
 
-    rebuildOpCaches(cb, scopes = ["core"], clearFiles = false)
+    rebuildOpCaches(cb, scopes = ["core"], clearFiles = false, haltOnError = false)
     {
         this._rebuildOpDocCache = true;
 
@@ -850,7 +862,7 @@ export default class SharedDocUtil extends SharedUtil
         docs = docs.concat(this.getOpDocsForCollections(opNames));
 
         // make sure all ops are in lookup table
-        this.addOpsToLookup(docs, clearFiles);
+        this.addOpsToLookup(docs, clearFiles, haltOnError);
         if (cb) cb(docs);
     }
 
