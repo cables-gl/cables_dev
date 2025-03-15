@@ -10,14 +10,17 @@ export class AnimKey {
     cb: any;
     cbTriggered: boolean;
     delete(): void;
-    setEasing(e: any): void;
+    /**
+     * @param {Number} e
+     */
+    setEasing(e: number): void;
     ease: ((perc: any, key2: any) => number) | ((perc: any, key2: any) => any) | ((perc: any, key2: any) => number) | ((perc: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((t: any, key2: any) => number) | ((perc: any, key2: any) => number);
     trigger(): void;
     setValue(v: any): void;
     set(obj: any): void;
     /**
-     * @returns {Object}
-     */
+   * @returns {Object}
+   */
     getSerialized(): any;
     getEasing(): number;
 }

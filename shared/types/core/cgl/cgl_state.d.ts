@@ -53,6 +53,7 @@ export class CglContext extends CgContext {
     _oldCanvasWidth: number;
     _oldCanvasHeight: number;
     _enabledExtensions: {};
+    errorShader: Shader;
     set mvMatrix(m: mat4);
     get mvMatrix(): mat4;
     _setCanvas(canv: any): void;
@@ -109,18 +110,18 @@ export class CglContext extends CgContext {
     getDefaultShader(): Shader;
     /**
      * @deprecated
-     * @param {CgShader|Shader} s
+     * @param {Shader} s
      */
-    setShader(s: CgShader | Shader): void;
+    setShader(s: Shader): void;
     /**
      * push a shader to the shader stack
      * @function pushShader
      * @memberof Context
      * @instance
-     * @param {CglShader} shader
+     * @param {Shader} shader
      * @function
      */
-    pushShader(shader: CglShader): void;
+    pushShader(shader: Shader): void;
     popShader(): void;
     /**
      * pop current used shader from shader stack
@@ -400,12 +401,12 @@ export class CglContext extends CgContext {
      * @returns {Object} extension object or null
      */
     enableExtension(name: string): any;
+    getErrorShader(): Shader;
 }
 import { CgContext } from "../cg/cg_state.js";
 import { ProfileData } from "./cgl_profiledata.js";
 import { Logger } from "cables-shared-client";
 import { Shader } from "./cgl_shader.js";
-import { CgShader } from "../cg/cg_shader.js";
 import { Framebuffer2 } from "./cgl_framebuffer2.js";
 import { Geometry } from "../cg/cg_geom.js";
 import { Mesh } from "./cgl_mesh.js";

@@ -21,6 +21,7 @@ declare class CglShader extends CgShader {
     _program: any;
     _uniforms: any[];
     _drawBuffers: boolean[];
+    error: any;
     ignoreMissingUniforms: boolean;
     _projMatrixUniform: any;
     _mvMatrixUniform: any;
@@ -55,7 +56,6 @@ declare class CglShader extends CgShader {
     _tempCamPosMatrix: any;
     _tempInverseViewMatrix: any;
     _tempInverseProjMatrix: any;
-    isValid(): boolean;
     getCgl(): any;
     getName(): any;
     /**
@@ -226,8 +226,8 @@ declare class CglShader extends CgShader {
      * @param {String} fstr
      */
     _createProgram(vstr: string, fstr: string): any;
-    vshader: any;
-    fshader: any;
+    vshader: CglShader;
+    fshader: CglShader;
     hasErrors(): boolean;
     _linkProgram(program: any, vstr: any, fstr: any): void;
     _hasErrors: boolean;
@@ -248,14 +248,14 @@ declare class CglShader extends CgShader {
     setUniformTexture(uni: any, tex: any): any;
     /**
      * push a texture on the stack. those textures will be bound when binding the shader. texture slots are automatically set
-     * @param {uniform} uniform texture uniform
-     * @param {texture} t texture
-     * @param {type} type texture type, can be ignored when TEXTURE_2D
+     * @param {Uniform} uniform texture uniform
+     * @param {Texture} t texture
+     * @param {number} type texture type, can be ignored when TEXTURE_2D
      * @function pushTexture
      * @memberof Shader
      * @instance
      */
-    pushTexture(uniform: any, t: texture, type: any): void;
+    pushTexture(uniform: Uniform, t: Texture, type: number): void;
     /**
      * pop last texture
      * @function popTexture
@@ -283,9 +283,19 @@ declare namespace CglShader {
     export { getDefaultVertexShader };
     export { getDefaultFragmentShader };
     export function getErrorFragmentShader(): string;
-    export function createShader(cgl: any, str: any, type: any, cglShader: any): any;
+    /**
+     * @param {CglContext} cgl
+     * @param {String} str
+     * @param {number} type
+     * @param {CglShader} cglShader
+     * @returns {CglShader}
+     */
+    export function createShader(cgl: CglContext, str: string, type: number, cglShader: CglShader): CglShader;
 }
 import { CgShader } from "../cg/cg_shader.js";
 import { Logger } from "cables-shared-client";
+import { Uniform } from "./cgl_shader_uniform.js";
+import { Texture } from "./cgl_texture.js";
 declare function getDefaultVertexShader(): any;
 declare function getDefaultFragmentShader(r: any, g: any, b: any): string;
+import { CglContext } from "./cgl_state.js";

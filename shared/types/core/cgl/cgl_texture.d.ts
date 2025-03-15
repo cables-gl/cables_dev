@@ -18,6 +18,7 @@
 export class Texture extends CgTexture {
     constructor(__cgl: any, options?: {});
     _cgl: any;
+    _log: Logger;
     tex: any;
     loading: boolean;
     flip: unknown;
@@ -253,3 +254,4 @@ export namespace Texture {
     function isPixelFormatHalfFloat(pxlFrmtStr: any): any;
 }
 import { CgTexture } from "../cg/cg_texture.js";
+import { Logger } from "cables-shared-client";

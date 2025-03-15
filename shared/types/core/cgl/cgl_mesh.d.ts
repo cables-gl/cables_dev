@@ -41,7 +41,6 @@ export class Mesh extends CgMesh {
      * @param {CglMeshOptions} _options
      */
     constructor(_cgl: CglContext, __geom: Geometry, _options?: CglMeshOptions);
-    _cgl: CglContext;
     _log: Logger;
     _bufVertexAttrib: {
         buffer: any;
@@ -53,7 +52,6 @@ export class Mesh extends CgMesh {
         instanced: boolean;
         type: any;
     };
-    _bufVerticesIndizes: any;
     _indexType: any;
     _attributes: any[];
     _attribLocs: {};
@@ -70,6 +68,7 @@ export class Mesh extends CgMesh {
     _lastAttrUpdate: number;
     memFreed: boolean;
     _queryExt: any;
+    get geom(): Geometry;
     set numInstances(v: number);
     get numInstances(): number;
     freeMem(): void;
@@ -82,8 +81,18 @@ export class Mesh extends CgMesh {
      */
     updateVertices(geom: Geometry): void;
     _numVerts: number;
-    setAttributePointer(attrName: any, name: any, stride: any, offset: any): void;
-    getAttribute(name: any): any;
+    /**
+     * @param {String} attrName
+     * @param {String} name
+     * @param {Number} stride
+     * @param {Number} offset
+      */
+    setAttributePointer(attrName: string, name: string, stride: number, offset: number): void;
+    /**
+     * @param {String} name
+     * @returns {AttributeObject}
+     */
+    getAttribute(name: string): AttributeObject;
     setAttributeRange(attr: any, array: any, start: any, end: any): void;
     warned: boolean;
     _resizeAttr(array: any, attr: any): void;
@@ -152,16 +161,30 @@ export class Mesh extends CgMesh {
     unBind(): void;
     meshChanged(): boolean;
     printDebug(shader: any): void;
-    setNumVertices(num: any): void;
+    /**
+     * @param {Number} num
+     */
+    setNumVertices(num: number): void;
+    /**
+     * @returns {Number}
+     */
     getNumVertices(): number;
+    /**
+     * @param {Number} num
+     */
+    setNumIndices(num: number): void;
+    /**
+     * @returns {Number}
+     */
+    getNumIndices(): number;
     /**
      * @function render
      * @memberof Mesh
      * @instance
      * @description draw mesh to screen
-     * @param {Shader} shader
+     * @param {CgShader} shader
      */
-    render(shader: Shader): void;
+    render(shader: CgShader): void;
     setNumInstances(n: any): void;
     _disposeAttributes(): void;
     dispose(): void;
@@ -171,6 +194,7 @@ export namespace MESH {
     let lastMesh: any;
 }
 import { CgMesh } from "../cg/cg_mesh.js";
-import { CglContext } from "./cgl_state.js";
 import { Logger } from "cables-shared-client";
 import { Geometry } from "../cg/cg_geom.js";
+import { CgShader } from "../cg/cg_shader.js";
+import { CglContext } from "./cgl_state.js";

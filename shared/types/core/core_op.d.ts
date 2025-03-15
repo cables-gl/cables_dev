@@ -1,16 +1,24 @@
 /**
+ * @typedef Translation
+ * @property {string} [x]
+ * @property {string} [y]
+ */
+/**
  * configuration object for loading a patch
  * @typedef OpUiAttribs
+ * @property {string} [title] overwrite op title
+ * @property {string} [hidePort] hidePort
  * @property {string} [title] overwrite op title
  * @property {String} [title=''] overwrite title of port (by default this is portname)
  * @property {object} [storage] internal - do not use manualy
  * @property {boolean} [working] internal - do not use manualy
  * @property {boolean} [bookmarked] internal - do not use manualy
+ * @property {boolean} [selected] internal - do not use manualy
  * @property {object} [uierrors] internal - do not use manualy - use op.setUiError
  * @property {string} [color]
  * @property {string} [comment]
- * @property {object} [translate]
- * @property {string} [subpatch]
+ * @property {Translation} [translate]
+ * @property {string} [subPatch] internal - do not use manualy - use op.setUiError
  */
 export class Op extends Events {
     static OP_VERSION_PREFIX: string;
@@ -23,8 +31,8 @@ export class Op extends Events {
     constructor(_patch: Patch, _name: string, _id?: string);
     _log: Logger;
     opId: string;
-    /** @type {Array<CABLES.Port>} */
-    portsOut: Array<typeof Port>;
+    /** @type {Array<Port>} */
+    portsOut: Array<Port>;
     /** @type {Patch} */
     patch: Patch;
     data: {};
@@ -45,7 +53,7 @@ export class Op extends Events {
         needsParentOp: any;
     };
     shouldWork: {};
-    hasUiErrors: boolean;
+    hasUiErrors: number;
     /** @type {Object} */
     uiErrors: any;
     hasAnimPort: boolean;
@@ -76,7 +84,7 @@ export class Op extends Events {
      * @function renderVizLayer
      * @instance
      * @memberof Op
-     * @param {ctx} context of canvas 2d
+     * @param {CanvasRenderingContext2D} context of canvas 2d
      * @param {Object} layer info
      * @param {number} layer.x x position on canvas
      * @param {number} layer.y y position on canvas
@@ -327,11 +335,11 @@ export class Op extends Events {
     /**
      * create a array input port
      * @param {String} name
-     * @param {array} v
+     * @param {Array|Number} v
      * @param {number} stride
      * @return {Port} created port
      */
-    inArray(name: string, v: any[], stride: number): Port;
+    inArray(name: string, v: any[] | number, stride: number): Port;
     /**
      * @deprecated
      */
@@ -453,7 +461,7 @@ export class Op extends Events {
         portsIn: any[];
         portsOut: any[];
     };
-    getFirstOutPortByType(type: any): typeof Port;
+    getFirstOutPortByType(type: any): Port;
     getFirstInPortByType(type: any): Port;
     /**
      * return port by the name portName
@@ -467,7 +475,7 @@ export class Op extends Events {
     getPort(name: string, lowerCase: boolean): Port;
     /**
      * @param {string} name
-     * @param {boolean} lowerCase
+     * @param {boolean} [lowerCase]
      * @returns {Port}
      */
     getPortByName(name: string, lowerCase?: boolean): Port;
@@ -517,7 +525,7 @@ export class Op extends Events {
      * @param {string} txt text message
      * @param {number} level level
      */
-    setUiError(id: string, txt: string, level?: number): void;
+    setUiError(id: string, txt: string, level?: number, options?: {}): void;
     /**
      * enable/disable op
      * @function
@@ -593,6 +601,10 @@ export class Op extends Events {
     isCurrentUiOp(): boolean;
     #private;
 }
+export type Translation = {
+    x?: string;
+    y?: string;
+};
 /**
  * configuration object for loading a patch
  */
@@ -601,6 +613,10 @@ export type OpUiAttribs = {
      * overwrite op title
      */
     title?: string;
+    /**
+     * hidePort
+     */
+    hidePort?: string;
     /**
      * internal - do not use manualy
      */
@@ -614,13 +630,20 @@ export type OpUiAttribs = {
      */
     bookmarked?: boolean;
     /**
+     * internal - do not use manualy
+     */
+    selected?: boolean;
+    /**
      * internal - do not use manualy - use op.setUiError
      */
     uierrors?: object;
     color?: string;
     comment?: string;
-    translate?: object;
-    subpatch?: string;
+    translate?: Translation;
+    /**
+     * internal - do not use manualy - use op.setUiError
+     */
+    subPatch?: string;
 };
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
