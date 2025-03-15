@@ -22,7 +22,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         this._CLIEngine = eslint.CLIEngine;
 
-        jsonfile.spaces = 4;
+        this.OPJSON_FORMAT = { "encoding": "utf-8", "spaces": 4 };
+        jsonfile.spaces = this.OPJSON_FORMAT.spaces;
 
         this.PREFIX_OPS = "Ops.";
         this.PREFIX_USEROPS = "Ops.User.";
@@ -314,11 +315,10 @@ export default class SharedOpsUtil extends SharedUtil
     {
         let info = {};
 
-        const opPath = this.getOpAbsolutePath(opName);
-        if (opPath)
+        const jsonFilename = this.getOpAbsoluteJsonFilename(opName);
+        if (jsonFilename)
         {
-            const jsonFilename = path.join(opPath, opName + ".json");
-            const screenshotFilename = path.join(opPath, "screenshot.png");
+            const screenshotFilename = this.getExampleScreenshotPath(opName);
             let screenshotExists = false;
             if (screenshotFilename) screenshotExists = fs.existsSync(screenshotFilename);
             try
@@ -328,9 +328,7 @@ export default class SharedOpsUtil extends SharedUtil
                 info.shortName = opName.split(".")[opName.split(".").length - 1];
                 info.hasExample = !!info.exampleProjectId;
             }
-            catch (e)
-            {
-            }
+            catch (e) {}
         }
 
         info.doc = this._docsUtil.getOpDocMd(opName);
@@ -355,7 +353,7 @@ export default class SharedOpsUtil extends SharedUtil
                     obj.changelog = obj.changelog.concat(changes);
                 }
                 obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
-                jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
+                jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
             }
         }
     }
@@ -991,7 +989,7 @@ export default class SharedOpsUtil extends SharedUtil
         });
         if (newOpDocs.length > 0)
         {
-            jsonfile.writeFileSync(collectionFile, newOpDocs, { "encoding": "utf-8", "spaces": 4 });
+            jsonfile.writeFileSync(collectionFile, newOpDocs, this.OPJSON_FORMAT);
         }
         else if (fs.existsSync(collectionFile))
         {
@@ -1105,7 +1103,7 @@ export default class SharedOpsUtil extends SharedUtil
 
                 opDoc.dependencies = deps;
                 opDoc = this._docsUtil.cleanOpDocData(opDoc);
-                jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
+                jsonfile.writeFileSync(opDocFile, opDoc, this.OPJSON_FORMAT);
                 this._docsUtil.updateOpDocs(opName);
                 return true;
             }
@@ -1139,7 +1137,7 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!(d.src === dep.src)) newDeps.push(d);
                 });
                 opDoc.dependencies = newDeps;
-                if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, { "encoding": "utf-8", "spaces": 4 });
+                if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, this.OPJSON_FORMAT);
                 this._docsUtil.updateOpDocs(opName);
                 return true;
             }
@@ -1310,11 +1308,12 @@ export default class SharedOpsUtil extends SharedUtil
         const dirName = this.getOpAbsolutePath(opName);
         if (!dirName) return null;
         const filename = path.join(dirName, opName + ".json");
+
         const exists = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
         if (!existsPath && createPath) mkdirp.sync(dirName);
         existsPath = fs.existsSync(dirName);
-        if (existsPath && !exists) jsonfile.writeFileSync(filename, { "name": opName }, { "encoding": "utf-8", "spaces": 4 });
+        if (existsPath && !exists) jsonfile.writeFileSync(filename, {}, this.OPJSON_FORMAT);
         if (!existsPath) return null;
 
         return filename;
@@ -1843,63 +1842,91 @@ export default class SharedOpsUtil extends SharedUtil
         return null;
     }
 
-    setOpDefaults(opname, author = null)
+    /**
+     *
+     * @param {String} opName
+     * @param {User} author
+     * @param {Boolean} createMissing
+     * @return {Object} cleaned up json
+     */
+    cleanOpJson(opName, author = null, createMissing = false)
     {
-        const fn = this.getOpJsonPath(opname);
-        if (!fn)
+        const jsonFile = this.getOpJsonPath(opName);
+        if (!jsonFile)
         {
-            this._log.error("op default error read", opname, "has no json path");
+            this._log.error("op default error read", opName, "has no json path");
             return;
         }
-        let obj = null;
+
+        const defaults = this.getOpDefaults(opName, author);
+        let jsonData = {};
         try
         {
-            obj = jsonfile.readFileSync(fn);
+            jsonData = jsonfile.readFileSync(jsonFile);
         }
         catch (e)
         {
-            this._log.error("op default error read", opname, fn, e);
-            return;
+            if (createMissing)
+            {
+                hasChanged = true;
+                jsonData = defaults;
+            }
+            else
+            {
+                this._log.error("op default error read", opName, jsonFile, e);
+                return;
+            }
         }
-        const defaults = this.getOpDefaults(opname, author);
-        if (!obj)
+        if (!jsonData)
         {
-            this._log.warn("op default error read", opname, fn);
+            this._log.warn("op default error read", opName, jsonData);
             return;
         }
         let hasChanged = false;
-
-        if (!obj.hasOwnProperty("authorName") && defaults.authorName)
+        if (!jsonData.hasOwnProperty("authorName") && defaults.authorName)
         {
-            obj.authorName = defaults.authorName;
+            jsonData.authorName = defaults.authorName;
             hasChanged = true;
         }
 
-        if (!obj.hasOwnProperty("id"))
+        if (!jsonData.hasOwnProperty("id"))
         {
-            obj.id = defaults.id;
+            jsonData.id = defaults.id;
             hasChanged = true;
         }
 
-        if (!obj.hasOwnProperty("created"))
+        if (jsonData.hasOwnProperty("updated"))
         {
-            obj.created = defaults.created;
+            delete jsonData.updated;
             hasChanged = true;
         }
 
-        if (!obj.hasOwnProperty("license"))
+        if (!jsonData.hasOwnProperty("created"))
         {
-            obj.license = defaults.license;
+            jsonData.created = defaults.created;
+            hasChanged = true;
+        }
+
+        if (!jsonData.hasOwnProperty("license"))
+        {
+            jsonData.license = defaults.license;
             hasChanged = true;
         }
 
         if (hasChanged)
         {
-            jsonfile.writeFileSync(fn, obj, { "encoding": "utf-8", "spaces": 4 });
+            jsonfile.writeFileSync(jsonFile, jsonData, this.OPJSON_FORMAT);
+            this._docsUtil.updateOpDocs(opName);
         }
-        return hasChanged;
+        return jsonData;
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {User} author
+     *
+     */
     getOpDefaults(opName, author = null)
     {
         const defaults = {
@@ -2256,7 +2283,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (existsPath && !existsFile && create)
         {
-            jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
+            jsonfile.writeFileSync(filename, { "name": name }, this.OPJSON_FORMAT);
             existsFile = true;
         }
         if (!existsPath || !existsFile) return null;
@@ -2278,7 +2305,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (existsPath && !existsFile && create)
         {
-            jsonfile.writeFileSync(filename, { "name": name }, { "encoding": "utf-8", "spaces": 4 });
+            jsonfile.writeFileSync(filename, { "name": name }, this.OPJSON_FORMAT);
             existsFile = true;
         }
         if (!existsPath || !existsFile) return null;
@@ -2403,6 +2430,12 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {User} author
+     * @param {Object} code
+     */
     updateOpCode(opName, author, code)
     {
         const opDir = this.getOpSourceDir(opName);
@@ -2413,13 +2446,49 @@ export default class SharedOpsUtil extends SharedUtil
         const fn = this.getOpAbsoluteFileName(opName);
         let returnedCode = this._helperUtil.removeTrailingSpaces(code);
         fs.writeFileSync(fn, returnedCode);
-        const jsonFile = this.getOpJsonPath(opName);
-        let jsonData = jsonfile.readFileSync(jsonFile);
-        if (!jsonData) jsonData = {};
-        if (jsonData.updated) delete jsonData.updated;
-        jsonfile.writeFileSync(jsonFile, jsonData, { "encoding": "utf-8", "spaces": 4 });
-        this.setOpDefaults(opName, author);
+        this.updateOpJson(opName, author);
         return returnedCode;
+    }
+
+    /**
+     *
+     * @param {String} opName
+     * @returns {Object|null}
+     */
+    getOpJson(opName)
+    {
+        if (!opName) return null;
+        const jsonFile = this.getOpAbsoluteJsonFilename(opName);
+        try
+        {
+            return jsonfile.readFileSync(jsonFile);
+        }
+        catch (e) {}
+        return null;
+    }
+
+    /**
+     *
+     * @param {String} opName
+     * @param {User} author
+     * @param {Object} opJson
+     */
+    updateOpJson(opName, author, opJson = null)
+    {
+        if (!opName) return;
+        if (opJson)
+        {
+            try
+            {
+                const jsonFile = this.getOpJsonPath(opName);
+                jsonfile.writeFileSync(jsonFile, opJson, this.OPJSON_FORMAT);
+            }
+            catch (e)
+            {
+                this._log.error("failed to update op-json", e);
+            }
+        }
+        return this.cleanOpJson(opName, author, true);
     }
 
     addAttachment(opName, attName, content)
@@ -2751,7 +2820,7 @@ export default class SharedOpsUtil extends SharedUtil
         const filename = this.getOpJsonPath(opName);
         const obj = jsonfile.readFileSync(filename);
         obj.coreLibs = libNames || [];
-        jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
+        jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
         return obj.coreLibs;
     }
 
@@ -3023,7 +3092,7 @@ export default class SharedOpsUtil extends SharedUtil
 
             try
             {
-                jsonfile.writeFileSync(filename, obj, { "encoding": "utf-8", "spaces": 4 });
+                jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
                 return true;
             }
             catch (_err)
@@ -3654,7 +3723,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         const oldNameChangelog = oldName.replace(this.PREFIX_OPS, "");
-        if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, { "encoding": "utf-8", "spaces": 4 });
+        if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, this.OPJSON_FORMAT);
         if (newName.includes(this.INFIX_DEPRECATED))
         {
             this.addOpChangelog(currentUser, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
@@ -3684,31 +3753,6 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (cb) cb(null, log, newJsonData);
         return true;
-    }
-
-    getScreenshot(opName)
-    {
-        const p = this.getOpAbsolutePath(opName);
-        let buffer = " ";
-
-        try
-        {
-            buffer = fs.readFileSync(path.join(p, "screenshot.png"), "binary");
-        }
-        catch (ex)
-        {
-            try
-            {
-                let fileName = "placeholder_dark.png";
-                const placeholderPath = path.join(this._cables.getPublicPath(), "/img/", fileName);
-                buffer = fs.readFileSync(placeholderPath);
-            }
-            catch (e)
-            {
-                this._log.error("error loading op screenshot and placeholder", opName);
-            }
-        }
-        return buffer;
     }
 
     getOpEnvironmentUrls(opIdentifier)

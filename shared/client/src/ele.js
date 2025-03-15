@@ -58,7 +58,7 @@ class Ele
      * returns the all elements with class
      *
      * @param {String} name
-     * @returns {HTMLCollectionOf<Element>|Array} DOM elements
+     * @returns {HTMLCollectionOf<Element|HTMLElement>|Array} DOM elements
      */
     byClassAll(name)
     {

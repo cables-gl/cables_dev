@@ -96,12 +96,13 @@ export default class SharedExportService extends SharedUtil
      *
      * called after export finished without error
      *
-     * @param originalProject
-     * @param credentials
-     * @param exportNumber
-     * @return {any} originalProject
+     * @param {Project} originalProject
+     * @param {Object} credentials
+     * @param {Number} exportNumber
+     * @param {Object} result
+     * @return {Project}
      */
-    _doAfterExport(originalProject, credentials, exportNumber)
+    _doAfterExport(originalProject, credentials, exportNumber, result)
     {
         return originalProject;
     }
@@ -691,9 +692,10 @@ export default class SharedExportService extends SharedUtil
                                 this.addLog(table + "</table>");
                             }
                             this._log.info("file collecting ... ok");
+                            this._doAfterExport(originalProject, credentials, exportNumber, result);
+
                             if (!result.error)
                             {
-                                this._doAfterExport(originalProject, credentials, exportNumber);
                                 this.addLog("successfully exported as " + this.constructor.getName());
                             }
                             else if (result.error)
