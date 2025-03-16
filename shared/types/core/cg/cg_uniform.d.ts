@@ -9,7 +9,7 @@ export class CgUniform {
      * @param {Port} _port3
      * @param {Port} _port4
      */
-    constructor(__shader: CgShader, __type: string, __name: string, _value: number | Port, _port2: Port, _port3: Port, _port4: Port);
+    constructor(__shader: CgShader, __type: string, __name: string, _value: number | Port, _port2: Port, _port3: Port, _port4: Port, _structUniformName: any, _structName: any, _propertyName: any);
     _log: Logger;
     _type: string;
     _name: string;
@@ -17,6 +17,9 @@ export class CgUniform {
     _value: any;
     _oldValue: any;
     _port: Port;
+    _structName: any;
+    _structUniformName: any;
+    _propertyName: any;
     needsUpdate: boolean;
     shaderType: any;
     comment: any;

@@ -8,7 +8,6 @@ export class CgpMesh extends CgMesh {
     _pipe: Pipeline;
     _numNonIndexed: number;
     _positionBuffer: any;
-    _bufVerticesIndizes: any;
     _attributes: any[];
     _createBuffer(device: any, data: any, usage: any): any;
     /**

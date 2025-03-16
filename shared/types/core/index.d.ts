@@ -1,5 +1,4 @@
 export default CABLES;
-export { bla as Op };
 declare namespace CABLES {
     export { CGL };
     export { CG };
@@ -45,7 +44,6 @@ declare namespace CABLES {
     export { CgContext as CGState };
     export { CgContext };
 }
-declare const bla: typeof Op;
 import { CGL } from "./cgl/index.js";
 import { CG } from "./cg/cg_constants.js";
 import { CGP } from "./cgp/index.js";

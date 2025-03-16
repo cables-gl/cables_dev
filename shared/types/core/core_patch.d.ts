@@ -8,6 +8,7 @@
  * @property {Function} [onFinishedLoading=null] called when patch finished loading all assets
  * @property {Function} [onFirstFrameRendered=null] called when patch rendered it's first frame
  * @property {Boolean} [glCanvasResizeToWindow=false] resize canvas automatically to window size
+ * @property {Boolean} [glCanvasResizeToParent] resize canvas automatically to parent element
  * @property {Boolean} [doRequestAnimation=true] do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
  * @property {Boolean} [clearCanvasColor=true] clear canvas in transparent color every frame
  * @property {Boolean} [clearCanvasDepth=true] clear depth every frame
@@ -17,8 +18,10 @@
  * @property {String} [glslPrecision='mediump'] default precision for glsl shader
  * @property {String} [prefixJsPath]
  * @property {Function} [onPatchLoaded]
- *
- */
+ * @property {Object} [canvas]
+ * @property {String} [patchFile]
+ * @property {String} [subPatch] internal use
+  */
 /**
  * Patch class, contains all operators,values,links etc. manages loading and running of the whole patch
  *
@@ -189,20 +192,25 @@ export class Patch extends Events {
      * @param {boolean} fromDeserialize
      */
     link(op1: Op, port1Name: string, op2: Op, port2Name: string, lowerCase?: boolean, fromDeserialize?: boolean): false | void | Link;
-    serialize(options: any): string | {
-        ops: any[];
-        settings: {};
-    };
+    /**
+     * @param {Object} options
+     * @returns {Object|String}
+     */
+    serialize(options: any): any | string;
     getOpsByRefId(refId: any): any[];
-    getOpById(opid: any): any;
+    /**
+     * @param {String} opid
+     * @returns {Op}
+     */
+    getOpById(opid: string): Op;
     /**
      * @param {String} name
      */
     getOpsByObjName(name: string): Op[];
     /**
-     * @param {UUID} opid
+     * @param {String} opid
      */
-    getOpsByOpId(opid: UUID): Op[];
+    getOpsByOpId(opid: string): Op[];
     /**
      * @param {String} which
      */
@@ -240,15 +248,15 @@ export class Patch extends Events {
      * @memberof Patch
      * @instance
      * @param {String} name
-     * @return {Variable} variable
+     * @return {PatchVariable} variable
      */
-    getVar(name: string): Variable;
+    getVar(name: string): PatchVariable;
     deleteVar(name: any): void;
     /**
      * @param {number} t
-     * @returns {any}
+     * @returns {Array<PatchVariable>}
      */
-    getVars(t: number): any;
+    getVars(t: number): Array<PatchVariable>;
     /**
      * @function preRenderOps
      * @memberof Patch
@@ -315,6 +323,10 @@ export type PatchConfig = {
      */
     glCanvasResizeToWindow?: boolean;
     /**
+     * resize canvas automatically to parent element
+     */
+    glCanvasResizeToParent?: boolean;
+    /**
      * do requestAnimationFrame set to false if you want to trigger exec() from outside (only do if you know what you are doing)
      */
     doRequestAnimation?: boolean;
@@ -341,6 +353,12 @@ export type PatchConfig = {
     glslPrecision?: string;
     prefixJsPath?: string;
     onPatchLoaded?: Function;
+    canvas?: any;
+    patchFile?: string;
+    /**
+     * internal use
+     */
+    subPatch?: string;
 };
 import { Events } from "cables-shared-client";
 import { Logger } from "cables-shared-client";
@@ -350,3 +368,4 @@ import { Profiler } from "./core_profiler.js";
 import { LoadingStatus } from "./loadingstatus.js";
 import { CglContext } from "./cgl/cgl_state.js";
 import { Link } from "./core_link.js";
+import { PatchVariable } from "./core_variable.js";

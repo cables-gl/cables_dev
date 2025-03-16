@@ -32,6 +32,7 @@ export class CgShader extends Events {
     /** @type {Array<ShaderModule>} */
     _modules: Array<ShaderModule>;
     _compileCount: number;
+    logError: boolean;
     /**
      * @param {string} reason
      */
@@ -91,6 +92,7 @@ export class CgShader extends Events {
      * @param {ShaderModule} [sibling] sibling module, new module will share the same group
      */
     addModule(mod: ShaderModule, sibling?: ShaderModule): ShaderModule;
+    isValid(): boolean;
 }
 import { Events } from "cables-shared-client";
 import { Port } from "../core_port.js";

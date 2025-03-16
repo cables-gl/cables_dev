@@ -1,5 +1,6 @@
 /**
  * @property  {String} [title=''] overwrite title of port (by default this is portname)
+ * @property  {String} [display=''] how the port is displayed and interacted in the paramerer panel
  * @property  {Boolean} [greyout=false] port paramater will appear greyed out, can not be
  * @property  {Boolean} [hidePort] port will be hidden from op
  * @property  {Boolean} [hideParam] port params will be hidden from parameter panel
@@ -15,6 +16,7 @@
  * @property  {Boolean} [multiPortManual] internal: do not set manually
  * @property  {Number} [multiPortNum] internal: do not set manually
  * @property  {String} [display] internal: do not set manually
+ *
  */
 export class PortUiAttribs {
 }
@@ -44,7 +46,7 @@ export class Port extends Events {
      * @param {number} type
      * @param {PortUiAttribs} uiAttribs
      */
-    constructor(___op: Op, name: string, type: number, uiAttribs: PortUiAttribs);
+    constructor(___op: Op, name: string, type: number, uiAttribs?: PortUiAttribs);
     data: {};
     _log: Logger;
     /**
@@ -65,6 +67,7 @@ export class Port extends Events {
     name: string;
     /** @type {number} */
     type: number;
+    /** @type {PortUiAttribs} */
     uiAttribs: PortUiAttribs;
     /** @type {Anim} */
     anim: Anim;
@@ -188,7 +191,12 @@ export class Port extends Events {
     getSerialized(): {
         name: string;
     };
-    shouldLink(): boolean;
+    /**
+     * will be overwritten in ui
+     * @param {Port} port1
+     * @param {Port} port2
+     */
+    shouldLink(port1: Port, port2: Port): Port;
     /**
      * @function removeLinks
      * @memberof Port
@@ -256,8 +264,8 @@ export class Port extends Events {
     setVariableName(n: any): void;
     getVariableName(): any;
     setVariable(v: any): void;
-    _variableIn: any;
-    _varChangeListenerId: any;
+    _variableIn: import("./core_variable.js").PatchVariable;
+    _varChangeListenerId: string;
     _handleNoTriggerOpAnimUpdates(a: any): void;
     _notriggerAnimUpdate: any;
     /**
@@ -308,6 +316,8 @@ export class Port extends Events {
      * @description set callback, which will be executed when port was triggered (usually output port)
      */
     _onTriggered(a: Function): void;
+    _onSetProfiling(v: any): void;
+    _onTriggeredProfiling(): void;
     /**
      * @deprecated
      * @param {function} cb
