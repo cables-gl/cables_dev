@@ -2482,6 +2482,7 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 const jsonFile = this.getOpJsonPath(opName);
                 jsonfile.writeFileSync(jsonFile, opJson, this.OPJSON_FORMAT);
+                this._docsUtil.updateOpDocs(opName);
             }
             catch (e)
             {
