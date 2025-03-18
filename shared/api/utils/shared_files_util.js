@@ -80,7 +80,7 @@ export default class SharedFilesUtil extends SharedUtil
             if (info.cachebuster) info.imgPreview += "?rnd" + info.cachebuster;
         }
 
-        if (!info.isReference) info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb));
+        info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb), info);
 
         info.icon = this.getFileIconName(fileDb);
         info.path = this.getFileAssetUrlPath(fileDb);
@@ -103,16 +103,25 @@ export default class SharedFilesUtil extends SharedUtil
         return fileDb.fileName || fileDb.name;
     }
 
-    getConvertersForFile(fileName)
+    getConvertersForFile(fileName, fileInfo)
     {
         const converters = [];
         for (const i in this.converters)
         {
-            for (const si in this.converters[i].suffix)
+            const converter = this.converters[i];
+            for (const si in converter.suffix)
             {
-                if ((fileName + "").toLocaleLowerCase().endsWith(this.converters[i].suffix[si]))
+                if ((fileName + "").toLocaleLowerCase().endsWith(converter.suffix[si]))
                 {
-                    if (!this.converters[i].hidden) converters.push(this.converters[i]);
+                    if (converter.hidden) continue;
+                    if (fileInfo.isReference)
+                    {
+                        if (converter.referencesOnly) converters.push(converter);
+                    }
+                    else
+                    {
+                        converters.push(converter);
+                    }
                 }
             }
         }
