@@ -13,6 +13,7 @@ export default class SharedFilesUtil extends SharedUtil
     constructor(utilProvider)
     {
         super(utilProvider);
+        this.converters = [];
         this.FILETYPES =
             {
                 "image": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".jxl"],
@@ -68,6 +69,7 @@ export default class SharedFilesUtil extends SharedUtil
         let info = this.getFileInfoFromFile(fn);
         info.fileDb = fileDb;
         info.fileDb.fileName = this.getAssetFileName(fileDb);
+        info.isReference = info.fileDb.referenceTo;
         info.cachebuster = fileDb.cachebuster;
         info.date = fileDb.updated;
         info.converters = [];
@@ -78,7 +80,7 @@ export default class SharedFilesUtil extends SharedUtil
             if (info.cachebuster) info.imgPreview += "?rnd" + info.cachebuster;
         }
 
-        info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb) + "");
+        if (!info.isReference) info.converters = this.getConvertersForFile(this.getAssetFileName(fileDb));
 
         info.icon = this.getFileIconName(fileDb);
         info.path = this.getFileAssetUrlPath(fileDb);
@@ -105,9 +107,15 @@ export default class SharedFilesUtil extends SharedUtil
     {
         const converters = [];
         for (const i in this.converters)
+        {
             for (const si in this.converters[i].suffix)
+            {
                 if ((fileName + "").toLocaleLowerCase().endsWith(this.converters[i].suffix[si]))
-                    converters.push(this.converters[i]);
+                {
+                    if (!this.converters[i].hidden) converters.push(this.converters[i]);
+                }
+            }
+        }
         return converters;
     }
 
