@@ -523,4 +523,17 @@ export default class SharedProjectsUtil extends SharedUtil
 
         return legalText;
     }
+
+    findNewAssetFilename(targetDir, fileName)
+    {
+        let fileInfo = path.parse(fileName);
+        let newName = fileName;
+        let counter = 1;
+        while (fs.existsSync(path.join(targetDir, newName)))
+        {
+            newName = path.format({ "name": fileInfo.name + "_" + counter, "ext": fileInfo.ext });
+            counter++;
+        }
+        return newName;
+    }
 }

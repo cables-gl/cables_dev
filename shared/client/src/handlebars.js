@@ -41,7 +41,7 @@ class HandlebarsHelper
             Handlebars.registerHelper("toInt", (str) =>
             {
                 if (!str) return "0";
-                let parsed = parseInt(value);
+                let parsed = parseInt(str);
                 if (!parsed) return "0";
                 return parsed;
             });
