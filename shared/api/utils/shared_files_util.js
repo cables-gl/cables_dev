@@ -120,7 +120,7 @@ export default class SharedFilesUtil extends SharedUtil
                     }
                     else
                     {
-                        converters.push(converter);
+                        if (!converter.referencesOnly) converters.push(converter);
                     }
                 }
             }

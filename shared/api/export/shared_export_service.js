@@ -180,11 +180,20 @@ export default class SharedExportService extends SharedUtil
 
     appendFile(filePath, zipFilePath, handleAssets)
     {
-        const newChecksum = md5File(filePath);
-
-        const stats = fs.statSync(filePath);
-
+        let newChecksum = "";
+        let stats = {};
         let ignore = false;
+        try
+        {
+            newChecksum = md5File.sync(filePath);
+            stats = fs.statSync(filePath);
+        }
+        catch (e)
+        {
+            // file might not exist, we handle this later
+            ignore = true;
+        }
+
         for (let i = 0; i < this.assetInfos.length; i++)
         {
             if (this.assetInfos[i].path === filePath && this.assetInfos[i].zipFilePath === zipFilePath)
@@ -202,7 +211,6 @@ export default class SharedExportService extends SharedUtil
 
         if (handleAssets === "none")
         {
-            this._log.warn("ignore ", filePath);
             ignore = true;
         }
 
@@ -885,7 +893,16 @@ export default class SharedExportService extends SharedUtil
         this._log.info("json...", (Date.now() - this.startTimeExport) / 1000);
 
         const proJson = this._getProjectJson(proj, replacedOpIds, options);
-        if (proJson.indexOf("/assets/") > -1) this.addLogError("WARNING: not all assets found!");
+        if (proJson.includes("/assets/"))
+        {
+            this._projectsUtil.getProjectAssetPorts(proj).forEach((port) =>
+            {
+                if (port.value && port.value.includes("/assets/"))
+                {
+                    this.addLogError("WARNING! missing asset: <a href=\"" + this._cables.getConfig().url + "/asset/patches/?filename=" + port.value + "\">" + port.value + "</a>");
+                }
+            });
+        }
 
         this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
