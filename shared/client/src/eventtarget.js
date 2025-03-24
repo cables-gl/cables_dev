@@ -171,7 +171,7 @@ export default class Events
      * @param {*} param5
      * @param {*} param6
      */
-    emitEvent(which, param1 = null, param2 = null, param3 = null, param4 = null, param5 = null, param6 = null)
+    emitEvent(which, param1 = null, param2 = null, param3 = null, param4 = null, param5 = null, param6 = null, param7 = null, param8 = null)
     {
         if (this._logEvents) this.#eventLog.log("[event] ", this._logName, which, this._eventCallbacks);
 
@@ -181,7 +181,7 @@ export default class Events
             {
                 if (this._eventCallbacks[which][i])
                 {
-                    this._eventCallbacks[which][i].cb(param1, param2, param3, param4, param5, param6);
+                    this._eventCallbacks[which][i].cb(param1, param2, param3, param4, param5, param6, param7, param8);
                 }
             }
         }
