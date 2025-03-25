@@ -2,14 +2,14 @@ name: jsdocs develop
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'
   push:
     branches:
       - develop
     paths:
       - "shared/**"
       - "jsdoc/**"
+#  schedule:
+#    - cron: '0 3 * * *'
 
 env:
   JDOC_APP_ID: "fdb282ef-1a12-4ed8-8859-ac16c5ea3390"
