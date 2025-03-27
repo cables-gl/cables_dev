@@ -27,7 +27,6 @@ export default class SharedDocUtil extends SharedUtil
             {
                 if (!err && data)
                 {
-                    this._log.info("reloaded opdocs cache json file!");
                     this.cachedOpDocs = data;
                 }
             });

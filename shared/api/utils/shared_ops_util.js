@@ -3278,6 +3278,11 @@ export default class SharedOpsUtil extends SharedUtil
         return "";
     }
 
+    updateOpDocs(opName)
+    {
+        this._docsUtil.updateOpDocs(opName);
+    }
+
     _minifyGlsl(glsl)
     {
         if (!glsl) return "";
