@@ -2,12 +2,12 @@ name: jsdocs develop
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - develop
-    paths:
-      - "shared/**"
-      - "jsdoc/**"
+#  push:
+#    branches:
+#      - develop
+#    paths:
+#      - "shared/**"
+#      - "jsdoc/**"
 #  schedule:
 #    - cron: '0 3 * * *'
 
