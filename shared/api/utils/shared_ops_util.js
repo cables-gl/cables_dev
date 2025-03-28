@@ -2394,6 +2394,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             return this.PREFIX_TEAMOPS + this._teamsUtil.sanitizeShortNameForNamespace(name) + ".";
         }
+
+        let parts = name.split(".");
+        parts = parts.map((part) => { return part.charAt(0).toUpperCase() + part.slice(1); });
+        name = parts.join(".");
         return this.getTeamNamespaceByOpName(name);
     }
 
@@ -2632,6 +2636,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(newName)) problems.patch_op_illegal_namespace = "Illegal patch op namespace: '" + newNamespace + "'.";
 
         if (newName.endsWith(".")) problems.name_ends_with_dot = "Op name cannot end with '.'";
+        if (newName.endsWith("_")) problems.name_ends_with_underscore = "Op name cannot end with '_'";
         if (!newName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name does not start with '" + this.PREFIX_OPS + "'.";
         if (newName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
         const opExists = this.opExists(newName);
@@ -2686,18 +2691,15 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
 
-        if (Object.keys(problems).length === 0)
+        if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
         {
-            if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
-            {
-                problems.no_rights_target = "You lack write permissions to " + newName + ".";
-            }
+            problems.no_rights_target = "You lack write permissions to " + newName + ".";
+        }
 
-            if (oldName)
-            {
-                if (!this.userHasReadRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack read permissions to " + oldName + ".";
-                if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
-            }
+        if (oldName)
+        {
+            if (!this.userHasReadRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack read permissions to " + oldName + ".";
+            if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
         }
         if (opUsages && checkUsages)
         {
@@ -2800,11 +2802,7 @@ export default class SharedOpsUtil extends SharedUtil
         const noVersionName = this.getOpNameWithoutVersion(opName);
 
         let nextName = "";
-        if (!this.opExists(noVersionName))
-        {
-            nextName = noVersionName;
-        }
-        else if (version === 0)
+        if (version === 0)
         {
             nextName = noVersionName + this.SUFFIX_VERSION + 2;
         }
@@ -3278,6 +3276,11 @@ export default class SharedOpsUtil extends SharedUtil
         const parts = path.parse(fileName);
         if (parts && parts.name) return parts.name;
         return "";
+    }
+
+    updateOpDocs(opName)
+    {
+        this._docsUtil.updateOpDocs(opName);
     }
 
     _minifyGlsl(glsl)
