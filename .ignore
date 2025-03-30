@@ -1,0 +1,6 @@
+cables/build/
+cables_ui/dist/
+cables_electron/dist/
+jsdoc/dist/
+**/node_modules/**
+cables_api/public/landing/standalone/patch
