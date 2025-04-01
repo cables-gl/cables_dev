@@ -536,10 +536,25 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpCodeWarnings(opName, jsFile = null)
     {
+        const srcWarnings = [];
         const info = this.getOpInfo(opName);
 
+        if (info && info.libs)
+        {
+            info.libs.forEach((lib) =>
+            {
+                if (this._libsUtil.isAssetLib(lib))
+                {
+                    srcWarnings.push({
+                        "type": "oldlib",
+                        "id": lib,
+                        "text": "uses deprecated asset lib " + lib
+                    });
+                }
+            });
+        }
+
         const blendmodeWarning = ": use `{{CGL.BLENDMODES}}` in your shader and remove all manual replace code";
-        const srcWarnings = [];
         const fn = this.getOpAbsoluteFileName(opName);
         if (!this.isUserOp(opName))
         {
