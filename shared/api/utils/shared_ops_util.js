@@ -2935,14 +2935,16 @@ export default class SharedOpsUtil extends SharedUtil
         for (let i = 0; i < attachmentFiles.length; i++)
         {
             const attachmentFile = attachmentFiles[i];
-            fs.copySync(oldPath + attachmentFile, basePath + attachmentFile);
+            const oldFile = path.join(oldPath, attachmentFile);
+            const newFile = path.join(basePath, attachmentFile);
+            fs.copySync(oldFile, newFile);
             attachments[attachmentFile] = this.getAttachment(newName, attachmentFile);
         }
 
         const docsMd = this._docsUtil.getOpDocMd(oldName);
         if (docsMd)
         {
-            const filenameMd = basePath + "/" + newName + ".md";
+            const filenameMd = path.join(basePath, newName + ".md");
             fs.writeFileSync(filenameMd, docsMd);
         }
         this._docsUtil.updateOpDocs(newName);

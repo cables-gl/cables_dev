@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 export default class Logger
 {
 
@@ -13,12 +12,18 @@ export default class Logger
         this._options = options;
     }
 
+    /**
+     * @param {string} t
+     */
     stack(t)
     {
         console.info("[" + this.initiator + "] ", t);
         console.log((new Error()).stack);
     }
 
+    /**
+     * @param {string} t
+     */
     groupCollapsed(t)
     {
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent) console.log("[" + this.initiator + "]", ...arguments);
@@ -26,6 +31,9 @@ export default class Logger
         console.groupCollapsed("[" + this.initiator + "] " + t);
     }
 
+    /**
+     * @param {any[][]} t
+     */
     table(t)
     {
         console.table(t);
