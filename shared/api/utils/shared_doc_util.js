@@ -813,7 +813,6 @@ export default class SharedDocUtil extends SharedUtil
 
         const coreDocs = this.getOpDocs();
         let docs = [];
-        this._log.startTime("rebuildOpCaches");
         if (scopes.includes("core"))
         {
             docs = coreDocs;
@@ -861,12 +860,9 @@ export default class SharedDocUtil extends SharedUtil
             this._opsUtil.buildOpDocsForCollection(collection);
         });
         docs = docs.concat(this.getOpDocsForCollections(opNames));
-        this._log.endTime("rebuildOpCaches");
 
         // make sure all ops are in lookup table
-        this._log.startTime("addOpsToLookup");
         this.addOpsToLookup(docs, clearFiles, haltOnError);
-        this._log.endTime("addOpsToLookup");
 
         if (cb) cb(docs);
     }

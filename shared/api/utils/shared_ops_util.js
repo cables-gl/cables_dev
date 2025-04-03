@@ -1042,7 +1042,7 @@ export default class SharedOpsUtil extends SharedUtil
             }
             catch (e)
             {
-                this._log.warn("failed to read collection opdocs from", collectionFile, e);
+                this._log.warn("failed to read collection opdocs from", collectionFile, e.message || e);
             }
             cacheDocs.forEach((cacheDoc) =>
             {
