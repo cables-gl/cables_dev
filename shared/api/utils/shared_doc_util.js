@@ -867,7 +867,7 @@ export default class SharedDocUtil extends SharedUtil
             this.addOpsToLookup(docs, clearFiles, haltOnError);
 
             if (cb) cb(docs);
-        }, 0);
+        }, 1000);
 
     }
 
