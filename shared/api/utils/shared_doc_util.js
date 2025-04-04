@@ -863,6 +863,7 @@ export default class SharedDocUtil extends SharedUtil
 
         // make sure all ops are in lookup table
         this.addOpsToLookup(docs, clearFiles, haltOnError);
+
         if (cb) cb(docs);
     }
 
