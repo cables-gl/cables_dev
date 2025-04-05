@@ -809,62 +809,66 @@ export default class SharedDocUtil extends SharedUtil
 
     rebuildOpCaches(cb, scopes = ["core"], clearFiles = false, haltOnError = false)
     {
-        this._rebuildOpDocCache = true;
-
-        const coreDocs = this.getOpDocs();
-        let docs = [];
-        if (scopes.includes("core"))
+        setTimeout(() =>
         {
-            docs = coreDocs;
-            this._log.info("updating", coreDocs.length, "ops in core");
-        }
+            this._rebuildOpDocCache = true;
 
-        let opNames = [];
-        if (scopes.includes("extensions"))
-        {
-            const extensionOpNames = this._opsUtil.getAllExtensionOpNames();
-            this._log.info("updating", extensionOpNames.length, "ops in extensions");
-            opNames = opNames.concat(extensionOpNames);
-        }
+            const coreDocs = this.getOpDocs();
+            let docs = [];
+            if (scopes.includes("core"))
+            {
+                docs = coreDocs;
+                this._log.info("updating", coreDocs.length, "ops in core");
+            }
 
-        if (scopes.includes("teams"))
-        {
-            const teamOpNames = this._opsUtil.getAllTeamOpNames();
-            this._log.info("updating", teamOpNames.length, "ops in teams");
-            opNames = opNames.concat(teamOpNames);
-        }
+            let opNames = [];
+            if (scopes.includes("extensions"))
+            {
+                const extensionOpNames = this._opsUtil.getAllExtensionOpNames();
+                this._log.info("updating", extensionOpNames.length, "ops in extensions");
+                opNames = opNames.concat(extensionOpNames);
+            }
 
-        if (scopes.includes("users"))
-        {
-            const userOpNames = this._opsUtil.getAllUserOpNames();
-            this._log.info("updating", userOpNames.length, "ops in users");
-            opNames = opNames.concat(userOpNames);
-        }
+            if (scopes.includes("teams"))
+            {
+                const teamOpNames = this._opsUtil.getAllTeamOpNames();
+                this._log.info("updating", teamOpNames.length, "ops in teams");
+                opNames = opNames.concat(teamOpNames);
+            }
 
-        if (scopes.includes("patches"))
-        {
-            const patchOpNames = this._opsUtil.getAllPatchOpNames();
-            this._log.info("updating", patchOpNames.length, "ops in patches");
-            opNames = opNames.concat(patchOpNames);
-        }
+            if (scopes.includes("users"))
+            {
+                const userOpNames = this._opsUtil.getAllUserOpNames();
+                this._log.info("updating", userOpNames.length, "ops in users");
+                opNames = opNames.concat(userOpNames);
+            }
 
-        let collections = [];
-        opNames.forEach((opName) =>
-        {
-            collections.push(this._opsUtil.getCollectionName(opName));
-        });
+            if (scopes.includes("patches"))
+            {
+                const patchOpNames = this._opsUtil.getAllPatchOpNames();
+                this._log.info("updating", patchOpNames.length, "ops in patches");
+                opNames = opNames.concat(patchOpNames);
+            }
 
-        collections = this._helperUtil.uniqueArray(collections);
-        collections.forEach((collection) =>
-        {
-            this._opsUtil.buildOpDocsForCollection(collection);
-        });
-        docs = docs.concat(this.getOpDocsForCollections(opNames));
+            let collections = [];
+            opNames.forEach((opName) =>
+            {
+                collections.push(this._opsUtil.getCollectionName(opName));
+            });
 
-        // make sure all ops are in lookup table
-        this.addOpsToLookup(docs, clearFiles, haltOnError);
+            collections = this._helperUtil.uniqueArray(collections);
+            collections.forEach((collection) =>
+            {
+                this._opsUtil.buildOpDocsForCollection(collection);
+            });
+            docs = docs.concat(this.getOpDocsForCollections(opNames));
 
-        if (cb) cb(docs);
+            // make sure all ops are in lookup table
+            this.addOpsToLookup(docs, clearFiles, haltOnError);
+
+            if (cb) cb(docs);
+        }, 1000);
+
     }
 
     getOpDocsForCollections(opNames, currentUser)

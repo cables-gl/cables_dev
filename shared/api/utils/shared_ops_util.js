@@ -3631,7 +3631,6 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!this.isPatchOp(newName))
         {
-            this._log.verbose("STARTING RENAME");
             this._log.info("*" + currentUser.username + "* renaming " + oldName + " to " + newName);
         }
 
