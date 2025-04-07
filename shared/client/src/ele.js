@@ -22,7 +22,7 @@ class Ele
      * shortcut for document.querySelector(id)
      *
      * @param {String} q
-     * @returns {HTMLElement} DOM element
+     * @returns {any} DOM element
      */
     byQuery(q)
     {
