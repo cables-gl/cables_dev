@@ -3,7 +3,8 @@ cables_ui/dist/
 cables_electron/dist/
 jsdoc/dist/
 cables_api/public/landing/standalone/patch/**
-cables_api/public/landing/hero/**
+cables_api/public/landing/standalone/hero/js/*
 cables_api/public/libs_core/**
-cables_api/public/js/
 **/node_modules/**
+cables_api/public/js/
+cables_api/gen/**
