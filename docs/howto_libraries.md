@@ -12,7 +12,7 @@ If you want to create a library, there are some steps you need to consider:
 7. Every library in a subfolder (see 3.) needs an `index.js` as the main entry point.
 8. Webpack builds minified and non-minified versions to `build/libs/`
 9. use `npm run build` to build the libraries
-10. libraries are coped to `../cables_api/public/libs_core/`
+10. libraries are coped to `../cables_api/public/js/libs_core/`
 
 ### Example:
 
