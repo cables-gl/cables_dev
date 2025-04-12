@@ -1711,7 +1711,9 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opName) return false;
         if (!team) return false;
-        const namespaces = [...team.namespaces, ...team.extensions];
+        let namespaces = [];
+        if (team.namespaces) namespaces = namespaces.concat(team.namespaces);
+        if (team.extensions) namespaces = namespaces.concat(team.extensions);
         return namespaces.some((ns) => { return opName.startsWith(ns); });
     }
 
