@@ -547,7 +547,11 @@ export default class SharedExportService extends SharedUtil
                     }
                     if (proj._id && !fs.existsSync(pathfn))
                     {
-                        pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
+                        pathfn = path.join(this._projectsUtil.getAssetPath(proj._id), fn);
+                        if (!fs.existsSync(pathfn))
+                        {
+                            pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
+                        }
                     }
 
                     if (!fs.existsSync(pathfn))
