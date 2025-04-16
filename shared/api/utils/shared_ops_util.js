@@ -3899,4 +3899,28 @@ export default class SharedOpsUtil extends SharedUtil
         }
         return depUrls;
     }
+
+    sanitizeOpName(opName)
+    {
+        if (!opName) return "";
+        let fullName = "";
+        const nameParts = opName.split(".");
+        const userOp = this.isUserOp(opName);
+        for (let i = 0; i < nameParts.length; i++)
+        {
+            if (i > 0) fullName += ".";
+            const part = nameParts[i];
+            // username is the only part of ops that can be lowercase
+            if (userOp && i === 2)
+            {
+                fullName += part;
+            }
+            else
+            {
+                fullName += this._helperUtil.capitalizeFirstLetter(part);
+            }
+        }
+        return fullName;
+    }
+
 }

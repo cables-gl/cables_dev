@@ -540,7 +540,11 @@ export default class SharedExportService extends SharedUtil
                 }
                 else
                 {
-                    let pathfn = path.join(this._cables.getExportAssetTargetPath(), fn);
+                    let pathfn = fn;
+                    if (!fs.existsSync(fn))
+                    {
+                        pathfn = path.join(this._cables.getExportAssetTargetPath(), fn);
+                    }
                     if (proj._id && !fs.existsSync(pathfn))
                     {
                         pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
@@ -572,7 +576,7 @@ export default class SharedExportService extends SharedUtil
                             }
 
                             let lzipFileName = this._getNameForZipEntry(fn, allFiles);
-                            if (allFiles.indexOf(lzipFileName) === -1)
+                            if (!allFiles.includes(lzipFileName))
                             {
                                 lzipFileName = this.appendFile(pathfn, lzipFileName, handleAssets);
                                 allFiles.push(lzipFileName);
@@ -1119,21 +1123,22 @@ export default class SharedExportService extends SharedUtil
 
     _addAssets(proj, allFiles, options)
     {
-        this._replaceAssetFilePathes(proj, options.handleAssets);
+        const replacements = this._replaceAssetFilePathes(proj, options.handleAssets);
         if (options.handleAssets === "all")
         {
             for (let iaf = 0; iaf < allFiles.length; iaf++)
             {
                 if (!allFiles[iaf].fileName) continue;
-                const pathfn = this._getAssetPath(allFiles[iaf]);
+                const assetPath = this._getAssetPath(allFiles[iaf]);
+                const assetUrl = path.join(this._projectsUtil.getAssetPathUrl(proj._id), allFiles[iaf].fileName);
 
                 let assetDir = this.finalAssetPath;
                 if (this.options.assetsInSubdirs) assetDir = path.join(assetDir, proj._id);
 
                 let lzipFileName = path.join(assetDir, allFiles[iaf].fileName);
-                if (allFiles.indexOf(lzipFileName) === -1)
+                if (!replacements.hasOwnProperty(assetUrl) && !allFiles.includes(lzipFileName))
                 {
-                    lzipFileName = this.appendFile(pathfn, lzipFileName, options.handleAssets);
+                    lzipFileName = this.appendFile(assetPath, lzipFileName, options.handleAssets);
                     allFiles.push(lzipFileName);
                 }
             }
@@ -1169,11 +1174,19 @@ export default class SharedExportService extends SharedUtil
     _resolveFileName(filePathAndName, pathStr, project)
     {
         let result = filePathAndName || "";
+        if (result.startsWith("/")) result = result.replace("/", "");
         if (result.startsWith("file:/")) result = fileURLToPath(filePathAndName);
         let finalPath = this.finalAssetPath;
         if (this.options.assetsInSubdirs && project && project._id) finalPath = path.join(this.finalAssetPath, project._id, "/");
         if (this.options.rewriteAssetPorts) result = result.replace(pathStr, finalPath);
-        return result.replace("assets/", "");
+        if (result.startsWith("assets/"))
+        {
+            return result.replace("assets/", "");
+        }
+        else
+        {
+            return result;
+        }
     }
 
     _getNameForZipEntry(fn, allFiles)
