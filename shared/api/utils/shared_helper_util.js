@@ -459,4 +459,14 @@ export default class SharedHelperUtil extends SharedUtil
 
         return arr;
     }
+
+    pathLookup(obj, path)
+    {
+        const parts = path.split(".");
+        if (parts.length == 1)
+        {
+            return obj[parts[0]];
+        }
+        return this.pathLookup(obj[parts[0]], parts.slice(1).join("."));
+    }
 }

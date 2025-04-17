@@ -48,5 +48,15 @@ class Helper
         return this._simpleIdCounter;
     }
 
+    pathLookup(obj, path)
+    {
+        const parts = path.split(".");
+        if (parts.length == 1)
+        {
+            return obj[parts[0]];
+        }
+        return this.pathLookup(obj[parts[0]], parts.slice(1).join("."));
+    }
+
 }
 export default new Helper();
