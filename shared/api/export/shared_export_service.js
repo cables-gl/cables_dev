@@ -531,6 +531,7 @@ export default class SharedExportService extends SharedUtil
             }
             else
             {
+                if (this.options.rewriteAssetPorts) filePathAndName = filePathAndName.replace(pathStr, this.finalAssetPath);
                 let fn = this._resolveFileName(filePathAndName, pathStr, proj);
                 if (!fn)
                 {
@@ -1177,20 +1178,7 @@ export default class SharedExportService extends SharedUtil
 
     _resolveFileName(filePathAndName, pathStr, project)
     {
-        let result = filePathAndName || "";
-        if (result.startsWith("/")) result = result.replace("/", "");
-        if (result.startsWith("file:/")) result = fileURLToPath(filePathAndName);
-        let finalPath = this.finalAssetPath;
-        if (this.options.assetsInSubdirs && project && project._id) finalPath = path.join(this.finalAssetPath, project._id, "/");
-        if (this.options.rewriteAssetPorts) result = result.replace(pathStr, finalPath);
-        if (result.startsWith("assets/"))
-        {
-            return result.replace("assets/", "");
-        }
-        else
-        {
-            return result;
-        }
+        return filePathAndName.replace("assets/", "");
     }
 
     _getNameForZipEntry(fn, allFiles)
