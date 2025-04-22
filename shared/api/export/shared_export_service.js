@@ -6,10 +6,9 @@ import fse from "fs-extra";
 import path from "path";
 import os from "os";
 import moment from "moment-mini";
-import { fileURLToPath } from "url";
-import CablesConstants from "../constants.js";
 import SharedUtil from "../utils/shared_util.js";
 import { UtilProvider } from "../utils/util_provider.js";
+import { CablesConstants } from "../index.js";
 
 /**
  * abstract class to handle different exports, see implementations like HtmlExport
@@ -673,6 +672,7 @@ export default class SharedExportService extends SharedUtil
                         this._log.info("js packaging...", (Date.now() - this.startTimeExport) / 1000);
                         this._addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies);
                         const exportContainsOps = this._addProjectOpCode(usedOps, options);
+
                         if (exportContainsOps)
                         {
                             if (!proj.dirs) proj.dirs = {};

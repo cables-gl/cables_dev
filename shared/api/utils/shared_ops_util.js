@@ -2872,6 +2872,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     cloneOp(oldName, newName, user, targetDir = null)
     {
+        newName = this.sanitizeOpName(newName);
         const code = fs.readFileSync(this.getOpAbsoluteFileName(oldName), "utf8");
         let fn = this.getOpAbsoluteFileName(newName);
         let basePath = this.getOpAbsolutePath(newName);
@@ -3126,6 +3127,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     createOp(opName, author, code = null, opDocDefaults = null, attachments = null, targetDir = null)
     {
+        opName = this.sanitizeOpName(opName);
         if (!opDocDefaults) opDocDefaults = {};
         let parts = opName.split(".");
         if (parts[0] === "Ops" && parts[1] === "User")
@@ -3631,6 +3633,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
     {
+        newName = this.sanitizeOpName(newName);
         if (!this.isPatchOp(newName))
         {
             this._log.info("*" + currentUser.username + "* renaming " + oldName + " to " + newName);

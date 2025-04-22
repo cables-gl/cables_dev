@@ -10,19 +10,19 @@ let commands = [
         "command": "cd shared && npm run build",
         "name": "shared",
         "prefixColor": "blue",
-        "env": { "cables_electron": electron }
+        "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
     {
         "command": "cd cables && npm run start",
         "name": "core",
         "prefixColor": "yellow",
-        "env": { "cables_electron": electron }
+        "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
     {
         "command": "cd cables_ui && npm run start",
         "name": "gui",
         "prefixColor": "green",
-        "env": { "cables_electron": electron }
+        "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
 ];
 
@@ -46,13 +46,13 @@ if (!electron)
             "command": "cd cables_api && npm run start",
             "name": "api",
             "prefixColor": "cyan",
-            "env": { "cables_electron": electron }
+            "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
         });
         commands.splice(2, 0, {
             "command": "cd cables_api && npm run start:socketcluster",
             "name": "socketcluster",
             "prefixColor": "magenta",
-            "env": { "cables_electron": electron }
+            "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
         });
     }
     else
