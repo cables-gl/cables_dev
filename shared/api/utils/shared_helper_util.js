@@ -3,7 +3,7 @@ import uuid from "uuid-v4";
 import moment from "moment-mini";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
-import CablesConstants from "../constants.js";
+import { CablesConstants } from "../index.js";
 
 /**
  * @abstract

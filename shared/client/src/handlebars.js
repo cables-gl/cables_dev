@@ -1,5 +1,5 @@
 import helper from "./helper.js";
-import CablesConstants from "../constants.js";
+import { CablesConstants } from "../index.js";
 
 class HandlebarsHelper
 {
@@ -17,7 +17,7 @@ class HandlebarsHelper
                 if (!str) return "";
                 let escaped = Handlebars.escapeExpression(str);
                 if (marked) escaped = marked.parse(escaped);
-                if (setOpLinks) escaped = this.setOpLinks(escaped, linkTarget);
+                if (setOpLinks) escaped = this._setOpLinks(escaped, linkTarget);
                 return new Handlebars.SafeString(escaped);
             });
 
@@ -237,10 +237,24 @@ class HandlebarsHelper
                 }
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
+
+            Handlebars.registerHelper("text", (str) =>
+            {
+                const locale = "en";
+                return CablesConstants.text[locale][str];
+            });
+
+            Handlebars.registerHelper("constants", (path) =>
+            {
+                if (!path) return "";
+                const constant = helper.pathLookup(CablesConstants, path);
+                if (constant) return constant;
+                return path;
+            });
         }
     }
 
-    setOpLinks(html, linkTarget = "")
+    _setOpLinks(html, linkTarget = "")
     {
         html = html || "";
         let link = "/op/";
@@ -252,5 +266,6 @@ class HandlebarsHelper
         html = html.replace(urlPattern, replaceValue);
         return html;
     }
+
 }
 export default new HandlebarsHelper();
