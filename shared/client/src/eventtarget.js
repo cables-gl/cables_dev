@@ -41,6 +41,23 @@ export default class Events
         return event.id;
     }
 
+    /**
+     * @param {string} which
+     * @param {Function} cb
+     */
+    listen(which, cb, idPrefix = "")
+    {
+
+        const id = this.on(which, cb, idPrefix);
+
+        return { "stop": () =>
+        {
+            console.log("remove!!!");
+            this.off(id);
+        }
+        };
+    }
+
     /** @deprecated */
     addEventListener(which, cb, idPrefix = "")
     {

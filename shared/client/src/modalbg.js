@@ -1,3 +1,4 @@
+import ele from "./ele.js";
 import Events from "./eventtarget.js";
 
 export default class ModalBackground extends Events
@@ -5,7 +6,7 @@ export default class ModalBackground extends Events
     constructor(options = {})
     {
         super();
-        this._eleBg = document.getElementById("modalbg");
+        this._eleBg = ele.byId("modalbg");
         this.showing = false;
 
         this._eleBg.addEventListener("pointerdown", () =>
@@ -25,7 +26,10 @@ export default class ModalBackground extends Events
                 });
     }
 
-    show(transparent)
+    /**
+     * @param {boolean} [transparent]
+     */
+    show(transparent = false)
     {
         if (!this.showing)
         {
