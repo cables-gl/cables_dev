@@ -1,3 +1,4 @@
+import { Listener } from "./eventlistener.js";
 import helper from "./helper.js";
 import Logger from "./logger.js";
 
@@ -20,25 +21,43 @@ export default class Events
 
     /**
      * add event listener
-     * @param {string} which event name
+     * @param {string} eventName event name
      * @param {function} cb callback
      * @param {string} idPrefix prefix for id, default empty
      * @return {string} event id
      */
-    on(which, cb, idPrefix = "")
+    on(eventName, cb, idPrefix = "")
     {
         const event =
             {
                 "id": (idPrefix || "") + helper.simpleId(),
-                "name": which,
+                "name": eventName,
                 "cb": cb,
             };
-        if (!this._eventCallbacks[which]) this._eventCallbacks[which] = [event];
-        else this._eventCallbacks[which].push(event);
+        if (!this._eventCallbacks[eventName]) this._eventCallbacks[eventName] = [event];
+        else this._eventCallbacks[eventName].push(event);
 
         this._listeners[event.id] = event;
 
         return event.id;
+    }
+
+    /**
+     * @param {string} eventName
+     * @param {Function} cb
+     */
+    listen(eventName, cb, idPrefix = "")
+    {
+        const id = this.on(eventName, cb, idPrefix);
+        return new Listener(this, id, eventName);
+    }
+
+    removeAllEventListeners()
+    {
+        for (let i = 0; i < this._listeners.length; i++)
+        {
+            this.off(this._listeners[i].id);
+        }
     }
 
     /** @deprecated */
@@ -76,10 +95,11 @@ export default class Events
 
     /**
      * check event listener by name
-     * @param eventName event name
+     * @param {string } eventName event name
      * @return {boolean}
      */
     hasListenerForEventName(eventName)
+
     {
         return this._eventCallbacks[eventName] && this._eventCallbacks[eventName].length > 0;
     }
