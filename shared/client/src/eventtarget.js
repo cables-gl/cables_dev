@@ -1,4 +1,4 @@
-import { Listener } from "./eventlistener.js";
+import { EventListener } from "./eventlistener.js";
 import helper from "./helper.js";
 import Logger from "./logger.js";
 
@@ -8,13 +8,15 @@ import Logger from "./logger.js";
 export default class Events
 {
     #eventLog;
+    #listeners;
+
     constructor()
     {
         this.#eventLog = new Logger("eventtarget");
         this._eventCallbacks = {};
         this._logName = "";
         this._logEvents = false;
-        this._listeners = {};
+        this.#listeners = {};
 
         this._countErrorUnknowns = 0;
     }
@@ -28,16 +30,18 @@ export default class Events
      */
     on(eventName, cb, idPrefix = "")
     {
+        // TODO this should be the new eventlistener class...
         const event =
             {
                 "id": (idPrefix || "") + helper.simpleId(),
                 "name": eventName,
                 "cb": cb,
             };
+
         if (!this._eventCallbacks[eventName]) this._eventCallbacks[eventName] = [event];
         else this._eventCallbacks[eventName].push(event);
 
-        this._listeners[event.id] = event;
+        this.#listeners[event.id] = event;
 
         return event.id;
     }
@@ -45,18 +49,19 @@ export default class Events
     /**
      * @param {string} eventName
      * @param {Function} cb
+     * @returns {EventListener}
      */
     listen(eventName, cb, idPrefix = "")
     {
         const id = this.on(eventName, cb, idPrefix);
-        return new Listener(this, id, eventName);
+        return new EventListener(this, id, eventName);
     }
 
     removeAllEventListeners()
     {
-        for (let i = 0; i < this._listeners.length; i++)
+        for (let i = 0; i < this.#listeners.length; i++)
         {
-            this.off(this._listeners[i].id);
+            this.off(this.#listeners[i].id);
         }
     }
 
@@ -77,7 +82,7 @@ export default class Events
         if (id && !cb)
         {
             // check by id
-            return !!this._listeners[id];
+            return !!this.#listeners[id];
         }
         else
         {
@@ -125,7 +130,7 @@ export default class Events
 
         if (typeof id == "string") // new style, remove by id, not by name/callback
         {
-            const event = this._listeners[id];
+            const event = this.#listeners[id];
             if (!event)
             {
                 if (this._countErrorUnknowns == 20) this.#eventLog.warn("stopped reporting unknown events");
@@ -153,7 +158,7 @@ export default class Events
                 if (index !== -1)
                 {
                     this._eventCallbacks[event.name].splice(index, 1);
-                    delete this._listeners[id];
+                    delete this.#listeners[id];
                     removeCount++;
                 }
             }

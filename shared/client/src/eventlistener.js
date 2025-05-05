@@ -1,4 +1,4 @@
-export class Listener
+export class EventListener
 {
 
     /**
@@ -13,7 +13,7 @@ export class Listener
         this.eventName = eventName;
     }
 
-    stop()
+    remove()
     {
         this.targetObj.off(this.id);
     }
