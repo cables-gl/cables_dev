@@ -238,7 +238,7 @@ class HandlebarsHelper
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
 
-            Handlebars.registerHelper("text", (str) =>
+            Handlebars.registerHelper("textconstant", (str) =>
             {
                 const locale = "en";
                 return CablesConstants.text[locale][str];
