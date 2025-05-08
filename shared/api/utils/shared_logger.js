@@ -127,10 +127,10 @@ export default class SharedLogger extends SharedUtil
         });
     }
 
-    _logConsole(initiator, level, context, args, dateFormat = "DD-MM-YYYY HH:mm:ss")
+    _logConsole(initiator, level, context, args, dateFormat = "DD-MM-YYYY HH:mm:ss", shortFormat = false)
     {
         let dateTime = moment().format(dateFormat);
-        if (this._cables && this._cables.isLocal())
+        if (shortFormat || (this._cables && this._cables.isLocal()))
         {
             dateTime = "[" + moment().format("HH:mm:ss") + "]";
         }
