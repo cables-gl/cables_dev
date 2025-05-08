@@ -3,7 +3,7 @@ assimp2json/
 electron/
 data/
 docker-compose.yml
-
+gen/
 
 # misc
 .idea/

@@ -1166,18 +1166,20 @@ export default class SharedOpsUtil extends SharedUtil
 
     addOpDependencyFile(opName, fileName, buffer)
     {
-        if (!fileName.startsWith("lib_")) fileName = "lib_" + fileName;
         fileName = this._filesUtil.realSanitizeFilename(fileName);
         const opDir = this.getOpAbsolutePath(opName);
         const absoluteFile = path.join(opDir, fileName);
-        try
+        if (!fs.existsSync(absoluteFile))
         {
-            fs.writeFileSync(absoluteFile, buffer);
-            return fileName;
-        }
-        catch (e)
-        {
-            this._log.error("failed to write opdependency file", fileName, e);
+            try
+            {
+                fs.writeFileSync(absoluteFile, buffer);
+                return fileName;
+            }
+            catch (e)
+            {
+                this._log.error("failed to write opdependency file", fileName, e);
+            }
         }
         return false;
     }

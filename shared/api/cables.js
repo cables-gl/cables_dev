@@ -13,7 +13,7 @@ import { UtilProvider } from "./utils/util_provider.js";
  * @param {UtilProvider} utilProvider
  * @param {string|null} dirName base directory for everything, defaults to `.`
  * @param {string|null} writableDirName a directory that is writable (e.g. for generated files), defaults to `dirName`
- * @param {string|null} configLocation location of the `cables.json` configfile, defaults to `dirName` + "../cables.json"
+ * @param {string|null} configLocation location of the `cables.json` configfile, defaults to `dirName` + "../../gen/cables.json"
  *
  * @abstract
  */
@@ -29,7 +29,7 @@ export default class Cables extends SharedUtil
         this.PATCH_OPS_SUBDIR = "patches/";
         this._dirname = dirName || fileURLToPath(new URL(".", import.meta.url));
         this._writeableDirName = writableDirName || this._dirname;
-        this.configLocation = configLocation || path.resolve(this._dirname, "../cables.json");
+        this.configLocation = configLocation || path.resolve(this._dirname, "../../gen/cables.json");
 
         this._config = this.getConfig();
         this._createDirectories();
@@ -55,7 +55,7 @@ export default class Cables extends SharedUtil
             {
                 try
                 {
-                    fs.copySync(path.resolve("./cables_example.json"), this.configLocation);
+                    fs.copySync(path.resolve("./cables_defaults.json"), this.configLocation);
                 }
                 catch (err)
                 {
@@ -67,7 +67,6 @@ export default class Cables extends SharedUtil
         }
         return this._config;
     }
-
 
     getUserOpsPath()
     {
@@ -97,7 +96,6 @@ export default class Cables extends SharedUtil
     {
         return path.join(this.getOpsPath(), "/", this.CORE_OPS_SUBDIR);
     }
-
 
     getSourcePath()
     {
