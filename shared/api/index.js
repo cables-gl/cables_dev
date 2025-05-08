@@ -12,6 +12,7 @@ import SharedFilesUtil from "./utils/shared_files_util.js";
 import SharedLibsUtil from "./utils/shared_libs_util.js";
 import SharedExportService from "./export/shared_export_service.js";
 import CablesConstants from "./api_constants.js";
+import BuildWatcher from "./buildwatcher.js";
 
 export {
     utilProvider,
@@ -27,5 +28,6 @@ export {
     SharedLibsUtil,
     SharedLogger,
     SharedExportService,
-    CablesConstants
+    CablesConstants,
+    BuildWatcher
 };
