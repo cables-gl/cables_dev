@@ -14,6 +14,7 @@
     "type": "module",
     "license": "MIT",
     "dependencies": {
+        "archiver": "5.3.1",
         "eslint": "7.32.0",
         "eslint-config-airbnb-base": "14.2.1",
         "eslint-plugin-import": "2.27.5",
@@ -28,7 +29,10 @@
         "sanitize-filename": "1.6.3",
         "uuid-v4": "0.1.0",
         "xml-writer": "1.7.0",
-        "md5-file": "5.0.0",
-        "archiver": "5.3.1"
+        "md5-file": "5.0.0"
+    },
+    "devDependencies": {
+        "socketcluster-client": "19.2.3",
+        "jsonwebtoken": "9.0.0"
     }
 }

@@ -41,16 +41,6 @@ export default class Events
         return event;
     }
 
-    /**
-     * @param {string} eventName
-     * @param {Function} cb
-     * @returns {EventListener}
-     */
-    listen(eventName, cb, idPrefix = "")
-    {
-        return this.on(eventName, cb, idPrefix);
-    }
-
     removeAllEventListeners()
     {
         for (const i in this.#listeners)
@@ -127,7 +117,8 @@ export default class Events
             return;
         }
 
-        let id = listenerParam;
+        let id = listenerParam; // old off was using id strings directly, now uses eventlistener class
+        // @ts-ignore
         if (listenerParam.eventName) id = listenerParam.id;
 
         if (typeof id != "string")
