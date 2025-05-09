@@ -68,6 +68,11 @@ export default class Cables extends SharedUtil
         return this._config;
     }
 
+    setConfig(config)
+    {
+        if (config) this._config = config;
+    }
+
     getUserOpsPath()
     {
         if (!this._config.path.userops) return path.join(this.getOpsPath(), this.USER_OPS_SUBDIR);
