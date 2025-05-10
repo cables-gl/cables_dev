@@ -1,8 +1,5 @@
 import socketClusterClient from "socketcluster-client";
-import jwt from "jsonwebtoken";
-import SharedLogger from "./utils/shared_logger.js";
-import { utilProvider } from "./index.js";
-import { UtilProvider } from "./utils/util_provider.js";
+import sign from "jwt-encode";
 
 export default class BuildWatcher
 {
@@ -21,25 +18,24 @@ export default class BuildWatcher
             "secret": serverConfig.secret
         };
 
-        const Logger = class extends SharedLogger
-        {
-            get utilName()
+        this._log = {
+            "info": (...args) =>
             {
-                return UtilProvider.BUILD_WATCHER;
-            }
-
-            _logConsole(initiator, level, context, args, dateFormat = "HH:mm:ss", shortFormat = false)
-            {
-                super._logConsole(initiator, level, context, args, dateFormat, true);
+                const date = new Date();
+                let hours = ("0" + date.getHours()).slice(-2);
+                let minutes = ("0" + date.getMinutes()).slice(-2);
+                let seconds = ("0" + date.getMinutes()).slice(-2);
+                console.log("[" + hours + ":" + minutes + ":" + seconds + "]", "[buildwatcher]", ...args);
             }
         };
-        this._log = new Logger(utilProvider);
+
     }
 
     watch(glob, watchOptions, task)
     {
         if (this._socketCluster.active)
         {
+            if (!this._socketCluster.connected) this._connect();
             const _build_watcher = (done) =>
             {
                 this._sendBroadcast({ "build": "started", "time": Date.now(), "module": this._module });
@@ -82,12 +78,10 @@ export default class BuildWatcher
             this._log.info("not broadcasting serverside message - not connected");
             return;
         }
-        const socketclusterToken = jwt.sign(
-            {
-                "channels": [channelName],
-            },
-            this._socketCluster.secret,
-        );
+
+        const socketclusterToken = sign({
+            "channels": [channelName],
+        }, this._socketCluster.secret);
 
         const payload = {
             "token": socketclusterToken,
@@ -95,6 +89,7 @@ export default class BuildWatcher
             "data": data
         };
         this._socketCluster.socket.transmitPublish(channelName, payload);
+
     }
 
 }

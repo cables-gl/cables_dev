@@ -6,6 +6,7 @@ import Logger from "./src/logger.js";
 import ModalBackground from "./src/modalbg.js";
 import HandlebarsHelper from "./src/handlebars.js";
 import CablesConstants from "./client_contstants.js";
+import BuildWatcher from "../buildwatcher.js";
 
 export {
     helper,
@@ -15,5 +16,6 @@ export {
     Logger,
     ModalBackground,
     HandlebarsHelper,
-    CablesConstants
+    CablesConstants,
+    BuildWatcher
 };
