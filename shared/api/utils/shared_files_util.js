@@ -4,6 +4,7 @@ import sizeOfImage from "image-size";
 import sanitizeFileName from "sanitize-filename";
 import { UtilProvider } from "./util_provider.js";
 import SharedUtil from "./shared_util.js";
+import { CablesConstants } from "../index.js";
 
 /**
  * @abstract
@@ -14,29 +15,7 @@ export default class SharedFilesUtil extends SharedUtil
     {
         super(utilProvider);
         this.converters = [];
-        this.FILETYPES =
-            {
-                "image": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".jxl"],
-                "binary": [".bin"],
-                "audio": [".mp3", ".wav", ".ogg", ".aac", ".mid"],
-                "video": [".m4a", ".mp4", ".mpg", ".webm"],
-                "gltf": [".glb"],
-                "3d raw": [".obj", ".fbx", ".3ds", ".ply", ".dae", ".blend", ".md2", ".md3", ".ase"],
-                "JSON": [".json"],
-                "CSS": [".css"],
-                "textfile": [".txt"],
-                "pointcloud": [".pc.txt"],
-                "shader": [".frag", ".vert"],
-                "SVG": [".svg"],
-                "CSV": [".csv"],
-                "XML": [".xml"],
-                "font": [".otf", ".ttf", ".woff", ".woff2"],
-                "mesh sequence": [".seq.zip"],
-                "pointcloud json": [".pc.txt"],
-                "3d json": [".3d.json"],
-                "javascript": [".js"],
-                "ar markers": [".iset", ".fset", ".fset3"]
-            };
+        this.FILETYPES = CablesConstants.FILETYPES;
     }
 
     get utilName()
