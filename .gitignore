@@ -1,5 +1,4 @@
 .env
-assimp2json/
 electron/
 data/
 docker-compose.yml
