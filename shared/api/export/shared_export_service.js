@@ -778,7 +778,7 @@ export default class SharedExportService extends SharedUtil
         }
 
         let subPatchOps = this._subPatchOpUtil.getOpsUsedInSubPatches(proj);
-        let bpCount = 0;
+        let subPatchCount = 0;
         if (!subPatchOps) subPatchOps = [];
         subPatchOps.forEach((subPatchOp) =>
         {
@@ -796,20 +796,23 @@ export default class SharedExportService extends SharedUtil
 
             if (this._opsUtil.isSubPatchOp(subPatchOp))
             {
-                const attBp = this._opsUtil.getSubPatchOpAttachment(opName);
-                if (attBp && attBp.ops && attBp.ops.length > 0)
+                const subPatchOpAttachment = this._opsUtil.getSubPatchOpAttachment(opName);
+                if (subPatchOpAttachment && subPatchOpAttachment.ops && subPatchOpAttachment.ops.length > 0)
                 {
-                    libs = libs.concat(this._docsUtil.getProjectLibs(attBp));
-                    coreLibs = coreLibs.concat(this._docsUtil.getCoreLibs(attBp));
-                    dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies(attBp));
+                    libs = libs.concat(this._docsUtil.getProjectLibs(subPatchOpAttachment));
+                    coreLibs = coreLibs.concat(this._docsUtil.getCoreLibs(subPatchOpAttachment));
+                    dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies(subPatchOpAttachment));
 
-                    allProjects.push(attBp);
+                    subPatchOpAttachment._id = proj._id;
+                    subPatchOpAttachment.name = proj.name;
+
+                    allProjects.push(subPatchOpAttachment);
 
                     if (options.combineJS)
                     {
-                        for (let j = 0; j < attBp.ops.length; j++)
+                        for (let j = 0; j < subPatchOpAttachment.ops.length; j++)
                         {
-                            const attOp = attBp.ops[j];
+                            const attOp = subPatchOpAttachment.ops[j];
                             let opId = attOp.opId;
                             let id = attOp.id;
                             const attOpName = this._opsUtil.getOpNameById(opId);
@@ -819,12 +822,12 @@ export default class SharedExportService extends SharedUtil
                             }
                             if (!replacedOpIds.hasOwnProperty(id))
                             {
-                                replacedOpIds[id] = "bp" + bpCount + "-" + j;
+                                replacedOpIds[id] = "sp" + subPatchCount + "-" + j;
                             }
                         }
                     }
                 }
-                bpCount++;
+                subPatchCount++;
             }
         });
         usedOps = usedOps.concat(subPatchOps);
