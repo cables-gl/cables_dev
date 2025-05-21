@@ -54,6 +54,32 @@ export default class BuildWatcher
 
     }
 
+    notify(glob, watchOptions, eventName)
+    {
+        if (this._socketCluster.active)
+        {
+            if (!this._socketCluster.connected) this._connect();
+            const _build_notify = (fileName) =>
+            {
+                const data = { "build": eventName, "time": Date.now(), "module": this._module };
+                let send = true;
+                const dirSeperator = process && process.platform === "win32" ? "\\" : "/";
+                if (eventName === "opchange")
+                {
+                    let opName = "";
+                    if (fileName)
+                    {
+                        opName = fileName.split(dirSeperator).reverse().find((pathPart) => { return pathPart && pathPart.startsWith("Ops.") && !pathPart.endsWith(".js"); });
+                        data.opName = opName;
+                    }
+                }
+                if (send) this._sendBroadcast(data);
+            };
+            const watcher = this._gulp.watch(glob, watchOptions);
+            watcher.on("change", _build_notify);
+        }
+    }
+
     _connect()
     {
         if (this._socketCluster.active && !this._socketCluster.connected)
