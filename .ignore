@@ -1,4 +1,4 @@
-cables/build/
+cables/build/*
 cables_ui/dist/
 cables_electron/dist/
 jsdoc/dist/
@@ -6,5 +6,7 @@ cables_api/public/landing/standalone/patch/**
 cables_api/public/landing/standalone/hero/js/*
 cables_api/public/libs_core/**
 **/node_modules/**
-cables_api/public/js/
-cables_api/gen/**
+**/public/js/
+**/gen/**
+**/public/js/libs_core/*
+**/public/libs_core/*
