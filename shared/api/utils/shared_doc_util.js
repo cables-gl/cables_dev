@@ -478,15 +478,15 @@ export default class SharedDocUtil extends SharedUtil
                 let error = false;
                 if (cachedLookup.ids[op.id] && cachedLookup.ids[op.id] !== op.name)
                 {
-                    this._log.error("DUPLICATE OP ID", op.id, op.name, cachedLookup.ids[op.id]);
+                    this._log.warn("DUPLICATE OP ID", op.id, op.name, cachedLookup.ids[op.id]);
                     error = true;
                 }
                 if (cachedLookup.names[op.name] && cachedLookup.names[op.name] !== op.id)
                 {
-                    this._log.error("DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.names]);
+                    this._log.warn("DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.names]);
                     error = true;
                 }
-                if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!");
+                if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!" + op.id + " " + op.name + " " + cachedLookup.ids[op.id]);
                 cachedLookup.ids[op.id] = op.name;
                 cachedLookup.names[op.name] = op.id;
             }
