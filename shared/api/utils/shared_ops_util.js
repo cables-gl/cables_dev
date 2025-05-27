@@ -2691,6 +2691,10 @@ export default class SharedOpsUtil extends SharedUtil
         });
 
         const parts = newName.split(".");
+        let minParts = 3;
+        if (!this.isCoreOp(newName)) minParts = 4;
+        if (parts.length < minParts) problems.namespace_missing_parts = "Op namespace needs to have at least " + minParts + " parts";
+
         for (let i = 0; i < parts.length; i++) // do not start
         {
             if (parts[i].length > 0)

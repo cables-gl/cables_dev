@@ -187,16 +187,16 @@ export default class SharedProjectsUtil extends SharedUtil
             if (!keepInExport.includes(key)) delete readable[key];
         }
 
-        for (let j = 0; j < readable.ops.length; j++)
+        for (let i = 0; i < readable.ops.length; i++)
         {
-            const op = readable.ops[j];
+            const op = readable.ops[i];
             if (op.opId)
             {
                 const objName = this._opsUtil.getOpNameById(op.opId);
                 if (objName)
                 {
-                    readable.ops[j].objName = objName;
-                    delete readable.ops[j].opId;
+                    readable.ops[i].objName = objName;
+                    delete readable.ops[i].opId;
                 }
                 else
                 {
@@ -219,7 +219,22 @@ export default class SharedProjectsUtil extends SharedUtil
             {
                 for (let key in op.uiAttribs)
                 {
-                    if (!keepUiAttribs.includes(key)) delete readable.ops[j].uiAttribs[key];
+                    if (!keepUiAttribs.includes(key)) delete readable.ops[i].uiAttribs[key];
+                }
+            }
+
+            if (op.portsIn)
+            {
+                for (let j = 0; j < op.portsIn.length; j++)
+                {
+                    const port = op.portsIn[j];
+                    if (port.anim && port.anim.keys)
+                    {
+                        for (let k = 0; k < port.anim.keys.length; k++)
+                        {
+                            if (port.anim.keys[k].hasOwnProperty("uiAttribs")) delete readable.ops[i].portsIn[j].anim.keys[k].uiAttribs;
+                        }
+                    }
                 }
             }
         }
