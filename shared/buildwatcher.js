@@ -64,14 +64,21 @@ export default class BuildWatcher
                 const data = { "build": eventName, "time": Date.now(), "module": this._module };
                 let send = true;
                 const dirSeperator = process && process.platform === "win32" ? "\\" : "/";
-                if (eventName === "opchange")
+                switch (eventName)
                 {
-                    let opName = "";
+                case "opchange":
                     if (fileName)
                     {
-                        opName = fileName.split(dirSeperator).reverse().find((pathPart) => { return pathPart && pathPart.startsWith("Ops.") && !pathPart.endsWith(".js"); });
-                        data.opName = opName;
+                        data.opName = fileName.split(dirSeperator).reverse().find((pathPart) => { return pathPart && pathPart.startsWith("Ops.") && !pathPart.endsWith(".js"); });
                     }
+                    break;
+                case "attachmentchange":
+                    if (fileName)
+                    {
+                        data.opName = fileName.split(dirSeperator).reverse().find((pathPart) => { return pathPart && pathPart.startsWith("Ops.") && !pathPart.endsWith(".js"); });
+                        data.attachmentName = fileName.split(dirSeperator).reverse()[0];
+                    }
+                    break;
                 }
                 if (send) this._sendBroadcast(data);
             };
