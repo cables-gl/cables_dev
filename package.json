@@ -20,7 +20,7 @@
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/cables-gl/cables_docs/issues"
+        "url": "https://github.com/cables-gl/cables/issues"
     },
     "homepage": "https://github.com/cables-gl/cables_dev#readme",
     "devDependencies": {

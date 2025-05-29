@@ -2672,7 +2672,7 @@ export default class SharedOpsUtil extends SharedUtil
             matchString += "\\-";
         }
         matchString += "]";
-        if (this.isPatchOp(oldName) && this.isPatchOp(newName) && (oldNamespace !== newNamespace))
+        if (this.isPatchOp(oldName) && this.isPatchOp(newName) && !newNamespace.startsWith(oldNamespace))
         {
             problems.patch_op_rename_illegal = "Patch ops cannot be renamed to another patch, use copypaste to use the op in other patches";
         }
