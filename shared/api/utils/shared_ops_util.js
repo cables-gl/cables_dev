@@ -2355,9 +2355,17 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isCollection(collectionName)) dir = this.getCollectionDir(collectionName);
         if (this.isCoreOp(collectionName)) dir = this._cables.getCoreOpsPath();
 
-        if (fs.existsSync(dir))
+        let dirContents = null;
+        try
         {
-            const dirContents = fs.readdirSync(dir);
+            dirContents = fs.readdirSync(dir);
+        }
+        catch (e)
+        {
+            this._log.warn("could not read collection dir", dir);
+        }
+        if (dirContents)
+        {
             dirContents.forEach((dirContent) =>
             {
                 if (this.isOpNameValid(dirContent) && dirContent.startsWith(collectionName))
@@ -2367,8 +2375,8 @@ export default class SharedOpsUtil extends SharedUtil
                     opNames.push(dirContent);
                 }
             });
+            if (filterInvisibleOps) opNames = opNames.filter((opName) => { return !this.isInvisible(opName); });
         }
-        if (filterInvisibleOps) opNames = opNames.filter((opName) => { return !this.isInvisible(opName); });
         return opNames;
     }
 

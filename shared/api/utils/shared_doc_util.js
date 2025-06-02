@@ -354,10 +354,11 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
-    getCachedOpLookup()
+    getCachedOpLookup(updateCache = true)
     {
         if (!this.cachedLookup)
         {
+            const emptyLookup = { "names": {}, "ids": {} };
             if (fs.existsSync(this.opLookupFilename))
             {
                 let removeOps = [];
@@ -368,7 +369,8 @@ export default class SharedDocUtil extends SharedUtil
                 }
                 catch (e)
                 {
-                    this._log.warn("error reading oplookup file", this.opLookupFilename, e);
+                    this._log.warn("error reading oplookup file", this.opLookupFilename, e.message);
+                    fileLookUp = emptyLookup;
                 }
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
@@ -404,11 +406,11 @@ export default class SharedDocUtil extends SharedUtil
                     }
                 }
                 this.cachedLookup = fileLookUp;
-                this.removeOpNamesFromLookup(removeOps);
+                if (updateCache) this.removeOpNamesFromLookup(removeOps);
             }
             else
             {
-                this.cachedLookup = { "names": {}, "ids": {} };
+                this.cachedLookup = emptyLookup;
             }
         }
         return this.cachedLookup;
@@ -423,11 +425,15 @@ export default class SharedDocUtil extends SharedUtil
     {
         if (!opNames) return;
         let changed = false;
-        if (opNames.length > 0)
+        if (opNames.length === 0)
+        {
+            return;
+        }
+        else
         {
             this._log.info("removing", opNames.length, "ops from lookup table:", opNames.slice(0, 4).join(","), opNames.length > 5 ? "..." : "");
         }
-        const cachedLookup = this.getCachedOpLookup();
+        const cachedLookup = this.getCachedOpLookup(false);
         for (let i = 0; i < opNames.length; i++)
         {
             const opName = opNames[i];
@@ -465,9 +471,9 @@ export default class SharedDocUtil extends SharedUtil
 
     addOpsToLookup(ops, clearFiles = false, haltOnError = false)
     {
-        if (!ops) return;
+        if (!ops || ops.length === 0) return;
         if (clearFiles) this._log.info("rewriting caches with", ops.length, "ops");
-        let cachedLookup = this.getCachedOpLookup();
+        let cachedLookup = this.getCachedOpLookup(false);
         if (clearFiles || !cachedLookup) cachedLookup = {};
         if (clearFiles || !cachedLookup.ids) cachedLookup.ids = {};
         if (clearFiles || !cachedLookup.names) cachedLookup.names = {};
@@ -497,7 +503,7 @@ export default class SharedDocUtil extends SharedUtil
     replaceOpNameInLookup(oldName, newName)
     {
         if (!oldName || !newName) return;
-        let cachedLookup = this.getCachedOpLookup();
+        let cachedLookup = this.getCachedOpLookup(false);
         if (!cachedLookup || !cachedLookup.ids || !cachedLookup.names)
         {
             this._log.warn("no cache of op lookup table during rename!");
