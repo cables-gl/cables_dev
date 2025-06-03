@@ -10,9 +10,9 @@ If you want to create a library, there are some steps you need to consider:
 5. The resulting filename will have the structure `folder_subfolder.min/max.js`.
 6. If a file is in the `cables/` namespace, the resulting filename will be `filename.js`
 7. Every library in a subfolder (see 3.) needs an `index.js` as the main entry point.
-8. Webpack builds minified and non-minified versions to `build/libs/`
+8. Webpack builds minified and non-minified versions to `build/corelibs/`
 9. use `npm run build` to build the libraries
-10. libraries are coped to `../cables_api/public/js/libs_core/`
+10. libraries are copied to `../cables_api/public/js/libs_core/`
 
 ### Example:
 
