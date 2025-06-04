@@ -12,7 +12,7 @@
     "FILETYPES":{
         "image": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".jxl"],
         "binary": [".bin"],
-        "audio": [".mp3", ".wav", ".ogg", ".aac", ".mid"],
+        "audio": [".mp3", ".wav", ".ogg", ".aac", ".mid",".flac"],
         "video": [".m4a", ".mp4", ".mpg", ".webm"],
         "gltf": [".glb"],
         "3d raw": [".obj", ".fbx", ".3ds", ".ply", ".dae", ".blend", ".md2", ".md3", ".ase"],
