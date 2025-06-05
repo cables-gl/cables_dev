@@ -2362,8 +2362,9 @@ export default class SharedOpsUtil extends SharedUtil
         }
         catch (e)
         {
-            this._log.warn("could not read collection dir", dir);
+            // this is okay if the collection has no ops or the dir is not ready, e.g. during checking while cloning
         }
+
         if (dirContents)
         {
             dirContents.forEach((dirContent) =>
@@ -2548,26 +2549,20 @@ export default class SharedOpsUtil extends SharedUtil
         return null;
     }
 
-    updateAttachment(opName, attName, content, force = false, res = false)
+    updateAttachment(opName, attName, content, force = false)
     {
-        if (res) res.startTime("sanitizeFileName");
         let p = this.getOpAbsolutePath(opName);
         p = path.join(p, sanitizeFileName(attName));
-        if (res) res.endTime("sanitizeFileName");
 
         if (this.isCoreOp(opName))
         {
             if (p.endsWith(".js"))
             {
-                if (res) res.startTime("validateAndFormatOpCode");
                 const format = this.validateAndFormatOpCode(content);
-                if (res) res.endTime("validateAndFormatOpCode");
                 content = format.formatedCode;
             }
         }
-        if (res) res.startTime("removeTrailingSpaces");
         content = this._helperUtil.removeTrailingSpaces(content);
-        if (res) res.endTime("removeTrailingSpaces");
 
         let subPatchProblems = null;
         if (attName === this.SUBPATCH_ATTACHMENT_NAME)
@@ -2575,9 +2570,7 @@ export default class SharedOpsUtil extends SharedUtil
             try
             {
                 const subPatch = JSON.parse(content);
-                if (res) res.startTime("getNamespaceHierarchyProblem");
                 subPatchProblems = this._subPatchOpUtil.getSaveSubPatchOpProblems(opName, subPatch);
-                if (res) res.endTime("getNamespaceHierarchyProblem");
             }
             catch (e)
             {
@@ -2587,9 +2580,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (!subPatchProblems || force)
         {
-            if (res) res.startTime("writeFile");
             fs.writeFileSync(p, content, "utf8");
-            if (res) res.endTime("writeFile");
         }
         return subPatchProblems;
     }
