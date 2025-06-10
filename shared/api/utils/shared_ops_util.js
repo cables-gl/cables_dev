@@ -3735,6 +3735,11 @@ export default class SharedOpsUtil extends SharedUtil
 
         let jsonChange = false;
         const newJsonData = jsonfile.readFileSync(newJson);
+        if (this.isPatchOp(newName))
+        {
+            delete newJsonData.exampleProjectId;
+            jsonChange = true;
+        }
 
         if (removeOld)
         {
