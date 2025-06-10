@@ -982,7 +982,7 @@ export default class SharedOpsUtil extends SharedUtil
         let collectionDocs = this._docsUtil.getCollectionOpDocs(collectionName);
         let rebuildOps = collectionOps;
         if (singleOpName) rebuildOps = rebuildOps.filter((name) => { return name === singleOpName; });
-        const newOpDocs = [];
+        let newOpDocs = [];
         collectionOps.forEach((opName) =>
         {
             if (rebuildOps.includes(opName))
@@ -1004,6 +1004,7 @@ export default class SharedOpsUtil extends SharedUtil
         });
         if (newOpDocs.length > 0)
         {
+            newOpDocs = this.addVersionInfoToOps(newOpDocs, true);
             jsonfile.writeFileSync(collectionFile, newOpDocs, this.OPJSON_FORMAT);
         }
         else if (fs.existsSync(collectionFile))

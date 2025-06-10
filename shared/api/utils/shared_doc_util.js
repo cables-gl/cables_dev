@@ -328,7 +328,7 @@ export default class SharedDocUtil extends SharedUtil
         {
             if (this.cachedOpDocs && this.cachedOpDocs.opDocs)
             {
-                this._opsUtil.addVersionInfoToOps(this.cachedOpDocs.opDocs);
+                this.cachedOpDocs.opDocs = this._opsUtil.addVersionInfoToOps(this.cachedOpDocs.opDocs);
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
