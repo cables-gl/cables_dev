@@ -763,6 +763,7 @@ export default class SharedDocUtil extends SharedUtil
         if (opDoc.dependencies && opDoc.dependencies.length > 0) docObj.dependencies = opDoc.dependencies;
         if (opDoc.issues) docObj.issues = opDoc.issues;
         if (opDoc.caniusequery) docObj.caniusequery = opDoc.caniusequery;
+        if (opDoc.cloneOf) docObj.cloneOf = opDoc.cloneOf;
 
         return docObj;
     }

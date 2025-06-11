@@ -2909,6 +2909,11 @@ export default class SharedOpsUtil extends SharedUtil
             "authorName": user.username,
             "created": Date.now()
         };
+        if (this.isPatchOp(newName))
+        {
+            const oldId = this.getOpIdByObjName(oldName);
+            if (oldId) newJson.cloneOf = oldId;
+        }
         const oldJsonFile = this.getOpJsonPath(oldName);
         if (oldJsonFile)
         {
@@ -3738,7 +3743,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         let jsonChange = false;
         const newJsonData = jsonfile.readFileSync(newJson);
-        if (this.isPatchOp(newName))
+        if (this.isPatchOp(newName) && newJsonData)
         {
             delete newJsonData.exampleProjectId;
             jsonChange = true;
@@ -3756,6 +3761,9 @@ export default class SharedOpsUtil extends SharedUtil
             if (newJsonData)
             {
                 newJsonData.id = uuidv4();
+                newJsonData.authorName = currentUser.username;
+                const oldId = this.getOpIdByObjName(oldName);
+                if (oldId) newJsonData.cloneOf = oldId;
                 this._docsUtil.addOpToLookup(newJsonData.id, newName);
                 jsonChange = true;
             }
