@@ -429,6 +429,10 @@ export default class SharedDocUtil extends SharedUtil
         {
             return;
         }
+        else
+        {
+            this._log.info("removing", opNames.length, "ops from lookup table:", opNames.slice(0, 4).join(","), opNames.length > 5 ? "..." : "");
+        }
         const cachedLookup = this.getCachedOpLookup(false);
         for (let i = 0; i < opNames.length; i++)
         {
@@ -455,7 +459,6 @@ export default class SharedDocUtil extends SharedUtil
         if (changed)
         {
             jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
-            this._log.info("removed", opNames.length, "ops from lookup table:", opNames.slice(0, 4).join(","), opNames.length > 5 ? "..." : "");
         }
     }
 
@@ -526,7 +529,10 @@ export default class SharedDocUtil extends SharedUtil
                 "content": ""
             };
 
-            const jsonFilename = this._opsUtil.getOpAbsoluteJsonFilename(opName);
+            const dirName = this._opsUtil.getOpSourceDir(opName);
+            docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
+
+            const jsonFilename = path.join(dirName, opName + ".json");
 
             const parts = opName.split(".");
             const shortName = parts[parts.length - 1];
@@ -543,17 +549,16 @@ export default class SharedDocUtil extends SharedUtil
             }
             catch (e)
             {
-                if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e.message);
+                if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
             }
 
             if (js)
             {
-                const screenshotFilename = this._opsUtil.getExampleScreenshotPath(opName);
+                const screenshotFilename = path.join(dirName, "screenshot.png");
                 const screenshotExists = fs.existsSync(screenshotFilename);
 
                 docObj = { ...docObj, ...this.makeImportable(js) };
 
-                docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
                 docObj.shortName = shortName;
                 docObj.hasScreenshot = screenshotExists;
                 docObj.namespace = namespace;
@@ -867,8 +872,9 @@ export default class SharedDocUtil extends SharedUtil
             collections = this._helperUtil.uniqueArray(collections);
             collections.forEach((collection) =>
             {
-                docs = docs.concat(this._opsUtil.buildOpDocsForCollection(collection));
+                this._opsUtil.buildOpDocsForCollection(collection);
             });
+            docs = docs.concat(this.getOpDocsForCollections(opNames));
 
             // make sure all ops are in lookup table
             this.addOpsToLookup(docs, clearFiles, haltOnError);
@@ -878,7 +884,7 @@ export default class SharedDocUtil extends SharedUtil
             this._log.info("updating", opCount, "ops took " + duration / 1000 + "s");
             this._log.event(null, "server", "opcache", "rebuild", { "count": opCount, "duration": duration, "scopes": scopes });
             if (cb) cb(docs);
-        }, 0);
+        }, 1000);
 
     }
 
