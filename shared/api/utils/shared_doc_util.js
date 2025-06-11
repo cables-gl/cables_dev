@@ -459,7 +459,6 @@ export default class SharedDocUtil extends SharedUtil
         if (changed)
         {
             jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
-            this._log.info("DONE - removing", opNames.length, "ops from lookup table");
         }
     }
 
@@ -815,8 +814,11 @@ export default class SharedDocUtil extends SharedUtil
 
     rebuildOpCaches(cb, scopes = ["core"], clearFiles = false, haltOnError = false)
     {
+        // do this in a separate thread to not block the main-loop
         setTimeout(() =>
         {
+            const start = Date.now();
+            let opCount = 0;
             this._rebuildOpDocCache = true;
 
             const coreDocs = this.getOpDocs();
@@ -824,6 +826,7 @@ export default class SharedDocUtil extends SharedUtil
             if (scopes.includes("core"))
             {
                 docs = coreDocs;
+                opCount += coreDocs.length;
                 this._log.info("updating", coreDocs.length, "ops in core");
             }
 
@@ -831,6 +834,7 @@ export default class SharedDocUtil extends SharedUtil
             if (scopes.includes("extensions"))
             {
                 const extensionOpNames = this._opsUtil.getAllExtensionOpNames();
+                opCount += extensionOpNames.length;
                 this._log.info("updating", extensionOpNames.length, "ops in extensions");
                 opNames = opNames.concat(extensionOpNames);
             }
@@ -838,6 +842,7 @@ export default class SharedDocUtil extends SharedUtil
             if (scopes.includes("teams"))
             {
                 const teamOpNames = this._opsUtil.getAllTeamOpNames();
+                opCount += teamOpNames.length;
                 this._log.info("updating", teamOpNames.length, "ops in teams");
                 opNames = opNames.concat(teamOpNames);
             }
@@ -845,6 +850,7 @@ export default class SharedDocUtil extends SharedUtil
             if (scopes.includes("users"))
             {
                 const userOpNames = this._opsUtil.getAllUserOpNames();
+                opCount += userOpNames.length;
                 this._log.info("updating", userOpNames.length, "ops in users");
                 opNames = opNames.concat(userOpNames);
             }
@@ -852,6 +858,7 @@ export default class SharedDocUtil extends SharedUtil
             if (scopes.includes("patches"))
             {
                 const patchOpNames = this._opsUtil.getAllPatchOpNames();
+                opCount += patchOpNames.length;
                 this._log.info("updating", patchOpNames.length, "ops in patches");
                 opNames = opNames.concat(patchOpNames);
             }
@@ -859,7 +866,7 @@ export default class SharedDocUtil extends SharedUtil
             let collections = [];
             opNames.forEach((opName) =>
             {
-                collections.push(this._opsUtil.getCollectionName(opName));
+                if (opName) collections.push(this._opsUtil.getCollectionName(opName));
             });
 
             collections = this._helperUtil.uniqueArray(collections);
@@ -872,6 +879,10 @@ export default class SharedDocUtil extends SharedUtil
             // make sure all ops are in lookup table
             this.addOpsToLookup(docs, clearFiles, haltOnError);
 
+            const end = Date.now();
+            const duration = (end - start);
+            this._log.info("updating", opCount, "ops took " + duration / 1000 + "s");
+            this._log.event(null, "server", "opcache", "rebuild", { "count": opCount, "duration": duration, "scopes": scopes });
             if (cb) cb(docs);
         }, 1000);
 

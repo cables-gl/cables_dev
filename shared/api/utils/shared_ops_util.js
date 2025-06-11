@@ -955,21 +955,24 @@ export default class SharedOpsUtil extends SharedUtil
     {
         opDocs.forEach((opDoc) =>
         {
-            if (forceUpdate || !opDoc.hasOwnProperty("oldVersion")) opDoc.oldVersion = this.isOpOldVersion(opDoc.name, opDocs);
-            if (this.isPrivateOp(opDoc.name))
+            if (opDoc)
             {
-                opDoc.hidden = false;
-            }
-            else
-            {
-                if (opDoc.oldVersion) opDoc.hidden = true;
-            }
+                if (forceUpdate || !opDoc.hasOwnProperty("oldVersion")) opDoc.oldVersion = this.isOpOldVersion(opDoc.name, opDocs);
+                if (this.isPrivateOp(opDoc.name))
+                {
+                    opDoc.hidden = false;
+                }
+                else
+                {
+                    if (opDoc.oldVersion) opDoc.hidden = true;
+                }
 
-            if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
+                if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
 
-            if (opDoc.versions)
-            {
-                opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];
+                if (opDoc.versions)
+                {
+                    opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];
+                }
             }
         });
         return opDocs;
