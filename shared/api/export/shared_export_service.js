@@ -158,7 +158,7 @@ export default class SharedExportService extends SharedUtil
     /**
      * @abstract
      */
-    doExport(_projectId, cb)
+    doExport(project, cb)
     {
         throw new Error("not implemented, abstract class");
     }
@@ -628,9 +628,6 @@ export default class SharedExportService extends SharedUtil
 
         try
         {
-            // add backups
-            this._addBackups(proj, options);
-
             // add info files (docs, legal, LICENCE, ...)
             this._addInfoFiles(proj, options);
 
@@ -894,8 +891,6 @@ export default class SharedExportService extends SharedUtil
             this.append(legal.join("\n"), { "name": "legal.txt" });
         }
     }
-
-    _addBackups(backupProject, options) {}
 
     _addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies)
     {

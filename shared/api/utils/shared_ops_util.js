@@ -955,21 +955,24 @@ export default class SharedOpsUtil extends SharedUtil
     {
         opDocs.forEach((opDoc) =>
         {
-            if (forceUpdate || !opDoc.hasOwnProperty("oldVersion")) opDoc.oldVersion = this.isOpOldVersion(opDoc.name, opDocs);
-            if (this.isPrivateOp(opDoc.name))
+            if (opDoc)
             {
-                opDoc.hidden = false;
-            }
-            else
-            {
-                if (opDoc.oldVersion) opDoc.hidden = true;
-            }
+                if (forceUpdate || !opDoc.hasOwnProperty("oldVersion")) opDoc.oldVersion = this.isOpOldVersion(opDoc.name, opDocs);
+                if (this.isPrivateOp(opDoc.name))
+                {
+                    opDoc.hidden = false;
+                }
+                else
+                {
+                    if (opDoc.oldVersion) opDoc.hidden = true;
+                }
 
-            if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
+                if (forceUpdate || !opDoc.hasOwnProperty("versions")) opDoc.versions = this.getOpVersionNumbers(opDoc.name, opDocs);
 
-            if (opDoc.versions)
-            {
-                opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];
+                if (opDoc.versions)
+                {
+                    opDoc.newestVersion = opDoc.versions[opDoc.versions.length - 1];
+                }
             }
         });
         return opDocs;
@@ -2906,6 +2909,11 @@ export default class SharedOpsUtil extends SharedUtil
             "authorName": user.username,
             "created": Date.now()
         };
+        if (this.isPatchOp(newName))
+        {
+            const oldId = this.getOpIdByObjName(oldName);
+            if (oldId) newJson.cloneOf = oldId;
+        }
         const oldJsonFile = this.getOpJsonPath(oldName);
         if (oldJsonFile)
         {
@@ -3735,7 +3743,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         let jsonChange = false;
         const newJsonData = jsonfile.readFileSync(newJson);
-        if (this.isPatchOp(newName))
+        if (this.isPatchOp(newName) && newJsonData)
         {
             delete newJsonData.exampleProjectId;
             jsonChange = true;
@@ -3753,6 +3761,9 @@ export default class SharedOpsUtil extends SharedUtil
             if (newJsonData)
             {
                 newJsonData.id = uuidv4();
+                newJsonData.authorName = currentUser.username;
+                const oldId = this.getOpIdByObjName(oldName);
+                if (oldId) newJsonData.cloneOf = oldId;
                 this._docsUtil.addOpToLookup(newJsonData.id, newName);
                 jsonChange = true;
             }
