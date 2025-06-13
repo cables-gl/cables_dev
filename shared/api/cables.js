@@ -49,8 +49,6 @@ export default class Cables extends SharedUtil
     {
         if (!this._config)
         {
-            if (process.env.npm_config_apiconfig) this.configLocation = path.resolve("./cables_env_" + process.env.npm_config_apiconfig + ".json");
-
             if (!fs.existsSync(this.configLocation))
             {
                 try
