@@ -863,8 +863,8 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (this.isExtensionOp(opName))
         {
-            // extensions are editable for team members with write access, and for staff on dev
-            if (user.isStaff) return this._cables.isDevEnv();
+            // extensions are editable for team members with write access, and for staff
+            if (user.isStaff) return true;
 
             let inTeam = false;
             for (let i = 0; i < teams.length; i++)
