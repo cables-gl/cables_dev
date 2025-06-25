@@ -863,8 +863,8 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (this.isExtensionOp(opName))
         {
-            // extensions are editable for team members with write access, and for staff on dev
-            if (user.isStaff) return this._cables.isDevEnv();
+            // extensions are editable for team members with write access, and for staff
+            if (user.isStaff) return true;
 
             let inTeam = false;
             for (let i = 0; i < teams.length; i++)
@@ -2884,14 +2884,14 @@ export default class SharedOpsUtil extends SharedUtil
         newName = this.sanitizeOpName(newName);
         const code = fs.readFileSync(this.getOpAbsoluteFileName(oldName), "utf8");
         let fn = this.getOpAbsoluteFileName(newName);
-        let basePath = this.getOpAbsolutePath(newName);
+        let newPath = this.getOpAbsolutePath(newName);
         const oldPath = this.getOpAbsolutePath(oldName);
 
         let newJsonFile;
         if (targetDir)
         {
-            basePath = targetDir;
-            let opPath = path.join(basePath, this.getOpTargetDir(newName, true));
+            newPath = targetDir;
+            let opPath = path.join(newPath, this.getOpTargetDir(newName, true));
             mkdirp.sync(opPath);
             fn = path.join(opPath, this.getOpFileName(newName));
             newJsonFile = path.join(opPath, this.getOpJsonFilename(newName));
@@ -2901,7 +2901,7 @@ export default class SharedOpsUtil extends SharedUtil
             newJsonFile = this.getOpJsonPath(newName, true);
         }
 
-        mkdirp.sync(basePath);
+        mkdirp.sync(newPath);
         fs.writeFileSync(fn, code);
 
         let newJson = {
@@ -2953,15 +2953,36 @@ export default class SharedOpsUtil extends SharedUtil
         {
             const attachmentFile = attachmentFiles[i];
             const oldFile = path.join(oldPath, attachmentFile);
-            const newFile = path.join(basePath, attachmentFile);
+            const newFile = path.join(newPath, attachmentFile);
             fs.copySync(oldFile, newFile);
             attachments[attachmentFile] = this.getAttachment(newName, attachmentFile);
         }
 
+        let opDependencyFiles = [];
+        if (newJson.dependencies)
+        {
+            newJson.dependencies.forEach((dependency) =>
+            {
+                if (dependency.src && dependency.src.startsWith("./"))
+                {
+                    opDependencyFiles.push(path.join(oldPath, dependency.src));
+                }
+            });
+        }
+        opDependencyFiles.forEach((oldFile) =>
+        {
+            const newFile = path.join(newPath, path.basename(oldFile));
+            try
+            {
+                fs.copySync(oldFile, newFile);
+            }
+            catch (e) {}
+        });
+
         const docsMd = this._docsUtil.getOpDocMd(oldName);
         if (docsMd)
         {
-            const filenameMd = path.join(basePath, newName + ".md");
+            const filenameMd = path.join(newPath, newName + ".md");
             fs.writeFileSync(filenameMd, docsMd);
         }
         this._docsUtil.updateOpDocs(newName);
