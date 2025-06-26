@@ -15,6 +15,7 @@ export default class Events
     #logName = "";
     #eventCallbacks = {};
     #countErrorUnknowns = 0;
+    eventsPaused = false;
 
     constructor()
     {
@@ -190,6 +191,7 @@ export default class Events
      */
     emitEvent(which, param1 = null, param2 = null, param3 = null, param4 = null, param5 = null, param6 = null, param7 = null, param8 = null)
     {
+        if (this.eventsPaused) return;
         if (this.#logEvents) this.#eventLog.log("[event] ", this.#logName, which, this.#eventCallbacks);
 
         if (this.#eventCallbacks[which])
