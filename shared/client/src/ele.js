@@ -10,7 +10,7 @@ class Ele
      * shortcut for document.getElementById(id)
      *
      * @param {String} id
-     * @returns {HTMLElement|HTMLInputElement} DOM element
+     * @returns {Object} DOM element
      */
     byId(id)
     {
