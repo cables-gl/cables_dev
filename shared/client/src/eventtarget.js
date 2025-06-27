@@ -22,9 +22,14 @@ export default class Events
     }
 
     /**
+     * @callback whatever
+     * @param {...any} param
+     */
+
+    /**
      * add event listener
      * @param {string} eventName event name
-     * @param {function} cb callback
+     * @param {whatever} cb callback
      * @param {string} idPrefix prefix for id, default empty
      * @return {EventListener} eventlistener
      */
@@ -53,7 +58,7 @@ export default class Events
     /**
      *
      * @param {string} which
-     * @param {Function} cb
+     * @param {whatever} cb
      */
     addEventListener(which, cb, idPrefix = "")
     {
@@ -63,7 +68,7 @@ export default class Events
     /**
      * check event listener registration
      * @param {string|EventListener} id event id
-     * @param {function} cb callback - deprecated
+     * @param {whatever} cb callback - deprecated
      * @return {boolean}
      */
     hasEventListener(id, cb = null)
