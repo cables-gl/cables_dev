@@ -9,13 +9,12 @@ export default class BuildWatcher
         this._gulp = gulp;
         this._module = module;
         this._config = cablesConfig.socketclusterClient || {};
-        const serverConfig = cablesConfig.socketclusterServer || {};
         this._socketCluster = {
-            "active": this._config.enabled,
-            "config": this._config,
+            "active": this._config.enabled && cablesConfig.watchBuildWhenLocal,
+            "config": cablesConfig.socketclusterServer || {},
             "connected": false,
             "socket": null,
-            "secret": serverConfig.secret
+            "secret": cablesConfig.socketclusterServer.secret
         };
 
         this._log = {
@@ -92,11 +91,11 @@ export default class BuildWatcher
         if (this._socketCluster.active && !this._socketCluster.connected)
         {
             this._socketCluster.socket = socketClusterClient.create({
-                "hostname": this._config.hostname,
-                "port": this._config.port,
-                "secure": this._config.secure
+                "hostname": this._socketCluster.config.interface,
+                "port": this._socketCluster.config.port,
+                "secure": false
             });
-            this._log.info(this._module + " - connected to socketcluster server at " + this._socketCluster.config.hostname);
+            this._log.info(this._module, "- connected to socketcluster server at", this._socketCluster.config.interface + ":" + this._socketCluster.config.port);
             this._socketCluster.connected = true;
         }
     }
