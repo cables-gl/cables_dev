@@ -201,6 +201,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpIdByObjName(objName)
     {
+        if (!objName) return null;
         const nameLookup = this._docsUtil.getCachedOpLookup();
         if (nameLookup && nameLookup.names)
         {
