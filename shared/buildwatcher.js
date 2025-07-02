@@ -9,12 +9,13 @@ export default class BuildWatcher
         this._gulp = gulp;
         this._module = module;
         this._config = cablesConfig.socketclusterClient || {};
+        const serverConfig = cablesConfig.socketclusterServer || {};
         this._socketCluster = {
             "active": this._config.enabled && cablesConfig.watchBuildWhenLocal,
-            "config": cablesConfig.socketclusterServer || {},
+            "config": serverConfig,
             "connected": false,
             "socket": null,
-            "secret": cablesConfig.socketclusterServer.secret
+            "secret": serverConfig.secret
         };
 
         this._log = {

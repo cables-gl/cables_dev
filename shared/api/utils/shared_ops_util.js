@@ -219,12 +219,12 @@ export default class SharedOpsUtil extends SharedUtil
         return null;
     }
 
-    getOpVersionNumbers(opname, opDocs)
+    getOpVersionNumbers(opName, opDocs, reverse = false)
     {
         let versions = [];
-        if (!opname) return versions;
+        if (!opName) return versions;
 
-        const nameWithoutVersion = this.getOpNameWithoutVersion(opname);
+        const nameWithoutVersion = this.getOpNameWithoutVersion(opName);
         versions = versions || [];
 
         for (let i = 0; i < opDocs.length; i++)
@@ -244,6 +244,7 @@ export default class SharedOpsUtil extends SharedUtil
                 );
             }
         }
+        if (reverse) return versions.sort((a, b) => { return b.version - a.version; });
         return versions.sort((a, b) => { return a.version - b.version; });
     }
 
@@ -978,13 +979,13 @@ export default class SharedOpsUtil extends SharedUtil
         return opDocs;
     }
 
-    buildOpDocsForCollection(collectionName, singleOpName = false)
+    buildOpDocsForCollection(collectionName, opNames = null, collectionOps = null, updateLookup = true)
     {
         const collectionFile = this.getCollectionOpDocFile(collectionName);
-        let collectionOps = this.getCollectionOpNames(collectionName);
-        let collectionDocs = this._docsUtil.getCollectionOpDocs(collectionName);
+        if (!collectionOps) collectionOps = this.getCollectionOpNames(collectionName);
+        let collectionDocs = this._docsUtil.getCollectionOpDocs(collectionName, null, opNames);
         let rebuildOps = collectionOps;
-        if (singleOpName) rebuildOps = rebuildOps.filter((name) => { return name === singleOpName; });
+        if (opNames) rebuildOps = rebuildOps.filter((name) => { return name === opNames.includes(name); });
         let newOpDocs = [];
         collectionOps.forEach((opName) =>
         {
@@ -1014,12 +1015,13 @@ export default class SharedOpsUtil extends SharedUtil
         {
             fs.removeSync(collectionFile);
         }
-        this._docsUtil.addOpsToLookup(newOpDocs);
+        if (updateLookup) this._docsUtil.addOpsToLookup(newOpDocs);
         return newOpDocs;
     }
 
     addOpDocsForCollections(opNames, opDocs = [], forceRebuild = false)
     {
+        if (!opNames || opNames.length == 0) return [];
         const allOpDocs = [...opDocs];
         const collections = {};
         opNames.forEach((opName) =>
@@ -2636,8 +2638,52 @@ export default class SharedOpsUtil extends SharedUtil
         return subPatchData;
     }
 
-    getOpRenameProblems(newName, oldName, userObj, teams = [], newOpProject = null, oldOpProject = null, opUsages = [], checkUsages = true, targetDir = null)
+    getRenameObjects(oldName, newName, opDocs, forAllVersions = false)
     {
+        const renames = [];
+        if (forAllVersions)
+        {
+            if (!opDocs) opDocs = this._docsUtil.getOpDocs(false, false);
+            const newBaseName = this.getOpNameWithoutVersion(newName);
+            let allVersions = this.getOpVersionNumbers(oldName, opDocs, true);
+            allVersions.forEach((opVersion) =>
+            {
+                let newOpName = newName;
+                if (opVersion.name !== oldName)
+                {
+                    newOpName = newBaseName;
+                    let oldVersion = this.getVersionFromOpName(opVersion.name);
+                    if (oldVersion) newOpName = newBaseName + this.SUFFIX_VERSION + oldVersion;
+                }
+                renames.push({
+                    "old": opVersion.name,
+                    "new": newOpName
+                });
+            });
+        }
+        else
+        {
+            renames.push({
+                "old": oldName,
+                "new": newName
+            });
+        }
+        return renames;
+    }
+
+    getOpRenameProblems(newName, oldName, userObj, teams = [], newOpProject = null, oldOpProject = null, opUsages = [], checkUsages = true, targetDir = null, renameAllVersions = false)
+    {
+        let opDocs = [];
+        if (this.isCoreOp(oldName))
+        {
+            opDocs = this._docsUtil.getOpDocs(false, false);
+        }
+        else
+        {
+            const collectionName = this.getCollectionName(oldName);
+            opDocs = this._docsUtil.getCollectionOpDocs(collectionName);
+        }
+
         const problems = {};
         if (!newName)
         {
@@ -2645,118 +2691,142 @@ export default class SharedOpsUtil extends SharedUtil
             newName = "";
         }
 
-        const oldOpExists = this.opExists(oldName);
-        if (oldName && !oldOpExists)
+        const renames = this.getRenameObjects(oldName, newName, opDocs, renameAllVersions);
+        if (renameAllVersions)
         {
-            problems.source_does_not_exist = "Source op does not exist.";
-            return problems;
-        }
-
-        const newNamespace = this.getNamespace(newName);
-        const oldNamespace = this.getNamespace(oldName);
-        if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
-        if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(newName)) problems.patch_op_illegal_namespace = "Illegal patch op namespace: '" + newNamespace + "'.";
-
-        if (newName.endsWith(".")) problems.name_ends_with_dot = "Op name cannot end with '.'";
-        if (newName.endsWith("_")) problems.name_ends_with_underscore = "Op name cannot end with '_'";
-        if (!newName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name does not start with '" + this.PREFIX_OPS + "'.";
-        if (newName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
-        const opExists = this.opExists(newName);
-        if (opExists) problems.target_exists = "Op exists already.";
-        if (!opExists && this.opNameTaken(newName)) problems.name_taken = "Op with same name (ignoring case) exists already.";
-        if (newName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
-        if (newName.indexOf("..") !== -1) problems.name_contains_doubledot = "Op name contains '..'.";
-        let matchString = "[^abcdefghijklmnopqrstuvwxyz._ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9";
-        // patchops can have - because they contain the patch shortid
-        if (this.isPatchOp(newName) || this.isTeamOp(newName))
-        {
-            const shortName = this.getOpShortName(newName);
-            if (shortName.includes("-")) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
-            matchString += "\\-";
-        }
-        matchString += "]";
-        if (this.isPatchOp(oldName) && this.isPatchOp(newName) && !newNamespace.startsWith(oldNamespace))
-        {
-            problems.patch_op_rename_illegal = "Patch ops cannot be renamed to another patch, use copypaste to use the op in other patches";
-        }
-
-        if (newName.match(matchString)) problems.name_contains_illegal_characters = "Op name contains illegal characters.";
-
-        const versionParts = newName.toLowerCase().split(this.SUFFIX_VERSION);
-        if (versionParts.length > 2) problems.name_contains_illegal_characters = "Op name cannot contain version suffix `_v` more than once.";
-        versionParts.shift();
-        versionParts.forEach((versionPart) =>
-        {
-            if (!this._helperUtil.isNumeric(versionPart))
+            const newNames = [];
+            for (let i in renames)
             {
-                problems.name_contains_illegal_characters = "Version suffix `_v` can only be followed by numbers. ";
-            }
-        });
-
-        const parts = newName.split(".");
-        let minParts = 3;
-        if (!this.isCoreOp(newName)) minParts = 4;
-        if (parts.length < minParts) problems.namespace_missing_parts = "Op namespace needs to have at least " + minParts + " parts";
-
-        for (let i = 0; i < parts.length; i++) // do not start
-        {
-            if (parts[i].length > 0)
-            {
-                const firstChar = parts[i].charAt(0);
-                const isnum = this._helperUtil.isNumeric(firstChar);
-                if (isnum) problems.namespace_starts_with_numbers = "Op namespace parts cannot start with numbers (" + parts[i] + ").";
-                if (firstChar === " ") problems.namespace_starts_with_whitespace = "Op namespace cannot start with whitespace (" + parts[i] + ").";
-                if (firstChar === "-") problems.namespace_starts_with_dash = "Op namespace parts can not start with - (" + parts[i] + ").";
-                if (parts[i].charAt(0) !== parts[i].charAt(0).toUpperCase())
+                const rename = renames[i];
+                if (newNames.includes(rename.new))
                 {
-                    if (!this.isUserOp(newName) || i > 2)
+                    problems.rename_all_name_conflict = "Renaming all versions would lead to " + rename.old + " also being renamed to " + rename.new;
+                    break;
+                }
+                newNames.push(rename.new);
+            }
+        }
+
+        renames.forEach((oneRename) =>
+        {
+            const oneOldName = oneRename.old;
+            const oneNewName = oneRename.new;
+
+            const oldOpExists = this.opExists(oneOldName);
+            const problemNewPrefix = renames.length ? "<a href=\"/op/" + oneNewName + "\">" + oneNewName + "</a>: " : "";
+            const problemOldPrefix = renames.length ? "<a href=\"/op/" + oneOldName + "\">" + oneOldName + "</a>: " : "";
+
+            if (oneOldName && !oldOpExists)
+            {
+                problems.source_does_not_exist = problemOldPrefix + "Source op does not exist.";
+                return problems;
+            }
+
+            const newNamespace = this.getNamespace(oneNewName);
+            const oldNamespace = this.getNamespace(oneOldName);
+            if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = problemNewPrefix + "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
+            if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.patch_op_illegal_namespace = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
+
+            if (oneNewName.endsWith(".")) problems.name_ends_with_dot = problemNewPrefix + "Op name cannot end with '.'";
+            if (oneNewName.endsWith("_")) problems.name_ends_with_underscore = problemNewPrefix + "Op name cannot end with '_'";
+            if (!oneNewName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name does not start with '" + this.PREFIX_OPS + "'.";
+            if (oneNewName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
+            const opExists = this.opExists(oneNewName);
+            if (opExists) problems.target_exists = problemNewPrefix + "Op exists already.";
+            if (!opExists && this.opNameTaken(oneNewName)) problems.name_taken = problemNewPrefix + "Op with same name (ignoring case) exists already.";
+            if (oneNewName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = problemNewPrefix + "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
+            if (oneNewName.indexOf("..") !== -1) problems.name_contains_doubledot = problemNewPrefix + "Op name contains '..'.";
+            let matchString = "[^abcdefghijklmnopqrstuvwxyz._ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9";
+            // patchops can have - because they contain the patch shortid
+            if (this.isPatchOp(oneNewName) || this.isTeamOp(oneNewName))
+            {
+                const shortName = this.getOpShortName(oneNewName);
+                if (shortName.includes("-")) problems.name_contains_illegal_characters = problemNewPrefix + "Op name contains illegal characters.";
+                matchString += "\\-";
+            }
+            matchString += "]";
+            if (this.isPatchOp(oneOldName) && this.isPatchOp(oneNewName) && !newNamespace.startsWith(oldNamespace))
+            {
+                problems.patch_op_rename_illegal = problemOldPrefix + "Patch ops cannot be renamed to another patch, use copypaste to use the op in other patches";
+            }
+
+            if (oneNewName.match(matchString)) problems.name_contains_illegal_characters = problemNewPrefix + "Op name contains illegal characters.";
+
+            const versionParts = oneNewName.toLowerCase().split(this.SUFFIX_VERSION);
+            if (versionParts.length > 2) problems.name_contains_illegal_characters = problemNewPrefix + "Op name cannot contain version suffix `_v` more than once.";
+            versionParts.shift();
+            versionParts.forEach((versionPart) =>
+            {
+                if (!this._helperUtil.isNumeric(versionPart))
+                {
+                    problems.name_contains_illegal_characters = problemNewPrefix + "Version suffix `_v` can only be followed by numbers. ";
+                }
+            });
+
+            const parts = oneNewName.split(".");
+            let minParts = 3;
+            if (!this.isCoreOp(oneNewName)) minParts = 4;
+            if (parts.length < minParts) problems.namespace_missing_parts = problemNewPrefix + "Op namespace needs to have at least " + minParts + " parts";
+
+            for (let i = 0; i < parts.length; i++) // do not start
+            {
+                if (parts[i].length > 0)
+                {
+                    const firstChar = parts[i].charAt(0);
+                    const isnum = this._helperUtil.isNumeric(firstChar);
+                    if (isnum) problems.namespace_starts_with_numbers = problemNewPrefix + "Op namespace parts cannot start with numbers (" + parts[i] + ").";
+                    if (firstChar === " ") problems.namespace_starts_with_whitespace = problemNewPrefix + "Op namespace cannot start with whitespace (" + parts[i] + ").";
+                    if (firstChar === "-") problems.namespace_starts_with_dash = problemNewPrefix + "Op namespace parts can not start with - (" + parts[i] + ").";
+                    if (parts[i].charAt(0) !== parts[i].charAt(0).toUpperCase())
                     {
-                        problems.namespace_not_uppercase = "All namespace parts have to be uppercase (" + parts[i] + ").";
+                        if (!this.isUserOp(oneNewName) || i > 2)
+                        {
+                            problems.namespace_not_uppercase = problemNewPrefix + "All namespace parts have to be uppercase (" + parts[i] + ").";
+                        }
                     }
                 }
             }
-        }
 
-        if (!this.userHasWriteRightsOp(userObj, newName, teams, newOpProject))
-        {
-            problems.no_rights_target = "You lack write permissions to " + newName + ".";
-        }
-
-        if (oldName)
-        {
-            if (!this.userHasReadRightsOp(userObj, oldName, teams, oldOpProject)) problems.no_rights_source = "You lack read permissions to " + oldName + ".";
-            if (!oldOpExists) problems.not_found_source = oldName + " does not exist.";
-        }
-        if (opUsages && checkUsages)
-        {
-            opUsages.forEach((opReference) =>
+            if (!this.userHasWriteRightsOp(userObj, oneNewName, teams, newOpProject))
             {
-                const refName = this.getOpNameById(opReference.referenceId);
-                if (refName)
+                problems.no_rights_target = problemNewPrefix + "You lack write permissions to " + oneNewName + ".";
+            }
+
+            if (oneOldName)
+            {
+                if (!this.userHasReadRightsOp(userObj, oneOldName, teams, oldOpProject)) problems.no_rights_source = problemOldPrefix + "You lack read permissions to " + oneOldName + ".";
+                if (!oldOpExists) problems.not_found_source = problemOldPrefix + oneOldName + " does not exist.";
+            }
+            if (opUsages && checkUsages)
+            {
+                opUsages.forEach((opReference) =>
                 {
-                    const hierarchyProblem = this.getNamespaceHierarchyProblem(refName, newName);
+                    const refName = this.getOpNameById(opReference.referenceId);
+                    if (refName)
+                    {
+                        const hierarchyProblem = this.getNamespaceHierarchyProblem(refName, oneNewName);
+                        if (hierarchyProblem)
+                        {
+                            problems.op_used_elsewhere = problemOldPrefix + "<a href=\"/op/" + refName + "\">" + refName + "</a> contains " + "<a href=\"/op/" + oldName + "\">" + oldName + "</a>" + ", and cannot be renamed, try cloning the op instead.";
+                        }
+                    }
+                });
+            }
+            const subPatchAtt = this.getSubPatchOpAttachment(oneOldName);
+            if (subPatchAtt)
+            {
+                subPatchAtt.ops.forEach((subPatchOp) =>
+                {
+                    const subPatchOpName = this.getOpNameById(subPatchOp.opId);
+                    const hierarchyProblem = this.getNamespaceHierarchyProblem(oneNewName, subPatchOpName);
                     if (hierarchyProblem)
                     {
-                        const refLink = "[" + refName + "](" + refName + ")";
-                        const oldLink = "[" + oldName + "](" + oldName + ")";
-                        problems.op_used_elsewhere = refLink + " contains " + oldLink + ", and cannot be renamed, try cloning the op instead.";
+                        problems.bad_op_hierarchy = hierarchyProblem;
                     }
-                }
-            });
-        }
-        const subPatchAtt = this.getSubPatchOpAttachment(oldName);
-        if (subPatchAtt)
-        {
-            subPatchAtt.ops.forEach((subPatchOp) =>
-            {
-                const subPatchOpName = this.getOpNameById(subPatchOp.opId);
-                const hierarchyProblem = this.getNamespaceHierarchyProblem(newName, subPatchOpName);
-                if (hierarchyProblem)
-                {
-                    problems.bad_op_hierarchy = hierarchyProblem;
-                }
-            });
-        }
+                });
+            }
+            if (oneOldName !== oldName && Object.keys(problems).length) problems.rename_old_versions_problem = true;
+        });
         return problems;
     }
 
@@ -2997,39 +3067,39 @@ export default class SharedOpsUtil extends SharedUtil
         };
     }
 
-    renameToCoreOp(oldName, newName, currentUser, removeOld, cb = null)
+    renameToCoreOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, true, false, oldOpDir, newOpDir, cb);
     }
 
-    renameToExtensionOp(oldName, newName, currentUser, removeOld, cb = null)
+    renameToExtensionOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, true, removeOld, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, true, false, oldOpDir, newOpDir, cb);
     }
 
-    renameToTeamOp(oldName, newName, currentUser, removeOld, cb = null)
+    renameToTeamOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, false, oldOpDir, newOpDir, cb);
     }
 
-    renameToUserOp(oldName, newName, currentUser, removeOld, cb = null)
+    renameToUserOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, false, oldOpDir, newOpDir, cb);
     }
 
-    renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb = null)
+    renameToPatchOp(oldName, newName, currentUser, newId, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, newId, oldOpDir, newOpDir, cb);
     }
 
     updateOp(user, opName, updates, options = {})
@@ -3666,7 +3736,7 @@ export default class SharedOpsUtil extends SharedUtil
         return xw.toString();
     }
 
-    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
+    _renameOp(oldName, newName, currentUser, formatCode, newId, oldOpDir, newOpDir, cb = null)
     {
         newName = this.sanitizeOpName(newName);
         if (!this.isPatchOp(newName))
@@ -3679,9 +3749,7 @@ export default class SharedOpsUtil extends SharedUtil
         const oldOpFile = path.join(oldOpDir, oldName + ".js");
         const newOpFile = path.join(newOpDir, newName + ".js");
 
-        let actionString = "moving";
-        if (!removeOld) actionString = "copying";
-        if (!this.isPatchOp(newName)) this._log.info("*" + currentUser.username + "* " + actionString + " " + oldOpFile + " to " + newOpFile);
+        if (!this.isPatchOp(newName)) this._log.info("*" + currentUser.username + "* moving " + oldOpFile + " to " + newOpFile);
 
         const exists = fs.existsSync(oldOpFile);
         const existsNew = fs.existsSync(newOpFile);
@@ -3770,14 +3838,11 @@ export default class SharedOpsUtil extends SharedUtil
             jsonChange = true;
         }
 
-        if (removeOld)
-        {
-            fs.emptyDirSync(oldOpDir);
-            this._docsUtil.replaceOpNameInLookup(oldName, newName);
-            fs.rmSync(oldOpDir, { "recursive": true });
-        }
+        fs.emptyDirSync(oldOpDir);
+        this._docsUtil.replaceOpNameInLookup(oldName, newName);
+        fs.rmSync(oldOpDir, { "recursive": true });
 
-        if (!removeOld || newId)
+        if (newId)
         {
             if (newJsonData)
             {
@@ -3801,23 +3866,17 @@ export default class SharedOpsUtil extends SharedUtil
             this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
         }
 
-        let updateOld = false;
-        if (removeOld) updateOld = true;
-
         if (!this.isPatchOp(newName)) this._log.verbose("*" + currentUser.username + " finished rename ");
 
-        if (updateOld) this._docsUtil.updateOpDocs(oldName);
+        this._docsUtil.updateOpDocs(oldName);
         const newOpDocs = this._docsUtil.updateOpDocs(newName);
-        if (removeOld)
+        const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
+        versionNumbers.forEach((version) =>
         {
-            const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
-            versionNumbers.forEach((version) =>
-            {
-                this._docsUtil.updateOpDocs(version.name);
-            });
-        }
+            this._docsUtil.updateOpDocs(version.name);
+        });
 
-        log.push("Successfully renamed to " + newName);
+        log.push("Successfully renamed " + oldName + " to " + newName);
 
         if (cb) cb(null, log, newJsonData);
         return true;
