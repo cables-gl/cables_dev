@@ -1639,9 +1639,15 @@ export default class SharedOpsUtil extends SharedUtil
         let exists = false;
         try
         {
-            if (!p || !fs.existsSync(p)) return false;
-            p = fs.realpathSync.native(p);
-            exists = p.includes(opName);
+            if (!p || !fs.existsSync(p))
+            {
+                exists = false;
+            }
+            else
+            {
+                p = fs.realpathSync.native(p);
+                exists = p.includes(opName);
+            }
         }
         catch (e)
         {
