@@ -522,69 +522,67 @@ export default class SharedDocUtil extends SharedUtil
     buildOpDocs(opName)
     {
         let docObj = null;
-        if (this._opsUtil.opExists(opName))
+
+        docObj = {
+            "name": opName,
+            "content": ""
+        };
+
+        const dirName = this._opsUtil.getOpSourceDir(opName);
+        docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
+
+        const jsonFilename = path.join(dirName, opName + ".json");
+
+        const parts = opName.split(".");
+        const shortName = parts[parts.length - 1];
+
+        if (!shortName) this._log.warn("no shortname ?", parts);
+
+        parts.pop();
+        const namespace = parts.join(".");
+
+        let js = {};
+        try
         {
-            docObj = {
-                "name": opName,
-                "content": ""
-            };
-
-            const dirName = this._opsUtil.getOpSourceDir(opName);
-            docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
-
-            const jsonFilename = path.join(dirName, opName + ".json");
-
-            const parts = opName.split(".");
-            const shortName = parts[parts.length - 1];
-
-            if (!shortName) this._log.warn("no shortname ?", parts);
-
-            parts.pop();
-            const namespace = parts.join(".");
-
-            let js = {};
-            try
-            {
-                js = jsonfile.readFileSync(jsonFilename);
-            }
-            catch (e)
-            {
-                if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
-            }
-
-            if (js)
-            {
-                const screenshotFilename = path.join(dirName, "screenshot.png");
-                const screenshotExists = fs.existsSync(screenshotFilename);
-
-                docObj = { ...docObj, ...this.makeImportable(js) };
-
-                docObj.shortName = shortName;
-                docObj.hasScreenshot = screenshotExists;
-                docObj.namespace = namespace;
-                docObj.name = opName;
-                docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
-                docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
-                docObj.version = this._opsUtil.getVersionFromOpName(opName);
-                docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
-                docObj.hidden = (this._opsUtil.isDeprecated(opName));
-            }
-
-            const mdFile = path.join(this._opsUtil.getOpSourceDir(opName), opName + ".md");
-            try
-            {
-                const mdFileContent = fs.readFileSync(mdFile);
-                if (mdFileContent)
-                {
-                    docObj.content = mdFileContent.toString();
-                }
-                else
-                {
-                    docObj.content = "";
-                }
-            }
-            catch (e) {}
+            js = jsonfile.readFileSync(jsonFilename);
         }
+        catch (e)
+        {
+            if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
+        }
+
+        if (js)
+        {
+            // const screenshotFilename = path.join(dirName, "screenshot.png");
+            // const screenshotExists = fs.existsSync(screenshotFilename);
+
+            docObj = { ...docObj, ...this.makeImportable(js) };
+
+            docObj.shortName = shortName;
+            // docObj.hasScreenshot = screenshotExists;
+            docObj.namespace = namespace;
+            docObj.name = opName;
+            docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
+            docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
+            docObj.version = this._opsUtil.getVersionFromOpName(opName);
+            docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
+            docObj.hidden = (this._opsUtil.isDeprecated(opName));
+        }
+
+        const mdFile = path.join(dirName, opName + ".md");
+        try
+        {
+            const mdFileContent = fs.readFileSync(mdFile);
+            if (mdFileContent)
+            {
+                docObj.content = mdFileContent.toString();
+            }
+            else
+            {
+                docObj.content = "";
+            }
+        }
+        catch (e) {}
         return docObj;
     }
 
@@ -602,7 +600,7 @@ export default class SharedDocUtil extends SharedUtil
         return opDocs;
     }
 
-    getCollectionOpDocs(collectionName, currentUser)
+    getCollectionOpDocs(collectionName, currentUser = null, opNames = null)
     {
         let opDocs = [];
         if (!collectionName) return opDocs;
@@ -613,15 +611,18 @@ export default class SharedDocUtil extends SharedUtil
         }
         else
         {
-            const dirName = this._opsUtil.getCollectionOpDocFile(collectionName);
-            if (fs.existsSync(dirName))
+            if (!opNames)
             {
-                const opNames = this._opsUtil.getCollectionOpNames(collectionName);
-                opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
+                const docFile = this._opsUtil.getCollectionOpDocFile(collectionName);
+                if (fs.existsSync(docFile))
+                {
+                    opNames = this._opsUtil.getCollectionOpNames(collectionName);
+                }
             }
+            opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
         }
         opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
-        opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
+        if (!currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
         return opDocs;
     }
 
@@ -684,7 +685,7 @@ export default class SharedDocUtil extends SharedUtil
         else
         {
             const collectionName = this._opsUtil.getCollectionName(opName);
-            return this._opsUtil.buildOpDocsForCollection(collectionName, opName);
+            return this._opsUtil.buildOpDocsForCollection(collectionName, [opName]);
         }
     }
 
@@ -829,79 +830,100 @@ export default class SharedDocUtil extends SharedUtil
                 docs = coreDocs;
                 opCount += coreDocs.length;
                 this._log.info("updating", coreDocs.length, "ops in core");
+                this.addOpsToLookup(docs, clearFiles, haltOnError);
             }
 
-            let opNames = [];
+            let extensionOps = [];
             if (scopes.includes("extensions"))
             {
-                const extensionOpNames = this._opsUtil.getAllExtensionOpNames();
-                opCount += extensionOpNames.length;
-                this._log.info("updating", extensionOpNames.length, "ops in extensions");
-                opNames = opNames.concat(extensionOpNames);
+                extensionOps = this._opsUtil.getAllExtensionOpNames();
+                opCount += extensionOps.length;
             }
 
+            let teamOps = [];
             if (scopes.includes("teams"))
             {
-                const teamOpNames = this._opsUtil.getAllTeamOpNames();
-                opCount += teamOpNames.length;
-                this._log.info("updating", teamOpNames.length, "ops in teams");
-                opNames = opNames.concat(teamOpNames);
+                teamOps = this._opsUtil.getAllTeamOpNames();
+                opCount += teamOps.length;
             }
 
+            let userOps = [];
             if (scopes.includes("users"))
             {
-                const userOpNames = this._opsUtil.getAllUserOpNames();
-                opCount += userOpNames.length;
-                this._log.info("updating", userOpNames.length, "ops in users");
-                opNames = opNames.concat(userOpNames);
+                userOps = this._opsUtil.getAllUserOpNames();
+                opCount += userOps.length;
             }
 
+            let patchOps = [];
             if (scopes.includes("patches"))
             {
-                const patchOpNames = this._opsUtil.getAllPatchOpNames();
-                opCount += patchOpNames.length;
-                this._log.info("updating", patchOpNames.length, "ops in patches");
-                opNames = opNames.concat(patchOpNames);
+                patchOps = this._opsUtil.getAllPatchOpNames();
+                opCount += patchOps.length;
             }
 
-            let collections = [];
-            opNames.forEach((opName) =>
+            Promise.all([
+                this._updateOpCache("extensions", extensionOps),
+                this._updateOpCache("teams", teamOps),
+                this._updateOpCache("users", userOps),
+                this._updateOpCache("patches", patchOps)
+            ]).then((collectionDocs) =>
             {
-                if (opName) collections.push(this._opsUtil.getCollectionName(opName));
+                collectionDocs.forEach((opDocs) =>
+                {
+                    docs = docs.concat(opDocs);
+                });
+                const end = Date.now();
+                const duration = (end - start);
+                this._log.info("updating", opCount, "ops took " + duration / 1000 + "s");
+                this._log.event(null, "server", "opcache", "rebuild", { "count": opCount, "duration": duration, "scopes": scopes });
+                if (cb) cb(docs);
             });
-
-            collections = this._helperUtil.uniqueArray(collections);
-            collections.forEach((collection) =>
-            {
-                this._opsUtil.buildOpDocsForCollection(collection);
-            });
-            docs = docs.concat(this.getOpDocsForCollections(opNames));
-
-            // make sure all ops are in lookup table
-            this.addOpsToLookup(docs, clearFiles, haltOnError);
-
-            const end = Date.now();
-            const duration = (end - start);
-            this._log.info("updating", opCount, "ops took " + duration / 1000 + "s");
-            this._log.event(null, "server", "opcache", "rebuild", { "count": opCount, "duration": duration, "scopes": scopes });
-            if (cb) cb(docs);
         }, 1000);
 
+    }
+
+    async _updateOpCache(title, opNames, clearFiles, haltOnError)
+    {
+        if (opNames.length === 0) return [];
+        this._log.info("updating", opNames.length, "ops in", title);
+        let docs = [];
+        let collections = {};
+        opNames.forEach((opName) =>
+        {
+            if (opName)
+            {
+                const collection = this._opsUtil.getCollectionName(opName);
+                if (!collections.hasOwnProperty(collection)) collections[collection] = [];
+                collections[collection].push(opName);
+            }
+        });
+
+        for (const collection in collections)
+        {
+            const collectionOpNames = collections[collection];
+            docs = docs.concat(this._opsUtil.buildOpDocsForCollection(collection, collectionOpNames, collectionOpNames, false));
+        }
+
+        // make sure all ops are in lookup table, since we skipped adding individual ones in the line above
+        this.addOpsToLookup(docs, clearFiles, haltOnError);
+        return docs;
     }
 
     getOpDocsForCollections(opNames, currentUser)
     {
         let opDocs = [];
-        let collections = [];
+        let collections = {};
         opNames.forEach((extOp) =>
         {
-            collections.push(this._opsUtil.getCollectionName(extOp));
+            const collection = this._opsUtil.getCollectionName(extOp);
+            if (!collections.hasOwnProperty(collection)) collections[collection] = [];
+            collections[collection].push(extOp);
         });
-        collections = this._helperUtil.uniqueArray(collections);
-        collections.forEach((collection) =>
+        for (let collection in collections)
         {
-            opDocs = opDocs.concat(this.getCollectionOpDocs(collection, currentUser));
-        });
+            const collectionOpName = collections[collection];
+            opDocs = opDocs.concat(this.getCollectionOpDocs(collection, currentUser, collectionOpName));
+        }
         return opDocs;
     }
 
