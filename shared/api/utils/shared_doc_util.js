@@ -622,7 +622,7 @@ export default class SharedDocUtil extends SharedUtil
             opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
         }
         opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
-        if (!currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
+        if (currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
         return opDocs;
     }
 
