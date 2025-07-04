@@ -622,7 +622,7 @@ export default class SharedDocUtil extends SharedUtil
             opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
         }
         opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
-        if (!currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
+        if (currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
         return opDocs;
     }
 
@@ -733,6 +733,13 @@ export default class SharedDocUtil extends SharedUtil
                     if (dep.type === "op")
                     {
                         dep.opName = this._opsUtil.getOpNameById(dep.src);
+                        const depDocs = this.getDocForOp(dep.opName);
+                        if (depDocs && depDocs.oldVersion)
+                        {
+                            dep.oldVersion = depDocs.oldVersion;
+                            dep.newestVersion = depDocs.newestVersion || {};
+                            dep.newestVersion.opId = depDocs.id;
+                        }
                     }
                 });
             }
