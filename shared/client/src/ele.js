@@ -1,4 +1,15 @@
 /**
+ * @callback whatever
+ * @param {...any} param
+ */
+
+/**
+  * @typedef myElement
+  * @type {HTMLElement}
+  * @extends {HTMLInputElement}
+  */
+
+/**
  * Ele - minimalistic html dom helper
  *
  * @class
@@ -10,7 +21,7 @@ class Ele
      * shortcut for document.getElementById(id)
      *
      * @param {String} id
-     * @returns {Object} DOM element
+     * @returns {HTMLElement&any} DOM element
      */
     byId(id)
     {
@@ -98,7 +109,7 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @param {Function} cb
+     * @param {whatever} cb
      */
     asButton(el, cb)
     {
@@ -109,7 +120,7 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @param {Function} cb
+     * @param {whatever} cb
      */
     clickable(el, cb)
     {
