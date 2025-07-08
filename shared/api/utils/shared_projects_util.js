@@ -418,7 +418,7 @@ export default class SharedProjectsUtil extends SharedUtil
         credits = this._helperUtil.uniqueArray(credits);
 
         credits.push("");
-        credits.push("cables is build on open source software and community contributions, check https://cables.gl/support");
+        credits.push("cables is built on open source software and community contributions, check https://cables.gl/support");
 
         return credits;
     }
