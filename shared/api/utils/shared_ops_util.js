@@ -805,11 +805,12 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 const filename = path.join(dirName, file);
 
-                if (fs.existsSync(filename))
+                try
                 {
                     attachment = fs.readFileSync(filename, { "encoding": "utf8" });
                     break;
                 }
+                catch (e) {}
             }
         }
         return attachment;
