@@ -3078,35 +3078,35 @@ export default class SharedOpsUtil extends SharedUtil
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, true, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, true, true, false, oldOpDir, newOpDir, cb);
     }
 
     renameToExtensionOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, true, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, true, true, false, oldOpDir, newOpDir, cb);
     }
 
     renameToTeamOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, true, false, oldOpDir, newOpDir, cb);
     }
 
     renameToUserOp(oldName, newName, currentUser, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, false, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, true, false, oldOpDir, newOpDir, cb);
     }
 
-    renameToPatchOp(oldName, newName, currentUser, newId, cb = null)
+    renameToPatchOp(oldName, newName, currentUser, removeOld, newId, cb = null)
     {
         let oldOpDir = this.getOpSourceDir(oldName);
         let newOpDir = this.getOpTargetDir(newName);
-        return this._renameOp(oldName, newName, currentUser, false, newId, oldOpDir, newOpDir, cb);
+        return this._renameOp(oldName, newName, currentUser, false, removeOld, newId, oldOpDir, newOpDir, cb);
     }
 
     updateOp(user, opName, updates, options = {})
@@ -3743,7 +3743,7 @@ export default class SharedOpsUtil extends SharedUtil
         return xw.toString();
     }
 
-    _renameOp(oldName, newName, currentUser, formatCode, newId, oldOpDir, newOpDir, cb = null)
+    _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
     {
         newName = this.sanitizeOpName(newName);
         if (!this.isPatchOp(newName))
@@ -3845,11 +3845,14 @@ export default class SharedOpsUtil extends SharedUtil
             jsonChange = true;
         }
 
-        fs.emptyDirSync(oldOpDir);
-        this._docsUtil.replaceOpNameInLookup(oldName, newName);
-        fs.rmSync(oldOpDir, { "recursive": true });
+        if (removeOld)
+        {
+            fs.emptyDirSync(oldOpDir);
+            this._docsUtil.replaceOpNameInLookup(oldName, newName);
+            fs.rmSync(oldOpDir, { "recursive": true });
+        }
 
-        if (newId)
+        if (!removeOld || newId)
         {
             if (newJsonData)
             {
@@ -3873,15 +3876,21 @@ export default class SharedOpsUtil extends SharedUtil
             this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
         }
 
+        let updateOld = false;
+        if (removeOld) updateOld = true;
+
         if (!this.isPatchOp(newName)) this._log.verbose("*" + currentUser.username + " finished rename ");
 
-        this._docsUtil.updateOpDocs(oldName);
+        if (updateOld) this._docsUtil.updateOpDocs(oldName);
         const newOpDocs = this._docsUtil.updateOpDocs(newName);
-        const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
-        versionNumbers.forEach((version) =>
+        if (removeOld)
         {
-            this._docsUtil.updateOpDocs(version.name);
-        });
+            const versionNumbers = this.getOpVersionNumbers(oldName, newOpDocs);
+            versionNumbers.forEach((version) =>
+            {
+                this._docsUtil.updateOpDocs(version.name);
+            });
+        }
 
         log.push("Successfully renamed " + oldName + " to " + newName);
 
