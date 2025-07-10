@@ -131,13 +131,10 @@ export default class SharedDocUtil extends SharedUtil
                 const filename = this._opsUtil.getOpJsonPath(opName);
                 try
                 {
-                    if (fs.existsSync(filename))
-                    {
-                        const obj = jsonfile.readFileSync(filename);
-                        if (obj.coreLibs) coreLibs = coreLibs.concat(obj.coreLibs);
-                    }
+                    const obj = jsonfile.readFileSync(filename);
+                    if (obj.coreLibs) coreLibs = coreLibs.concat(obj.coreLibs);
                 }
-                catch (ex) { this._log.error("no ops meta info found", opName, filename); }
+                catch (ex) { if (!fs.existsSync(filename)) this._log.error("no ops meta info found", opName, filename); }
             }
         }
         coreLibs = this._helperUtil.uniqueArray(coreLibs);
@@ -359,7 +356,7 @@ export default class SharedDocUtil extends SharedUtil
         if (!this.cachedLookup)
         {
             const emptyLookup = { "names": {}, "ids": {} };
-            if (fs.existsSync(this.opLookupFilename))
+            try
             {
                 let removeOps = [];
                 let fileLookUp = null;
@@ -408,10 +405,11 @@ export default class SharedDocUtil extends SharedUtil
                 this.cachedLookup = fileLookUp;
                 if (updateCache) this.removeOpNamesFromLookup(removeOps);
             }
-            else
+            catch (e)
             {
                 this.cachedLookup = emptyLookup;
             }
+
         }
         return this.cachedLookup;
     }
@@ -496,7 +494,7 @@ export default class SharedDocUtil extends SharedUtil
                 cachedLookup.names[op.name] = op.id;
             }
         });
-        jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
+        jsonfile.writeFile(this._cables.getOpLookupFile(), cachedLookup);
     }
 
     replaceOpNameInLookup(oldName, newName)
@@ -553,13 +551,9 @@ export default class SharedDocUtil extends SharedUtil
 
         if (js)
         {
-            // const screenshotFilename = path.join(dirName, "screenshot.png");
-            // const screenshotExists = fs.existsSync(screenshotFilename);
-
             docObj = { ...docObj, ...this.makeImportable(js) };
 
             docObj.shortName = shortName;
-            // docObj.hasScreenshot = screenshotExists;
             docObj.namespace = namespace;
             docObj.name = opName;
             docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);

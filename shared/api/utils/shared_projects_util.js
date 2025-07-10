@@ -75,18 +75,23 @@ export default class SharedProjectsUtil extends SharedUtil
                 exampleOps.forEach((op) =>
                 {
                     const p = this._opsUtil.getOpAbsolutePath(op);
-                    if (p && fs.existsSync(p))
+                    try
                     {
-                        const fn = path.join(p, "screenshot." + ext);
-                        this._log.verbose("save op screenshot to", fn);
-                        fs.writeFileSync(fn, bitmap);
+                        if (p)
+                        {
+                            const fn = path.join(p, "screenshot." + ext);
+                            this._log.verbose("save op screenshot to", fn);
+                            fs.writeFileSync(fn, bitmap);
+                        }
+                        else this._log.error("invalid op screenshot path: ", op, p);
                     }
-                    else this._log.error("invalid op screenshot path: ", op, p);
+                    catch (e) {}
+
                 });
             }
 
             const screenShotPath = this.getScreenShotPath(proj._id);
-            if (!fs.existsSync(screenShotPath)) mkdirp.sync(screenShotPath);
+            mkdirp.sync(screenShotPath);
 
             if (proj.settings && proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
             const filenameScreenshot = this.getScreenShotFileName(proj, ext);
@@ -295,7 +300,7 @@ export default class SharedProjectsUtil extends SharedUtil
         }
         const libsPath = this._cables.getLibsPath();
         const libs = [];
-        if (fs.existsSync(libsPath))
+        try
         {
             _libs = _libs.concat(fs.readdirSync(this._cables.getLibsPath()));
             for (let i = 0; i < _libs.length; i++)
@@ -324,6 +329,7 @@ export default class SharedProjectsUtil extends SharedUtil
                 }
             }
         }
+        catch (e) {}
         return libs;
     }
 
@@ -331,7 +337,7 @@ export default class SharedProjectsUtil extends SharedUtil
     {
         const coreLibsPath = this._cables.getCoreLibsPath();
         const coreLibs = [];
-        if (fs.existsSync(coreLibsPath))
+        try
         {
             const _coreLibs = fs.readdirSync(coreLibsPath);
             for (let i = 0; i < _coreLibs.length; i++)
@@ -343,6 +349,7 @@ export default class SharedProjectsUtil extends SharedUtil
                 }
             }
         }
+        catch (e) {}
         return coreLibs;
     }
 
@@ -351,7 +358,7 @@ export default class SharedProjectsUtil extends SharedUtil
         if (!project) return [];
         const libs = [];
         const assetPath = this.getAssetPath(project._id);
-        if (fs.existsSync(assetPath))
+        try
         {
             let _libs = fs.readdirSync(assetPath);
             for (let i = 0; i < _libs.length; i++)
@@ -380,6 +387,7 @@ export default class SharedProjectsUtil extends SharedUtil
                 }
             }
         }
+        catch (e) {}
 
         return libs;
     }
