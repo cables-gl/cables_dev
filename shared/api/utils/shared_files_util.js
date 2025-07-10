@@ -194,37 +194,32 @@ export default class SharedFilesUtil extends SharedUtil
     {
         const info = {};
         if (!absolutePath) return info;
-        if (absolutePath)
+        if (absolutePath && fs.existsSync(absolutePath))
         {
-            try
+            const stats = fs.statSync(absolutePath);
+            const fileSizeInBytes = stats.size;
+            const fileSizeInKb = fileSizeInBytes / 1024;
+            info.sizeKb = Math.ceil(fileSizeInKb);
+
+            info.fileUpdated = stats.mtime;
+            info.fileCreated = stats.ctime;
+
+            info.sizeReadable = info.sizeKb + " kb";
+            if (info.sizeKb > 1024) info.sizeReadable = Math.round(fileSizeInKb / 1024 * 100) / 100 + " mb";
+
+            info.size = fileSizeInBytes;
+            info.type = this.getFileType(absolutePath);
+
+            const parts = path.parse(absolutePath);
+            if (parts.ext && (parts.ext.endsWith(".png") || parts.ext.endsWith(".jpg") || parts.ext.endsWith(".jpeg") || parts.ext.endsWith(".svg") || parts.ext.endsWith(".webp") || parts.ext.endsWith(".avif")))
             {
-                const stats = fs.statSync(absolutePath);
-                const fileSizeInBytes = stats.size;
-                const fileSizeInKb = fileSizeInBytes / 1024;
-                info.sizeKb = Math.ceil(fileSizeInKb);
-
-                info.fileUpdated = stats.mtime;
-                info.fileCreated = stats.ctime;
-
-                info.sizeReadable = info.sizeKb + " kb";
-                if (info.sizeKb > 1024) info.sizeReadable = Math.round(fileSizeInKb / 1024 * 100) / 100 + " mb";
-
-                info.size = fileSizeInBytes;
-                info.type = this.getFileType(absolutePath);
-
-                const parts = path.parse(absolutePath);
-                if (parts.ext && (parts.ext.endsWith(".png") || parts.ext.endsWith(".jpg") || parts.ext.endsWith(".jpeg") || parts.ext.endsWith(".svg") || parts.ext.endsWith(".webp") || parts.ext.endsWith(".avif")))
-                {
-                    info.isImage = true;
-                    const dimensions = this.imageSize(absolutePath);
-                    info.imgSizeWidth = dimensions.width;
-                    info.imgSizeHeight = dimensions.height;
-                    if (this.isPowerOfTwo(parseInt(dimensions.width)) && this.isPowerOfTwo(parseInt(dimensions.height))) info.imgSizePower = "is power of two";
-                    else info.imgSizePower = "is NOT power of two";
-                }
+                info.isImage = true;
+                const dimensions = this.imageSize(absolutePath);
+                info.imgSizeWidth = dimensions.width;
+                info.imgSizeHeight = dimensions.height;
+                if (this.isPowerOfTwo(parseInt(dimensions.width)) && this.isPowerOfTwo(parseInt(dimensions.height))) info.imgSizePower = "is power of two";
+                else info.imgSizePower = "is NOT power of two";
             }
-            catch (e) {}
-
         }
 
         return info;

@@ -340,7 +340,7 @@ export default class SharedOpsUtil extends SharedUtil
     _writeOpChangelog(opName, changes, update = false)
     {
         const filename = this.getOpAbsoluteJsonFilename(opName);
-        try
+        if (fs.existsSync(filename))
         {
             const obj = jsonfile.readFileSync(filename);
             if (obj)
@@ -358,7 +358,6 @@ export default class SharedOpsUtil extends SharedUtil
                 jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
             }
         }
-        catch (e) {}
     }
 
     addOpChangelog(user, opName, newEntry, referenceDate = null, update = false)
@@ -1036,7 +1035,7 @@ export default class SharedOpsUtil extends SharedUtil
         Object.keys(collections).forEach((collectionName) =>
         {
             const collectionFile = this.getCollectionOpDocFile(collectionName);
-            if (forceRebuild || !fs.existsSync(collectionFile))
+            if (!fs.existsSync(collectionFile) || forceRebuild)
             {
                 if (forceRebuild) this._log.info("forced recreation of cache for", collectionName);
                 this.buildOpDocsForCollection(collectionName);
@@ -1044,7 +1043,10 @@ export default class SharedOpsUtil extends SharedUtil
             let cacheDocs = [];
             try
             {
-                cacheDocs = JSON.parse(fs.readFileSync(collectionFile, { "encoding": "utf8" }));
+                if (fs.existsSync(collectionFile))
+                {
+                    cacheDocs = JSON.parse(fs.readFileSync(collectionFile, { "encoding": "utf8" }));
+                }
             }
             catch (e)
             {
@@ -1101,7 +1103,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (!opName || !newDependency) return false;
         const opDocFile = this.getOpAbsoluteJsonFilename(opName);
-        try
+        if (fs.existsSync(opDocFile))
         {
             let opDoc = jsonfile.readFileSync(opDocFile);
             if (opDoc)
@@ -1133,7 +1135,6 @@ export default class SharedOpsUtil extends SharedUtil
                 return false;
             }
         }
-        catch (e) {}
         return false;
     }
 
@@ -1147,7 +1148,7 @@ export default class SharedOpsUtil extends SharedUtil
             const depFile = path.join(this.getOpAbsolutePath(opName), dep.src);
             if (fs.existsSync(depFile)) fs.unlinkSync(depFile);
         }
-        try
+        if (fs.existsSync(opDocFile))
         {
             let opDoc = jsonfile.readFileSync(opDocFile);
             if (opDoc)
@@ -1168,7 +1169,6 @@ export default class SharedOpsUtil extends SharedUtil
                 return false;
             }
         }
-        catch (e) {}
         return false;
     }
 
@@ -1177,14 +1177,17 @@ export default class SharedOpsUtil extends SharedUtil
         fileName = this._filesUtil.realSanitizeFilename(fileName);
         const opDir = this.getOpAbsolutePath(opName);
         const absoluteFile = path.join(opDir, fileName);
-        try
+        if (!fs.existsSync(absoluteFile))
         {
-            fs.writeFileSync(absoluteFile, buffer);
-            return fileName;
-        }
-        catch (e)
-        {
-            this._log.error("failed to write opdependency file", fileName, e);
+            try
+            {
+                fs.writeFileSync(absoluteFile, buffer);
+                return fileName;
+            }
+            catch (e)
+            {
+                this._log.error("failed to write opdependency file", fileName, e);
+            }
         }
         return false;
     }
@@ -1221,7 +1224,7 @@ export default class SharedOpsUtil extends SharedUtil
         let opNames = [];
 
         const opsPath = this._cables.getPatchOpsPath();
-        try
+        if (fs.existsSync(opsPath))
         {
             const patches = fs.readdirSync(opsPath);
 
@@ -1237,7 +1240,6 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-        catch (e) {}
 
         return opNames;
     }
@@ -1246,7 +1248,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         const opNames = [];
         const opsPath = this._cables.getUserOpsPath();
-        try
+        if (fs.existsSync(opsPath))
         {
             const dirUser = fs.readdirSync(opsPath);
 
@@ -1258,7 +1260,6 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-        catch (e) {}
         return opNames;
     }
 
@@ -1267,7 +1268,7 @@ export default class SharedOpsUtil extends SharedUtil
         let opNames = [];
 
         const opsPath = this._cables.getExtensionOpsPath();
-        try
+        if (fs.existsSync(opsPath))
         {
             const extensions = fs.readdirSync(opsPath);
             for (const i in extensions)
@@ -1282,7 +1283,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-        catch (e) {}
+
         return opNames;
     }
 
@@ -1291,7 +1292,7 @@ export default class SharedOpsUtil extends SharedUtil
         let opNames = [];
 
         const opsPath = this._cables.getTeamOpsPath();
-        try
+        if (fs.existsSync(opsPath))
         {
             const teams = fs.readdirSync(opsPath);
 
@@ -1307,7 +1308,6 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
         }
-        catch (e) {}
         return opNames;
     }
 
@@ -1336,11 +1336,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         const exists = fs.existsSync(filename);
         let existsPath = fs.existsSync(dirName);
-        if (createPath)
-        {
-            if (!existsPath) mkdirp.sync(dirName);
-            existsPath = fs.existsSync(dirName);
-        }
+        if (!existsPath && createPath) mkdirp.sync(dirName);
+        existsPath = fs.existsSync(dirName);
         if (existsPath && !exists) jsonfile.writeFileSync(filename, {}, this.OPJSON_FORMAT);
         if (!existsPath) return null;
 
@@ -1350,35 +1347,31 @@ export default class SharedOpsUtil extends SharedUtil
     buildCode(basePath, codePrefix, filterOldVersions = false, filterDeprecated = false, opDocs = null, preview = false)
     {
         if (filterOldVersions && !opDocs) opDocs = this._docsUtil.getOpDocs(filterOldVersions, filterDeprecated);
-        if (!basePath)
+        if (!basePath || !fs.existsSync(basePath))
         {
             return "";
         }
         else
         {
-            try
+            const dir = fs.readdirSync(basePath);
+            const ops = [];
+            for (let i = 0; i < dir.length; i++)
             {
-                const dir = fs.readdirSync(basePath);
-                const ops = [];
-                for (let i = 0; i < dir.length; i++)
+                const dirName = dir[i];
+                if (!this.isOpNameValid(dirName)) continue;
+                if (codePrefix !== "none")
                 {
-                    const dirName = dir[i];
-                    if (!this.isOpNameValid(dirName)) continue;
-                    if (codePrefix !== "none")
-                    {
-                        if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
-                        if (codePrefix && !dirName.startsWith(codePrefix)) continue;
-                    }
-
-                    if (filterDeprecated && this.isDeprecated(dirName)) continue;
-                    if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
-
-                    const opId = this.getOpIdByObjName(dirName);
-                    ops.push({ "objName": dirName, "opId": opId });
+                    if (!codePrefix && dirName.startsWith(this.PREFIX_USEROPS)) continue;
+                    if (codePrefix && !dirName.startsWith(codePrefix)) continue;
                 }
-                return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs, false, false, preview);
+
+                if (filterDeprecated && this.isDeprecated(dirName)) continue;
+                if (filterOldVersions && this.isOpOldVersion(dirName, opDocs)) continue;
+
+                const opId = this.getOpIdByObjName(dirName);
+                ops.push({ "objName": dirName, "opId": opId });
             }
-            catch (e) {}
+            return this.buildFullCode(ops, codePrefix, filterOldVersions, filterDeprecated, opDocs, false, false, preview);
         }
     }
 
@@ -1869,8 +1862,10 @@ export default class SharedOpsUtil extends SharedUtil
         const fn = this.getOpAbsoluteFileName(opName);
         try
         {
-            if (fn) return fs.readFileSync(fn, "utf8");
-
+            if (fn && fs.existsSync(fn))
+            {
+                return fs.readFileSync(fn, "utf8");
+            }
         }
         catch (e)
         {
@@ -2490,7 +2485,10 @@ export default class SharedOpsUtil extends SharedUtil
     updateOpCode(opName, author, code)
     {
         const opDir = this.getOpSourceDir(opName);
-        mkdirp.sync(opDir);
+        if (!fs.existsSync(opDir))
+        {
+            mkdirp.sync(opDir);
+        }
         const fn = this.getOpAbsoluteFileName(opName);
         let returnedCode = this._helperUtil.removeTrailingSpaces(code);
         fs.writeFileSync(fn, returnedCode);
