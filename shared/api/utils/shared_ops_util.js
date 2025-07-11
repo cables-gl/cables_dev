@@ -1012,7 +1012,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (newOpDocs.length > 0)
         {
             newOpDocs = this.addVersionInfoToOps(newOpDocs, true);
-            jsonfile.writeFile(collectionFile, newOpDocs, this.OPJSON_FORMAT);
+            jsonfile.writeFileSync(collectionFile, newOpDocs, this.OPJSON_FORMAT);
         }
         else if (fs.existsSync(collectionFile))
         {
