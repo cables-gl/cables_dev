@@ -1,6 +1,8 @@
 import helper from "./helper.js";
 import { CablesConstants } from "../index.js";
 
+const Handlebars = window.Handlebars;
+
 class HandlebarsHelper
 {
     initHandleBarsHelper()
