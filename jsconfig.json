@@ -4,7 +4,14 @@
         "target": "ESNext",
         "checkJs": true,
         "moduleResolution": "bundler",
-        "typeRoots": ["cables/node_modules/@webgpu/types"]
+        "typeAcquisition": {
+            "include": [
+                "Handlebars"
+            ]
+        },
+        "typeRoots": [
+            "cables/node_modules/@webgpu/types"
+        ]
     },
     "include": [
         "shared/client/src/**/*",

@@ -44,16 +44,16 @@ export default class TalkerAPI extends Events
     /**
      * send message via cables-talkerapi
      * @param {string} cmd name of the event
-     * @param {any[]} data payload
-     * @param {function} cb callback
+     * @param {object} data payload
+     * @param {function} [callback]
      */
-    send(cmd, data, cb)
+    send(cmd, data, callback)
     {
         const payload = { "cmd": cmd, "data": data };
-        if (cb)
+        if (callback)
         {
             this._callbackCounter++;
-            this._callbacks[this._callbackCounter] = cb;
+            this._callbacks[this._callbackCounter] = callback;
             payload.cb = this._callbackCounter;
         }
 
