@@ -5,11 +5,6 @@
         "checkJs": true,
         "allowJs": true,
         "moduleResolution": "bundler",
-        "typeAcquisition": {
-            "include": [
-                "Handlebars"
-            ]
-        },
         "typeRoots": [
             "cables/node_modules/@webgpu/types"
         ]
