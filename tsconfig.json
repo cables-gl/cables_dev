@@ -3,6 +3,7 @@
         "module": "ESNext",
         "target": "ESNext",
         "checkJs": true,
+        "allowJs": true,
         "moduleResolution": "bundler",
         "typeAcquisition": {
             "include": [
