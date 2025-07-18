@@ -1,6 +1,8 @@
 import helper from "./helper.js";
 import { CablesConstants } from "../index.js";
 
+// bla();
+
 class HandlebarsHelper
 {
     initHandleBarsHelper()
