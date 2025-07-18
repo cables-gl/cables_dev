@@ -10,15 +10,18 @@ import { UtilProvider } from "./utils/util_provider.js";
  * cables configuration class
  * provides directories and environment information for every platform
  *
- * @param {UtilProvider} utilProvider
- * @param {string|null} dirName base directory for everything, defaults to `.`
- * @param {string|null} writableDirName a directory that is writable (e.g. for generated files), defaults to `dirName`
- * @param {string|null} configLocation location of the `cables.json` configfile, defaults to `dirName` + "../../gen/cables.json"
- *
  * @abstract
  */
 export default class Cables extends SharedUtil
 {
+
+    /**
+     *
+     * @param {UtilProvider} utilProvider
+     * @param {string|null} dirName base directory for everything, defaults to `.`
+     * @param {string|null} writableDirName a directory that is writable (e.g. for generated files), defaults to `dirName`
+     * @param {string|null} configLocation location of the `cables.json` configfile, defaults to `dirName` + "../../gen/cables.json"
+     */
     constructor(utilProvider, dirName = null, writableDirName = null, configLocation = null)
     {
         super(utilProvider);

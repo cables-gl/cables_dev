@@ -25,8 +25,10 @@ export default class SharedUtil
     /**
      * @abstract
      */
-    // eslint-disable-next-line getter-return,no-empty-function
-    get utilName() {}
+    get utilName()
+    {
+        return "not implemented, abstract class";
+    }
 
     /**
      *
