@@ -30,5 +30,8 @@
         "uuid-v4": "0.1.0",
         "xml-writer": "1.7.0",
         "md5-file": "5.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "20.13.0"
     }
 }

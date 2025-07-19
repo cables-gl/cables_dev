@@ -19,7 +19,7 @@
     "license": "MIT",
     "scripts": {
         "build": "run-s api client",
-        "api": "cd ./api && npm install",
-        "client": "cd ./client && npm install"
+        "api": "cd ./api && npm install --loglevel silent",
+        "client": "cd ./client && npm install --loglevel silent"
     }
 }

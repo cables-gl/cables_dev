@@ -1048,7 +1048,8 @@ export default class SharedOpsUtil extends SharedUtil
             }
             catch (e)
             {
-                this._log.warn("failed to read collection opdocs from", collectionFile, e.message || e);
+                // if collection contains no ops anymore, file is not created, so only log json parse errors here
+                if (fs.existsSync(collectionFile)) this._log.warn("failed to read collection opdocs from", collectionFile, e.message || e);
             }
             cacheDocs.forEach((cacheDoc) =>
             {
