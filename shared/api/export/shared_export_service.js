@@ -303,49 +303,59 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
-        const output = fs.createWriteStream(exportTargetLocation);
-        this._log.info("finalZipFileName", exportTargetLocation);
-        output.on("close", () =>
+        const dirName = path.join(os.tmpdir(), "cables-export-");
+        fs.mkdtemp(dirName, (_, tmpDir) =>
         {
-            this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
+            const tempFile = path.join(tmpDir, path.basename(exportTargetLocation));
+            const output = fs.createWriteStream(tempFile);
+            this._log.info("finalZipFileName", exportTargetLocation);
+            this._log.info("tempFileName", tempFile);
+            output.on("close", () =>
+            {
+                this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
 
-            const result = {};
-            result.zipLocation = exportTargetLocation;
-            result.size = this.archive.pointer() / 1000000.0;
-            result.path = exportTargetLocation;
-            result.log = this.exportLog;
-            callbackFinished(result);
+                const result = {};
+                result.zipLocation = exportTargetLocation;
+                result.size = this.archive.pointer() / 1000000.0;
+                result.path = exportTargetLocation;
+                result.log = this.exportLog;
+                fs.rename(tempFile, exportTargetLocation, () =>
+                {
+                    fs.rmSync(tmpDir, { "recursive": true, "force": true });
+                    callbackFinished(result);
+                });
+            });
+
+            output.on("error", (outputErr) =>
+            {
+                this._log.error("export error", outputErr);
+                const result = { "error": outputErr };
+                callbackFinished(result);
+            });
+
+            this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
+            for (const [filename, fileData] of Object.entries(files))
+            {
+                const options = { "name": filename };
+                if (filename === "/patch.app/Contents/MacOS/Electron")
+                {
+                    options.mode = 0o777;
+                }
+                if (fileData.type && fileData.type === "path")
+                {
+                    this.archive.file(fileData.content, options);
+
+                }
+                else
+                {
+                    this.archive.append(fileData.content, options);
+                }
+            }
+
+            this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
+            this.archive.pipe(output);
+            this.archive.finalize();
         });
-
-        output.on("error", (outputErr) =>
-        {
-            this._log.error("export error", outputErr);
-            const result = { "error": outputErr };
-            callbackFinished(result);
-        });
-
-        this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
-        for (const [filename, fileData] of Object.entries(files))
-        {
-            const options = { "name": filename };
-            if (filename === "/patch.app/Contents/MacOS/Electron")
-            {
-                options.mode = 0o777;
-            }
-            if (fileData.type && fileData.type === "path")
-            {
-                this.archive.file(fileData.content, options);
-
-            }
-            else
-            {
-                this.archive.append(fileData.content, options);
-            }
-        }
-
-        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
-        this.archive.pipe(output);
-        this.archive.finalize();
     }
 
     _embeddingDoc(proj)
