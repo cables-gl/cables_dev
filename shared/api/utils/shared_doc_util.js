@@ -494,6 +494,7 @@ export default class SharedDocUtil extends SharedUtil
                 cachedLookup.names[op.name] = op.id;
             }
         });
+        this.cachedLookup = cachedLookup;
         jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
     }
 
