@@ -315,8 +315,7 @@ export default class SharedExportService extends SharedUtil
             callbackFinished(result);
         });
 
-        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
-
+        this._log.info("adding files...", (Date.now() - this.startTimeExport) / 1000);
         for (const [filename, content] of Object.entries(files))
         {
             const options = { "name": filename };
@@ -327,6 +326,7 @@ export default class SharedExportService extends SharedUtil
             this.archive.append(content, options);
         }
 
+        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
         this.archive.pipe(output);
         this.archive.finalize();
     }
