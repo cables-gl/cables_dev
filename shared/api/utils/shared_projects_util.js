@@ -291,18 +291,18 @@ export default class SharedProjectsUtil extends SharedUtil
         return assetPorts;
     }
 
-    getAvailableLibs(project)
+    getAvailableLibs(projectId = null)
     {
         let _libs = [];
-        if (project)
+        if (projectId)
         {
-            _libs = this.getAssetLibs(project);
+            _libs = this.getAssetLibs(projectId);
         }
         const libsPath = this._cables.getLibsPath();
         const libs = [];
         try
         {
-            _libs = _libs.concat(fs.readdirSync(this._cables.getLibsPath()));
+            _libs = _libs.concat(fs.readdirSync(libsPath));
             for (let i = 0; i < _libs.length; i++)
             {
                 let skip = false;
@@ -311,7 +311,7 @@ export default class SharedProjectsUtil extends SharedUtil
                     const libName = path.parse(_libs[i]);
                     if (libName)
                     {
-                        let jsonName = path.join(this._cables.getLibsPath(), libName.name);
+                        let jsonName = path.join(libsPath, libName.name);
                         jsonName += ".json";
                         if (fs.existsSync(jsonName))
                         {
@@ -353,11 +353,11 @@ export default class SharedProjectsUtil extends SharedUtil
         return coreLibs;
     }
 
-    getAssetLibs(project)
+    getAssetLibs(projectId)
     {
-        if (!project) return [];
+        if (!projectId) return [];
         const libs = [];
-        const assetPath = this.getAssetPath(project._id);
+        const assetPath = this.getAssetPath(projectId);
         try
         {
             let _libs = fs.readdirSync(assetPath);
@@ -382,7 +382,7 @@ export default class SharedProjectsUtil extends SharedUtil
                     }
                     if (!skip)
                     {
-                        libs.push(path.join("/assets", String(project._id), _libs[i]));
+                        libs.push(path.join("/assets", String(projectId), _libs[i]));
                     }
                 }
             }

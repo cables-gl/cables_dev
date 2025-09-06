@@ -59,6 +59,7 @@ export default class SharedExportService extends SharedUtil
         this.finalAssetPath = "assets/";
         this.finalJsPath = "js/";
         this.files = {};
+        this.archive = null;
 
         this.options = exportOptions || {};
         this.options.logLevel = exportOptions.logLevel ? exportOptions.logLevel : "debug";
@@ -170,10 +171,15 @@ export default class SharedExportService extends SharedUtil
 
     append(content, options)
     {
+        let type = "content";
+        if (options.type) type = options.type;
         const filename = options.name;
         if (filename)
         {
-            this.files[filename] = content;
+            this.files[filename] = {
+                "type": type,
+                "content": content
+            };
         }
     }
 
@@ -205,7 +211,7 @@ export default class SharedExportService extends SharedUtil
             "path": filePath,
             "zipFilePath": zipFilePath,
             "checkSum": newChecksum,
-            "size": Math.round(stats.size / 1024),
+            "size": Math.round(stats.size / 1024)
         });
 
         if (handleAssets === "none")
@@ -213,7 +219,10 @@ export default class SharedExportService extends SharedUtil
             ignore = true;
         }
 
-        if (!ignore) this.append(fs.readFileSync(filePath), { "name": zipFilePath });
+        if (!ignore) this.append(filePath, {
+            "name": zipFilePath,
+            "type": "path"
+        });
 
         return zipFilePath;
     }
@@ -315,18 +324,26 @@ export default class SharedExportService extends SharedUtil
             callbackFinished(result);
         });
 
-        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
-
-        for (const [filename, content] of Object.entries(files))
+        this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
+        for (const [filename, fileData] of Object.entries(files))
         {
             const options = { "name": filename };
             if (filename === "/patch.app/Contents/MacOS/Electron")
             {
                 options.mode = 0o777;
             }
-            this.archive.append(content, options);
+            if (fileData.type && fileData.type === "path")
+            {
+                this.archive.append(fs.createReadStream(fileData.content), options);
+
+            }
+            else
+            {
+                this.archive.append(fileData.content, options);
+            }
         }
 
+        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
         this.archive.pipe(output);
         this.archive.finalize();
     }
@@ -344,7 +361,10 @@ export default class SharedExportService extends SharedUtil
             const opName = this._opsUtil.getOpNameById(op.opId) || op.objName;
             if (this._opsUtil.isVariableSetter(opName))
             {
-                const v = { "opname": opName, "comment": op.uiAttribs.comment };
+                const v = {
+                    "opname": opName,
+                    "comment": op.uiAttribs.comment
+                };
 
                 for (let i = 0; i < op.portsIn.length; i++)
                 {
@@ -684,7 +704,10 @@ export default class SharedExportService extends SharedUtil
 
                         // add screenshot
                         const proScreenshotPath = path.join(this._projectsUtil.getAssetPath(proj._id), "_screenshots", "screenshot.png");
-                        if (fs.existsSync(proScreenshotPath)) this.append(fs.readFileSync(proScreenshotPath), { "name": "screenshot.png" });
+                        if (fs.existsSync(proScreenshotPath)) this.append(proScreenshotPath, {
+                            "name": "screenshot.png",
+                            "type": "path"
+                        });
 
                         // done adding everything, delegate to service for packaging, then return here to finish things up
                         callbackFilesCollected(proj, this.files, (result, credentials) =>
@@ -880,8 +903,11 @@ export default class SharedExportService extends SharedUtil
         this.append(licence.join("\n"), { "name": "LICENCE" });
 
         // add info file
-        const nfofile = fs.readFileSync(path.join(this._cables.getApiPath(), "/cables.txt"), "utf8");
-        this.append(nfofile, { "name": "cables.txt" });
+        const nfofile = path.join(this._cables.getApiPath(), "/cables.txt");
+        this.append(nfofile, {
+            "name": "cables.txt",
+            "type": "path"
+        });
 
         // add legal txt
         const legal = this._projectsUtil.getLicenceTextArray(proj);
@@ -980,13 +1006,19 @@ export default class SharedExportService extends SharedUtil
             for (let f = 0; f < depFiles.length; f++)
             {
                 const fileData = depFiles[f];
-                if (fileData.file && fileData.type !== "commonjs") this.append(fs.readFileSync(fileData.file, "utf8"), { "name": fileData.src });
+                if (fileData.file && fileData.type !== "commonjs") this.append(fileData.file, {
+                    "name": fileData.src,
+                    "type": "path"
+                });
             }
         }
         else
         {
             this.append(proJson, { "name": this.finalJsPath + jsonFilename + ".json" });
-            this.append(fs.readFileSync(coreFile, "utf8"), { "name": this.finalJsPath + "cables.js" });
+            this.append(coreFile, {
+                "name": this.finalJsPath + "cables.js",
+                "type": "path"
+            });
 
             opsCode += jsCode;
             opsCode += "\n";
@@ -998,13 +1030,19 @@ export default class SharedExportService extends SharedUtil
 
             for (let f = 0; f < libScripts.length; f++)
             {
-                this.append(fs.readFileSync(libScripts[f].file, "utf8"), { "name": libScripts[f].src });
+                this.append(libScripts[f].file, {
+                    "name": libScripts[f].src,
+                    "type": "path"
+                });
             }
 
             for (let f = 0; f < depFiles.length; f++)
             {
                 const fileData = depFiles[f];
-                if (fileData.file) this.append(fs.readFileSync(fileData.file, "utf8"), { "name": fileData.src });
+                if (fileData.file) this.append(fileData.file, {
+                    "name": fileData.src,
+                    "type": "path"
+                });
             }
         }
 
@@ -1108,7 +1146,11 @@ export default class SharedExportService extends SharedUtil
             {
                 libPath = path.join(this._cables.getPublicPath(), lib);
             }
-            libScripts.push({ "name": lib, "file": libPath, "src": libSrc });
+            libScripts.push({
+                "name": lib,
+                "file": libPath,
+                "src": libSrc
+            });
         }
         return libScripts;
     }
@@ -1119,7 +1161,11 @@ export default class SharedExportService extends SharedUtil
         for (let l = 0; l < coreLibs.length; l++)
         {
             const coreLib = coreLibs[l];
-            coreLibScripts.push({ "name": coreLib, "file": path.join(this._cables.getCoreLibsPath(), coreLib + ".js"), "src": this.finalJsPath + coreLib + ".js" });
+            coreLibScripts.push({
+                "name": coreLib,
+                "file": path.join(this._cables.getCoreLibsPath(), coreLib + ".js"),
+                "src": this.finalJsPath + coreLib + ".js"
+            });
         }
         return coreLibScripts;
     }
