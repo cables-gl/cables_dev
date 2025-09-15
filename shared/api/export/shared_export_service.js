@@ -303,55 +303,49 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
-        const dirName = path.join(os.tmpdir(), "cables-export-");
-        fs.mkdtemp(dirName, (err, folder) =>
+        const output = fs.createWriteStream(exportTargetLocation);
+        this._log.info("finalZipFileName", exportTargetLocation);
+        output.on("close", () =>
         {
-            if (err) throw err;
-            const copyPromises = [];
-            const writePromises = [];
-            for (const [filename, fileData] of Object.entries(files))
-            {
-                const options = { "name": filename };
-                if (filename === "/patch.app/Contents/MacOS/Electron")
-                {
-                    options.mode = 0o777;
-                }
-                const targetFile = path.join(folder, filename);
-                mkdirp.sync(path.dirname(targetFile));
-                if (fileData.type && fileData.type === "path")
-                {
-                    copyPromises.push(fs.promises.copyFile(fileData.content, targetFile));
-                }
-                else
-                {
-                    writePromises.push(fs.promises.writeFile(targetFile, fileData.content, { "mode": options.mode }));
-                }
-            }
-            Promise.all(writePromises).then(() =>
-            {
-                Promise.all(copyPromises).then(() =>
-                {
-                    this.archive({
-                        "source": folder + "/*",
-                        "destination": exportTargetLocation
-                    }).then(() =>
-                    {
-                        const result = {};
-                        result.zipLocation = exportTargetLocation;
-                        result.size = 5711;
-                        result.path = exportTargetLocation;
-                        result.log = this.exportLog;
-                        fs.rmSync(folder, { "recursive": true, "force": true });
-                        callbackFinished(result);
-                    }).catch((outputErr) =>
-                    {
-                        this._log.error("export error", outputErr);
-                        const result = { "error": outputErr };
-                        callbackFinished(result);
-                    });
-                });
-            });
+            this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
+
+            const result = {};
+            result.zipLocation = exportTargetLocation;
+            result.size = this.archive.pointer() / 1000000.0;
+            result.path = exportTargetLocation;
+            result.log = this.exportLog;
+            callbackFinished(result);
         });
+
+        output.on("error", (outputErr) =>
+        {
+            this._log.error("export error", outputErr);
+            const result = { "error": outputErr };
+            callbackFinished(result);
+        });
+
+        this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
+        for (const [filename, fileData] of Object.entries(files))
+        {
+            const options = { "name": filename };
+            if (filename === "/patch.app/Contents/MacOS/Electron")
+            {
+                options.mode = 0o777;
+            }
+            if (fileData.type && fileData.type === "path")
+            {
+                this.archive.append(fs.createReadStream(fileData.content), options);
+
+            }
+            else
+            {
+                this.archive.append(fileData.content, options);
+            }
+        }
+
+        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
+        this.archive.pipe(output);
+        this.archive.finalize();
     }
 
     _embeddingDoc(proj)
