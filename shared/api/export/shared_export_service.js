@@ -59,6 +59,7 @@ export default class SharedExportService extends SharedUtil
         this.finalAssetPath = "assets/";
         this.finalJsPath = "js/";
         this.files = {};
+
         this.archive = null;
 
         this.options = exportOptions || {};
@@ -303,49 +304,53 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
-        const output = fs.createWriteStream(exportTargetLocation);
         this._log.info("finalZipFileName", exportTargetLocation);
-        output.on("close", () =>
+
+        try
         {
-            this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
+            const zip = new this.archive();
+            this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
+            for (const [filename, fileData] of Object.entries(files))
+            {
+                const options = { "name": filename };
+                if (filename === "/patch.app/Contents/MacOS/Electron")
+                {
+                    options.mode = 0o777;
+                }
+                if (fileData.type && fileData.type === "path")
+                {
+                    zip.addLocalFile(fileData.content, path.dirname(filename), path.basename(filename));
+                }
+                else
+                {
+                    zip.addFile(filename, Buffer.from(fileData.content, "utf8"), { "mode": options.mode });
+                }
+            }
 
-            const result = {};
-            result.zipLocation = exportTargetLocation;
-            result.size = this.archive.pointer() / 1000000.0;
-            result.path = exportTargetLocation;
-            result.log = this.exportLog;
-            callbackFinished(result);
-        });
+            this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
 
-        output.on("error", (outputErr) =>
+            zip.writeZipPromise(exportTargetLocation).then(() =>
+            {
+                fs.promises.stat(exportTargetLocation).then((stats) =>
+                {
+                    const size = stats.size / 1024.0 / 1024.0;
+                    this._log.info("exported file " + exportTargetLocation + " / " + size + " mb");
+                    const result = {};
+                    result.zipLocation = exportTargetLocation;
+                    result.size = size;
+                    result.path = exportTargetLocation;
+                    result.log = this.exportLog;
+                    callbackFinished(result);
+                });
+            });
+        }
+        catch (outputErr)
         {
             this._log.error("export error", outputErr);
             const result = { "error": outputErr };
             callbackFinished(result);
-        });
-
-        this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
-        for (const [filename, fileData] of Object.entries(files))
-        {
-            const options = { "name": filename };
-            if (filename === "/patch.app/Contents/MacOS/Electron")
-            {
-                options.mode = 0o777;
-            }
-            if (fileData.type && fileData.type === "path")
-            {
-                this.archive.append(fs.createReadStream(fileData.content), options);
-
-            }
-            else
-            {
-                this.archive.append(fileData.content, options);
-            }
         }
 
-        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
-        this.archive.pipe(output);
-        this.archive.finalize();
     }
 
     _embeddingDoc(proj)
