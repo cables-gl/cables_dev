@@ -12,6 +12,12 @@ module.exports = {
         "instances": 4
     },
     {
+        "name": "server_offload",
+        "script": "src/servers/server_offload.js",
+        "cwd": "./cables_api",
+        "instances": 2
+    },
+    {
         "name": "server_socketcluster",
         "script": "src/servers/server_socketcluster.js",
         "cwd": "./cables_api",
