@@ -467,6 +467,7 @@ export default class SharedDocUtil extends SharedUtil
         if (!ops || ops.length === 0) return;
         if (clearFiles) this._log.info("rewriting caches with", ops.length, "ops");
         let cachedLookup = this.getCachedOpLookup(false);
+        let changed = clearFiles || !cachedLookup || !cachedLookup.ids || !cachedLookup.names;
         if (clearFiles || !cachedLookup) cachedLookup = {};
         if (clearFiles || !cachedLookup.ids) cachedLookup.ids = {};
         if (clearFiles || !cachedLookup.names) cachedLookup.names = {};
@@ -486,12 +487,20 @@ export default class SharedDocUtil extends SharedUtil
                     error = true;
                 }
                 if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!" + op.id + " " + op.name + " " + cachedLookup.ids[op.id]);
-                cachedLookup.ids[op.id] = op.name;
-                cachedLookup.names[op.name] = op.id;
+                if (cachedLookup.ids[op.id] !== op.name)
+                {
+                    changed = true;
+                    cachedLookup.ids[op.id] = op.name;
+                }
+                if (cachedLookup.names[op.name] !== op.id)
+                {
+                    changed = true;
+                    cachedLookup.names[op.name] = op.id;
+                }
             }
         });
         this.cachedLookup = cachedLookup;
-        jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
+        if (changed) jsonfile.writeFileSync(this._cables.getOpLookupFile(), cachedLookup);
     }
 
     replaceOpNameInLookup(oldName, newName)
