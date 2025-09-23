@@ -17,11 +17,11 @@ export default class SharedDocUtil extends SharedUtil
         this.opdocsFilename = this._cables.getOpDocsFile();
         this.opLookupFilename = this._cables.getOpLookupFile();
 
-        this._rebuildOpDocCache = true;
+        this._rebuildOpDocCache = false;
         this.cachedOpDocs = null;
         this.cachedLookup = null;
 
-        fs.watch(this.opdocsFilename, () =>
+        const readOpDocs = (cb = null) =>
         {
             jsonfile.readFile(this.opdocsFilename).then((data) =>
             {
@@ -30,21 +30,34 @@ export default class SharedDocUtil extends SharedUtil
                     this._log.info("reloaded opdocs cache json file!");
                     this.cachedOpDocs = data;
                 }
+                if (cb) cb(null, data);
             }).catch((e) =>
             {
                 this._log.info("failed to reload opdocs cache json file", this.opdocsFilename, e.message);
+                if (cb) cb(e, null);
             });
-        });
+        };
 
-        fs.watch(this.opLookupFilename, () =>
+        const readOpLookup = (cb = null) =>
         {
             jsonfile.readFile(this.opLookupFilename).then((data) =>
             {
                 if (data) this.cachedLookup = data;
+                if (cb) cb(null, data);
             }).catch((e) =>
             {
-                this._log.info("failed to reload opdocs cache json file", this.opdocsFilename, e.message);
+                this._log.info("failed to reload oplookup cache json file", this.opdocsFilename, e.message);
+                if (cb) cb(e, null);
             });
+        };
+
+        readOpDocs(() =>
+        {
+            fs.watch(this.opdocsFilename, () => { return readOpDocs(); });
+        });
+        readOpLookup(() =>
+        {
+            fs.watch(this.opLookupFilename, () => { return readOpLookup(); });
         });
     }
 
