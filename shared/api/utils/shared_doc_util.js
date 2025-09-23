@@ -23,21 +23,27 @@ export default class SharedDocUtil extends SharedUtil
 
         fs.watch(this.opdocsFilename, () =>
         {
-            jsonfile.readFile(this.opdocsFilename, (err, data) =>
+            jsonfile.readFile(this.opdocsFilename).then((data) =>
             {
-                if (!err && data)
+                if (data)
                 {
                     this._log.info("reloaded opdocs cache json file!");
                     this.cachedOpDocs = data;
                 }
+            }).catch((e) =>
+            {
+                this._log.info("failed to reload opdocs cache json file", this.opdocsFilename, e.message);
             });
         });
 
         fs.watch(this.opLookupFilename, () =>
         {
-            jsonfile.readFile(this.opLookupFilename, (err, data) =>
+            jsonfile.readFile(this.opLookupFilename).then((data) =>
             {
-                if (!err && data) this.cachedLookup = data;
+                if (data) this.cachedLookup = data;
+            }).catch((e) =>
+            {
+                this._log.info("failed to reload opdocs cache json file", this.opdocsFilename, e.message);
             });
         });
     }
