@@ -795,7 +795,7 @@ export default class SharedDocUtil extends SharedUtil
         return docObj;
     }
 
-    getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false, publicOnly = true)
+    async getAllExtensionDocs(filterOldVersions = false, filterDeprecated = false, publicOnly = true)
     {
         const collectionPath = this._cables.getExtensionOpsPath();
         const extensions = [];
@@ -804,7 +804,7 @@ export default class SharedDocUtil extends SharedUtil
             let exDirs = [];
             try
             {
-                exDirs = fs.readdirSync(collectionPath);
+                exDirs = await fs.promises.readdir(collectionPath);
             }
             catch (e) {}
             exDirs.forEach((extensionName) =>
