@@ -51,14 +51,16 @@ export default class SharedDocUtil extends SharedUtil
             });
         };
 
-        readOpDocs(() =>
-        {
-            fs.watch(this.opdocsFilename, () => { return readOpDocs(); });
-        });
         readOpLookup(() =>
         {
             fs.watch(this.opLookupFilename, () => { return readOpLookup(); });
         });
+
+        readOpDocs(() =>
+        {
+            fs.watch(this.opdocsFilename, () => { return readOpDocs(); });
+        });
+
     }
 
     get utilName()
