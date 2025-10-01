@@ -244,8 +244,8 @@ export default class SharedExportService extends SharedUtil
 
     createZip(project, files, callbackFinished)
     {
-        const zipFileName = this.getExportFileName(project);
-        const zipPath = this.getExportTargetPath(project);
+        const zipFileName = this._projectsUtil.getExportFileName(project, this.getName());
+        const zipPath = this._projectsUtil.getExportTargetPath(project);
         const zipLocation = path.join(zipPath, zipFileName);
 
         mkdirp.sync(zipPath);
@@ -259,17 +259,6 @@ export default class SharedExportService extends SharedUtil
             };
             callbackFinished(result);
         });
-    }
-
-    getExportTargetPath(project)
-    {
-        return path.join(this._projectsUtil.getAssetPath(project._id), "/_exports/");
-    }
-
-    getExportFileName(project)
-    {
-        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + this.getName() + "_" + project.exports;
-        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
     }
 
     addLog(str, level = "info")
