@@ -120,7 +120,7 @@ class Ele
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
      * @param {Object} el
-     * @param {whatever} cb
+     * @param {whatever|function} cb
      */
     clickable(el, cb)
     {
@@ -128,8 +128,12 @@ class Ele
 
         if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", 0);
         el.classList.add("eleAsButton");
-        el.addEventListener("click", (e) => { cb(e); });
-        el.addEventListener("keydown", (e) => { if (e.keyCode === 13 || e.keyCode === 32)cb(e); });
+        if (cb)
+        {
+            el.addEventListener("click", (e) => { cb(e); });
+            el.addEventListener("keydown", (e) => { if (e.keyCode === 13 || e.keyCode === 32)cb(e); });
+        }
+        else { console.warn("ele.clickable no callback given", el); }
     }
 
     /**
