@@ -45,11 +45,8 @@ export default class SharedDocUtil extends SharedUtil
     {
         jsonfile.readFile(this.opdocsFilename).then((data) =>
         {
-            if (data)
-            {
-                this._log.info("reloaded opdocs cache json file!");
-                this.cachedOpDocs = data;
-            }
+            this._log.info("reloaded opdocs cache json file!");
+            if (data) this.setCachedOpDocs(data);
             if (cb) cb(null, data);
         }).catch((e) =>
         {
@@ -62,7 +59,7 @@ export default class SharedDocUtil extends SharedUtil
     {
         jsonfile.readFile(this.opLookupFilename).then((data) =>
         {
-            if (data) this.cachedLookup = data;
+            if (data) this.setCachedLookup(data);
             if (cb) cb(null, data);
         }).catch((e) =>
         {
@@ -282,7 +279,8 @@ export default class SharedDocUtil extends SharedUtil
                         {
                             if (this.getCachedOpLookup())
                             {
-                                opDoc = this.getDocForOp(opName, this.cachedOpDocs.opDocs);
+                                const cachedOpDocs = this.getCachedOpDocs();
+                                opDoc = this.getDocForOp(opName, cachedOpDocs.opDocs);
                                 if (!opDoc) opDoc = this.buildOpDocs(opName);
                             }
                         }
@@ -326,7 +324,7 @@ export default class SharedDocUtil extends SharedUtil
 
                 this._writeCache(this.OP_DOCS_CACHE, newCache);
 
-                this.cachedOpDocs = newCache;
+                this.setCachedOpDocs(newCache);
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
@@ -352,15 +350,16 @@ export default class SharedDocUtil extends SharedUtil
         }
         else
         {
-            if (this.cachedOpDocs && this.cachedOpDocs.opDocs)
+            const cachedOpDocs = this.getCachedOpDocs();
+            if (cachedOpDocs && cachedOpDocs.opDocs)
             {
-                this.cachedOpDocs.opDocs = this._opsUtil.addVersionInfoToOps(this.cachedOpDocs.opDocs);
+                cachedOpDocs.opDocs = this._opsUtil.addVersionInfoToOps(cachedOpDocs.opDocs);
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
-                    for (let i = 0; i < this.cachedOpDocs.opDocs.length; i++)
+                    for (let i = 0; i < cachedOpDocs.opDocs.length; i++)
                     {
-                        const opDoc = this.cachedOpDocs.opDocs[i];
+                        const opDoc = cachedOpDocs.opDocs[i];
                         if (filterOldVersions && opDoc.oldVersion) continue;
                         if (filterDeprecated && this._opsUtil.isDeprecated(opDoc.name)) continue;
                         filteredOpDocs.push(opDoc);
@@ -368,7 +367,7 @@ export default class SharedDocUtil extends SharedUtil
                 }
                 else
                 {
-                    filteredOpDocs = this.cachedOpDocs.opDocs;
+                    filteredOpDocs = cachedOpDocs.opDocs;
                 }
                 return filteredOpDocs;
             }
@@ -382,7 +381,8 @@ export default class SharedDocUtil extends SharedUtil
 
     getCachedOpLookup(updateCache = true)
     {
-        if (!this.cachedLookup)
+        const cachedLookup = this.getCachedLookup();
+        if (!cachedLookup)
         {
             const emptyLookup = { "names": {}, "ids": {} };
             try
@@ -431,16 +431,16 @@ export default class SharedDocUtil extends SharedUtil
                         }
                     }
                 }
-                this.cachedLookup = fileLookUp;
+                this.setCachedLookup(fileLookUp);
                 if (updateCache) this.removeOpNamesFromLookup(removeOps);
             }
             catch (e)
             {
-                this.cachedLookup = emptyLookup;
+                this.setCachedLookup(emptyLookup);
             }
 
         }
-        return this.cachedLookup;
+        return this.getCachedLookup();
     }
 
     addOpToLookup(opId, opName)
@@ -528,7 +528,7 @@ export default class SharedDocUtil extends SharedUtil
                 }
             }
         });
-        this.cachedLookup = cachedLookup;
+        this.setCachedLookup(cachedLookup);
         if (changed)
         {
             this._writeCache(this.OP_LOOKUP_CACHE, cachedLookup);
@@ -1043,5 +1043,25 @@ export default class SharedDocUtil extends SharedUtil
             jsonfile.writeFile(this.opdocsFilename, data);
             break;
         }
+    }
+
+    setCachedOpDocs(data)
+    {
+        this.cachedOpDocs = data;
+    }
+
+    getCachedOpDocs()
+    {
+        return this.cachedOpDocs;
+    }
+
+    setCachedLookup(data)
+    {
+        this.cachedLookup = data;
+    }
+
+    getCachedLookup()
+    {
+        return this.cachedLookup;
     }
 }
