@@ -292,15 +292,17 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
+        const archive = this.archive.create("zip", { "zlib": { "level": 0 } });
         const output = fs.createWriteStream(exportTargetLocation);
         this._log.info("finalZipFileName", exportTargetLocation);
         output.on("close", () =>
         {
-            this._log.info("exported file " + exportTargetLocation + " / " + this.archive.pointer() / 1000000.0 + " mb");
+            const size = archive.pointer() / 1000000.0;
+            this._log.info("exported file " + exportTargetLocation + " / " + size + " mb", (Date.now() - this.startTimeExport) / 1000);
 
             const result = {};
             result.zipLocation = exportTargetLocation;
-            result.size = this.archive.pointer() / 1000000.0;
+            result.size = size;
             result.path = exportTargetLocation;
             result.log = this.exportLog;
             callbackFinished(result);
@@ -323,18 +325,19 @@ export default class SharedExportService extends SharedUtil
             }
             if (fileData.type && fileData.type === "path")
             {
-                this.archive.append(fs.createReadStream(fileData.content), options);
+                archive.append(fs.createReadStream(fileData.content), options);
 
             }
             else
             {
-                this.archive.append(fileData.content, options);
+                archive.append(fileData.content, options);
             }
         }
 
+        this._log.info("piped output to zip...", (Date.now() - this.startTimeExport) / 1000);
+        archive.pipe(output);
         this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
-        this.archive.pipe(output);
-        this.archive.finalize();
+        archive.finalize();
     }
 
     _embeddingDoc(proj)
@@ -1181,6 +1184,7 @@ export default class SharedExportService extends SharedUtil
                 }
             }
         }
+        return replacements;
     }
 
     _replaceInString(replacements, theString)
