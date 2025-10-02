@@ -547,6 +547,24 @@ export default class SharedProjectsUtil extends SharedUtil
         return legalText;
     }
 
+    /**
+     * @param {Project} project
+     */
+    getExportTargetPath(project)
+    {
+        return path.join(this.getAssetPath(project._id), "/_exports/");
+    }
+
+    /**
+     * @param {Project} project
+     * @param {String} exportType
+     */
+    getExportFileName(project, exportType)
+    {
+        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + exportType + "_" + project.exports;
+        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
+    }
+
     findNewAssetFilename(targetDir, fileName)
     {
         let fileInfo = path.parse(fileName);
