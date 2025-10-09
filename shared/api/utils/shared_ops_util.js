@@ -988,7 +988,13 @@ export default class SharedOpsUtil extends SharedUtil
         if (!collectionOps) collectionOps = this.getCollectionOpNames(collectionName);
         let collectionDocs = this._docsUtil.getCollectionOpDocs(collectionName, null, opNames);
         let rebuildOps = collectionOps;
-        if (opNames) rebuildOps = rebuildOps.filter((name) => { return opNames.includes(name); });
+        if (opNames)
+        {
+            rebuildOps = [...rebuildOps, ...opNames];
+            rebuildOps = this._helperUtil.uniqueArray(rebuildOps);
+            rebuildOps = rebuildOps.filter((name) => { return opNames.includes(name); });
+            collectionOps = [...collectionOps, ...opNames];
+        }
         let newOpDocs = [];
         collectionOps.forEach((opName) =>
         {
