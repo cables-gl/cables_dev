@@ -10,6 +10,11 @@ export default class Logger
     {
         this.initiator = initiator;
         this._options = options;
+        if (!this.initiator)
+        {
+            console.error("no log initator given");
+            CABLES.logStack();
+        }
     }
 
     /**
