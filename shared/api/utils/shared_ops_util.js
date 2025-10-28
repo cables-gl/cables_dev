@@ -3857,9 +3857,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (removeOld)
         {
-            fs.emptyDirSync(oldOpDir);
+            fs.rmSync(oldOpDir, { "recursive": true, "force": true });
             this._docsUtil.replaceOpNameInLookup(oldName, newName);
-            fs.rmSync(oldOpDir, { "recursive": true });
         }
 
         if (!removeOld || newId)

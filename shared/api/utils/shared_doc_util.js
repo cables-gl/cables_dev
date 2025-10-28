@@ -505,29 +505,37 @@ export default class SharedDocUtil extends SharedUtil
             if (op && op.name && op.id)
             {
                 let error = false;
-                if (cachedLookup.ids[op.id] && cachedLookup.ids[op.id] !== op.name)
-                {
-                    this._log.warn("DUPLICATE OP ID", op.id, op.name, cachedLookup.ids[op.id]);
-                    error = true;
-                }
                 if (cachedLookup.names[op.name] && cachedLookup.names[op.name] !== op.id)
                 {
                     this._log.warn("DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.names]);
                     error = true;
                 }
+
                 if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!" + op.id + " " + op.name + " " + cachedLookup.ids[op.id]);
-                if (cachedLookup.ids[op.id] !== op.name)
+                if (!error)
                 {
-                    changed = true;
-                    cachedLookup.ids[op.id] = op.name;
-                }
-                if (cachedLookup.names[op.name] !== op.id)
-                {
-                    changed = true;
-                    cachedLookup.names[op.name] = op.id;
+                    if (cachedLookup.ids[op.id] !== op.name)
+                    {
+                        changed = true;
+                        cachedLookup.ids[op.id] = op.name;
+                    }
+                    if (cachedLookup.names[op.name] !== op.id)
+                    {
+                        changed = true;
+                        cachedLookup.names[op.name] = op.id;
+                    }
                 }
             }
         });
+        for (const oldName in cachedLookup.names)
+        {
+            const oldId = cachedLookup.names[oldName];
+            if (cachedLookup.ids[oldId] !== oldName)
+            {
+                delete cachedLookup.names[oldName];
+                changed = true;
+            }
+        }
         this.setCachedLookup(cachedLookup);
         if (changed)
         {
