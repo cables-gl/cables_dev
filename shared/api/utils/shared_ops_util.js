@@ -1617,33 +1617,42 @@ export default class SharedOpsUtil extends SharedUtil
         if (!outerName || !innerName) return "Unknow op";
         if (this.getNamespace(innerName).startsWith(this.getNamespace(outerName)) || this.getNamespace(outerName).startsWith(this.getNamespace(innerName))) return false;
 
+        const innerLink = "<a href=\"/op/" + innerName + "\">" + innerName + "</a>";
+        const opText = "<br/>Rename " + innerLink;
+
+        let convertText = "";
         if (this.isCoreOp(outerName))
         {
-            if (this.isExtensionOp(innerName)) return "(SubpatchOp) Core ops cannot contain extension ops.";
-            if (this.isTeamOp(innerName)) return "(SubpatchOp) Core ops cannot contain team ops.";
-            if (this.isUserOp(innerName)) return "(SubpatchOp) Core ops cannot contain user ops.";
-            if (this.isPatchOp(innerName)) return "(SubpatchOp) Core ops cannot contain patch ops.";
+            convertText = " to a core op.";
+            if (this.isExtensionOp(innerName)) return "Core ops cannot contain extension ops." + opText + convertText;
+            if (this.isTeamOp(innerName)) return "Core ops cannot contain team ops." + opText + convertText;
+            if (this.isUserOp(innerName)) return "Core ops cannot contain user ops." + opText + convertText;
+            if (this.isPatchOp(innerName)) return "Core ops cannot contain patch ops." + opText + convertText;
         }
         else if (this.isExtensionOp(outerName))
         {
-            if (this.isTeamOp(innerName)) return "(SubpatchOp) Extension ops cannot contain team ops.";
-            if (this.isUserOp(innerName)) return "(SubpatchOp) Extension ops cannot contain user ops.";
-            if (this.isPatchOp(innerName)) return "(SubpatchOp) Extension ops cannot contain patch ops.";
+            convertText = " to a core or extension op.";
+            if (this.isTeamOp(innerName)) return "Extension ops cannot contain team ops." + opText + convertText;
+            if (this.isUserOp(innerName)) return "Extension ops cannot contain user ops." + opText + convertText;
+            if (this.isPatchOp(innerName)) return "Extension ops cannot contain patch ops." + opText + convertText;
         }
         else if (this.isTeamOp(outerName))
         {
-            if (this.isTeamOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) Team ops cannot contain ops of other teams.";
-            if (this.isUserOp(innerName)) return "(SubpatchOp) Team ops cannot contain user ops.";
-            if (this.isPatchOp(innerName)) return "(SubpatchOp) Team ops cannot contain patch ops.";
+            convertText = " to a op of the same team.";
+            if (this.isTeamOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "Team ops cannot contain ops of other teams." + opText + convertText;
+            if (this.isUserOp(innerName)) return "Team ops cannot contain user ops." + opText + convertText;
+            if (this.isPatchOp(innerName)) return "Team ops cannot contain patch ops." + opText + convertText;
         }
         else if (this.isUserOp(outerName))
         {
-            if (this.isUserOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) User ops cannot contain ops of other users.";
-            if (this.isPatchOp(innerName)) return "(SubpatchOp) User ops cannot contain patch ops.";
+            convertText = " to your own user op";
+            if (this.isUserOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "User ops cannot contain ops of other users." + opText + convertText;
+            if (this.isPatchOp(innerName)) return "User ops cannot contain patch ops." + opText + convertText;
         }
         else if (this.isPatchOp(outerName))
         {
-            if (this.isPatchOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "(SubpatchOp) Patch ops cannot contain ops of other patches.";
+            convertText = " to a patch op of this patch";
+            if (this.isPatchOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "Patch ops cannot contain ops of other patches." + opText + convertText;
         }
 
         return false;
@@ -3857,9 +3866,8 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (removeOld)
         {
-            fs.emptyDirSync(oldOpDir);
+            fs.rmSync(oldOpDir, { "recursive": true, "force": true });
             this._docsUtil.replaceOpNameInLookup(oldName, newName);
-            fs.rmSync(oldOpDir, { "recursive": true });
         }
 
         if (!removeOld || newId)
