@@ -1,4 +1,5 @@
 module.exports = {
+    "treekill": false,
     "apps": [
         {
             "name": "server_api",
