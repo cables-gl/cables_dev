@@ -1617,7 +1617,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (!outerName || !innerName) return "Unknow op";
         if (this.getNamespace(innerName).startsWith(this.getNamespace(outerName)) || this.getNamespace(outerName).startsWith(this.getNamespace(innerName))) return false;
 
-        const innerLink = "<a href=\"/op/" + innerName + "\">" + innerName + "</a>";
+        const innerLink = "<a href=\"/op/" + innerName + "\" target=\"_blank\">" + innerName + "</a>";
         const opText = "<br/>Rename " + innerLink;
 
         let convertText = "";
@@ -1638,7 +1638,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         else if (this.isTeamOp(outerName))
         {
-            convertText = " to a op of the same team.";
+            convertText = " to an op of the same team.";
             if (this.isTeamOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "Team ops cannot contain ops of other teams." + opText + convertText;
             if (this.isUserOp(innerName)) return "Team ops cannot contain user ops." + opText + convertText;
             if (this.isPatchOp(innerName)) return "Team ops cannot contain patch ops." + opText + convertText;
@@ -2841,13 +2841,14 @@ export default class SharedOpsUtil extends SharedUtil
             const subPatchAtt = this.getSubPatchOpAttachment(oneOldName);
             if (subPatchAtt)
             {
-                subPatchAtt.ops.forEach((subPatchOp) =>
+                subPatchAtt.ops.forEach((subPatchOp, i) =>
                 {
                     const subPatchOpName = this.getOpNameById(subPatchOp.opId);
                     const hierarchyProblem = this.getNamespaceHierarchyProblem(oneNewName, subPatchOpName);
                     if (hierarchyProblem)
                     {
-                        problems.bad_op_hierarchy = hierarchyProblem;
+                        const problemKey = "bad_op_hierarchy_" + i;
+                        problems[problemKey] = hierarchyProblem;
                     }
                 });
             }
