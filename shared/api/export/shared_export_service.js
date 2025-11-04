@@ -987,12 +987,10 @@ export default class SharedExportService extends SharedUtil
             jsCode = jsCode.replaceAll(/[\u2029]/g, " ");
             jsCode = jsCode.replaceAll(/[\u00A0]/g, " ");
 
+            jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
             jsCode = this._doAfterCombine(jsCode, options);
 
             this._log.info("append code...", (Date.now() - this.startTimeExport) / 1000);
-
-            jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
-
             this.append(jsCode, { "name": this.finalJsPath + "patch.js" });
 
             for (let f = 0; f < depFiles.length; f++)

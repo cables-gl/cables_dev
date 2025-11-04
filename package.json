@@ -30,7 +30,7 @@
         "eslint-config-airbnb-base": "15.0.0",
         "eslint-plugin-import": "2.27.5",
         "npm": "10.5.2",
-        "pm2": "5.4.1",
+        "pm2": "6.0.13",
         "prettier": "3.2.5",
         "prettier-eslint": "16.3.0",
         "tree-kill": "1.2.2",
