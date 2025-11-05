@@ -828,27 +828,49 @@ export default class SharedDocUtil extends SharedUtil
                 exDirs = await fs.promises.readdir(collectionPath);
             }
             catch (e) {}
+            let allOpNames = [];
             exDirs.forEach((extensionName) =>
             {
-                if (!publicOnly)
+                if (this._opsUtil.isOpNameValid(extensionName))
                 {
-                    const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
-                    if (extensionOps.length > 0)
+                    if (!publicOnly)
                     {
-                        const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
-                        if (extDocs) extensions.push(extDocs);
+
+                        const extDocs = this.getExtensionDoc(extensionName);
+                        if (extDocs && extDocs.ops.length > 0)
+                        {
+                            extensions.push(extDocs);
+                            allOpNames = allOpNames.concat(extDocs.ops);
+                        }
                     }
-                }
-                else if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
-                {
-                    const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
-                    if (extensionOps.length > 0)
+                    else if (this._opsUtil.isExtension(extensionName) && this._opsUtil.getCollectionVisibility(extensionName) === this._opsUtil.VISIBILITY_PUBLIC)
                     {
-                        const extDocs = this.getExtensionDoc(extensionName, filterOldVersions, filterDeprecated);
-                        if (extDocs) extensions.push(extDocs);
+
+                        const extDocs = this.getExtensionDoc(extensionName);
+                        if (extDocs && extDocs.ops.length > 0)
+                        {
+                            extensions.push(extDocs);
+                            allOpNames = allOpNames.concat(extDocs.ops);
+                        }
                     }
                 }
             });
+
+            if (filterOldVersions || filterDeprecated)
+            {
+                let opDocs = this._docsUtil.getOpDocsForCollections(allOpNames);
+                opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
+                if (filterDeprecated) allOpNames = allOpNames.filter((opName) => { return !this._opsUtil.isDeprecated(opName); });
+                if (filterOldVersions) allOpNames = allOpNames.filter((opName) =>
+                {
+                    return !this._opsUtil.isOpOldVersion(opName, opDocs);
+                });
+
+                extensions.forEach((extension) =>
+                {
+                    extension.ops = extension.ops.filter((opName) => { return allOpNames.includes(opName); });
+                });
+            }
         }
 
         return extensions;
