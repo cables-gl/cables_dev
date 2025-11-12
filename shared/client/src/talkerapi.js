@@ -31,8 +31,8 @@ export default class TalkerAPI extends Events
     static CMD_SAVE_PATCH_AS = "saveProjectAs";
     static CMD_SAVE_PATCH_SCREENSHOT = "saveScreenshot";
     static CMD_SET_PATCH_NAME = "setProjectName";
-    static CMD_SET_ICON_UNSAVED = "setIconUnsaved";
     static CMD_SET_ICON_SAVED = "setIconSaved";
+    static CMD_SET_ICON_UNSAVED = "setIconUnsaved";
     static CMD_GET_FILE_LIST = "getFilelist";
     static CMD_CONVERT_FILE = "fileConvert";
     static CMD_UPDATE_PATCH_NAME = "updatePatchName";
@@ -71,11 +71,11 @@ export default class TalkerAPI extends Events
     static CMD_SEND_PATCH = "sendPatch";
 
     // notify ui
+    static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
     static CMD_UI_JOB_START = "jobStart";
     static CMD_UI_JOB_PROGRESS = "jobProgress";
-    static CMD_UI_NOTIFY = "notify";
     static CMD_UI_JOB_FINISH = "jobFinish";
-    static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
+    static CMD_UI_NOTIFY = "notify";
     static CMD_UI_NOTIFY_ERROR = "notifyError";
     static CMD_UI_FILE_UPDATED = "fileUpdated";
     static CMD_UI_FILE_DELETED = "fileDeleted";
