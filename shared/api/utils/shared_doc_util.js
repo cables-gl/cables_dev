@@ -10,7 +10,7 @@ import { UtilProvider } from "./util_provider.js";
  */
 export default class SharedDocUtil extends SharedUtil
 {
-    constructor(utilProvider)
+    constructor(utilProvider, rebuildCache = false)
     {
         super(utilProvider);
 
@@ -20,7 +20,7 @@ export default class SharedDocUtil extends SharedUtil
         this.opdocsFilename = this._cables.getOpDocsFile();
         this.opLookupFilename = this._cables.getOpLookupFile();
 
-        this._rebuildOpDocCache = false;
+        this._rebuildOpDocCache = rebuildCache;
         this.cachedOpDocs = null;
         this.cachedLookup = null;
 
