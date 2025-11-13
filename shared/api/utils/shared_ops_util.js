@@ -1639,7 +1639,7 @@ export default class SharedOpsUtil extends SharedUtil
         else if (this.isTeamOp(outerName))
         {
             convertText = " to an op of the same team.";
-            if (this.isTeamOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "Team ops cannot contain ops of other teams." + opText + convertText;
+            // if (this.isTeamOp(innerName) && this.getNamespace(innerName) !== this.getNamespace(outerName)) return "Team ops cannot contain ops of other teams." + opText + convertText;
             if (this.isUserOp(innerName)) return "Team ops cannot contain user ops." + opText + convertText;
             if (this.isPatchOp(innerName)) return "Team ops cannot contain patch ops." + opText + convertText;
         }
