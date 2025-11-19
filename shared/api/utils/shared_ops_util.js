@@ -718,6 +718,30 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": "use `op.log`, not `console.log` "
             });
 
+            if (code.includes("patch.cgl") || code.includes("CGL."))
+            {
+                if (!info.coreLibs || !info.coreLibs.includes("cgl"))
+                {
+                    srcWarnings.push({
+                        "type": "corelibs",
+                        "id": "missing_cgl",
+                        "text": "op uses CGL/patch.cgl, add cgl corelib"
+                    });
+                }
+            }
+
+            if (code.includes("patch.cgp") || code.includes("CGP."))
+            {
+                if (!info.coreLibs || !info.coreLibs.includes("cgp"))
+                {
+                    srcWarnings.push({
+                        "type": "corelibs",
+                        "id": "missing_cgp",
+                        "text": "op uses CGP/patch.cgp, add cgp corelib"
+                    });
+                }
+            }
+
             const atts = this.getAttachmentFiles(opName);
 
             for (let i = 0; i < atts.length; i++)

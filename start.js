@@ -13,13 +13,13 @@ let commands = [
         "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
     {
-        "command": "cd cables && npm run start",
+        "command": "cd cables && npm run watch",
         "name": "core",
         "prefixColor": "yellow",
         "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
     {
-        "command": "cd cables_ui && npm run start",
+        "command": "cd cables_ui && npm run watch",
         "name": "gui",
         "prefixColor": "green",
         "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
