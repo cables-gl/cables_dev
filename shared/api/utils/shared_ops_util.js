@@ -1937,6 +1937,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         const defaults = this.getOpDefaults(opName, author);
+        let hasChanged = false;
         let jsonData = {};
         try
         {
@@ -1960,7 +1961,6 @@ export default class SharedOpsUtil extends SharedUtil
             this._log.warn("op default error read", opName, jsonData);
             return;
         }
-        let hasChanged = false;
         if (!jsonData.hasOwnProperty("authorName") && defaults.authorName)
         {
             jsonData.authorName = defaults.authorName;
