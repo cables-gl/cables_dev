@@ -1937,6 +1937,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         const defaults = this.getOpDefaults(opName, author);
+        let hasChanged = false;
         let jsonData = {};
         try
         {
@@ -1960,7 +1961,6 @@ export default class SharedOpsUtil extends SharedUtil
             this._log.warn("op default error read", opName, jsonData);
             return;
         }
-        let hasChanged = false;
         if (!jsonData.hasOwnProperty("authorName") && defaults.authorName)
         {
             jsonData.authorName = defaults.authorName;
@@ -3027,7 +3027,6 @@ export default class SharedOpsUtil extends SharedUtil
 
         let newJson = {
             "id": uuidv4(),
-            "authorName": user.username,
             "created": Date.now()
         };
         if (this.isPatchOp(newName))
@@ -3040,6 +3039,15 @@ export default class SharedOpsUtil extends SharedUtil
         {
             const oldJson = JSON.parse(fs.readFileSync(oldJsonFile));
             newJson = Object.assign(oldJson, newJson);
+        }
+
+        let newAuthor = true;
+        const oldNoVersion = this.getOpNameWithoutVersion(oldName);
+        if (newName.startsWith(oldNoVersion + this.SUFFIX_VERSION)) newAuthor = false;
+
+        if (newAuthor)
+        {
+            newJson.authorName = user.username;
         }
 
         if (!Array.isArray(newJson.changelog)) newJson.changelog = [];
