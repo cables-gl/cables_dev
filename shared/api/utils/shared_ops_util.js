@@ -718,6 +718,18 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": "use `op.log`, not `console.log` "
             });
 
+            if (code.includes("CABLES.WEBAUDIO"))
+            {
+                if (!info.coreLibs || !info.coreLibs.includes("webaudio"))
+                {
+                    srcWarnings.push({
+                        "type": "corelibs",
+                        "id": "missing_webaudio",
+                        "text": "op uses CABLES.WEBAUDIO, add webaudio corelib"
+                    });
+                }
+            }
+
             if (code.includes("patch.cgl") || code.includes("CGL."))
             {
                 if (!info.coreLibs || !info.coreLibs.includes("cgl"))
