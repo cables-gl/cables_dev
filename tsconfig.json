@@ -13,6 +13,7 @@
         "shared/api/**/*",
         "shared/client/src/**/*",
         "cables_ui/src/**/*",
-        "cables/src/core/**/*"
+        "cables/src/core/**/*",
+        "cables/src/corelibs/**/*"
     ]
 }

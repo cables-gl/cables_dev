@@ -9,30 +9,106 @@
     "DATE_FORMAT_RELATIVEDATE_FULL": "MMM D, YYYY [at] HH:mm",
     "IFRAME_OPTIONS_ALLOW": "clipboard-read;clipboard-write;geolocation;camera;microphone;midi;usb;serial;xr-spatial-tracking;web-share;ambient-light-sensor;window-management;bluetooth",
     "IFRAME_OPTIONS_SANDBOX": "allow-scripts allow-same-origin allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-downloads allow-popups allow-popups-to-escape-sandbox",
-    "FILETYPES":{
-        "image": [".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".jxl"],
-        "binary": [".bin"],
-        "audio": [".mp3", ".wav", ".ogg", ".aac", ".mid",".flac"],
-        "video": [".m4a", ".mp4", ".mpg", ".webm"],
-        "gltf": [".glb"],
-        "3d raw": [".obj", ".fbx", ".3ds", ".ply", ".dae", ".blend", ".md2", ".md3", ".ase"],
-        "JSON": [".json"],
-        "CSS": [".css", ".scss"],
-        "textfile": [".txt", ".md"],
-        "pointcloud": [".pc.txt"],
-        "shader": [".frag", ".vert"],
-        "SVG": [".svg"],
-        "CSV": [".csv"],
-        "XML": [".xml"],
-        "font": [".otf", ".ttf", ".woff", ".woff2"],
-        "mesh sequence": [".seq.zip"],
-        "pointcloud json": [".pc.txt"],
-        "3d json": [".3d.json"],
-        "javascript": [".js"],
-        "ar markers": [".iset", ".fset", ".fset3"]
+    "FILETYPES": {
+        "image": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".webp",
+            ".avif",
+            ".jxl"
+        ],
+        "binary": [
+            ".bin"
+        ],
+        "audio": [
+            ".mp3",
+            ".wav",
+            ".ogg",
+            ".aac",
+            ".mid",
+            ".flac"
+        ],
+        "video": [
+            ".m4a",
+            ".mp4",
+            ".mpg",
+            ".webm",
+            ".mkv"
+        ],
+        "gltf": [
+            ".glb"
+        ],
+        "3d raw": [
+            ".obj",
+            ".fbx",
+            ".3ds",
+            ".ply",
+            ".dae",
+            ".blend",
+            ".md2",
+            ".md3",
+            ".ase"
+        ],
+        "JSON": [
+            ".json"
+        ],
+        "CSS": [
+            ".css",
+            ".scss"
+        ],
+        "textfile": [
+            ".txt",
+            ".md"
+        ],
+        "pointcloud": [
+            ".pc.txt"
+        ],
+        "shader": [
+            ".frag",
+            ".vert"
+        ],
+        "SVG": [
+            ".svg"
+        ],
+        "CSV": [
+            ".csv"
+        ],
+        "XML": [
+            ".xml"
+        ],
+        "font": [
+            ".otf",
+            ".ttf",
+            ".woff",
+            ".woff2"
+        ],
+        "mesh sequence": [
+            ".seq.zip"
+        ],
+        "pointcloud json": [
+            ".pc.txt"
+        ],
+        "3d json": [
+            ".3d.json"
+        ],
+        "javascript": [
+            ".js"
+        ],
+        "ar markers": [
+            ".iset",
+            ".fset",
+            ".fset3"
+        ]
     },
     "EDITABLE_FILETYPES": [
-        "textfile", "CSS", "javascript","XML", "JSON", "shader"
+        "textfile",
+        "CSS",
+        "javascript",
+        "XML",
+        "JSON",
+        "shader"
     ],
     "text": {
         "en": {
