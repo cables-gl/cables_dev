@@ -94,7 +94,9 @@
             ".3d.json"
         ],
         "javascript": [
-            ".js"
+            ".js",
+            ".cjs",
+            ".mjs"
         ],
         "ar markers": [
             ".iset",

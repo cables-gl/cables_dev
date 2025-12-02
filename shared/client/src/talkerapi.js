@@ -31,11 +31,11 @@ export default class TalkerAPI extends Events
     static CMD_SAVE_PATCH_AS = "saveProjectAs";
     static CMD_SAVE_PATCH_SCREENSHOT = "saveScreenshot";
     static CMD_SET_PATCH_NAME = "setProjectName";
+    static CMD_UPDATE_PATCH_NAME = "updatePatchName";
     static CMD_SET_ICON_SAVED = "setIconSaved";
     static CMD_SET_ICON_UNSAVED = "setIconUnsaved";
     static CMD_GET_FILE_LIST = "getFilelist";
     static CMD_CONVERT_FILE = "fileConvert";
-    static CMD_UPDATE_PATCH_NAME = "updatePatchName";
     static CMD_GET_FILE_DETAILS = "getFileDetails";
     static CMD_GET_LIBRARYFILE_DETAILS = "getLibraryFileInfo";
     static CMD_DELETE_FILE = "deleteFile";
@@ -85,6 +85,7 @@ export default class TalkerAPI extends Events
     static CMD_UI_CLOSE_RENAME_DIALOG = "closeRenameDialog";
     static CMD_UI_SET_SAVED_STATE = "setSavedState";
     static CMD_UI_SETTING_MANUAL_SCREENSHOT = "manualScreenshot";
+    static CMD_EXECUTE_OP = "executeOp";
 
     // electron
     static CMD_ELECTRON_RENAME_OP = "opRename";
