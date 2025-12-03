@@ -1086,7 +1086,7 @@ export default class SharedOpsUtil extends SharedUtil
             let cacheDocs = [];
             try
             {
-                cacheDocs = JSON.parse(fs.readFileSync(collectionFile, { "encoding": "utf8" }));
+                cacheDocs = jsonfile.readFileSync(collectionFile);
             }
             catch (e)
             {
