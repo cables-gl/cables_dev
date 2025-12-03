@@ -69,6 +69,7 @@ export default class TalkerAPI extends Events
     static CMD_REMOVE_OP_DEPENDENCY = "removeOpDependency";
     static CMD_SEND_ERROR_REPORT = "errorReport";
     static CMD_SEND_PATCH = "sendPatch";
+    static CMD_EXECUTE_OP = "executeOp";
 
     // notify ui
     static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
@@ -85,7 +86,7 @@ export default class TalkerAPI extends Events
     static CMD_UI_CLOSE_RENAME_DIALOG = "closeRenameDialog";
     static CMD_UI_SET_SAVED_STATE = "setSavedState";
     static CMD_UI_SETTING_MANUAL_SCREENSHOT = "manualScreenshot";
-    static CMD_EXECUTE_OP = "executeOp";
+    static CMD_UI_UPDATE_PATCH_NAME = "uiUpdatePatchName";
 
     // electron
     static CMD_ELECTRON_RENAME_OP = "opRename";
