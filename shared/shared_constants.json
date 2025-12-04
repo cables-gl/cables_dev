@@ -7,7 +7,7 @@
     "DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY": "MMM D, YYYY ",
     "DATE_FORMAT_RELATIVEDATE_CUTOFF_DAYS": 7,
     "DATE_FORMAT_RELATIVEDATE_FULL": "MMM D, YYYY [at] HH:mm",
-    "IFRAME_OPTIONS_ALLOW": "clipboard-read;clipboard-write;geolocation;camera;microphone;midi;usb;serial;xr-spatial-tracking;web-share;ambient-light-sensor;window-management;bluetooth",
+    "IFRAME_OPTIONS_ALLOW": "clipboard-read;clipboard-write;gyroscope;accelerometer;geolocation;camera;microphone;midi;usb;serial;xr-spatial-tracking;web-share;ambient-light-sensor;window-management;bluetooth",
     "IFRAME_OPTIONS_SANDBOX": "allow-scripts allow-same-origin allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-downloads allow-popups allow-popups-to-escape-sandbox",
     "FILETYPES": {
         "image": [
