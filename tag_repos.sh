@@ -85,26 +85,4 @@ fi
 cd "$BASEDIR"
 
 echo -e ""
-echo -e "${GREEN}TAGGING EXTENSIONS...${NC}"
-OPSDIR=cables/src/ops/extensions/
-if [ -d "$OPSDIR" ]; then
-  cd $OPSDIR
-  if [ -d ".git" ]; then
-    if [[ `git status --porcelain --untracked-files=no` ]]; then
-      echo -e "${RED}repository has local changes stash/commit before you tag...${NC}"
-      exit 1
-    fi
-    branch=`git rev-parse --abbrev-ref HEAD`
-    echo -e "${GREEN}tagging current state of '${branch}' with '${1}'...${NC}"
-    git tag "${1}"
-    git push origin tag "${1}"
-  else
-      echo -e "${RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
-  fi
-else
-  echo -e "${RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
-fi
-cd "$BASEDIR"
-
-echo -e ""
 echo -e "${GREEN}DONE${NC}"

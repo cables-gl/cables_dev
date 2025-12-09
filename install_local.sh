@@ -104,20 +104,6 @@ git pull
 npm install --no-save
 cd ..
 
-echo -e ""
-echo -e "${GREEN}INSTALLING EXTENSION OPS...${NC}";
-if [ "$CLEAN" = "true" ]; then
-  echo -e "  ...deleting extension ops";
-  rm -rf cables/src/ops/extensions
-  git clone ${CABLES_EXTENSION_OPS_REPO} cables/src/ops/extensions
-fi
-mkdir -p cables/src/ops/extensions
-if [ -d "cables/src/ops/extensions/.git" ]; then
-  git -C cables/src/ops/extensions pull
-else
-  git clone ${CABLES_EXTENSION_OPS_REPO} cables/src/ops/extensions
-fi
-
 if [ "$COMMUNITY_BUILD" = "true" ]; then
   echo -e ""
   echo -e "${GREEN}INSTALLING API..${NC}"
