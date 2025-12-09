@@ -2352,6 +2352,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         let visibility = defaultVisibility;
         if (this.isCoreNamespace(name)) visibility = this.VISIBILITY_PUBLIC;
+        if (this.isExtensionNamespace(name)) visibility = this.VISIBILITY_PUBLIC;
 
         const docs = this.getCollectionDocs(name);
         if (docs.hasOwnProperty("visibility")) visibility = docs.visibility;
