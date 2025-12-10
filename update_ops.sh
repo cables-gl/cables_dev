@@ -1,5 +1,5 @@
 #!/bin/bash -l
-# update userops/teamops/extensions if the default-dirs exist
+# update userops/teamops if the default-dirs exist
 
 git pull
 
@@ -31,21 +31,6 @@ OPSDIR=$BASEDIR/teams/
 branch="main"
 if [ -d "$OPSDIR" ]; then
   echo "UPDATING TEAMOPS..."
-  cd $OPSDIR
-  if [ -d ".git" ]; then
-      git checkout $branch
-      git pull
-  else
-      echo "  NOT A GIT REPO AT $OPSDIR, SKIPPING";
-  fi
-else
-  echo "  DIR NOT FOUND AT $OPSDIR, SKIPPING";
-fi
-
-OPSDIR=$BASEDIR/extensions/
-branch="main"
-if [ -d "$OPSDIR" ]; then
-  echo "UPDATING EXTENSIONS..."
   cd $OPSDIR
   if [ -d ".git" ]; then
       git checkout $branch

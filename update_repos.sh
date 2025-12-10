@@ -224,29 +224,4 @@ fi
 cd "$BASEDIR"
 
 echo -e ""
-echo -e "${GREEN}UPDATING EXTENSIONS...${NC}"
-OPSDIR=cables/src/ops/extensions/
-if [ -d "$OPSDIR" ]; then
-  cd $OPSDIR
-  if [ -d ".git" ]; then
-      git fetch || true
-      if ! [[ "${1}" =~ ^(clean|force)$ ]]; then
-        git -c advice.detachedHead=false checkout main
-      fi
-      branch=`git rev-parse --abbrev-ref HEAD`
-      reslog=$(git log HEAD..origin/${branch} --oneline)
-      if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-            git pull
-      else
-        echo -e "no changes in git, skipping update"
-      fi
-  else
-      echo -e "${RED} NOT A GIT REPO AT $OPSDIR, SKIPPING${NC}";
-  fi
-else
-  echo -e "${RED}DIR NOT FOUND AT $OPSDIR, SKIPPING${NC}";
-fi
-cd "$BASEDIR"
-
-echo -e ""
 echo -e "${GREEN}DONE${NC}"
