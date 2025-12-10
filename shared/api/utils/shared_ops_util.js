@@ -361,7 +361,7 @@ export default class SharedOpsUtil extends SharedUtil
         catch (e) {}
     }
 
-    addOpChangelog(user, opName, newEntry, referenceDate = null, update = false)
+    addOpChangelog(authorName, opName, newEntry, referenceDate = null, update = false)
     {
         let changes = [];
         if (update && referenceDate !== null)
@@ -374,6 +374,7 @@ export default class SharedOpsUtil extends SharedUtil
                 const oldEntry = changelog.find((change) => { return change.hasOwnProperty("date") && change.date === timestamp; });
                 if (oldEntry)
                 {
+                    oldEntry.author = authorName;
                     if (newEntry.message) oldEntry.message = newEntry.message;
                     if (newEntry.hasOwnProperty("type"))
                     {
@@ -413,7 +414,7 @@ export default class SharedOpsUtil extends SharedUtil
             const change = {
                 "message": newEntry.message,
                 "type": newEntry.type,
-                "author": user.username,
+                "author": authorName,
                 "date": Date.now()
             };
             changes.push(change);
@@ -3395,7 +3396,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.attachments = this.getAttachments(opName);
         }
 
-        this.addOpChangelog(author, opName, { "message": "op created", "type": "new op" });
+        this.addOpChangelog(author.username, opName, { "message": "op created", "type": "new op" });
         this._docsUtil.updateOpDocs(opName);
         this._docsUtil.addOpToLookup(opId, opName);
 
@@ -3933,11 +3934,11 @@ export default class SharedOpsUtil extends SharedUtil
         if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, this.OPJSON_FORMAT);
         if (newName.includes(this.INFIX_DEPRECATED))
         {
-            this.addOpChangelog(currentUser, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
+            this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
         }
         else
         {
-            this.addOpChangelog(currentUser, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
+            this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
         }
 
         let updateOld = false;
