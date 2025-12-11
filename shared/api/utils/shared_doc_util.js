@@ -1,7 +1,7 @@
 import fs from "fs";
 import jsonfile from "jsonfile";
 import path from "path";
-
+import chokidar from "chokidar";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -25,15 +25,82 @@ export default class SharedDocUtil extends SharedUtil
         this.cachedLookup = null;
 
         let watchFiles = !this._cables.getConfig().caching || this._cables.getConfig().caching.backend === "file";
+
+        const fileWatcherOptions = {
+            "ignored": /(^|[\/\\])\../,
+            "ignorePermissionErrors": true,
+            "ignoreInitial": true,
+            "persistent": true,
+            "followSymlinks": true,
+            "awaitWriteFinish": {
+                "stabilityThreshold": 200
+            }
+        };
+
+        const config = this._cables.getConfig();
+        const watchOps = config.watchOps;
+        if (watchOps)
+        {
+            const opFileGlob = "**/*.json";
+            const paths = [];
+            paths.push(path.join(path.resolve(path.join(this._cables.getSourcePath(), path.join(config.path.ops, this._cables.CORE_OPS_SUBDIR)), opFileGlob)));
+            paths.push(path.join(path.resolve(path.join(this._cables.getSourcePath(), config.path.extensionops), opFileGlob)));
+            paths.push(path.join(path.resolve(path.join(this._cables.getSourcePath(), config.path.teamops), opFileGlob)));
+            paths.push(path.join(path.resolve(path.join(this._cables.getSourcePath(), config.path.userops), opFileGlob)));
+            paths.push(path.join(path.resolve(path.join(this._cables.getSourcePath(), config.path.patchops), opFileGlob)));
+
+            const opChangeWatcher = chokidar.watch(paths, fileWatcherOptions);
+            console.log("watched", opChangeWatcher.getWatched());
+
+            opChangeWatcher.on("add", (fileName) =>
+            {
+                const opName = this._opsUtil.getOpNameByAbsoluteFileName(fileName);
+                const opId = this._opsUtil.getOpIdByObjName(opName);
+                this.addOpToLookup(opId, opName);
+                console.log("add", fileName, opName);
+            });
+
+            opChangeWatcher.on("change", (fileName) =>
+            {
+                const opName = this._opsUtil.getOpNameByAbsoluteFileName(fileName);
+                console.log("change", fileName, opName);
+                if (this._opsUtil.isCoreOp(opName))
+                {
+                    this._rebuildOpDocCache = true;
+                }
+            });
+
+            opChangeWatcher.on("unlink", (fileName) =>
+            {
+                const opName = this._opsUtil.getOpNameByAbsoluteFileName(fileName);
+                this.removeOpNameFromLookup(opName);
+                console.log("unlink", fileName, opName);
+            });
+        }
+
         this.updateOpLookupFromFile(() =>
         {
-            if (watchFiles) fs.watch(this.opLookupFilename, () => { return this.updateOpLookupFromFile(); });
+            if (watchFiles)
+            {
+                const lookupWatcher = chokidar.watch(this.opLookupFilename, fileWatcherOptions);
+                lookupWatcher.on("change", () =>
+                {
+                    this.updateOpLookupFromFile();
+                });
+            }
             this.afterInitialCacheLoad(this.OP_LOOKUP_CACHE);
         });
 
         this.updateOpDocsFromFile(() =>
         {
-            if (watchFiles) fs.watch(this.opdocsFilename, () => { return this.updateOpDocsFromFile(); });
+            if (watchFiles)
+            {
+                const opDocsWatcher = chokidar.watch(this.opdocsFilename, fileWatcherOptions);
+                opDocsWatcher.on("change", () =>
+                {
+                    this.updateOpDocsFromFile();
+                });
+            }
             this.afterInitialCacheLoad(this.OP_DOCS_CACHE);
         });
 
