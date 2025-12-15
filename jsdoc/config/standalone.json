@@ -16,6 +16,33 @@
           "name": "@enterthenamehere/esdoc-standard-plugin"
       },
       {
+          "name": "@enterthenamehere/esdoc-brand-plugin",
+          "option": {
+              "title": "cables.gl - standalone",
+              "repository": "https://github.com/cables-gl/cables_electron",
+              "site": "https://cables.gl",
+              "author": "https://undev.studio"
+          }
+      },
+      {
+          "name": "@enterthenamehere/esdoc-inject-style-plugin",
+          "option": {
+              "enable": true,
+              "styles": [
+                  "./cables.css"
+              ]
+          }
+      },
+      {
+          "name": "@enterthenamehere/esdoc-inject-style-plugin",
+          "option": {
+              "enable": true,
+              "styles": [
+                  "./cables.css"
+              ]
+          }
+      },
+      {
           "name": "@enterthenamehere/esdoc-importpath-plugin",
           "option": {
               "stripPackageName": true,

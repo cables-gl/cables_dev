@@ -14,6 +14,30 @@
             "name": "@enterthenamehere/esdoc-standard-plugin"
         },
         {
+            "name": "@enterthenamehere/esdoc-type-inference-plugin",
+            "option": {
+                "enable": true
+            }
+        },
+        {
+            "name": "@enterthenamehere/esdoc-brand-plugin",
+            "option": {
+                "title": "cables.gl - editor",
+                "repository": "https://github.com/cables-gl/cables_ui",
+                "site": "https://cables.gl",
+                "author": "https://undev.studio"
+            }
+        },
+        {
+            "name": "@enterthenamehere/esdoc-inject-style-plugin",
+            "option": {
+                "enable": true,
+                "styles": [
+                    "./cables.css"
+                ]
+            }
+        },
+        {
             "name": "@enterthenamehere/esdoc-importpath-plugin",
             "option": {
                 "stripPackageName": true,

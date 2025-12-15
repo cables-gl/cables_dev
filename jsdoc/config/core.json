@@ -11,9 +11,24 @@
     ],
     "plugins": [
         {
-            "name": "@enterthenamehere/esdoc-standard-plugin",
+            "name": "@enterthenamehere/esdoc-standard-plugin"
+        },
+        {
+            "name": "@enterthenamehere/esdoc-brand-plugin",
             "option": {
-                "template": "tesssssmplate"
+                "title": "cables.gl",
+                "repository": "https://github.com/cables-gl/cables",
+                "site": "https://cables.gl",
+                "author": "https://undev.studio"
+            }
+        },
+        {
+            "name": "@enterthenamehere/esdoc-inject-style-plugin",
+            "option": {
+                "enable": true,
+                "styles": [
+                    "./cables.css"
+                ]
             }
         },
         {
