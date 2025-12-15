@@ -1,35 +1,32 @@
 {
-  "index": "../cables/README.md",
-  "source": "../",
-  "destination": "dist",
-  "includes": [
-    "^cables/src/core/.*\\.js$",
-    "^cables/src/libs/.*\\.js$"
-  ],
-  "excludes": [
-    "node_modules"
-  ],
-  "plugins": [
-    {
-      "name": "@itsjamie/esdoc-standard-plugin"
-    },
-    {
-      "name": "@itsjamie/esdoc-publish-html-plugin",
-      "option": {
-        "template": "template"
-      }
-    },
-    {
-      "name": "@itsjamie/esdoc-importpath-plugin",
-      "option": {
-        "stripPackageName": true,
-        "replaces": [
-          {
-            "from": "^cables_dev/cables/src/",
-            "to": "./"
-          }
-        ]
-      }
-    }
-  ]
+    "index": "../cables/README.md",
+    "source": "../",
+    "destination": "dist/cables",
+    "includes": [
+        "^cables/src/core/.*\\.js$",
+        "^cables/src/libs/.*\\.js$"
+    ],
+    "excludes": [
+        "node_modules"
+    ],
+    "plugins": [
+        {
+            "name": "@enterthenamehere/esdoc-standard-plugin",
+            "option": {
+                "template": "tesssssmplate"
+            }
+        },
+        {
+            "name": "@enterthenamehere/esdoc-importpath-plugin",
+            "option": {
+                "stripPackageName": true,
+                "replaces": [
+                    {
+                        "from": "^cables_dev/cables/src/",
+                        "to": "./"
+                    }
+                ]
+            }
+        }
+    ]
 }
