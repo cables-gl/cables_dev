@@ -236,13 +236,16 @@ export default class SharedOpsUtil extends SharedUtil
                 const v = this.getVersionFromOpName(opDoc.name);
                 let vStr = this.SUFFIX_VERSION + v;
                 if (v === 0) vStr = "";
-                versions.push(
-                    {
-                        "name": opDoc.name,
-                        "versionString": vStr,
-                        "version": v
-                    }
-                );
+                if (!versions.some((version) => { return version.name === opDoc.name; }))
+                {
+                    versions.push(
+                        {
+                            "name": opDoc.name,
+                            "versionString": vStr,
+                            "version": v
+                        }
+                    );
+                }
             }
         }
         if (reverse) return versions.sort((a, b) => { return b.version - a.version; });
