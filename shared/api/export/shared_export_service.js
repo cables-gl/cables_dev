@@ -1023,7 +1023,7 @@ export default class SharedExportService extends SharedUtil
                 for (let f = 0; f < libScripts.length; f++)
                 {
                     const minifyLib = fs.readFileSync(libScripts[f].file).toString();
-                    this.append(this._minifyCode(minifyLib, options, (this.finalJsPath + libScripts[f].src).replaceAll(".js", ".map.js")).code, { "name": libScripts[f].src });
+                    this.append(this._minifyCode(minifyLib, options, libScripts[f].src.replaceAll(".js", ".map.js")).code, { "name": libScripts[f].src });
                 }
                 for (let f = 0; f < depFiles.length; f++)
                 {
@@ -1031,7 +1031,7 @@ export default class SharedExportService extends SharedUtil
                     if (fileData.file)
                     {
                         const minifyDep = fs.readFileSync(fileData.file).toString();
-                        this.append(this._minifyCode(minifyDep, options, (this.finalJsPath + fileData.src).replaceAll(".js", ".map.js")).code, { "name": fileData.src });
+                        this.append(this._minifyCode(minifyDep, options, fileData.src.replaceAll(".js", ".map.js")).code, { "name": fileData.src });
                     }
                 }
             }
