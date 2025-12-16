@@ -1017,13 +1017,13 @@ export default class SharedExportService extends SharedUtil
             if (options.minify)
             {
                 const minifyCore = fs.readFileSync(coreFile).toString();
-                this.append(this._minifyCode(minifyCore, options, this.finalJsPath + "cables.map.js").code, { "name": this.finalJsPath + "cables.js" });
-                this.append(this._minifyCode(opsCode, options, this.finalJsPath + "ops.map.js").code, { "name": this.finalJsPath + "ops.js" });
+                this.append(this._minifyCode(minifyCore, options, "cables.map.js").code, { "name": this.finalJsPath + "cables.js" });
+                this.append(this._minifyCode(opsCode, options, "ops.map.js").code, { "name": this.finalJsPath + "ops.js" });
 
                 for (let f = 0; f < libScripts.length; f++)
                 {
                     const minifyLib = fs.readFileSync(libScripts[f].file).toString();
-                    this.append(this._minifyCode(minifyLib, options, libScripts[f].src.replaceAll(".js", ".map.js")).code, { "name": libScripts[f].src });
+                    this.append(this._minifyCode(minifyLib, options, path.basename(libScripts[f].src).replaceAll(".js", ".map.js")).code, { "name": libScripts[f].src });
                 }
                 for (let f = 0; f < depFiles.length; f++)
                 {
@@ -1031,7 +1031,7 @@ export default class SharedExportService extends SharedUtil
                     if (fileData.file)
                     {
                         const minifyDep = fs.readFileSync(fileData.file).toString();
-                        this.append(this._minifyCode(minifyDep, options, fileData.src.replaceAll(".js", ".map.js")).code, { "name": fileData.src });
+                        this.append(this._minifyCode(minifyDep, options, path.basename(fileData.src).replaceAll(".js", ".map.js")).code, { "name": fileData.src });
                     }
                 }
             }
@@ -1089,7 +1089,7 @@ export default class SharedExportService extends SharedUtil
             else if (options.sourcemaps && minified.map)
             {
                 this._log.info("adding sourcemaps....", (Date.now() - this.startTimeExport) / 1000);
-                this.append(minified.map, { "name": sourceMap });
+                this.append(minified.map, { "name": this.finalJsPath + sourceMap });
             }
         }
         return minified;
