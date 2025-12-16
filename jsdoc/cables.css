@@ -1,0 +1,4 @@
+:not(pre) > code {
+    background: unset !important;
+    background-color: rgba(0,0,0,0.04);
+}
