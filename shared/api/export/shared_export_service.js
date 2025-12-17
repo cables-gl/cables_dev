@@ -6,6 +6,7 @@ import fse from "fs-extra";
 import path from "path";
 import os from "os";
 import moment from "moment-mini";
+import uglify from "uglify-js";
 import SharedUtil from "../utils/shared_util.js";
 import { UtilProvider } from "../utils/util_provider.js";
 import { CablesConstants } from "../index.js";
@@ -64,7 +65,7 @@ export default class SharedExportService extends SharedUtil
         this.options = exportOptions || {};
         this.options.logLevel = exportOptions.logLevel ? exportOptions.logLevel : "debug";
         this.options.hideMadeWithCables = exportOptions.hideMadeWithCables === "true";
-        this.options.combineJS = exportOptions.combineJS === "true";
+        this.options.combineJS = exportOptions.hasOwnProperty("combineJS") ? exportOptions.combineJS === "true" : false;
         this.options.jsonName = exportOptions.jsonName;
         this.options.removeIndexHtml = exportOptions.removeIndexHtml;
         this.options.flat = exportOptions.flat;
@@ -1005,10 +1006,6 @@ export default class SharedExportService extends SharedUtil
         else
         {
             this.append(proJson, { "name": this.finalJsPath + jsonFilename + ".json" });
-            this.append(coreFile, {
-                "name": this.finalJsPath + "cables.js",
-                "type": "path"
-            });
 
             opsCode += jsCode;
             opsCode += "\n";
@@ -1016,27 +1013,87 @@ export default class SharedExportService extends SharedUtil
             opsCode += "CABLES.jsLoaded=new Event('CABLES.jsLoaded');\n";
             opsCode += "document.dispatchEvent(CABLES.jsLoaded);\n";
             opsCode += "});\n";
-            this.append(opsCode, { "name": this.finalJsPath + "ops.js" });
 
-            for (let f = 0; f < libScripts.length; f++)
+            if (options.minify)
             {
-                this.append(libScripts[f].file, {
-                    "name": libScripts[f].src,
+                const minifyCore = fs.readFileSync(coreFile).toString();
+                this.append(this._minifyCode(minifyCore, options, "cables.map.js").code, { "name": this.finalJsPath + "cables.js" });
+                this.append(this._minifyCode(opsCode, options, "ops.map.js").code, { "name": this.finalJsPath + "ops.js" });
+
+                for (let f = 0; f < libScripts.length; f++)
+                {
+                    const minifyLib = fs.readFileSync(libScripts[f].file).toString();
+                    this.append(this._minifyCode(minifyLib, options, path.basename(libScripts[f].src).replaceAll(".js", ".map.js")).code, { "name": libScripts[f].src });
+                }
+                for (let f = 0; f < depFiles.length; f++)
+                {
+                    const fileData = depFiles[f];
+                    if (fileData.file)
+                    {
+                        const minifyDep = fs.readFileSync(fileData.file).toString();
+                        this.append(this._minifyCode(minifyDep, options, path.basename(fileData.src).replaceAll(".js", ".map.js")).code, { "name": fileData.src });
+                    }
+                }
+            }
+            else
+            {
+                this.append(coreFile, {
+                    "name": this.finalJsPath + "cables.js",
                     "type": "path"
                 });
+                this.append(opsCode, { "name": this.finalJsPath + "ops.js" });
+
+                for (let f = 0; f < libScripts.length; f++)
+                {
+                    this.append(libScripts[f].file, {
+                        "name": libScripts[f].src,
+                        "type": "path"
+                    });
+                }
+
+                for (let f = 0; f < depFiles.length; f++)
+                {
+                    const fileData = depFiles[f];
+                    if (fileData.file) this.append(fileData.file, {
+                        "name": fileData.src,
+                        "type": "path"
+                    });
+                }
             }
 
-            for (let f = 0; f < depFiles.length; f++)
-            {
-                const fileData = depFiles[f];
-                if (fileData.file) this.append(fileData.file, {
-                    "name": fileData.src,
-                    "type": "path"
-                });
-            }
         }
 
         return replacedOpIds;
+    }
+
+    _minifyCode(jsCode, options, sourceMap = null)
+    {
+        let minified = {
+            "code": jsCode
+        };
+        if (options.minify !== "false")
+        {
+            const minifyOptions = { "compress": false, "mangle": true };
+            if (options.sourcemaps)
+            {
+                minifyOptions.sourceMap = {
+                    "url": sourceMap
+                };
+            }
+            this._log.info("minifying projectfile...", (Date.now() - this.startTimeExport) / 1000);
+            minified = uglify.minify(jsCode, minifyOptions);
+            if (minified.error)
+            {
+                this.addLogError("failed to minify code, exported unminified (" + minified.error + ")");
+            }
+            else if (options.sourcemaps && minified.map)
+            {
+                this._log.info("adding sourcemaps....", (Date.now() - this.startTimeExport) / 1000);
+                this.append(minified.map, { "name": this.finalJsPath + sourceMap });
+            }
+        }
+        return minified;
+
     }
 
     _addProjectOpCode(usedOps, options, includeAllOps = false)
