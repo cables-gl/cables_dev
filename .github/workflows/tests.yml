@@ -9,18 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: checkout api
-      uses: actions/checkout@v4
-      with:
-        repository: "undev-studio/cables_api"
-        ref: develop
-        token: ${{ secrets.undev_token }}
-        path: "cables_api/"
-    - name: export tests
-      run: |
-        cd cables_api/
-        nvm install
-        nvm use
-        npm install --no-save
-        npm run tests:export
+      - name: install nodejs
+        uses: actions/setup-node@v4
+        with:
+            node-version-file: ".nvmrc"
+            check-latest: false
+      - name: checkout api
+        uses: actions/checkout@v4
+        with:
+          repository: "undev-studio/cables_api"
+          ref: develop
+          token: ${{ secrets.undev_token }}
+          path: "cables_api/"
+          fetch-depth: 0
+      - name: export tests
+        run: |
+          cd cables_api/
+          nvm install
+          nvm use
+          npm install --no-save
+          npm run tests:export
