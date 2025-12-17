@@ -2,8 +2,8 @@ name: nightly tests
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'
+  # schedule:
+  #   - cron: '0 3 * * *'
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
         with:
             node-version-file: ".nvmrc"
             check-latest: false
-      - name: export tests
+      - name: setup shared
         run: |
             cd shared/
             npm install --no-save
