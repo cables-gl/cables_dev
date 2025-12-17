@@ -26,7 +26,5 @@ jobs:
       - name: export tests
         run: |
           cd cables_api/
-          nvm install
-          nvm use
           npm install --no-save
           npm run tests:export
