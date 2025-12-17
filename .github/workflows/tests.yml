@@ -1,0 +1,24 @@
+name: nightly tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: checkout api
+      uses: actions/checkout@v4
+      with:
+        repository: "cables-gl/cables_api"
+        ref: develop
+        token: ${{ secrets.undev_token }}
+        path: "cables_api/"
+    - name: export tests
+      run: |
+        cd cables_api/
+        npm install --no-save
+        npm run tests:export
