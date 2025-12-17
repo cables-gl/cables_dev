@@ -13,7 +13,7 @@ jobs:
     - name: checkout api
       uses: actions/checkout@v4
       with:
-        repository: "cables-gl/cables_api"
+        repository: "undev-studio/cables_api"
         ref: develop
         token: ${{ secrets.undev_token }}
         path: "cables_api/"
