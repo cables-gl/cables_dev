@@ -1071,7 +1071,7 @@ export default class SharedExportService extends SharedUtil
         let minified = {
             "code": jsCode
         };
-        if (options.minify !== "false")
+        if (options.minify && options.minify !== "false")
         {
             const minifyOptions = { "compress": false, "mangle": true };
             if (options.sourcemaps)
