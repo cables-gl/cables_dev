@@ -17,6 +17,7 @@ jobs:
             check-latest: false
       - name: setup shared
         run: |
+            npm install --no-save
             cd shared/
             npm install --no-save
             npm run build
