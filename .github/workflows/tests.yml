@@ -23,7 +23,7 @@ jobs:
           sudo chmod +x /usr/local/bin/nvm
       - name: setup repos
         run: |
-            ./install_local.sh
+            ./install_local.sh https --community
       - name: checkout api
         uses: actions/checkout@v4
         with:
