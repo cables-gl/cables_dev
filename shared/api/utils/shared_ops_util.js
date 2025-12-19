@@ -528,7 +528,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "{\nsuper(...arguments);\nconst op=this;\n";
             let codeFoot = "\n}\n};\n\n";
 
-            if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
+            if (opId && !prepareForExport) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
             codeFoot += "\n\n\n";
 
             return codeHead + codeAttachments + codeAttachmentsInc + code + codeFoot;
