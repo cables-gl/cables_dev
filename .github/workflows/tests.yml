@@ -15,11 +15,15 @@ jobs:
         with:
             node-version-file: ".nvmrc"
             check-latest: false
-      - name: setup shared
+      - name: install nvm
         run: |
-            cd shared/
-            npm install --no-save
-            npm run build
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
+          echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
+          sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
+          sudo chmod +x /usr/local/bin/nvm
+      - name: setup repos
+        run: |
+            ./install_local.sh https
       - name: checkout api
         uses: actions/checkout@v4
         with:
