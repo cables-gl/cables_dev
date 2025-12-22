@@ -37,7 +37,16 @@ jobs:
           cd cables_api/
           npm install --no-save
           npm run build
-      - name: export tests
+      - name: checkout electron for exe export
+        uses: actions/checkout@v4
+        with:
+          repository: "cables-gl/cables-exe-export"
+          ref: develop
+          token: ${{ secrets.undev_token }}
+          path: "electron/"
+          fetch-depth: 0
+          lfs: true
+      - name: api tests
         run: |
           cd cables_api/
-          npm run tests:export
+          npm run test:export
