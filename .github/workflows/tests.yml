@@ -36,6 +36,7 @@ jobs:
         run: |
           cd cables_api/
           npm install --no-save
+          npm run build
       - name: export tests
         run: |
           cd cables_api/
