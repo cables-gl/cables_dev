@@ -32,8 +32,11 @@ jobs:
           token: ${{ secrets.undev_token }}
           path: "cables_api/"
           fetch-depth: 0
-      - name: export tests
+      - name: build api
         run: |
           cd cables_api/
           npm install --no-save
+      - name: export tests
+        run: |
+          cd cables_api/
           npm run tests:export
