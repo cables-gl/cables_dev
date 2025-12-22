@@ -37,6 +37,7 @@ jobs:
           cd cables_api/
           npm install --no-save
           npm run build
+          touch scss/svgicons.scss
       - name: checkout electron for exe export
         uses: actions/checkout@v4
         with:
@@ -46,11 +47,16 @@ jobs:
           path: "electron/"
           fetch-depth: 0
           lfs: true
+      - name: export tests
+        run: |
+          cd cables_api/
+          npm run test:export
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.1
         with:
             mongodb-version: 8.0.4
       - name: api tests
         run: |
+          npm run pm2:test
           cd cables_api/
-          npm run test:export
+          npm run test

@@ -8,7 +8,8 @@
         "start": "cross-env node start.js",
         "watch:standalone": "cross-env node start.js standalone",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "pm2": "pm2 start pm2_ecosystem.config.cjs"
+        "pm2": "pm2 start pm2_ecosystem.config.cjs",
+        "pm2:test": "npm_config_apiconfig=tests pm2 start pm2_ecosystem.config.cjs"
     },
     "repository": {
         "type": "git",
