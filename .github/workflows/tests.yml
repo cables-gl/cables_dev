@@ -46,6 +46,10 @@ jobs:
           path: "electron/"
           fetch-depth: 0
           lfs: true
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+            mongodb-version: 8.0.4
       - name: api tests
         run: |
           cd cables_api/
