@@ -1,62 +1,80 @@
 name: nightly tests
 
 on:
-  workflow_dispatch:
-  # schedule:
-  #   - cron: '0 3 * * *'
+    workflow_dispatch:
+    # schedule:
+    #   - cron: '0 3 * * *'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: install nodejs
-        uses: actions/setup-node@v4
-        with:
-            node-version-file: ".nvmrc"
-            check-latest: false
-      - name: install nvm
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
-          echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
-          sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
-          sudo chmod +x /usr/local/bin/nvm
-      - name: setup repos
-        run: |
-            ./install_local.sh https
-      - name: checkout api
-        uses: actions/checkout@v4
-        with:
-          repository: "undev-studio/cables_api"
-          ref: develop
-          token: ${{ secrets.undev_token }}
-          path: "cables_api/"
-          fetch-depth: 0
-      - name: build api
-        run: |
-          cd cables_api/
-          npm install --no-save
-          npm run build
-          touch scss/svgicons.scss
-      - name: checkout electron for exe export
-        uses: actions/checkout@v4
-        with:
-          repository: "cables-gl/cables-exe-export"
-          ref: develop
-          token: ${{ secrets.undev_token }}
-          path: "electron/"
-          fetch-depth: 0
-          lfs: true
-      - name: export tests
-        run: |
-          cd cables_api/
-          npm run test:export
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.1
-        with:
-            mongodb-version: 8.0.4
-      - name: api tests
-        run: |
-          npm run pm2:test
-          cd cables_api/
-          npm run test
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+            -   name: install nodejs
+                uses: actions/setup-node@v4
+                with:
+                    node-version-file: ".nvmrc"
+                    check-latest: false
+            -   name: install nvm
+                run: |
+                    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
+                    echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
+                    sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
+                    sudo chmod +x /usr/local/bin/nvm
+            -   name: setup repos
+                run: |
+                    ./install_local.sh https
+            -   name: core tests
+                run: |
+                    cd cables/
+                    npm run test
+            -   name: checkout api
+                uses: actions/checkout@v4
+                with:
+                    repository: "undev-studio/cables_api"
+                    ref: develop
+                    token: ${{ secrets.undev_token }}
+                    path: "cables_api/"
+                    fetch-depth: 0
+            -   name: checkout asset library
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-asset-library"
+                    ref: master
+                    token: ${{ secrets.undev_token }}
+                    path: "cables_api/public/assets/library"
+                    fetch-depth: 0
+            -   name: build api
+                run: |
+                    cd cables_api/
+                    npm install --no-save
+                    npm run build
+                    touch scss/svgicons.scss
+            -   name: checkout electron for exe export
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-exe-export"
+                    ref: develop
+                    token: ${{ secrets.undev_token }}
+                    path: "electron/"
+                    fetch-depth: 0
+                    lfs: true
+            -   name: export tests
+                run: |
+                    cd cables_api/
+                    npm run test:export
+            -   name: Start MongoDB
+                uses: supercharge/mongodb-github-action@1.12.1
+                with:
+                    mongodb-version: 8.0.4
+            -   name: Start Redis
+                uses: supercharge/redis-github-action@1.8.1
+                with:
+                    redis-version: 6.0.16
+            -   name: Start PM2
+                run: |
+                    npm run pm2:test
+            -   name: api tests
+                run: |
+                    cd cables_api/
+                    npm run test
