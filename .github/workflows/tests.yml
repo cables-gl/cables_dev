@@ -2,8 +2,8 @@ name: nightly tests
 
 on:
     workflow_dispatch:
-    # schedule:
-    #   - cron: '0 3 * * *'
+    schedule:
+      - cron: '0 3 * * *'
 
 jobs:
     build:
@@ -63,18 +63,18 @@ jobs:
                 run: |
                     cd cables_api/
                     npm run test:export
-            -   name: Start MongoDB
-                uses: supercharge/mongodb-github-action@1.12.1
-                with:
-                    mongodb-version: 8.0.4
-            -   name: Start Redis
-                uses: supercharge/redis-github-action@1.8.1
-                with:
-                    redis-version: 6.0.16
-            -   name: Start PM2
-                run: |
-                    npm run pm2:test
-            -   name: api tests
-                run: |
-                    cd cables_api/
-                    npm run test
+            # -   name: Start MongoDB
+            #     uses: supercharge/mongodb-github-action@1.12.1
+            #     with:
+            #         mongodb-version: 8.0.4
+            # -   name: Start Redis
+            #     uses: supercharge/redis-github-action@1.8.1
+            #     with:
+            #         redis-version: 6.0.16
+            # -   name: Start PM2
+            #     run: |
+            #         npm run pm2:test
+            # -   name: api tests
+            #     run: |
+            #         cd cables_api/
+            #         npm run test
