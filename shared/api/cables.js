@@ -182,6 +182,7 @@ export default class Cables extends SharedUtil
 
     getAssetLibraryPath()
     {
+        if (this._config.path.libraryassets) return path.join(this._dirname, "/", this._config.path.libraryassets);
         return path.join(this.getAssetPath(), "/library/");
     }
 
