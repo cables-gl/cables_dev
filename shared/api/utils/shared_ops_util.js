@@ -236,13 +236,16 @@ export default class SharedOpsUtil extends SharedUtil
                 const v = this.getVersionFromOpName(opDoc.name);
                 let vStr = this.SUFFIX_VERSION + v;
                 if (v === 0) vStr = "";
-                versions.push(
-                    {
-                        "name": opDoc.name,
-                        "versionString": vStr,
-                        "version": v
-                    }
-                );
+                if (!versions.some((version) => { return version.name === opDoc.name; }))
+                {
+                    versions.push(
+                        {
+                            "name": opDoc.name,
+                            "versionString": vStr,
+                            "version": v
+                        }
+                    );
+                }
             }
         }
         if (reverse) return versions.sort((a, b) => { return b.version - a.version; });
@@ -320,13 +323,9 @@ export default class SharedOpsUtil extends SharedUtil
         const jsonFilename = this.getOpAbsoluteJsonFilename(opName);
         if (jsonFilename)
         {
-            const screenshotFilename = this.getExampleScreenshotPath(opName);
-            let screenshotExists = false;
-            if (screenshotFilename) screenshotExists = fs.existsSync(screenshotFilename);
             try
             {
                 info = jsonfile.readFileSync(jsonFilename);
-                info.hasScreenshot = screenshotExists;
                 info.shortName = opName.split(".")[opName.split(".").length - 1];
                 info.hasExample = !!info.exampleProjectId;
             }
@@ -525,7 +524,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "{\nsuper(...arguments);\nconst op=this;\n";
             let codeFoot = "\n}\n};\n\n";
 
-            if (opId) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
+            if (opId && !prepareForExport) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
             codeFoot += "\n\n\n";
 
             return codeHead + codeAttachments + codeAttachmentsInc + code + codeFoot;

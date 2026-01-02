@@ -32,8 +32,9 @@ class Helper
      */
     isNumeric(n)
     {
-        const nn = parseFloat(n);
-        return !isNaN(nn) && isFinite(nn);
+        // const nn = parseFloat(n);
+        // return !isNaN(nn) && isFinite(nn);
+        return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
     /**

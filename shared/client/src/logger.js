@@ -72,7 +72,7 @@ export default class Logger
 
     warn()
     {
-        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)) || !CABLES.logSilent)
+        if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)))
             console.warn("[" + this.initiator + "]", ...arguments);
     }
 

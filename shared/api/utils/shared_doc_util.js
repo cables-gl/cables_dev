@@ -665,7 +665,6 @@ export default class SharedDocUtil extends SharedUtil
         if (js)
         {
             docObj = { ...docObj, ...this.makeImportable(js) };
-
             docObj.shortName = shortName;
             docObj.namespace = namespace;
             docObj.name = opName;
@@ -731,20 +730,6 @@ export default class SharedDocUtil extends SharedUtil
         opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
         if (currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
         return opDocs;
-    }
-
-    hasScreenshot(opname, opDocs)
-    {
-        if (!opDocs)
-        {
-            this._log.warn("hasScreenshot: no opDocs");
-            return false;
-        }
-        for (const i in opDocs)
-        {
-            if (opDocs[i].name === opname && opDocs[i].hasScreenshot) return true;
-        }
-        return false;
     }
 
     hasExample(opname, opDocs)
