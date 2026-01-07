@@ -1,6 +1,10 @@
 import fs from "fs";
 import uuid from "uuid-v4";
 import moment from "moment-mini";
+import path from "path";
+import mkdirp from "mkdirp";
+import jsonfile from "jsonfile";
+import deepmerge from "deepmerge";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 import { CablesConstants } from "../index.js";
@@ -468,5 +472,56 @@ export default class SharedHelperUtil extends SharedUtil
             return obj[parts[0]];
         }
         return this.pathLookup(obj[parts[0]], parts.slice(1).join("."));
+    }
+
+    rebuildCablesJson(apiPath, customConfig = null, genPath = "../gen/", genFilename = null)
+    {
+
+        const _arrayMerge = (target, source, options) =>
+        {
+            const destination = target.slice();
+
+            source.forEach((item, index) =>
+            {
+                if (typeof destination[index] === "undefined")
+                {
+                    destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
+                }
+                else if (options.isMergeableObject(item))
+                {
+                    destination[index] = deepmerge(target[index], item, options);
+                }
+                else if (target.indexOf(item) === -1)
+                {
+                    destination.push(item);
+                }
+            });
+            return destination;
+        };
+
+        const defaultConfigLocation = path.resolve(apiPath, "cables_defaults.json");
+        let overrideConfigLocation = path.resolve(apiPath, "cables.json");
+        if (customConfig) overrideConfigLocation = path.resolve(apiPath, "cables_env_" + customConfig + ".json");
+
+        mkdirp.sync(genPath);
+        let configLocation = path.resolve(apiPath, genPath, "cables.json");
+        if (customConfig) configLocation = path.resolve(apiPath, genPath, "cables_env_" + customConfig + ".json");
+        if (genFilename) configLocation = path.resolve(apiPath, genPath, genFilename);
+
+        if (!fs.existsSync(defaultConfigLocation))
+        {
+            // eslint-disable-next-line no-console
+            console.error("no default config file found at", defaultConfigLocation);
+            process.exit(1);
+        }
+
+        let defaultConfig = JSON.parse(fs.readFileSync(defaultConfigLocation, "utf-8"));
+        if (fs.existsSync(overrideConfigLocation))
+        {
+            const overrideConfig = JSON.parse(fs.readFileSync(overrideConfigLocation, "utf-8"));
+            defaultConfig = deepmerge(defaultConfig, overrideConfig, { "arrayMerge": _arrayMerge });
+        }
+        jsonfile.writeFileSync(configLocation, defaultConfig, { "encoding": "utf-8", "spaces": 4 });
+        return defaultConfig;
     }
 }
