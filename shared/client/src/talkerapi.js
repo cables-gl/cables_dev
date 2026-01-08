@@ -69,7 +69,6 @@ export default class TalkerAPI extends Events
     static CMD_REMOVE_OP_DEPENDENCY = "removeOpDependency";
     static CMD_SEND_ERROR_REPORT = "errorReport";
     static CMD_SEND_PATCH = "sendPatch";
-    static CMD_EXECUTE_OP = "executeOp";
 
     // notify ui
     static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
@@ -104,6 +103,7 @@ export default class TalkerAPI extends Events
     static CMD_ELECTRON_EXPORT_PATCH_BUNDLE = "exportPatchBundle";
     static CMD_ELECTRON_ADD_PROJECT_OPDIR = "addProjectOpDir";
     static CMD_ADD_OP_PACKAGE = "addOpPackage";
+    static CMD_ELECTRON_EXECUTE_OP = "executeOp";
 
     constructor(target)
     {
