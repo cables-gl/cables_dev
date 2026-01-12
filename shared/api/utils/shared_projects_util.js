@@ -226,6 +226,7 @@ export default class SharedProjectsUtil extends SharedUtil
                 {
                     if (!keepUiAttribs.includes(key)) delete readable.ops[i].uiAttribs[key];
                 }
+                if (Object.keys(readable.ops[i].uiAttribs).length === 0) delete readable.ops[i].uiAttribs;
             }
 
             if (op.portsIn)
