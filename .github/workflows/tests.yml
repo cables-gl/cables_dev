@@ -51,7 +51,7 @@ jobs:
                     npm run build
                     touch scss/svgicons.scss
             -   name: checkout electron for exe export
-                uses: schloe/action-cached-lfs-checkout@v1
+                uses: nschloe/action-cached-lfs-checkout@v1
                 with:
                     repository: "cables-gl/cables-exe-export"
                     ref: develop
