@@ -9,62 +9,60 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            # -   uses: actions/checkout@v4
-            # -   name: install nodejs
-            #     uses: actions/setup-node@v4
-            #     with:
-            #         node-version-file: ".nvmrc"
-            #         check-latest: false
-            # -   name: install nvm
-            #     run: |
-            #         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
-            #         echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
-            #         sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
-            #         sudo chmod +x /usr/local/bin/nvm
-            # -   name: setup repos
-            #     run: |
-            #         ./install_local.sh https
-            # -   name: core tests
-            #     run: |
-            #         cd cables/
-            #         npm run test
-            # -   name: checkout api
-            #     uses: actions/checkout@v4
-            #     with:
-            #         repository: "undev-studio/cables_api"
-            #         ref: develop
-            #         token: ${{ secrets.undev_token }}
-            #         path: "cables_api/"
-            #         fetch-depth: 0
-            # -   name: checkout asset library
-            #     uses: actions/checkout@v4
-            #     with:
-            #         repository: "cables-gl/cables-asset-library"
-            #         ref: master
-            #         token: ${{ secrets.undev_token }}
-            #         path: "cables_api/public/assets/library"
-            #         fetch-depth: 0
-            # -   name: build api
-            #     run: |
-            #         cd cables_api/
-            #         npm install --no-save
-            #         npm run build
-            #         touch scss/svgicons.scss
-            -   name: checkout electron for exe export
-                uses: nschloe/action-cached-lfs-checkout@v1
+            -   uses: actions/checkout@v4
+            -   name: install nodejs
+                uses: actions/setup-node@v4
                 with:
-                    repository: "cables-gl/cables-exe-export"
+                    node-version-file: ".nvmrc"
+                    check-latest: false
+            -   name: install nvm
+                run: |
+                    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
+                    echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
+                    sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
+                    sudo chmod +x /usr/local/bin/nvm
+            -   name: setup repos
+                run: |
+                    ./install_local.sh https
+            -   name: core tests
+                run: |
+                    cd cables/
+                    npm run test
+            -   name: checkout api
+                uses: actions/checkout@v4
+                with:
+                    repository: "undev-studio/cables_api"
                     ref: develop
                     token: ${{ secrets.undev_token }}
-            -   name: move exe export repostitory
+                    path: "cables_api/"
+                    fetch-depth: 0
+            -   name: checkout asset library
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-asset-library"
+                    ref: master
+                    token: ${{ secrets.undev_token }}
+                    path: "cables_api/public/assets/library"
+                    fetch-depth: 0
+            -   name: build api
                 run: |
-                    ls
-                    mv cables-exe-export electron
-                    ls
-            # -   name: export tests
+                    cd cables_api/
+                    npm install --no-save
+                    npm run build
+                    touch scss/svgicons.scss
+            # -   name: checkout electron for exe export
+            #     uses: schloe/action-cached-lfs-checkout@v1
+            #     with:
+            #         repository: "cables-gl/cables-exe-export"
+            #         ref: develop
+            #         token: ${{ secrets.undev_token }}
+            # -   name: move exe export repostitory
             #     run: |
-            #         cd cables_api/
-            #         npm run test:export
+            #         mv cables-gl/cables-exe-export electron
+            -   name: export tests
+                run: |
+                    cd cables_api/
+                    npm run test:export
             # -   name: Start MongoDB
             #     uses: supercharge/mongodb-github-action@1.12.1
             #     with:
