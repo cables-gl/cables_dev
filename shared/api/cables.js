@@ -198,6 +198,11 @@ export default class Cables extends SharedUtil
 
     getElectronPath()
     {
+        return this.getExeExportElectronPath();
+    }
+
+    getExeExportElectronPath()
+    {
         if (this._config.path.electron)
         {
             return path.join(this._dirname, this._config.path.electron);
@@ -243,6 +248,11 @@ export default class Cables extends SharedUtil
     {
         if (this._config.path.changelog) return path.join(this._dirname, this._config.path.changelog);
         return path.join(this.getSourcePath(), "../../shared/changelog.json");
+    }
+
+    getLogLevel()
+    {
+        return this._config.logger?.level || "debug";
     }
 
     _createDirectories()

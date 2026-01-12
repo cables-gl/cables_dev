@@ -295,11 +295,11 @@ export default class SharedExportService extends SharedUtil
 
         const archive = this.archive.create("zip", { "zlib": { "level": 0 } });
         const output = fs.createWriteStream(exportTargetLocation);
-        this._log.info("finalZipFileName", exportTargetLocation);
+        this._log.debug("finalZipFileName", exportTargetLocation);
         output.on("close", () =>
         {
             const size = archive.pointer() / 1000000.0;
-            this._log.info("exported file " + exportTargetLocation + " / " + size + " mb", (Date.now() - this.startTimeExport) / 1000);
+            this._log.verbose("exported file " + exportTargetLocation + " / " + size + " mb", (Date.now() - this.startTimeExport) / 1000);
 
             const result = {};
             result.zipLocation = exportTargetLocation;
@@ -311,12 +311,12 @@ export default class SharedExportService extends SharedUtil
 
         output.on("error", (outputErr) =>
         {
-            this._log.error("export error", outputErr);
+            this._log.warn("export error", outputErr);
             const result = { "error": outputErr };
             callbackFinished(result);
         });
 
-        this._log.info("appending files...", (Date.now() - this.startTimeExport) / 1000);
+        this._log.debug("appending files...", (Date.now() - this.startTimeExport) / 1000);
         for (const [filename, fileData] of Object.entries(files))
         {
             const options = { "name": filename };
@@ -335,9 +335,9 @@ export default class SharedExportService extends SharedUtil
             }
         }
 
-        this._log.info("piped output to zip...", (Date.now() - this.startTimeExport) / 1000);
+        this._log.debug("piped output to zip...", (Date.now() - this.startTimeExport) / 1000);
         archive.pipe(output);
-        this._log.info("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
+        this._log.debug("finalize archive...", (Date.now() - this.startTimeExport) / 1000);
         archive.finalize();
     }
 
@@ -420,7 +420,7 @@ export default class SharedExportService extends SharedUtil
             {
                 if (vars[j].comment === "ignore")
                 {
-                    this._log.warn("ignored", vars[j]);
+                    this._log.debug("ignored", vars[j]);
                     continue;
                 }
                 docs += "* __" + vars[j].name + "__ ";
@@ -649,8 +649,8 @@ export default class SharedExportService extends SharedUtil
             {
                 this.addLog("number of unique ops: " + usedOps.length);
 
-                this._log.info("export core file is", options.coreSrcFile);
-                this._log.info("collect assets...", (Date.now() - this.startTimeExport) / 1000);
+                this._log.debug("export core file is", options.coreSrcFile);
+                this._log.debug("collect assets...", (Date.now() - this.startTimeExport) / 1000);
 
                 this._getFilesForProjects(allProjects, options, (allFiles) =>
                 {
@@ -662,7 +662,7 @@ export default class SharedExportService extends SharedUtil
 
                     // add assets
                     this._addAssets(proj, allFiles, options);
-                    this._log.info("done collecting assets...", (Date.now() - this.startTimeExport) / 1000);
+                    this._log.debug("done collecting assets...", (Date.now() - this.startTimeExport) / 1000);
 
                     // check if all ops can be found to build code
                     const opNames = usedOps.filter((op) => { return this._opsUtil.getOpNameById(op.opId) || op.objName; });
@@ -679,7 +679,7 @@ export default class SharedExportService extends SharedUtil
                         opsCode = this._replaceInString(replacedOpIds, opsCode);
 
                         // add js
-                        this._log.info("js packaging...", (Date.now() - this.startTimeExport) / 1000);
+                        this._log.debug("js packaging...", (Date.now() - this.startTimeExport) / 1000);
                         this._addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies);
                         const exportContainsOps = this._addProjectOpCode(usedOps, options);
 
@@ -692,7 +692,7 @@ export default class SharedExportService extends SharedUtil
 
                         // add html
                         let template = options.template;
-                        this._log.info("exporting with html template from", template);
+                        this._log.debug("exporting with html template from", template);
                         this._addProjectHtmlCode(proj, options, libs, coreLibs, template, dependencies);
 
                         // add screenshot
@@ -705,7 +705,7 @@ export default class SharedExportService extends SharedUtil
                         // done adding everything, delegate to service for packaging, then return here to finish things up
                         callbackFilesCollected(proj, this.files, (result, credentials) =>
                         {
-                            this._log.info("time used all", (Date.now() - this.startTimeExport) / 1000);
+                            this._log.debug("time used all", (Date.now() - this.startTimeExport) / 1000);
                             this.assetInfos.sort((a, b) => { return b.size - a.size; });
 
                             if (this.assetInfos.length > 0)
@@ -721,7 +721,7 @@ export default class SharedExportService extends SharedUtil
                                 }
                                 this.addLog(table + "</table>");
                             }
-                            this._log.info("file collecting ... ok");
+                            this._log.debug("file collecting ... ok");
                             this._doAfterExport(originalProject, credentials, exportNumber, result);
 
                             if (!result.error)
@@ -916,7 +916,7 @@ export default class SharedExportService extends SharedUtil
         const projectName = sanitizeFileName(proj.name).replace(/ /g, "_");
         const jsonFilename = sanitizeFileName(options.jsonName || projectName);
 
-        this._log.info("json...", (Date.now() - this.startTimeExport) / 1000);
+        this._log.debug("json...", (Date.now() - this.startTimeExport) / 1000);
 
         const proJson = this._getProjectJson(proj, replacedOpIds, options);
         if (proJson.includes("/assets/"))
@@ -930,7 +930,7 @@ export default class SharedExportService extends SharedUtil
             });
         }
 
-        this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
+        this._log.debug("libs...", (Date.now() - this.startTimeExport) / 1000);
         let libScripts = this._getLibsUrls(libs);
         libScripts = libScripts.concat(this._getCoreLibUrls(coreLibs));
 
@@ -941,7 +941,7 @@ export default class SharedExportService extends SharedUtil
 
         if (options.combineJS)
         {
-            this._log.info("combine files!", options.coreSrcFile);
+            this._log.verbose("combine files!", options.coreSrcFile);
 
             jsCode += "\n";
             jsCode += "if(!CABLES.exportedPatches) CABLES.exportedPatches={};";
@@ -957,7 +957,7 @@ export default class SharedExportService extends SharedUtil
             jsCode += "document.dispatchEvent(CABLES.jsLoaded);\n";
             jsCode += "});\n";
 
-            this._log.info("combine libs...", (Date.now() - this.startTimeExport) / 1000);
+            this._log.debug("combine libs...", (Date.now() - this.startTimeExport) / 1000);
 
             for (let i = 0; i < libScripts.length; i++)
             {
@@ -991,7 +991,7 @@ export default class SharedExportService extends SharedUtil
             jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
             jsCode = this._doAfterCombine(jsCode, options);
 
-            this._log.info("append code...", (Date.now() - this.startTimeExport) / 1000);
+            this._log.debug("append code...", (Date.now() - this.startTimeExport) / 1000);
             this.append(jsCode, { "name": this.finalJsPath + "patch.js" });
 
             for (let f = 0; f < depFiles.length; f++)
@@ -1080,7 +1080,7 @@ export default class SharedExportService extends SharedUtil
                     "url": sourceMap
                 };
             }
-            this._log.info("minifying projectfile...", (Date.now() - this.startTimeExport) / 1000);
+            this._log.debug("minifying projectfile...", (Date.now() - this.startTimeExport) / 1000);
             minified = uglify.minify(jsCode, minifyOptions);
             if (minified.error)
             {
@@ -1088,7 +1088,7 @@ export default class SharedExportService extends SharedUtil
             }
             else if (options.sourcemaps && minified.map)
             {
-                this._log.info("adding sourcemaps....", (Date.now() - this.startTimeExport) / 1000);
+                this._log.debug("adding sourcemaps....", (Date.now() - this.startTimeExport) / 1000);
                 this.append(minified.map, { "name": this.finalJsPath + sourceMap });
             }
         }
@@ -1148,7 +1148,7 @@ export default class SharedExportService extends SharedUtil
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "cables.js\"></script>\n";
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "ops.js\"></script>\n";
 
-            this._log.info("libs...", (Date.now() - this.startTimeExport) / 1000);
+            this._log.debug("libs...", (Date.now() - this.startTimeExport) / 1000);
             let libScriptsTags = "";
             this._getLibsUrls(libs).forEach((lib) =>
             {
