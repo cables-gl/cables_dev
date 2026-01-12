@@ -8,8 +8,9 @@ export default class BuildWatcher
     {
         this._gulp = gulp;
         this._module = module;
-        this._config = cablesConfig.socketclusterClient || {};
-        const serverConfig = cablesConfig.socketclusterServer || {};
+        this._config = cablesConfig.socketcluster?.client || cablesConfig.socketclusterClient || {};
+        const serverConfig = cablesConfig.socketcluster?.server || cablesConfig.socketclusterServer || {};
+
         this._socketCluster = {
             "active": this._config.enabled && cablesConfig.watchBuildWhenLocal,
             "config": serverConfig,
