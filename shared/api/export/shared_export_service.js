@@ -311,7 +311,7 @@ export default class SharedExportService extends SharedUtil
 
         output.on("error", (outputErr) =>
         {
-            this._log.warn("export error", outputErr);
+            this._log.error("export error", outputErr);
             const result = { "error": outputErr };
             callbackFinished(result);
         });
