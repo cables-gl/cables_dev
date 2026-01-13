@@ -24,7 +24,7 @@ export default class SharedLogger extends SharedUtil
             "uncaught"
         ];
 
-        this._logLevel = this._cables.getLogLevel();
+        this._logLevel = this._cables ? this._cables.getLogLevel() : "info";
         this._logLevelIndex = this._levels.findIndex((level) => { return level == this._logLevel; });
 
         // register console output, will include "verbose"

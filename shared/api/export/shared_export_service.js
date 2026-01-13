@@ -733,6 +733,7 @@ export default class SharedExportService extends SharedUtil
                                 this.addLogError("<b>ERROR exporting to " + this.constructor.getName() + ":</b> " + result.message + " (" + result.code + " - " + result.name + ")");
                             }
                             result.log = this._filterLog(this.exportLog, this.options.logLevel);
+                            result.exports = proj.exports;
                             next(null, result);
                         });
                     }
