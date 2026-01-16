@@ -2949,9 +2949,8 @@ export default class SharedOpsUtil extends SharedUtil
             let nsName = namespaceName.toLowerCase();
             if (Object.keys(nameLookup.names).find((name) => { return name.toLowerCase().startsWith(nsName); })) return true;
         }
-        const namespaceDir = this.getCollectionDir(namespaceName);
-        if (namespaceDir && fs.existsSync(namespaceDir)) return true;
-        return false;
+        const collectionOps = this.getCollectionOpNames(namespaceName);
+        return collectionOps.some((collectionOp) => { return collectionOp.startsWith(namespaceName); });
     }
 
     getNextVersionOpName(opName, opDocs)
