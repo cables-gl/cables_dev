@@ -50,15 +50,28 @@ jobs:
                     npm install --no-save
                     npm run build
                     touch scss/svgicons.scss
-            # -   name: checkout electron for exe export
-            #     uses: schloe/action-cached-lfs-checkout@v1
-            #     with:
-            #         repository: "cables-gl/cables-exe-export"
-            #         ref: develop
-            #         token: ${{ secrets.undev_token }}
-            # -   name: move exe export repostitory
-            #     run: |
-            #         mv cables-gl/cables-exe-export electron
+            -   name: checkout electron for exe export
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-exe-export"
+                    ref: develop
+                    token: ${{ secrets.undev_token }}
+                    path: "electron"
+                    fetch-depth: 0
+            -   name: create exe-export LFS file list
+                run: |
+                    cd electron/
+                    git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+            -   name: restore exe-export LFS cache
+                uses: actions/cache@v2
+                id: exe-export-lfs-cache
+                with:
+                    path: electron/.git/lfs
+                    key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}-v1
+            -   name: pull exe-export LFS files
+                run: |
+                    cd electron/
+                    git lfs pull
             -   name: export tests
                 run: |
                     cd cables_api/
