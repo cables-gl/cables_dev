@@ -257,13 +257,17 @@ class HandlebarsHelper
     _setOpLinks(html, linkTarget = "")
     {
         html = html || "";
+        html = html.trim();
+        const paragraph = html.startsWith("<p>");
+        if (paragraph) html = html.replace("<p>", "");
         let link = "/op/";
         if (CABLES && CABLES.platform) link = CABLES.platform.getCablesUrl() + link;
         // eslint-disable-next-line no-useless-escape
-        const urlPattern = /\b(?:Ops\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+        const urlPattern = /\b(?:^|\sOps\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
         let replaceValue = "<a href=\"" + link + "$&\">$&</a>";
         if (linkTarget) replaceValue = "<a href=\"" + link + "$&\" target=\"" + linkTarget + "\">$&</a>";
-        html = html.replace(urlPattern, replaceValue);
+        html = html.replaceAll(urlPattern, replaceValue);
+        if (paragraph) html = "<p>" + html;
         return html;
     }
 
