@@ -1738,7 +1738,9 @@ export default class SharedOpsUtil extends SharedUtil
 
     namespaceExistsInCore(name, opDocs)
     {
-        return opDocs.some((d) => { return d.name.startsWith(name); });
+        const firstOp = opDocs.find((d) => { return this.getNamespace(d.name).toLowerCase() == name.toLowerCase(); });
+        if (firstOp) return this.getNamespace(firstOp.name);
+        return false;
     }
 
     isOpId(id)
@@ -2790,8 +2792,14 @@ export default class SharedOpsUtil extends SharedUtil
             if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = problemNewPrefix + "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
             if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.patch_op_illegal_namespace = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
 
-            if (oneNewName.endsWith(".")) problems.name_ends_with_dot = problemNewPrefix + "Op name cannot end with '.'";
-            if (oneNewName.endsWith("_")) problems.name_ends_with_underscore = problemNewPrefix + "Op name cannot end with '_'";
+            const existingNamespace = this.namespaceExists(newNamespace, opDocs);
+            if (existingNamespace && newNamespace !== existingNamespace)
+            {
+                problems.namespace_name_taken = "Namespace with same name (ignoring case) exists already: `" + existingNamespace + "`.";
+            }
+
+            if (oneNewName.endsWith(".")) problems.name_ends_with_dot = problemNewPrefix + "Op name cannot end with '.'.";
+            if (oneNewName.endsWith("_")) problems.name_ends_with_underscore = problemNewPrefix + "Op name cannot end with '_'.";
             if (!oneNewName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name does not start with '" + this.PREFIX_OPS + "'.";
             if (oneNewName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
             const opExists = this.opExists(oneNewName);
@@ -2942,15 +2950,19 @@ export default class SharedOpsUtil extends SharedUtil
         if (!namespaceName) return false;
         if (!opDocs) opDocs = this._docsUtil.getOpDocs();
         let exists = this.namespaceExistsInCore(namespaceName, opDocs);
-        if (exists) return true;
+        if (exists) return exists;
         const nameLookup = this._docsUtil.getCachedOpLookup();
         if (nameLookup && nameLookup.names)
         {
             let nsName = namespaceName.toLowerCase();
-            if (Object.keys(nameLookup.names).find((name) => { return name.toLowerCase().startsWith(nsName); })) return true;
+            const lookupNs = Object.keys(nameLookup.names).find((name) => { return this.getNamespace(name).toLowerCase() === nsName; });
+            if (lookupNs) return this.getNamespace(lookupNs);
         }
         const collectionOps = this.getCollectionOpNames(namespaceName);
-        return collectionOps.some((collectionOp) => { return collectionOp.startsWith(namespaceName); });
+        const firstOp = collectionOps.find((collectionOp) => { return this.getNamespace(collectionOp).toLowerCase() === namespaceName.toLowerCase(); });
+        let collectionNs = false;
+        if (firstOp) collectionNs = this.getNamespace(firstOp.name);
+        return collectionNs;
     }
 
     getNextVersionOpName(opName, opDocs)
