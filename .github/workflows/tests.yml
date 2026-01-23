@@ -67,7 +67,7 @@ jobs:
                 id: exe-export-lfs-cache
                 with:
                     path: electron/.git/lfs
-                    key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}-v1
+                    key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
             -   name: pull exe-export LFS files
                 run: |
                     cd electron/
