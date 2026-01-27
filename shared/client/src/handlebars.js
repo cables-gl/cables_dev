@@ -263,7 +263,7 @@ class HandlebarsHelper
         let link = "/op/";
         if (CABLES && CABLES.platform) link = CABLES.platform.getCablesUrl() + link;
         // eslint-disable-next-line no-useless-escape
-        const urlPattern = /\b(?:^|\sOps\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+        const urlPattern = /\b^|\s(?:Ops\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
         let replaceValue = "<a href=\"" + link + "$&\">$&</a>";
         if (linkTarget) replaceValue = "<a href=\"" + link + "$&\" target=\"" + linkTarget + "\">$&</a>";
         html = html.replaceAll(urlPattern, replaceValue);
