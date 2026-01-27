@@ -263,10 +263,16 @@ class HandlebarsHelper
         let link = "/op/";
         if (CABLES && CABLES.platform) link = CABLES.platform.getCablesUrl() + link;
         // eslint-disable-next-line no-useless-escape
-        const urlPattern = /\b^|\s(?:Ops\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+        const urlPattern = /\b(?:^|\sOps\.)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
         let replaceValue = "<a href=\"" + link + "$&\">$&</a>";
         if (linkTarget) replaceValue = "<a href=\"" + link + "$&\" target=\"" + linkTarget + "\">$&</a>";
-        html = html.replaceAll(urlPattern, replaceValue);
+        html = html.replaceAll(urlPattern, (match, offset, string, groups) =>
+        {
+            const prefix = match.startsWith(" ") ? " " : "";
+            let replacement = match.trim();
+            if (replacement.startsWith("Ops.")) replacement = prefix + replaceValue.replaceAll("$&", replacement);
+            return replacement;
+        });
         if (paragraph) html = "<p>" + html;
         return html;
     }
