@@ -72,10 +72,12 @@ jobs:
                 run: |
                     cd electron/
                     git lfs pull
-            -   name: export tests
+            -   name: Export Tests
                 run: |
                     cd cables_api/
                     npm run test:export
+            -   name: Publish Export Tests Summary Results
+                run: npx github-actions-ctrf cables_api/ctrf/ctrf-report.json
             # -   name: Start MongoDB
             #     uses: supercharge/mongodb-github-action@1.12.1
             #     with:
