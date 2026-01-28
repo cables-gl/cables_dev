@@ -48,8 +48,8 @@ jobs:
                 run: |
                     cd cables_api/
                     npm install --no-save
-                    npm run build
                     touch scss/svgicons.scss
+                    npm run build
             -   name: checkout electron for exe export
                 uses: actions/checkout@v4
                 with:
@@ -77,7 +77,20 @@ jobs:
                     cd cables_api/
                     npm run test:export
             -   name: Publish Export Tests Summary Results
-                run: npx github-actions-ctrf cables_api/ctrf/ctrf-report.json
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                if: always()
             # -   name: Start MongoDB
             #     uses: supercharge/mongodb-github-action@1.12.1
             #     with:
