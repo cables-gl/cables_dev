@@ -102,6 +102,10 @@
             ".iset",
             ".fset",
             ".fset3"
+        ],
+        "subtitles": [
+            ".srt",
+            ".vtt"
         ]
     },
     "EDITABLE_FILETYPES": [
@@ -110,7 +114,8 @@
         "javascript",
         "XML",
         "JSON",
-        "shader"
+        "shader",
+        "subtitles"
     ],
     "text": {
         "en": {
