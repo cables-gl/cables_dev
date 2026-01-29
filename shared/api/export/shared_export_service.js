@@ -280,6 +280,25 @@ export default class SharedExportService extends SharedUtil
         this.exportLog.unshift(logEntry);
     }
 
+    makeCablesFileJson(proj, keepAlso = [])
+    {
+        const exportNumber = proj.exports;
+        let proJson = this._projectsUtil.makeReadable(proj, true);
+
+        const keepInExport = ["_id", "ops", ...keepAlso];
+        for (let key in proJson)
+        {
+            if (!keepInExport.includes(key)) delete proJson[key];
+        }
+        proJson.export = {
+            "time": moment().format(CablesConstants.DATE_FORMAT_LOGDATE),
+            "service": this.getName(),
+            "exportNumber": exportNumber
+        };
+        proJson = JSON.stringify(proJson, null, 4);
+        return proJson;
+    }
+
     /* private */
 
     _doZip(files, exportTargetLocation, callbackFinished)
