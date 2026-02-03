@@ -3406,7 +3406,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.attachments = this.getAttachments(opName);
         }
 
-        this.addOpChangelog(author.username, opName, { "message": "op created", "type": "new op" });
+        this.addOpChangelog(author.username, opName, { "message": "Op created", "type": "new op" });
         this._docsUtil.updateOpDocs(opName);
         this._docsUtil.addOpToLookup(opId, opName);
 
@@ -3944,11 +3944,11 @@ export default class SharedOpsUtil extends SharedUtil
         if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, this.OPJSON_FORMAT);
         if (newName.includes(this.INFIX_DEPRECATED))
         {
-            this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
+            this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "Op " + oldNameChangelog + " was deprecated" });
         }
         else
         {
-            this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
+            this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": "Op " + oldNameChangelog + " renamed to " + newName });
         }
 
         let updateOld = false;
