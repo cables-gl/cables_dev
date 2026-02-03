@@ -99,8 +99,8 @@ export default class TalkerAPI extends Events
     static CMD_ELECTRON_COLLECT_OPS = "collectOps";
     static CMD_ELECTRON_SAVE_PROJECT_OPDIRS_ORDER = "saveProjectOpDirOrder";
     static CMD_ELECTRON_REMOVE_PROJECT_OPDIR = "removeProjectOpDir";
-    static CMD_ELECTRON_EXPORT_PATCH = "exportPatch";
-    static CMD_ELECTRON_EXPORT_PATCH_BUNDLE = "exportPatchBundle";
+    static CMD_ELECTRON_EXPORT_PATCH = "exportPatchBundle";
+    static CMD_ELECTRON_EXPORT_PATCH_HTML = "exportPatch";
     static CMD_ELECTRON_ADD_PROJECT_OPDIR = "addProjectOpDir";
     static CMD_ADD_OP_PACKAGE = "addOpPackage";
     static CMD_ELECTRON_EXECUTE_OP = "executeOp";
