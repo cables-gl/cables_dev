@@ -30,6 +30,7 @@ export default class SharedOpsUtil extends SharedUtil
         this.PREFIX_TEAMOPS = "Ops.Team.";
         this.PREFIX_EXTENSIONOPS = "Ops.Extension.";
         this.PREFIX_PATCHOPS = "Ops.Patch.P";
+        this.PREFIX_LOCAL_OPS = "Ops.Local.";
 
         this.INFIX_DEPRECATED = ".Deprecated.";
         this.INFIX_DEVOPS = ".Dev.";
@@ -1760,6 +1761,12 @@ export default class SharedOpsUtil extends SharedUtil
         return opName.startsWith(this.PREFIX_USEROPS);
     }
 
+    isLocalOp(opName)
+    {
+        if (!opName) return false;
+        return opName.startsWith(this.PREFIX_LOCAL_OPS);
+    }
+
     isPrivateOp(opname)
     {
         if (!opname) return false;
@@ -2837,6 +2844,8 @@ export default class SharedOpsUtil extends SharedUtil
             const parts = oneNewName.split(".");
             let minParts = 3;
             if (!this.isCoreOp(oneNewName)) minParts = 4;
+            if (this.isLocalOp(oneNewName)) minParts = 3;
+
             if (parts.length < minParts) problems.namespace_missing_parts = problemNewPrefix + "Op namespace needs to have at least " + minParts + " parts";
 
             for (let i = 0; i < parts.length; i++) // do not start
