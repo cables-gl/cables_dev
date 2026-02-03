@@ -9,6 +9,7 @@ gen/
 .DS_Store
 .vscode
 docker-compose.yml
+.mocharc.json
 
 # OS generated files #
 ######################

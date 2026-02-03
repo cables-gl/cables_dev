@@ -24,6 +24,9 @@ jobs:
             -   name: setup repos
                 run: |
                     ./install_local.sh https
+            -   name: configure mochajs for github
+                run: |
+                    echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
             -   name: core tests
                 run: |
                     cd cables/

@@ -285,7 +285,7 @@ export default class SharedExportService extends SharedUtil
         const exportNumber = proj.exports;
         let proJson = this._projectsUtil.makeReadable(proj, true);
 
-        const keepInExport = ["_id", "ops", ...keepAlso];
+        const keepInExport = ["_id", "ops", "shortId", "name", ...keepAlso];
         for (let key in proJson)
         {
             if (!keepInExport.includes(key)) delete proJson[key];
