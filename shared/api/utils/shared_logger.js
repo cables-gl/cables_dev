@@ -24,7 +24,6 @@ export default class SharedLogger extends SharedUtil
             "uncaught"
         ];
 
-        this._logLevel = this._cables ? this._cables.getLogLevel() : "info";
         this._logLevelIndex = this._levels.findIndex((level) => { return level == this._logLevel; });
 
         // register console output, will include "verbose"
@@ -255,7 +254,11 @@ export default class SharedLogger extends SharedUtil
     _logLevelFiltered(logLevel)
     {
         if (!logLevel) return false;
-        if (!this._logLevel) return false;
+        if (!this._logLevel)
+        {
+            this._logLevel = this._cables ? this._cables.getLogLevel() : "info";
+            if (!this._logLevel) return false;
+        }
         if (this._logLevelIndex < 0) return false;
         const levelIndex = this._levels.findIndex((level) => { return level === logLevel; });
         if (levelIndex < 0) return false;
