@@ -356,6 +356,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
                 obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
                 jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
+                this._docsUtil.updateOpDocs(opName);
             }
         }
         catch (e) {}
@@ -426,7 +427,7 @@ export default class SharedOpsUtil extends SharedUtil
     {
         if (date)
         {
-            const opDocs = this._docsUtil.getDocForOp(opName);
+            const opDocs = this._docsUtil.getOpDocsFromFile(opName);
             if (opDocs)
             {
                 const timestamp = Number(date);
