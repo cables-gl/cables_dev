@@ -479,7 +479,10 @@ export default class SharedDocUtil extends SharedUtil
                 changed = true;
             }
         }
-        this._writeCache(this.OP_LOOKUP_CACHE, cachedLookup);
+        if (changed)
+        {
+            this._writeCache(this.OP_LOOKUP_CACHE, cachedLookup);
+        }
     }
 
     removeOpNameFromLookup(opName)
@@ -534,7 +537,10 @@ export default class SharedDocUtil extends SharedUtil
             }
         }
         this.setCachedLookup(cachedLookup);
-        this._writeCache(this.OP_LOOKUP_CACHE, cachedLookup);
+        if (changed)
+        {
+            this._writeCache(this.OP_LOOKUP_CACHE, cachedLookup);
+        }
     }
 
     replaceOpNameInLookup(oldName, newName)
