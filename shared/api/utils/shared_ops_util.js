@@ -2046,12 +2046,15 @@ export default class SharedOpsUtil extends SharedUtil
         if (topLevel)
         {
             parts.length = this.isCoreOp(opName) ? 2 : 3;
+            parts.length = this.isLocalOp(opName) ? 2 : 3;
         }
         else
         {
             parts.length -= 1;
         }
-        return parts.join(".") + ".";
+        let namespaceName = parts.join(".");
+        if (!namespaceName.endsWith(".")) namespaceName += ".";
+        return namespaceName;
     }
 
     isInvisible(opName)
