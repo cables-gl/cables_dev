@@ -558,6 +558,17 @@ export default class SharedProjectsUtil extends SharedUtil
 
     /**
      * @param {Project} project
+     * @param {String} zipFileName
+     */
+    getExportDownloadUrl(project, zipFileName)
+    {
+        const assetPathUrl = path.join("/api/exports/", project._id, "/");
+        const downloadUrl = this._cables.getConfig().url + assetPathUrl;
+        return downloadUrl + encodeURIComponent(zipFileName);
+    }
+
+    /**
+     * @param {Project} project
      * @param {String} exportType
      */
     getExportFileName(project, exportType)

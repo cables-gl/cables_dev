@@ -252,11 +252,9 @@ export default class SharedExportService extends SharedUtil
         mkdirp.sync(zipPath);
         this._doZip(files, zipLocation, (result) =>
         {
-            const assetPathUrl = path.join(this._projectsUtil.getAssetPathUrl(project._id), "/_exports/");
-            const downloadUrl = this._cables.getConfig().sandbox.url + assetPathUrl;
-            result.path = assetPathUrl + zipFileName;
+            const downloadUrl = this._projectsUtil.getExportDownloadUrl(project, zipFileName);
             result.urls = {
-                "downloadUrl": downloadUrl + encodeURIComponent(zipFileName)
+                "downloadUrl": downloadUrl
             };
             callbackFinished(result);
         });
