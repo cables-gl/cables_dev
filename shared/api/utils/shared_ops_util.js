@@ -3946,7 +3946,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (newJsonData)
             {
                 newJsonData.id = uuidv4();
-                newJsonData.authorName = currentUser.username;
+                if (currentUser) newJsonData.authorName = currentUser.username;
                 const oldId = this.getOpIdByObjName(oldName);
                 if (oldId) newJsonData.cloneOf = oldId;
                 this._docsUtil.addOpToLookup(newJsonData.id, newName);
