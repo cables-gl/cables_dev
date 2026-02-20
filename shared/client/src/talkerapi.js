@@ -104,6 +104,7 @@ export default class TalkerAPI extends Events
     static CMD_ELECTRON_ADD_PROJECT_OPDIR = "addProjectOpDir";
     static CMD_ADD_OP_PACKAGE = "addOpPackage";
     static CMD_ELECTRON_EXECUTE_OP = "executeOp";
+    static CMD_ELECTRON_GET_DESKTOP_CAPTURE_SOURCES = "getDesktopCaptureSources";
 
     constructor(target)
     {
