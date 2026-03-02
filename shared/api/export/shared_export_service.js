@@ -321,6 +321,7 @@ export default class SharedExportService extends SharedUtil
             const result = {};
             result.zipLocation = exportTargetLocation;
             result.size = size;
+            result.path = exportTargetLocation;
             result.log = this.exportLog;
             callbackFinished(result);
         });
