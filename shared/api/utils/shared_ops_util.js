@@ -732,6 +732,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
 
+            let hasGlMatrix = false;
             if (code.includes("patch.cgl") || code.includes("CGL."))
             {
                 if (!info.coreLibs || !info.coreLibs.includes("cgl"))
@@ -741,6 +742,10 @@ export default class SharedOpsUtil extends SharedUtil
                         "id": "missing_cgl",
                         "text": "op uses CGL/patch.cgl, add cgl corelib"
                     });
+                }
+                else
+                {
+                    hasGlMatrix = true;
                 }
             }
 
@@ -752,6 +757,33 @@ export default class SharedOpsUtil extends SharedUtil
                         "type": "corelibs",
                         "id": "missing_cgp",
                         "text": "op uses CGP/patch.cgp, add cgp corelib"
+                    });
+                }
+                else
+                {
+                    hasGlMatrix = true;
+                }
+            }
+
+            if (!hasGlMatrix && (
+                code.includes("glMatrix.") ||
+                code.includes("mat2.") ||
+                code.includes("mat2d.") ||
+                code.includes("mat3.") ||
+                code.includes("mat4.") ||
+                code.includes("quat.") ||
+                code.includes("quat2.") ||
+                code.includes("vec2.") ||
+                code.includes("vec3.") ||
+                code.includes("vec4.")
+            ))
+            {
+                if (!info.coreLibs || !info.coreLibs.includes("cgp"))
+                {
+                    srcWarnings.push({
+                        "type": "corelibs",
+                        "id": "missing_cg",
+                        "text": "op uses glmatrix, add cg corelib"
                     });
                 }
             }
