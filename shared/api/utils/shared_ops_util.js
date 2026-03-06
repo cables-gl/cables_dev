@@ -782,8 +782,8 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     srcWarnings.push({
                         "type": "corelibs",
-                        "id": "missing_cg",
-                        "text": "op uses glmatrix, add cg corelib"
+                        "id": "missing_glmatrix",
+                        "text": "op uses glmatrix, add cgl corelib"
                     });
                 }
             }
