@@ -778,7 +778,7 @@ export default class SharedOpsUtil extends SharedUtil
                 code.includes("vec4.")
             ))
             {
-                if (!info.coreLibs || !info.coreLibs.includes("cgp"))
+                if (!info.coreLibs || !info.coreLibs.includes("cgl"))
                 {
                     srcWarnings.push({
                         "type": "corelibs",
