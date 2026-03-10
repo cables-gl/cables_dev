@@ -582,6 +582,14 @@ export default class SharedExportService extends SharedUtil
                         {
                             pathfn = path.join(this._cables.getExportAssetTargetPath(), proj._id, fn);
                         }
+                        // might be from another patch in a subpatch op, try to get projectid from path
+                        if (!fs.existsSync(pathfn))
+                        {
+                            const parts = filePathAndName.split("/");
+                            const assetsIndex = parts.findIndex((part) => { return part === "assets"; });
+                            const otherPatchId = parts[assetsIndex + 1];
+                            if (otherPatchId) pathfn = path.join(this._cables.getExportAssetTargetPath(), fn);
+                        }
                     }
 
                     if (!fs.existsSync(pathfn))
@@ -835,7 +843,7 @@ export default class SharedExportService extends SharedUtil
                     dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies(subPatchOpAttachment));
 
                     subPatchOpAttachment._id = proj._id;
-                    subPatchOpAttachment.name = proj.name;
+                    subPatchOpAttachment.name = proj.name + " - " + opName;
 
                     allProjects.push(subPatchOpAttachment);
 
