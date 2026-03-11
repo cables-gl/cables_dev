@@ -1280,7 +1280,7 @@ export default class SharedExportService extends SharedUtil
     _getOpExportSubdir(opName)
     {
         if (opName.endsWith(".")) opName = opName.substring(0, opName.length - 1);
-        let subDir = this._opsUtil.getOpSourceDir(opName);
+        let subDir = this._opsUtil.getOpSourceDir(opName, true);
         subDir = subDir.replace(this._cables.getOpsPath(), "");
         subDir = path.join("ops/", subDir);
         return subDir;
