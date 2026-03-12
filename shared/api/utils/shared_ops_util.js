@@ -1691,7 +1691,7 @@ export default class SharedOpsUtil extends SharedUtil
             return {
                 "formatedCode": code,
                 "error": true,
-                "message": e.message
+                "message": "eslint exception: " + e.message
             };
         }
 
