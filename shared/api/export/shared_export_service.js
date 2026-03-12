@@ -1110,6 +1110,10 @@ export default class SharedExportService extends SharedUtil
                 this.append(minified.map, { "name": this.finalJsPath + sourceMap });
             }
         }
+        else
+        {
+            minified.code = minified.code.replace("sourceMappingURL=", "");
+        }
         return minified;
 
     }
