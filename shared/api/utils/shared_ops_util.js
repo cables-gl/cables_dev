@@ -1667,19 +1667,34 @@ export default class SharedOpsUtil extends SharedUtil
         return fullCode;
     }
 
+    /**
+     * @param {String} code unformatted code
+     * @return {Object} result object with formated code, eventual error message and a bool for if errors are fatal
+     */
     validateAndFormatOpCode(code)
     {
-        const { results } = this.cli.executeOnText(code);
-        const { messages } = results[0];
+        try
+        {
+            const { results } = this.cli.executeOnText(code);
+            const { messages } = results[0];
 
-        const hasFatal = messages.filter((message) => { return Boolean(message.fatal); }).length > 0;
+            const hasFatal = messages.filter((message) => { return Boolean(message.fatal); }).length > 0;
 
-        const status = {
-            "formatedCode": this._helperUtil.removeTrailingSpaces(results[0].output || code),
-            "error": hasFatal,
-            "message": messages[0]
-        };
-        return status;
+            return {
+                "formatedCode": this._helperUtil.removeTrailingSpaces(results[0].output || code),
+                "error": hasFatal,
+                "message": messages[0]
+            };
+        }
+        catch (e)
+        {
+            return {
+                "formatedCode": code,
+                "error": true,
+                "message": e.message
+            };
+        }
+
     }
 
     getNamespaceHierarchyProblem(outerName, innerName)
