@@ -406,6 +406,17 @@ export default class SharedOpsUtil extends SharedUtil
                             oldEntry.date = Date.now();
                         }
                     }
+                    if (newEntry.hasOwnProperty("url"))
+                    {
+                        if (newEntry.url)
+                        {
+                            oldEntry.url = newEntry.url;
+                        }
+                        else
+                        {
+                            delete oldEntry.url;
+                        }
+                    }
                 }
                 changes = changelog;
             }
@@ -418,6 +429,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "author": authorName,
                 "date": Date.now()
             };
+            if (newEntry.url) change.url = newEntry.url;
             changes.push(change);
         }
         this._writeOpChangelog(opName, changes, update);
