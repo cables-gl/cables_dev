@@ -2588,12 +2588,12 @@ export default class SharedOpsUtil extends SharedUtil
                 if (fs.existsSync(fn))
                 {
                     fs.unlinkSync(fn);
-                    this._docsUtil.removeOpNameFromLookup(opName);
-                    this._docsUtil.deleteOpDocs(opName);
                 }
                 try
                 {
                     fs.rmSync(this.getOpAbsolutePath(opName), { "recursive": true, "force": true });
+                    this._docsUtil.removeOpNameFromLookup(opName);
+                    this._docsUtil.deleteOpDocs(opName);
                 }
                 catch (e)
                 {
