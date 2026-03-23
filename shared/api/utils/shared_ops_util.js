@@ -1758,7 +1758,7 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opExists(opName, updateCache = true)
+    opExists(opName)
     {
         let p = this.getOpAbsoluteFileName(opName);
         let exists = false;
@@ -1778,9 +1778,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             exists = false;
         }
-        if (!exists && updateCache)
+        if (!exists)
         {
             this._docsUtil.removeOpNameFromLookup(opName);
+            this._docsUtil.deleteOpDocs(opName);
         }
         return exists;
     }
@@ -2588,6 +2589,7 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     fs.unlinkSync(fn);
                     this._docsUtil.removeOpNameFromLookup(opName);
+                    this._docsUtil.deleteOpDocs(opName);
                 }
                 try
                 {
@@ -2598,7 +2600,6 @@ export default class SharedOpsUtil extends SharedUtil
                     this._log.error(e);
                     return false;
                 }
-                this._docsUtil.updateOpDocs(opName);
             }
             catch (e)
             {
