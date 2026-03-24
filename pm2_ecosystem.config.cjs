@@ -5,7 +5,7 @@ module.exports = {
             "name": "server_api",
             "script": "src/servers/server_api.js",
             "cwd": "./cables_api",
-            "instances": 8,
+            "instances": 6,
             "increment_var": "PM2_INSTANCE_ID",
             "env": {
                 "PM2_INSTANCE_ID": 0
@@ -15,7 +15,7 @@ module.exports = {
             "name": "server_sandbox",
             "script": "src/servers/server_sandbox.js",
             "cwd": "./cables_api",
-            "instances": 8,
+            "instances": 6,
             "increment_var": "PM2_INSTANCE_ID",
             "env": {
                 "PM2_INSTANCE_ID": 0
