@@ -53,6 +53,10 @@ jobs:
                     npm install --no-save
                     touch scss/svgicons.scss
                     npm run build
+            -   name: dev/live Tests
+                run: |
+                    cd cables_api/
+                    npm run test:servers
             -   name: checkout electron for exe export
                 uses: actions/checkout@v4
                 with:
