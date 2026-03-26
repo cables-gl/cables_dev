@@ -71,6 +71,7 @@ jobs:
                     slowest-report: true
                     upload-artifact: true
                     suite-folded-report: true
+                    artifact-name: "devlive-report"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
@@ -112,6 +113,7 @@ jobs:
                     slowest-report: true
                     upload-artifact: true
                     suite-folded-report: true
+                    artifact-name: "export-report"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
