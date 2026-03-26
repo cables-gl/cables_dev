@@ -134,7 +134,9 @@ jobs:
                     pm2 status
                     cd cables_api/
                     npm run test:api
+                    pm2 logs --lines 100
                     pm2 stop all
+                    pm2 flush
             -   name: Publish API Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
@@ -154,7 +156,9 @@ jobs:
                     pm2 status
                     cd cables_api/
                     npm run test:views
+                    pm2 logs --lines 100
                     pm2 stop all
+                    pm2 flush
             -   name: Publish Views Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
