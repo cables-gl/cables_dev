@@ -59,6 +59,21 @@ jobs:
                     npm run test:servers
                 env:
                     CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
+            -   name: Publish Export Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                if: always()
             -   name: checkout electron for exe export
                 uses: actions/checkout@v4
                 with:
