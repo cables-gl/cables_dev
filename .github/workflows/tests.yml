@@ -126,6 +126,8 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
+            -   name: Install PM2 locally
+                run: npm install pm2@6.0.13 -g
             -   name: API Tests
                 run: |
                     npm run pm2:test
