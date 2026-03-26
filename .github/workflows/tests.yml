@@ -8,6 +8,21 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        services:
+            mongodb:
+                image: mongodb/mongodb-community-server:8.0-ubi
+                ports:
+                    - 27017:27017
+                options: >
+                    --health-cmd "mongosh --eval 'db.runCommand(\"ping\").ok'" mongodb://localhost:27017/test --quiet
+                    --health-interval 10s --health-timeout 5s --health-retries 5
+            redis:
+                image: redis:6-alpine
+                ports:
+                    - 6379:6379
+                options: >
+                    --health-cmd "redis-cli ping"
+                    --health-interval 10s --health-timeout 5s --health-retries 5
         steps:
             -   uses: actions/checkout@v4
             -   name: install nodejs
@@ -117,18 +132,43 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
-            # -   name: Start MongoDB
-            #     uses: supercharge/mongodb-github-action@1.12.1
-            #     with:
-            #         mongodb-version: 8.0.4
-            # -   name: Start Redis
-            #     uses: supercharge/redis-github-action@1.8.1
-            #     with:
-            #         redis-version: 6.0.16
-            # -   name: Start PM2
-            #     run: |
-            #         npm run pm2:test
-            # -   name: api tests
-            #     run: |
-            #         cd cables_api/
-            #         npm run test
+            -   name: API Tests
+                run: |
+                    npm run pm2:test
+                    pm2 status
+                    cd cables_api/
+                    npm run test:api
+                    pm2 stop all
+            -   name: Publish API Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                    artifact-name: "api-report"
+            -   name: Views Tests
+                run: |
+                    npm run pm2:test
+                    pm2 status
+                    cd cables_api/
+                    npm run test:views
+                    pm2 stop all
+            -   name: Publish Views Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                    artifact-name: "views-report"
