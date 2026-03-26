@@ -57,6 +57,8 @@ jobs:
                 run: |
                     cd cables_api/
                     npm run test:servers
+                env:
+                    CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
             -   name: checkout electron for exe export
                 uses: actions/checkout@v4
                 with:
