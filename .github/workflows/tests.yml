@@ -59,7 +59,7 @@ jobs:
                     npm run test:servers
                 env:
                     CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
-            -   name: Publish Export Tests Summary Results
+            -   name: Publish dev/live Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
