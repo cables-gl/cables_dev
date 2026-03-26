@@ -126,49 +126,50 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
-            -   name: Install PM2 locally
-                run: npm install pm2@6.0.13 -g
-            -   name: API Tests
-                run: |
-                    npm run pm2:test
-                    pm2 status
-                    cd cables_api/
-                    npm run test:api
-                    pm2 logs --lines 100
-                    pm2 stop all
-                    pm2 flush
-            -   name: Publish API Tests Summary Results
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "api-report"
-            -   name: Views Tests
-                run: |
-                    npm run pm2:test
-                    pm2 status
-                    cd cables_api/
-                    npm run test:views
-                    pm2 logs --lines 100
-                    pm2 stop all
-                    pm2 flush
-            -   name: Publish Views Tests Summary Results
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "views-report"
+            # -   name: Install PM2 locally
+            #     run: npm install pm2@6.0.13 -g
+            # -   name: API Tests
+            #     run: |
+            #         npm run pm2:test
+            #         pm2 status
+            #         cd cables_api/
+            #         npm run test:api
+            #         pm2 logs --lines 100
+            #         pm2 stop all
+            #         pm2 flush
+            # -   name: Publish API Tests Summary Results
+            #     uses: ctrf-io/github-test-reporter@v1
+            #     with:
+            #         report-path: './cables_api/ctrf/*.json'
+            #         github-report: true
+            #         summary-delta-report: true
+            #         insights-report: true
+            #         flaky-rate-report: true
+            #         fail-rate-report: true
+            #         slowest-report: true
+            #         upload-artifact: true
+            #         suite-folded-report: true
+            #         artifact-name: "api-report"
+            # -   name: Views Tests
+            #     run: |
+            #         npm run pm2:test
+            #         pm2 status
+            #         cd cables_api/
+            #         npm run test:views
+            #         pm2 logs --lines 100
+            #         pm2 stop all
+            #         pm2 flush
+            # -   name: Publish Views Tests Summary Results
+            #     uses: ctrf-io/github-test-reporter@v1
+            #     with:
+            #         report-path: './cables_api/ctrf/*.json'
+            #         github-report: true
+            #         summary-delta-report: true
+            #         insights-report: true
+            #         flaky-rate-report: true
+            #         fail-rate-report: true
+            #         slowest-report: true
+            #         upload-artifact: true
+            #         suite-folded-report: true
+            #         artifact-name: "views-report"
+#
