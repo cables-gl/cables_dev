@@ -2,11 +2,11 @@ name: 'webhook pull dev'
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - develop
-    paths-ignore:
-      - "shared/**"
+  # push:
+  #   branches:
+  #     - develop
+  #   paths-ignore:
+  #     - "shared/**"
 
 jobs:
   webhook-dev:
