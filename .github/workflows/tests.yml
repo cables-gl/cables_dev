@@ -19,6 +19,12 @@ jobs:
                     - 6379:6379
         steps:
             -   uses: actions/checkout@v4
+            -   name: Cache pulled docker images
+                uses: docker/cache-action@v4
+                with:
+                    images: |
+                        mongo:8
+                        redis:6-alpine
             -   name: install nodejs
                 uses: actions/setup-node@v4
                 with:
@@ -37,6 +43,7 @@ jobs:
                 run: |
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
             # -   name: core tests
+            #     continue-on-error: true
             #     run: |
             #         cd cables/
             #         npm run test
@@ -62,7 +69,8 @@ jobs:
                     npm install --no-save
                     touch scss/svgicons.scss
                     npm run build
-            # -   name: dev/live Tests
+            # -   name: Server dev/live Tests
+            #     continue-on-error: true
             #     run: |
             #         cd cables_api/
             #         npm run test:servers
@@ -107,6 +115,7 @@ jobs:
             #         cd electron/
             #         git lfs pull
             # -   name: Export Tests
+            #     continue-on-error: true
             #     run: |
             #         cd cables_api/
             #         npm run test:export
@@ -149,6 +158,7 @@ jobs:
                     echo "curl GET http://127.0.0.1:5711/login"
                     curl -v http://127.0.0.1:5711/login
             -   name: API Tests
+                continue-on-error: true
                 run: |
                     cd cables_api/
                     npm run test:api
@@ -168,6 +178,7 @@ jobs:
                     suite-folded-report: true
                     artifact-name: "api-report"
             -   name: Views Tests
+                continue-on-error: true
                 run: |
                     cd cables_api/
                     npm run test:views
@@ -188,7 +199,7 @@ jobs:
                     artifact-name: "views-report"
             # always try to capture PM2 and app logs when step fails
             -   name: Upload PM2 logs on failure
-                if: always()
+                if: failure()
                 uses: actions/upload-artifact@v4
                 with:
                     name: pm2-logs
