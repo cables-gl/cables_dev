@@ -137,7 +137,11 @@ export default class Events
         if (!event)
         {
             if (this.#countErrorUnknowns == 20) this.#eventLog.warn("stopped reporting unknown events");
-            if (this.#countErrorUnknowns < 20) this.#eventLog.warn("could not find event...", id, event);
+            if (this.#countErrorUnknowns < 20)
+            {
+                this.#eventLog.warn("could not find event...", id, event);
+                console.trace();
+            }
             this.#countErrorUnknowns++;
             return;
         }
