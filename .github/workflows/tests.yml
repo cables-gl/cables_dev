@@ -3,7 +3,7 @@ name: nightly tests
 on:
     workflow_dispatch:
     schedule:
-     - cron: '0 3 * * *'
+        -   cron: '0 3 * * *'
 
 jobs:
     build:
@@ -135,11 +135,19 @@ jobs:
             -   name: Wait for Express on port 5711
                 run: |
                     echo "Waiting for tcp:5711..."
-                    time npx wait-on tcp:5711 --timeout 30000
+                    time npx wait-on http://localhost:5711/login --timeout 30000 -v
                     echo "Port 5711 is up!"
                     echo "Waiting for tcp:5713..."
-                    time npx wait-on tcp:5711 --timeout 30000
+                    time npx wait-on http://localhost:5713/api/ops/code--timeout 30000 -v
                     echo "Port 5713 is up!"
+            -   name: Check what listens on 5711
+                run: |
+                    echo "Listening on 5711:"
+                    ss -tlnp | grep 5711 || netstat -tlnp | grep 5711
+            -   name: Try HTTP hit
+                run: |
+                    echo "curl GET http://127.0.0.1:5711/login"
+                    curl -v http://127.0.0.1:5711/login
             -   name: API Tests
                 run: |
                     cd cables_api/
