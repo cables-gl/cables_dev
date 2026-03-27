@@ -19,12 +19,6 @@ jobs:
                     - 6379:6379
         steps:
             -   uses: actions/checkout@v4
-            -   name: Cache pulled docker images
-                uses: docker/cache-action@v4
-                with:
-                    images: |
-                        mongo:8
-                        redis:6-alpine
             -   name: install nodejs
                 uses: actions/setup-node@v4
                 with:
