@@ -239,6 +239,12 @@ export default class Cables extends SharedUtil
         return this._config.env === "nightly";
     }
 
+    isTestEnv()
+    {
+        if (this._config.tests) return this._config.tests.is_testenvironment === true;
+        return false;
+    }
+
     getEnv()
     {
         return this._config.env;

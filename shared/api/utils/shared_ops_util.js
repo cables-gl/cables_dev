@@ -406,6 +406,17 @@ export default class SharedOpsUtil extends SharedUtil
                             oldEntry.date = Date.now();
                         }
                     }
+                    if (newEntry.hasOwnProperty("url"))
+                    {
+                        if (newEntry.url)
+                        {
+                            oldEntry.url = newEntry.url;
+                        }
+                        else
+                        {
+                            delete oldEntry.url;
+                        }
+                    }
                 }
                 changes = changelog;
             }
@@ -418,6 +429,7 @@ export default class SharedOpsUtil extends SharedUtil
                 "author": authorName,
                 "date": Date.now()
             };
+            if (newEntry.url) change.url = newEntry.url;
             changes.push(change);
         }
         this._writeOpChangelog(opName, changes, update);
@@ -1746,7 +1758,7 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opExists(opName, updateCache = true)
+    opExists(opName)
     {
         let p = this.getOpAbsoluteFileName(opName);
         let exists = false;
@@ -1766,9 +1778,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             exists = false;
         }
-        if (!exists && updateCache)
+        if (!exists)
         {
             this._docsUtil.removeOpNameFromLookup(opName);
+            this._docsUtil.deleteOpDocs(opName);
         }
         return exists;
     }
@@ -2575,18 +2588,18 @@ export default class SharedOpsUtil extends SharedUtil
                 if (fs.existsSync(fn))
                 {
                     fs.unlinkSync(fn);
-                    this._docsUtil.removeOpNameFromLookup(opName);
                 }
                 try
                 {
                     fs.rmSync(this.getOpAbsolutePath(opName), { "recursive": true, "force": true });
+                    this._docsUtil.removeOpNameFromLookup(opName);
+                    this._docsUtil.deleteOpDocs(opName);
                 }
                 catch (e)
                 {
                     this._log.error(e);
                     return false;
                 }
-                this._docsUtil.updateOpDocs(opName);
             }
             catch (e)
             {

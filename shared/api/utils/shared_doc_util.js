@@ -714,6 +714,20 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    deleteOpDocs(opName)
+    {
+        if (!opName || this._opsUtil.isCoreOp(opName))
+        {
+            this._rebuildOpDocCache = opName || true;
+            return this.getOpDocs();
+        }
+        else
+        {
+            const collectionName = this._opsUtil.getCollectionName(opName);
+            return this._opsUtil.buildOpDocsForCollection(collectionName);
+        }
+    }
+
     cleanOpDocData(obj)
     {
         // remove empty strings etc from array:

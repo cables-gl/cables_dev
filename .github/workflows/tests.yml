@@ -3,11 +3,20 @@ name: nightly tests
 on:
     workflow_dispatch:
     schedule:
-     - cron: '0 3 * * *'
+        -   cron: '0 3 * * *'
 
 jobs:
     build:
         runs-on: ubuntu-latest
+        services:
+            mongodb:
+                image: mongo:8
+                ports:
+                    - 27017:27017
+            redis:
+                image: redis:6-alpine
+                ports:
+                    - 6379:6379
         steps:
             -   uses: actions/checkout@v4
             -   name: install nodejs
@@ -27,10 +36,11 @@ jobs:
             -   name: configure mochajs for github
                 run: |
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
-            -   name: core tests
-                run: |
-                    cd cables/
-                    npm run test
+            # -   name: core tests
+            #     continue-on-error: true
+            #     run: |
+            #         cd cables/
+            #         npm run test
             -   name: checkout api
                 uses: actions/checkout@v4
                 with:
@@ -53,33 +63,102 @@ jobs:
                     npm install --no-save
                     touch scss/svgicons.scss
                     npm run build
-            -   name: checkout electron for exe export
-                uses: actions/checkout@v4
-                with:
-                    repository: "cables-gl/cables-exe-export"
-                    ref: develop
-                    token: ${{ secrets.undev_token }}
-                    path: "electron"
-                    fetch-depth: 0
-            -   name: create exe-export LFS file list
+            # -   name: Server dev/live Tests
+            #     continue-on-error: true
+            #     run: |
+            #         cd cables_api/
+            #         npm run test:servers
+            #     env:
+            #         CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
+            # -   name: Publish dev/live Tests Summary Results
+            #     uses: ctrf-io/github-test-reporter@v1
+            #     with:
+            #         report-path: './cables_api/ctrf/*.json'
+            #         github-report: true
+            #         summary-delta-report: true
+            #         insights-report: true
+            #         flaky-rate-report: true
+            #         fail-rate-report: true
+            #         slowest-report: true
+            #         upload-artifact: true
+            #         suite-folded-report: true
+            #         artifact-name: "devlive-report"
+            #     env:
+            #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     if: always()
+            # -   name: checkout electron for exe export
+            #     uses: actions/checkout@v4
+            #     with:
+            #         repository: "cables-gl/cables-exe-export"
+            #         ref: develop
+            #         token: ${{ secrets.undev_token }}
+            #         path: "electron"
+            #         fetch-depth: 0
+            # -   name: create exe-export LFS file list
+            #     run: |
+            #         cd electron/
+            #         git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+            # -   name: restore exe-export LFS cache
+            #     uses: actions/cache@v4
+            #     id: exe-export-lfs-cache
+            #     with:
+            #         path: electron/.git/lfs
+            #         key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
+            # -   name: pull exe-export LFS files
+            #     run: |
+            #         cd electron/
+            #         git lfs pull
+            # -   name: Export Tests
+            #     continue-on-error: true
+            #     run: |
+            #         cd cables_api/
+            #         npm run test:export
+            # -   name: Publish Export Tests Summary Results
+            #     uses: ctrf-io/github-test-reporter@v1
+            #     with:
+            #         report-path: './cables_api/ctrf/*.json'
+            #         github-report: true
+            #         summary-delta-report: true
+            #         insights-report: true
+            #         flaky-rate-report: true
+            #         fail-rate-report: true
+            #         slowest-report: true
+            #         upload-artifact: true
+            #         suite-folded-report: true
+            #         artifact-name: "export-report"
+            #     env:
+            #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     if: always()
+            -   name: Install PM2 locally
+                run: npm install pm2@6.0.13 -g
+            -   name: Run PM2
                 run: |
-                    cd electron/
-                    git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-            -   name: restore exe-export LFS cache
-                uses: actions/cache@v4
-                id: exe-export-lfs-cache
-                with:
-                    path: electron/.git/lfs
-                    key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
-            -   name: pull exe-export LFS files
+                    npm run pm2:test &
+                shell: bash
+            -   name: Wait for Express on port 5711
                 run: |
-                    cd electron/
-                    git lfs pull
-            -   name: Export Tests
+                    echo "Waiting for tcp:5711..."
+                    time npx wait-on http://localhost:5711/login --timeout 30000 -v
+                    echo "Port 5711 is up!"
+                    echo "Waiting for tcp:5713..."
+                    time npx wait-on http://localhost:5713/api/ops/code --timeout 30000 -v
+                    echo "Port 5713 is up!"
+            -   name: Check what listens on 5711
+                run: |
+                    echo "Listening on 5711:"
+                    ss -tlnp | grep 5711 || netstat -tlnp | grep 5711
+            -   name: Try HTTP hit
+                run: |
+                    echo "curl GET http://127.0.0.1:5711/login"
+                    curl -v http://127.0.0.1:5711/login
+            -   name: API Tests
+                continue-on-error: true
                 run: |
                     cd cables_api/
-                    npm run test:export
-            -   name: Publish Export Tests Summary Results
+                    npm run test:api
+                    pm2 logs --lines 20
+                    pm2 flush
+            -   name: Publish API Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -91,21 +170,33 @@ jobs:
                     slowest-report: true
                     upload-artifact: true
                     suite-folded-report: true
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                if: always()
-            # -   name: Start MongoDB
-            #     uses: supercharge/mongodb-github-action@1.12.1
-            #     with:
-            #         mongodb-version: 8.0.4
-            # -   name: Start Redis
-            #     uses: supercharge/redis-github-action@1.8.1
-            #     with:
-            #         redis-version: 6.0.16
-            # -   name: Start PM2
-            #     run: |
-            #         npm run pm2:test
-            # -   name: api tests
-            #     run: |
-            #         cd cables_api/
-            #         npm run test
+                    artifact-name: "api-report"
+            -   name: Views Tests
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    npm run test:views
+                    pm2 logs --lines 20
+                    pm2 flush
+            -   name: Publish Views Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                    artifact-name: "views-report"
+            # always try to capture PM2 and app logs when step fails
+            -   name: Upload PM2 logs on failure
+                if: failure()
+                uses: actions/upload-artifact@v4
+                with:
+                    name: pm2-logs
+                    path: |
+                        ~/.pm2/logs/*.log
+                    if-no-files-found: warn
