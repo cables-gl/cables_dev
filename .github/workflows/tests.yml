@@ -138,7 +138,7 @@ jobs:
                     time npx wait-on http://localhost:5711/login --timeout 30000 -v
                     echo "Port 5711 is up!"
                     echo "Waiting for tcp:5713..."
-                    time npx wait-on http://localhost:5713/api/ops/code--timeout 30000 -v
+                    time npx wait-on http://localhost:5713/api/ops/code --timeout 30000 -v
                     echo "Port 5713 is up!"
             -   name: Check what listens on 5711
                 run: |
