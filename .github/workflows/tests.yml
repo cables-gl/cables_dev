@@ -133,7 +133,13 @@ jobs:
                     npm run pm2:test &
                 shell: bash
             -   name: Wait for Express on port 5711
-                run: npx wait-on tcp:5711 --timeout 30000
+                run: |
+                    echo "Waiting for tcp:5711..."
+                    time npx wait-on tcp:5711 --timeout 30000
+                    echo "Port 5711 is up!"
+                    echo "Waiting for tcp:5713..."
+                    time npx wait-on tcp:5711 --timeout 30000
+                    echo "Port 5713 is up!"
             -   name: API Tests
                 run: |
                     cd cables_api/
