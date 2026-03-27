@@ -128,14 +128,17 @@ jobs:
             #     if: always()
             -   name: Install PM2 locally
                 run: npm install pm2@6.0.13 -g
+            -   name: Run PM2
+                run: |
+                    npm run pm2:test &
+                shell: bash
+            -   name: Wait for Express on port 5711
+                run: npx wait-on tcp:5711 --timeout 30000
             -   name: API Tests
                 run: |
-                    npm run pm2:test
-                    pm2 status
                     cd cables_api/
                     npm run test:api
-                    pm2 logs --lines 100
-                    pm2 stop all
+                    pm2 logs --lines 20
                     pm2 flush
             -   name: Publish API Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
@@ -152,12 +155,9 @@ jobs:
                     artifact-name: "api-report"
             -   name: Views Tests
                 run: |
-                    npm run pm2:test
-                    pm2 status
                     cd cables_api/
                     npm run test:views
-                    pm2 logs --lines 100
-                    pm2 stop all
+                    pm2 logs --lines 20
                     pm2 flush
             -   name: Publish Views Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
