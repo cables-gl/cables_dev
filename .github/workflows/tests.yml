@@ -36,11 +36,11 @@ jobs:
             -   name: configure mochajs for github
                 run: |
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
-            # -   name: core tests
-            #     continue-on-error: true
-            #     run: |
-            #         cd cables/
-            #         npm run test
+            -   name: core tests
+                continue-on-error: true
+                run: |
+                    cd cables/
+                    npm run test
             -   name: checkout api
                 uses: actions/checkout@v4
                 with:
@@ -63,72 +63,72 @@ jobs:
                     npm install --no-save
                     touch scss/svgicons.scss
                     npm run build
-            # -   name: Server dev/live Tests
-            #     continue-on-error: true
-            #     run: |
-            #         cd cables_api/
-            #         npm run test:servers
-            #     env:
-            #         CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
-            # -   name: Publish dev/live Tests Summary Results
-            #     uses: ctrf-io/github-test-reporter@v1
-            #     with:
-            #         report-path: './cables_api/ctrf/*.json'
-            #         github-report: true
-            #         summary-delta-report: true
-            #         insights-report: true
-            #         flaky-rate-report: true
-            #         fail-rate-report: true
-            #         slowest-report: true
-            #         upload-artifact: true
-            #         suite-folded-report: true
-            #         artifact-name: "devlive-report"
-            #     env:
-            #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     if: always()
-            # -   name: checkout electron for exe export
-            #     uses: actions/checkout@v4
-            #     with:
-            #         repository: "cables-gl/cables-exe-export"
-            #         ref: develop
-            #         token: ${{ secrets.undev_token }}
-            #         path: "electron"
-            #         fetch-depth: 0
-            # -   name: create exe-export LFS file list
-            #     run: |
-            #         cd electron/
-            #         git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-            # -   name: restore exe-export LFS cache
-            #     uses: actions/cache@v4
-            #     id: exe-export-lfs-cache
-            #     with:
-            #         path: electron/.git/lfs
-            #         key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
-            # -   name: pull exe-export LFS files
-            #     run: |
-            #         cd electron/
-            #         git lfs pull
-            # -   name: Export Tests
-            #     continue-on-error: true
-            #     run: |
-            #         cd cables_api/
-            #         npm run test:export
-            # -   name: Publish Export Tests Summary Results
-            #     uses: ctrf-io/github-test-reporter@v1
-            #     with:
-            #         report-path: './cables_api/ctrf/*.json'
-            #         github-report: true
-            #         summary-delta-report: true
-            #         insights-report: true
-            #         flaky-rate-report: true
-            #         fail-rate-report: true
-            #         slowest-report: true
-            #         upload-artifact: true
-            #         suite-folded-report: true
-            #         artifact-name: "export-report"
-            #     env:
-            #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     if: always()
+            -   name: Server dev/live Tests
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    npm run test:servers
+                env:
+                    CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
+            -   name: Publish dev/live Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                    artifact-name: "devlive-report"
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                if: always()
+            -   name: checkout electron for exe export
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-exe-export"
+                    ref: develop
+                    token: ${{ secrets.undev_token }}
+                    path: "electron"
+                    fetch-depth: 0
+            -   name: create exe-export LFS file list
+                run: |
+                    cd electron/
+                    git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+            -   name: restore exe-export LFS cache
+                uses: actions/cache@v4
+                id: exe-export-lfs-cache
+                with:
+                    path: electron/.git/lfs
+                    key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
+            -   name: pull exe-export LFS files
+                run: |
+                    cd electron/
+                    git lfs pull
+            -   name: Export Tests
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    npm run test:export
+            -   name: Publish Export Tests Summary Results
+                uses: ctrf-io/github-test-reporter@v1
+                with:
+                    report-path: './cables_api/ctrf/*.json'
+                    github-report: true
+                    summary-delta-report: true
+                    insights-report: true
+                    flaky-rate-report: true
+                    fail-rate-report: true
+                    slowest-report: true
+                    upload-artifact: true
+                    suite-folded-report: true
+                    artifact-name: "export-report"
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                if: always()
             -   name: Install PM2 locally
                 run: npm install pm2@6.0.13 -g
             -   name: Run PM2
