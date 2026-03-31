@@ -73,6 +73,7 @@ export default class SharedExportService extends SharedUtil
         this.options.sourcemaps = exportOptions.sourcemaps;
         this.options.handleAssets = exportOptions.assets || "auto";
         this.options.minifyGlsl = exportOptions.minifyGlsl;
+        this.options.incrementExportCount = exportOptions.hasOwnProperty("incrementExportCount") ? exportOptions.incrementExportCount : true;
 
         this.options.ignoreBackupBeforeExport = exportOptions.ignoreBackupBeforeExport || false;
 
@@ -652,7 +653,7 @@ export default class SharedExportService extends SharedUtil
         }
 
         if (!originalProject.exports) originalProject.exports = 0;
-        originalProject.exports++;
+        if (options.incrementExportCount) originalProject.exports++;
         const exportNumber = originalProject.exports;
         proj.exports = exportNumber;
 
