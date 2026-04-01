@@ -606,6 +606,7 @@ export default class SharedDocUtil extends SharedUtil
             docObj.version = this._opsUtil.getVersionFromOpName(opName);
             docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
             docObj.hidden = (this._opsUtil.isDeprecated(opName));
+            if (js.isReleased) docObj.isReleased = js.isReleased;
         }
 
         const mdFile = path.join(dirName, opName + ".md");
