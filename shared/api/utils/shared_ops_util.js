@@ -463,6 +463,7 @@ export default class SharedOpsUtil extends SharedUtil
             const code = fs.readFileSync(fn, "utf8");
             let codeAttachments = "const attachments=op.attachments={";
             let codeAttachmentsInc = "";
+            let staticAttachments = "static staticAttachments={";
             const dir = fs.readdirSync(path.dirname(fn));
             for (const i in dir)
             {
@@ -470,7 +471,13 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
                 }
-                if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
+                if (dir[i].startsWith("att_bin_"))
+                {
+                    let varName = dir[i].substr(8, dir[i].length - 8);
+                    varName = varName.replace(/\./g, "_");
+                    staticAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i])).toString("base64") + "\",";
+                }
+                else if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
                 {
                     if (prepareForExport) continue;
                     let varName = dir[i].substr(4, dir[i].length - 4);
@@ -518,6 +525,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
 
+            staticAttachments += "};\n";
             codeAttachments += "};\n";
 
             const codeHead = "\n\n// **************************************************************\n" +
@@ -527,8 +535,9 @@ export default class SharedOpsUtil extends SharedUtil
                 "// **************************************************************\n\n" +
                 opName + "= class extends CABLES.Op \n" +
                 "{\n" +
+                staticAttachments + "\n" +
                 "constructor()\n" +
-                "{\nsuper(...arguments);\nconst op=this;\n";
+                "{\nsuper(...arguments);\nconst op=this;\nconst staticAttachments=this.constructor.staticAttachments;\n";
             let codeFoot = "\n}\n};\n\n";
 
             if (opId && !prepareForExport) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";

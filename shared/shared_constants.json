@@ -106,6 +106,9 @@
         "subtitles": [
             ".srt",
             ".vtt"
+        ],
+        "opdependency": [
+            "*"
         ]
     },
     "EDITABLE_FILETYPES": [
