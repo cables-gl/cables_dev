@@ -3170,6 +3170,7 @@ export default class SharedOpsUtil extends SharedUtil
             newJson.changelog.push(change);
         }
 
+        delete newJson.isReleased;
         jsonfile.writeFileSync(newJsonFile, newJson, {
             "encoding": "utf-8",
             "spaces": 4
@@ -4009,6 +4010,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (newJsonData)
             {
                 newJsonData.id = uuidv4();
+                delete newJsonData.isReleased;
                 if (currentUser) newJsonData.authorName = currentUser.username;
                 const oldId = this.getOpIdByObjName(oldName);
                 if (oldId) newJsonData.cloneOf = oldId;
