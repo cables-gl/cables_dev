@@ -470,14 +470,7 @@ export default class SharedOpsUtil extends SharedUtil
                 {
                     codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
                 }
-                if (dir[i].startsWith("att_bin_"))
-                {
-                    let varName = dir[i].substr(4, dir[i].length - 4);
-                    varName = varName.replace(/\./g, "_");
-                    codeAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i]))
-                        .toString("base64") + "\",";
-                }
-                else if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
+                if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
                 {
                     if (prepareForExport) continue;
                     let varName = dir[i].substr(4, dir[i].length - 4);
