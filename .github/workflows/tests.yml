@@ -70,7 +70,7 @@ jobs:
                     npm run test:servers
                 env:
                     CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
-            -   name: Publish dev/live Tests Summary Results
+            -   name: Store dev/live Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -86,6 +86,14 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
+            -   name: Publish dev/live Tests Results on discord
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                env:
+                    CABLES_TEST_TITLE: "HTTP dev/live Tests"
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: checkout electron for exe export
                 uses: actions/checkout@v4
                 with:
@@ -113,7 +121,7 @@ jobs:
                 run: |
                     cd cables_api/
                     npm run test:export
-            -   name: Publish Export Tests Summary Results
+            -   name: Store Export Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -129,6 +137,14 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 if: always()
+            -   name: Publish Export Tests Results on discord
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                env:
+                    CABLES_TEST_TITLE: "Export Tests"
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: Install PM2 locally
                 run: npm install pm2@6.0.13 -g
             -   name: Run PM2
@@ -158,7 +174,7 @@ jobs:
                     npm run test:api
                     pm2 logs --lines 20
                     pm2 flush
-            -   name: Publish API Tests Summary Results
+            -   name: Store API Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -171,6 +187,14 @@ jobs:
                     upload-artifact: true
                     suite-folded-report: true
                     artifact-name: "api-report"
+            -   name: Publish API Tests Results on discord
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                env:
+                    CABLES_TEST_TITLE: "API Tests"
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: Views Tests
                 continue-on-error: true
                 run: |
@@ -178,7 +202,7 @@ jobs:
                     npm run test:views
                     pm2 logs --lines 20
                     pm2 flush
-            -   name: Publish Views Tests Summary Results
+            -   name: Store Views Tests Summary Results
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -191,7 +215,14 @@ jobs:
                     upload-artifact: true
                     suite-folded-report: true
                     artifact-name: "views-report"
-            # always try to capture PM2 and app logs when step fails
+            -   name: Publish Views Tests Results on discord
+                continue-on-error: true
+                run: |
+                    cd cables_api/
+                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                env:
+                    CABLES_TEST_TITLE: "Views Tests"
+                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: Upload PM2 logs on failure
                 if: failure()
                 uses: actions/upload-artifact@v4
