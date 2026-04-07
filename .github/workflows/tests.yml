@@ -90,7 +90,7 @@ jobs:
                 continue-on-error: true
                 run: |
                     cd cables_api/
-                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                    node hooks/discord_testresults.js ctrf/ctrf-report.json
                 env:
                     CABLES_TEST_TITLE: "HTTP dev/live Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
@@ -141,7 +141,7 @@ jobs:
                 continue-on-error: true
                 run: |
                     cd cables_api/
-                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                    node hooks/discord_testresults.js ctrf/ctrf-report.json
                 env:
                     CABLES_TEST_TITLE: "Export Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
@@ -191,7 +191,7 @@ jobs:
                 continue-on-error: true
                 run: |
                     cd cables_api/
-                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                    node hooks/discord_testresults.js ctrf/ctrf-report.json
                 env:
                     CABLES_TEST_TITLE: "API Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
@@ -219,7 +219,7 @@ jobs:
                 continue-on-error: true
                 run: |
                     cd cables_api/
-                    node hooks/discord_testresults.js ../ctrf/ctrf-report.json
+                    node hooks/discord_testresults.js ctrf/ctrf-report.json
                 env:
                     CABLES_TEST_TITLE: "Views Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
