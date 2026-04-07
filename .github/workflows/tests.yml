@@ -2,6 +2,32 @@ name: nightly tests
 
 on:
     workflow_dispatch:
+        inputs:
+            core:
+                type: boolean
+                description: "core"
+                default: 'true'
+                required: false
+            servers:
+                type: boolean
+                description: "servers"
+                default: 'true'
+                required: false
+            exports:
+                type: boolean
+                description: "exports"
+                default: 'true'
+                required: false
+            api:
+                type: boolean
+                description: "api"
+                default: 'true'
+                required: false
+            views:
+                type: boolean
+                description: "views"
+                default: 'true'
+                required: false
     schedule:
         -   cron: '0 3 * * *'
 
@@ -37,6 +63,7 @@ jobs:
                 run: |
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
             -   name: core tests
+                if: ${{ inputs.core == true || inputs.core == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables/
@@ -72,6 +99,7 @@ jobs:
                     touch scss/svgicons.scss
                     npm run build
             -   name: Server dev/live Tests
+                if: ${{ inputs.servers == true || inputs.servers == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -79,6 +107,7 @@ jobs:
                 env:
                     CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
             -   name: Store dev/live Tests Summary Results
+                if: ${{ inputs.servers == true || inputs.servers == 'true' }}
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -93,8 +122,8 @@ jobs:
                     artifact-name: "devlive-report"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                if: always()
             -   name: Publish dev/live Tests Results on discord
+                if: ${{ inputs.servers == true || inputs.servers == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -103,6 +132,7 @@ jobs:
                     CABLES_TEST_TITLE: "HTTP dev/live Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: checkout electron for exe export
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 uses: actions/checkout@v4
                 with:
                     repository: "cables-gl/cables-exe-export"
@@ -111,25 +141,30 @@ jobs:
                     path: "electron"
                     fetch-depth: 0
             -   name: create exe-export LFS file list
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 run: |
                     cd electron/
                     git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
             -   name: restore exe-export LFS cache
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 uses: actions/cache@v4
                 id: exe-export-lfs-cache
                 with:
                     path: electron/.git/lfs
                     key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
             -   name: pull exe-export LFS files
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 run: |
                     cd electron/
                     git lfs pull
             -   name: Export Tests
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
                     npm run test:export
             -   name: Store Export Tests Summary Results
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -144,8 +179,8 @@ jobs:
                     artifact-name: "export-report"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                if: always()
             -   name: Publish Export Tests Results on discord
+                if: ${{ inputs.exports == true || inputs.exports == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -176,6 +211,7 @@ jobs:
                     echo "curl GET http://127.0.0.1:5711/login"
                     curl -v http://127.0.0.1:5711/login
             -   name: API Tests
+                if: ${{ inputs.api == true || inputs.api == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -183,6 +219,7 @@ jobs:
                     pm2 logs --lines 20
                     pm2 flush
             -   name: Store API Tests Summary Results
+                if: ${{ inputs.api == true || inputs.api == 'true' }}
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -196,6 +233,7 @@ jobs:
                     suite-folded-report: true
                     artifact-name: "api-report"
             -   name: Publish API Tests Results on discord
+                if: ${{ inputs.api == true || inputs.api == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -204,6 +242,7 @@ jobs:
                     CABLES_TEST_TITLE: "API Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: Views Tests
+                if: ${{ inputs.views == true || inputs.views == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -211,6 +250,7 @@ jobs:
                     pm2 logs --lines 20
                     pm2 flush
             -   name: Store Views Tests Summary Results
+                if: ${{ inputs.views == true || inputs.views == 'true' }}
                 uses: ctrf-io/github-test-reporter@v1
                 with:
                     report-path: './cables_api/ctrf/*.json'
@@ -224,6 +264,7 @@ jobs:
                     suite-folded-report: true
                     artifact-name: "views-report"
             -   name: Publish Views Tests Results on discord
+                if: ${{ inputs.views == true || inputs.views == 'true' }}
                 continue-on-error: true
                 run: |
                     cd cables_api/
