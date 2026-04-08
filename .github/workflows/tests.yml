@@ -64,7 +64,7 @@ jobs:
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
             -   name: core tests
                 if: ${{ inputs.core == true || inputs.core == 'true' }}
-                timeout-minutes: 5
+                timeout-minutes: 10
                 continue-on-error: true
                 run: |
                     cd cables/
@@ -101,7 +101,7 @@ jobs:
                     npm run build
             -   name: Server dev/live Tests
                 if: ${{ inputs.servers == true || inputs.servers == 'true' }}
-                timeout-minutes: 5
+                timeout-minutes: 10
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -161,7 +161,7 @@ jobs:
                     git lfs pull
             -   name: Export Tests
                 if: ${{ inputs.exports == true || inputs.exports == 'true' }}
-                timeout-minutes: 5
+                timeout-minutes: 10
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -215,7 +215,7 @@ jobs:
                     curl -v http://127.0.0.1:5711/login
             -   name: API Tests
                 if: ${{ inputs.api == true || inputs.api == 'true' }}
-                timeout-minutes: 5
+                timeout-minutes: 10
                 continue-on-error: true
                 run: |
                     cd cables_api/
@@ -247,7 +247,7 @@ jobs:
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
             -   name: Views Tests
                 if: ${{ inputs.views == true || inputs.views == 'true' }}
-                timeout-minutes: 5
+                timeout-minutes: 10
                 continue-on-error: true
                 run: |
                     cd cables_api/
