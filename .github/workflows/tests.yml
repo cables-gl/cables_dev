@@ -29,7 +29,7 @@ on:
                 default: 'true'
                 required: false
     schedule:
-        -   cron: '30 7 * * *'
+        -   cron: '30 8 * * *'
 
 jobs:
     build:
@@ -220,8 +220,6 @@ jobs:
                 run: |
                     cd cables_api/
                     npm run test:api
-                    pm2 logs --lines 20
-                    pm2 flush
             -   name: Store API Tests Summary Results
                 if: ${{ !contains(inputs.api, 'false') }}
                 uses: ctrf-io/github-test-reporter@v1
@@ -252,8 +250,6 @@ jobs:
                 run: |
                     cd cables_api/
                     npm run test:views
-                    pm2 logs --lines 20
-                    pm2 flush
             -   name: Store Views Tests Summary Results
                 if: ${{ !contains(inputs.views, 'false') }}
                 uses: ctrf-io/github-test-reporter@v1
@@ -277,8 +273,7 @@ jobs:
                 env:
                     CABLES_TEST_TITLE: "Views Tests"
                     DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
-            -   name: Upload PM2 logs on failure
-                if: failure()
+            -   name: Upload PM2 logs
                 uses: actions/upload-artifact@v4
                 with:
                     name: pm2-logs
