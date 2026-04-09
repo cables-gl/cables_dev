@@ -311,7 +311,7 @@ export default class SharedExportService extends SharedUtil
             return;
         }
 
-        const archive = this.archive.create("zip", { "zlib": { "level": 0 } });
+        const archive = this.archive.create("zip", { "zlib": { "level": 0 }, "forceLocalTime": true });
         const output = fs.createWriteStream(exportTargetLocation);
         this._log.debug("finalZipFileName", exportTargetLocation);
         output.on("close", () =>
