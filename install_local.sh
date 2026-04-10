@@ -54,7 +54,7 @@ if [ "$?" -eq "0" ]; then
       echo -e "ASSUMING LINUX/WSL..."
       if [ "$COMMUNITY_BUILD" = "true" ]; then
         echo -e "TRYING TO INSTALL DEPENDENCIES..."
-        sudo apt-get install -y python gcc g++ build-essential autoconf libpng-dev nasm imagemagick
+        sudo apt-get install -y python3 gcc g++ build-essential autoconf libpng-dev nasm imagemagick
       fi
     fi
     echo -e "LOADING nodejs VERSION" `cat .nvmrc`
