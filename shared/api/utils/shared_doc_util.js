@@ -114,7 +114,7 @@ export default class SharedDocUtil extends SharedUtil
         try
         {
             const o = jsonfile.readFileSync(p);
-            if (o) return o;
+            if (o) return this.makeImportable(o);
         }
         catch (e) {}
         return null;

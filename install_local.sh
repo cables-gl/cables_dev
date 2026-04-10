@@ -54,7 +54,7 @@ if [ "$?" -eq "0" ]; then
       echo -e "ASSUMING LINUX/WSL..."
       if [ "$COMMUNITY_BUILD" = "true" ]; then
         echo -e "TRYING TO INSTALL DEPENDENCIES..."
-        sudo apt-get install python gcc g++ build-essential autoconf libpng-dev nasm
+        sudo apt-get install -y python gcc g++ build-essential autoconf libpng-dev nasm imagemagick
       fi
     fi
     echo -e "LOADING nodejs VERSION" `cat .nvmrc`
@@ -120,18 +120,22 @@ if [ "$COMMUNITY_BUILD" = "true" ]; then
   npm install --no-save
   cd ..
 
-  echo -e ""
-  echo -e "${GREEN}INSTALLING DEFAULT ASSETS...${NC}";
   if [ "$CLEAN" = "true" ]; then
     echo -e "  ...deleting default assets";
     rm -rf cables_api/public/assets/library
-    git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
   fi
-  mkdir -p cables_api/public/assets/library
-  if [ -d "cables_api/public/assets/library/.git" ]; then
-    git -C cables_api/public/assets/library pull
-  else
-    git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
+  if [ ! -d "cables_api/public/assets/library/" ]; then
+      echo -e ""
+      echo -e "${GREEN}INSTALLING DEFAULT ASSETS...${NC}";
+      if [ "$CLEAN" = "true" ]; then
+        git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
+      fi
+      mkdir -p cables_api/public/assets/library
+      if [ -d "cables_api/public/assets/library/.git" ]; then
+        git -C cables_api/public/assets/library pull
+      else
+        git clone ${CABLES_ASSET_LIBRARY_REPO} cables_api/public/assets/library
+      fi
   fi
 fi
 

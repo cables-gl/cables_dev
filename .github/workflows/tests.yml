@@ -56,9 +56,25 @@ jobs:
                     echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
                     sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
                     sudo chmod +x /usr/local/bin/nvm
+            -   name: checkout api
+                uses: actions/checkout@v4
+                with:
+                    repository: "undev-studio/cables_api"
+                    ref: develop
+                    token: ${{ secrets.undev_token }}
+                    path: "cables_api/"
+                    fetch-depth: 0
+            -   name: checkout asset library
+                uses: actions/checkout@v4
+                with:
+                    repository: "cables-gl/cables-asset-library"
+                    ref: master
+                    token: ${{ secrets.undev_token }}
+                    path: "cables_api/public/assets/library"
+                    fetch-depth: 0
             -   name: setup repos
                 run: |
-                    ./install_local.sh https
+                    ./install_local.sh https --community
             -   name: configure mochajs for github
                 run: |
                     echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
@@ -69,14 +85,6 @@ jobs:
                 run: |
                     cd cables/
                     npm run test
-            -   name: checkout api
-                uses: actions/checkout@v4
-                with:
-                    repository: "undev-studio/cables_api"
-                    ref: develop
-                    token: ${{ secrets.undev_token }}
-                    path: "cables_api/"
-                    fetch-depth: 0
             -   name: checkout docs
                 uses: actions/checkout@v4
                 with:
@@ -84,14 +92,6 @@ jobs:
                     ref: develop
                     token: ${{ secrets.undev_token }}
                     path: "cables_docs/"
-                    fetch-depth: 0
-            -   name: checkout asset library
-                uses: actions/checkout@v4
-                with:
-                    repository: "cables-gl/cables-asset-library"
-                    ref: master
-                    token: ${{ secrets.undev_token }}
-                    path: "cables_api/public/assets/library"
                     fetch-depth: 0
             -   name: build api
                 run: |
