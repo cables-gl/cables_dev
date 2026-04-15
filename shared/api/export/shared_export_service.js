@@ -816,6 +816,7 @@ export default class SharedExportService extends SharedUtil
         {
             const opName = this._opsUtil.getOpNameById(subPatchOp.opId);
             const opDoc = this._docsUtil.getDocForOp(opName);
+
             if (opDoc)
             {
                 if (opDoc.libs) libs = libs.concat(opDoc.libs);
@@ -833,6 +834,7 @@ export default class SharedExportService extends SharedUtil
                 {
                     libs = libs.concat(this._docsUtil.getProjectLibs(subPatchOpAttachment));
                     coreLibs = coreLibs.concat(this._docsUtil.getCoreLibs(subPatchOpAttachment));
+
                     dependencies = dependencies.concat(this._docsUtil.getProjectOpDependencies(subPatchOpAttachment));
 
                     subPatchOpAttachment._id = proj._id;
@@ -872,7 +874,15 @@ export default class SharedExportService extends SharedUtil
         allProjects.push(proj);
         libs = this._helperUtil.uniqueArray(libs);
         coreLibs = this._helperUtil.uniqueArray(coreLibs);
-        cb(allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode, dependencies);
+        const uniqueDependencies = [];
+        dependencies.forEach((dependency) =>
+        {
+            if (!uniqueDependencies.find((ud) => { return ud.type === dependency.type && ud.src === dependency.src && ud.opId === dependency.opId; }))
+            {
+                uniqueDependencies.push(dependency);
+            }
+        });
+        cb(allProjects, usedOps, libs, coreLibs, replacedOpIds, jsCode, uniqueDependencies);
     }
 
     _getProjectJson(proj, replacedOpIds, options)

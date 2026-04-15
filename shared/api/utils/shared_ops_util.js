@@ -253,7 +253,13 @@ export default class SharedOpsUtil extends SharedUtil
         return versions.sort((a, b) => { return a.version - b.version; });
     }
 
-    getHighestVersionOpName(opName, opDocs = false)
+    /**
+     *
+     * @param {String} opName
+     * @param {Array} opDocs
+     * @return {string|*}
+     */
+    getHighestVersionOpName(opName, opDocs = null)
     {
         if (!opDocs) opDocs = this._docsUtil.getOpDocs();
         const opnameWithoutVersion = this.getOpNameWithoutVersion(opName);
