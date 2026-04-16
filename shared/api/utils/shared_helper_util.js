@@ -294,10 +294,18 @@ export default class SharedHelperUtil extends SharedUtil
         return bObject;
     }
 
-    getLogEntry(key, text, date = null)
+    /**
+     *
+     * @param {String} key
+     * @param {String} text
+     * @param {Number} timestamp
+     * @param {String} description
+     * @return {{created: number, key: string, text: string, description: string}}
+     */
+    getLogEntry(key, text, timestamp = null, description = null)
     {
-        if (!date) date = Date.now();
-        return { "created": date, "key": key, "text": text };
+        if (!timestamp) timestamp = Date.now();
+        return { "created": timestamp, "key": key, "text": text, "description": description };
     }
 
     generateRandomId()
