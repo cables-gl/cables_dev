@@ -55,7 +55,7 @@ class Ele
      * returns the first element with class
      *
      * @param {String} name
-     * @returns {HTMLElement|null|Element} DOM element
+     * @returns {HTMLElement|null} DOM element
      */
     byClass(name)
     {
