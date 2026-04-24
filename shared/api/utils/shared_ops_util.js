@@ -2207,6 +2207,7 @@ export default class SharedOpsUtil extends SharedUtil
                     "mmd": "readonly"
                 },
                 "rules": {
+                    "no-useless-concat": 0,
                     "object-property-newline": "error",
                     "global-require": 1,
                     "no-compare-neg-zero": 0,
@@ -2224,6 +2225,7 @@ export default class SharedOpsUtil extends SharedUtil
                         }
                     ],
                     "func-names": 0,
+                    "max-classes-per-file": 0,
                     "max-len": [
                         0,
                         {
@@ -2240,9 +2242,18 @@ export default class SharedOpsUtil extends SharedUtil
                     "no-unused-vars": 0,
                     "no-lonely-if": 0,
                     "no-plusplus": 0,
-                    "indent": [1, 4],
-                    "quotes": [1, "double"],
-                    "quote-props": [1, "always"],
+                    "indent": [
+                        1,
+                        4
+                    ],
+                    "quotes": [
+                        1,
+                        "double"
+                    ],
+                    "quote-props": [
+                        1,
+                        "always"
+                    ],
                     "comma-dangle": 0,
                     "nonblock-statement-body-position": 0,
                     "curly": 0,
@@ -2254,7 +2265,7 @@ export default class SharedOpsUtil extends SharedUtil
                     "space-in-parens": 1,
                     "space-infix-ops": 1,
                     "keyword-spacing": 1,
-                    "padded-blocks": 1,
+                    "padded-blocks": 0,
                     "comma-spacing": 1,
                     "space-before-blocks": 1,
                     "spaced-comment": 1,
@@ -2279,6 +2290,7 @@ export default class SharedOpsUtil extends SharedUtil
                     "no-continue": 0,
                     "no-console": 1,
                     "no-else-return": 0,
+                    "no-useless-return": 0,
                     "one-var-declaration-per-line": 0,
                     "guard-for-in": 0,
                     "no-new": 0,
@@ -2287,16 +2299,18 @@ export default class SharedOpsUtil extends SharedUtil
                     "no-useless-constructor": 0,
                     "import/no-dynamic-require": 0,
                     "import/no-cycle": [
-                        1,
+                        0,
                         {
                             "maxDepth": 3
                         }
                     ],
+                    "import/no-relative-packages": 0,
                     "prefer-template": 0,
                     "prefer-rest-params": 0,
                     "no-restricted-properties": 0,
                     "import/prefer-default-export": 0,
                     "import/no-default-export": 0,
+                    "import/extensions": 0,
                     "prefer-arrow-callback": 0,
                     "arrow-body-style": ["error", "always"],
                     "new-cap": 0,
@@ -2309,8 +2323,15 @@ export default class SharedOpsUtil extends SharedUtil
                             "next": "*"
                         }
                     ],
-                    "no-return-await": 0
+                    "no-return-await": 0,
+                    "no-multiple-empty-lines": 1,
+                    "no-mixed-operators": 0,
+                    "no-inner-declarations": 0,
+                    "lines-around-comment": ["error", { "beforeBlockComment": true }],
+                    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+                    "newline-per-chained-call": 0
                 }
+
             }
         };
     }
