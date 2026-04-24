@@ -1165,6 +1165,26 @@ export default class SharedExportService extends SharedUtil
         {
             this.addLog("adding dependency of op: " + dep.op + " - " + dep.src, "debug");
         });
+
+        let preloadCssTags = "";
+        let preloadJsTags = "";
+        if (proj.preloadAssets)
+        {
+            proj.preloadAssets.forEach((preloadAsset) =>
+            {
+                if (preloadAsset.type === "CSS")
+                {
+                    preloadCssTags += "<link rel=\"stylesheet\" href=\"" + preloadAsset.url + "\">\n";
+                }
+                else if (preloadAsset.type === "javascript")
+                {
+                    preloadCssTags += "<script src=\"" + preloadAsset.url + "\">\n";
+                }
+            });
+        }
+        indexhtml = indexhtml.replace("<preloadcss/>", preloadCssTags);
+        indexhtml = indexhtml.replace("<preloadjs/>", preloadJsTags);
+
         if (options.combineJS)
         {
             scriptTagsHtml += "<script type=\"text/javascript\" src=\"" + this.finalJsPath + "patch.js\" async></script>";
