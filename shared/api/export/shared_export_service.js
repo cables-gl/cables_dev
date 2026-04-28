@@ -699,7 +699,7 @@ export default class SharedExportService extends SharedUtil
                         // add js
                         this._log.debug("JS packaging...", (Date.now() - this.startTimeExport) / 1000);
                         this._addProjectJsCode(proj, opsCode, libs, coreLibs, replacedOpIds, jsCode, options, dependencies);
-                        const exportContainsOps = this._addProjectOpCode(usedOps, options);
+                        const exportContainsOps = this._addProjectOpCode(usedOps, options, stringReplacements);
 
                         if (exportContainsOps)
                         {
@@ -1129,9 +1129,10 @@ export default class SharedExportService extends SharedUtil
 
     }
 
-    _addProjectOpCode(usedOps, options, includeAllOps = false)
+    _addProjectOpCode(usedOps, options, stringReplacements = {})
     {
         if (!options.addOpCode) return false;
+        const includeAllOps = options.addOpCodeAll;
         let opsAdded = false;
         usedOps.forEach((op) =>
         {
@@ -1145,7 +1146,12 @@ export default class SharedExportService extends SharedUtil
                 Object.keys(opFiles).forEach((opFile) =>
                 {
                     const targetFile = path.join(targetDir, opFile);
-                    const content = opFiles[opFile];
+                    let content = opFiles[opFile];
+                    const baseName = path.basename(opFile);
+                    if (baseName === this._opsUtil.SUBPATCH_ATTACHMENT_NAME || baseName === this._opsUtil.SUBPATCH_ATTACHMENT_PORTS)
+                    {
+                        content = this._replaceInString(stringReplacements, content.toString());
+                    }
                     opsAdded = true;
                     this.append(content, { "name": targetFile });
                 });
