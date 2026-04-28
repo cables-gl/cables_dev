@@ -58,6 +58,7 @@ export default class SharedExportService extends SharedUtil
         this.exportLog = [];
         this.assetInfos = [];
         this.finalAssetPath = "assets/";
+        this.finalAssetPathPrefix = "";
         this.finalJsPath = "js/";
         this.files = {};
         this.archive = null;
@@ -1348,8 +1349,10 @@ export default class SharedExportService extends SharedUtil
     _getPortValueReplacement(filePathAndName, fn, lzipFileName)
     {
         const repl = path.join("assets/", fn);
-        const value = filePathAndName.replace(repl, lzipFileName);
-        return value.replace(/^\/+/, "").replace(path.win32.sep, path.posix.sep);
+        let value = filePathAndName.replace(repl, lzipFileName);
+        value = value.replace(/^\/+/, "");
+        if (this.finalAssetPathPrefix && !value.startsWith(this.finalAssetPathPrefix)) value = this.finalAssetPathPrefix + value;
+        return value.replace(path.win32.sep, path.posix.sep);
     }
 
     _getAssetPath(file)
