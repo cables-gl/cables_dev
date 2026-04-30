@@ -2701,7 +2701,10 @@ export default class SharedOpsUtil extends SharedUtil
             if (oneNewName.endsWith("_")) problems.name_ends_with_underscore = problemNewPrefix + "Op name cannot end with '_'.";
             if (!oneNewName.startsWith(this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name does not start with '" + this.PREFIX_OPS + "'.";
             if (oneNewName.startsWith(this.PREFIX_OPS + this.PREFIX_OPS)) problems.name_not_op_namespace = problemNewPrefix + "Op name starts with '" + this.PREFIX_OPS + this.PREFIX_OPS + "'.";
-            const opExists = this.opExists(oneNewName);
+
+            const newNameValid = this.isOpNameValid(oneNewName);
+            const opExists = newNameValid && this.opExists(oneNewName);
+
             if (opExists) problems.target_exists = problemNewPrefix + "Op exists already.";
             if (!opExists && this.opNameTaken(oneNewName)) problems.name_taken = problemNewPrefix + "Op with same name (ignoring case) exists already.";
             if (oneNewName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = problemNewPrefix + "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
