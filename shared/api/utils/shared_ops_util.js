@@ -1,11 +1,9 @@
 import jsonfile from "jsonfile";
 import fs from "fs-extra";
-import eslint from "eslint";
 import path from "path";
 import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
-import eslintAirbnbBase from "eslint-config-airbnb-base";
 import tokenString from "glsl-tokenizer/string.js";
 import XMLWriter from "xml-writer";
 import SharedUtil from "./shared_util.js";
@@ -19,8 +17,6 @@ export default class SharedOpsUtil extends SharedUtil
     constructor(utilProvider)
     {
         super(utilProvider);
-
-        this._CLIEngine = eslint.CLIEngine;
 
         this.OPJSON_FORMAT = { "encoding": "utf-8", "spaces": 4 };
         jsonfile.spaces = this.OPJSON_FORMAT.spaces;
@@ -90,7 +86,6 @@ export default class SharedOpsUtil extends SharedUtil
         this.VISIBILITY_HIDDEN = "hidden";
         this.OPS_CODE_PREFIX = "\"use strict\";\n\nvar CABLES=CABLES||{};\nCABLES.OPS=CABLES.OPS||{};\n\n";
 
-        this.cli = new this._CLIEngine(this._getCLIConfig());
     }
 
     get utilName()
@@ -993,26 +988,23 @@ export default class SharedOpsUtil extends SharedUtil
 
     getAllOps(sessionUser, opDocs)
     {
-        let i = 0;
         const arr = [];
         const dir = fs.readdirSync(this._cables.getCoreOpsPath());
 
         if (sessionUser)
         {
-            const userOps = [];
             const dirUser = fs.readdirSync(this._cables.getUserOpsPath());
 
-            for (i in dirUser)
+            for (const i in dirUser)
             {
                 if ((dirUser[i] + "").startsWith(this.getUserNamespace(sessionUser.username)) && this.isOpNameValid(dirUser[i]))
                 {
                     dir.push(dirUser[i]);
-                    userOps.push(dirUser[i]);
                 }
             }
         }
 
-        for (i in dir)
+        for (const i in dir)
         {
             if (this.isOpNameValid(dir[i]))
             {
@@ -1693,31 +1685,11 @@ export default class SharedOpsUtil extends SharedUtil
      */
     validateAndFormatOpCode(code)
     {
-        try
-        {
-            const { results } = this.cli.executeOnText(code);
-            const { messages } = results[0];
-
-            const hasFatal = messages.filter((message) => { return Boolean(message.fatal); }).length > 0;
-
-            return {
-                "formatedCode": this._helperUtil.removeTrailingSpaces(results[0].output || code),
-                "error": hasFatal,
-                "message": messages[0]
-            };
-        }
-        catch (e)
-        {
-            return {
-                "formatedCode": code,
-                "error": true,
-                "message": {
-                    "line": "server",
-                    "message": "eslint exception: " + e.message
-                },
-            };
-        }
-
+        return {
+            "formatedCode": this._helperUtil.removeTrailingSpaces(code),
+            "error": false,
+            "message": null
+        };
     }
 
     getNamespaceHierarchyProblem(outerName, innerName)
@@ -1766,7 +1738,7 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opExists(opName)
+    opFileExists(opName)
     {
         let p = this.getOpAbsoluteFileName(opName);
         let exists = false;
@@ -1791,6 +1763,17 @@ export default class SharedOpsUtil extends SharedUtil
             this._docsUtil.removeOpNameFromLookup(opName);
             this._docsUtil.deleteOpDocs(opName);
         }
+        return exists;
+    }
+
+    /**
+     * @param {string} opName
+     * @param {boolean} [checkOpFile] force checking of op existing on filesystem
+     */
+    opExists(opName, checkOpFile = false)
+    {
+        let exists = !!this.getOpIdByObjName(opName);
+        if (!exists || checkOpFile) exists = this.opFileExists(opName);
         return exists;
     }
 
@@ -2147,193 +2130,6 @@ export default class SharedOpsUtil extends SharedUtil
             }
         }
         return invisible;
-    }
-
-    _getCLIConfig()
-    {
-        return {
-            "fix": true,
-            "useEslintrc": false,
-
-            "baseConfig": {
-                "extends": eslintAirbnbBase.extends,
-                "parser": "@babel/eslint-parser",
-                "env": {
-                    "browser": true
-                },
-                "parserOptions": {
-                    "ecmaVersion": "latest",
-                    "sourceType": "module",
-                    "requireConfigFile": false,
-                    "babelOptions": {
-                        "babelrc": false,
-                        "configFile": false,
-                        "presets": ["@babel/preset-env"]
-                    }
-                },
-                "globals": {
-                    "op": "readonly",
-                    "gui": "readonly",
-                    "navigator": "readonly",
-                    "document": "readonly",
-                    "BroadcastChannel": "readonly",
-                    "window": "readonly",
-                    "AudioContext": "readonly",
-                    "CABLES": "readonly",
-                    "XMLHttpRequest": "readonly",
-                    "ace": "readonly",
-                    "logStartup": "readonly",
-                    "attachments": "readonly",
-                    "CABLESUILOADER": "readonly",
-                    "iziToast": "readonly",
-                    "CGL": "readonly",
-                    "vec2": "readonly",
-                    "vec3": "readonly",
-                    "vec4": "readonly",
-                    "mat3": "readonly",
-                    "mat4": "readonly",
-                    "quat": "readonly",
-                    "chroma": "readonly",
-                    "QRCode": "readonly",
-                    "moment": "readonly",
-                    "introJs": "readonly",
-                    "UndoManager": "readonly",
-                    "Handlebars": "readonly",
-                    "hljs": "readonly",
-                    "loadjs": "readonly",
-                    "MathParser": "readonly",
-                    "socketClusterClient": "readonly",
-                    "incrementStartup": "readonly",
-                    "mmd": "readonly"
-                },
-                "rules": {
-                    "no-useless-concat": 0,
-                    "object-property-newline": "error",
-                    "global-require": 1,
-                    "no-compare-neg-zero": 0,
-                    "camelcase": 0,
-                    "class-methods-use-this": 0,
-                    "no-var": 1,
-                    "vars-on-top": 0,
-                    "no-bitwise": 0,
-                    "no-underscore-dangle": 0,
-                    "brace-style": [
-                        1,
-                        "allman",
-                        {
-                            "allowSingleLine": true
-                        }
-                    ],
-                    "func-names": 0,
-                    "max-classes-per-file": 0,
-                    "max-len": [
-                        0,
-                        {
-                            "code": 120,
-                            "tabWidth": 4,
-                            "comments": 300,
-                            "ignoreComments": true
-                        }
-                    ],
-                    "no-param-reassign": 0,
-                    "consistent-return": 0,
-                    "eqeqeq": 0,
-                    "one-var": 0,
-                    "no-unused-vars": 0,
-                    "no-lonely-if": 0,
-                    "no-plusplus": 0,
-                    "indent": [
-                        1,
-                        4
-                    ],
-                    "quotes": [
-                        1,
-                        "double"
-                    ],
-                    "quote-props": [
-                        1,
-                        "always"
-                    ],
-                    "comma-dangle": 0,
-                    "nonblock-statement-body-position": 0,
-                    "curly": 0,
-                    "object-shorthand": 0,
-                    "prefer-spread": 0,
-                    "no-loop-func": 0,
-                    "no-trailing-spaces": 1,
-                    "space-before-function-paren": 1,
-                    "space-in-parens": 1,
-                    "space-infix-ops": 1,
-                    "keyword-spacing": 1,
-                    "padded-blocks": 0,
-                    "comma-spacing": 1,
-                    "space-before-blocks": 1,
-                    "spaced-comment": 1,
-                    "object-curly-spacing": 1,
-                    "object-curly-newline": 0,
-                    "implicit-arrow-linebreak": 0,
-                    "operator-linebreak": 0,
-                    "array-element-newline": 0,
-                    "function-paren-newline": 0,
-                    "no-self-compare": 0,
-                    "no-case-declarations": 0,
-                    "default-case": 0,
-                    "no-empty": 0,
-                    "no-use-before-define": 0,
-                    "no-multi-assign": 0,
-                    "no-extend-native": 0,
-                    "no-prototype-builtins": 0,
-                    "array-callback-return": 1,
-                    "prefer-destructuring": 0,
-                    "no-restricted-syntax": ["error", "TemplateLiteral"],
-                    "no-restricted-globals": 0,
-                    "no-continue": 0,
-                    "no-console": 1,
-                    "no-else-return": 0,
-                    "no-useless-return": 0,
-                    "one-var-declaration-per-line": 0,
-                    "guard-for-in": 0,
-                    "no-new": 0,
-                    "radix": 0,
-                    "no-template-curly-in-string": 0,
-                    "no-useless-constructor": 0,
-                    "import/no-dynamic-require": 0,
-                    "import/no-cycle": [
-                        0,
-                        {
-                            "maxDepth": 3
-                        }
-                    ],
-                    "import/no-relative-packages": 0,
-                    "prefer-template": 0,
-                    "prefer-rest-params": 0,
-                    "no-restricted-properties": 0,
-                    "import/prefer-default-export": 0,
-                    "import/no-default-export": 0,
-                    "import/extensions": 0,
-                    "prefer-arrow-callback": 0,
-                    "arrow-body-style": ["error", "always"],
-                    "new-cap": 0,
-                    "prefer-const": 0,
-                    "padding-line-between-statements": [
-                        1,
-                        {
-                            "blankLine": "always",
-                            "prev": "function",
-                            "next": "*"
-                        }
-                    ],
-                    "no-return-await": 0,
-                    "no-multiple-empty-lines": 1,
-                    "no-mixed-operators": 0,
-                    "no-inner-declarations": 0,
-                    "lines-around-comment": ["error", { "beforeBlockComment": true }],
-                    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
-                    "newline-per-chained-call": 0
-                }
-
-            }
-        };
     }
 
     getExampleScreenshotPath(opName)
@@ -3293,7 +3089,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     updateOp(user, opName, updates, options = {})
     {
-        const opExists = this.opExists(opName);
+        const opExists = this.opExists(opName, true);
         let rebuildOpDocs = !opExists;
         if (updates)
         {
@@ -3390,6 +3186,11 @@ export default class SharedOpsUtil extends SharedUtil
         {
             return null;
         }
+    }
+
+    updateLibs(opName, libNames)
+    {
+        return [];
     }
 
     saveLayout(opName, layout)

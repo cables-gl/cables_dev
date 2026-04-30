@@ -419,7 +419,7 @@ export default class SharedDocUtil extends SharedUtil
                         for (let j = 0; j < opNamesForId.length; j++)
                         {
                             const opName = opNamesForId[j];
-                            if (!this._opsUtil.opExists(opName, false))
+                            if (!this._opsUtil.opExists(opName, true))
                             {
                                 removeOps.push(opName);
                             }
