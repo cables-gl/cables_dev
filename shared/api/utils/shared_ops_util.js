@@ -2676,7 +2676,7 @@ export default class SharedOpsUtil extends SharedUtil
             const oneOldName = oneRename.old;
             const oneNewName = oneRename.new;
 
-            const oldOpExists = this.opExists(oneOldName);
+            const oldOpExists = oneOldName && this.opExists(oneOldName);
             const problemNewPrefix = renames.length ? "<a href=\"/op/" + oneNewName + "\">" + oneNewName + "</a>: " : "";
             const problemOldPrefix = renames.length ? "<a href=\"/op/" + oneOldName + "\">" + oneOldName + "</a>: " : "";
 
