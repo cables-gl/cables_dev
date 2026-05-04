@@ -247,7 +247,9 @@ export default class SharedExportService extends SharedUtil
 
     createZip(project, files, callbackFinished)
     {
-        const zipFileName = this._projectsUtil.getExportFileName(project, this.getName());
+        let zipFileName = this._projectsUtil.getExportFileName(project, this.getName());
+        if (this.options.zipFileName) zipFileName = this.options.zipFileName;
+
         const zipPath = this._projectsUtil.getExportTargetPath(project);
         const zipLocation = path.join(zipPath, zipFileName);
 
