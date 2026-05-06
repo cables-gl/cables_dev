@@ -6,8 +6,10 @@ import jsonfile from "jsonfile";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
 {
+    command.log.info("assembling dependencies");
+
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -99,6 +101,7 @@ export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, m
         }
 
         const output = {
+            "name": "dependencies_" + namespace,
             "entry": {
                 "main": {
                     "import": path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile),

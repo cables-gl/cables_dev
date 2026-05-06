@@ -4,8 +4,10 @@ import webpack from "webpack";
 import { fileURLToPath } from "url";
 import TerserPlugin from "terser-webpack-plugin";
 
-export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
 {
+    command.log.info("assembling core");
+
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));

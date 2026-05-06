@@ -4,41 +4,57 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
 {
+    command.log.info("assembling html");
+
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    const combineJs = minify; // FIXME: needs combine option
-
     let deps = CablesWebpackHelper.getOpDependencies();
     let coreLibs = CablesWebpackHelper.getCoreLibs();
 
-    let jsonFileName = null;
-    const patchFiles = fs.readdirSync(sourceDir);
-    patchFiles.forEach((file) => {
-        if (path.basename(file).endsWith(".cables"))
-        {
-            jsonFileName = path.basename(file, ".cables");
-        }
-    });
+    let usedDeps = [];
+    let usedCoreLibs = [];
+    let patchSource = "patch: CABLES.exportedPatch";
 
-    let patchSource = "patchFile: 'js/" + jsonFileName + ".json'";
-    if (combineJs) patchSource = "patch: CABLES.exportedPatch";
-
-    let finalJsPath = "js/";
-    if(flat) finalJsPath = "";
-
-    const cablesjs = [];
-    if (combineJs)
+    if (!combineJs)
     {
-        cablesjs.push("patch.js");
+        usedDeps = deps;
+        usedCoreLibs = coreLibs;
+
+        let jsonFileName = null;
+        const patchFiles = fs.readdirSync(sourceDir);
+        patchFiles.forEach((file) =>
+        {
+            if (path.basename(file)
+                .endsWith(".cables"))
+            {
+                jsonFileName = path.basename(file, ".cables");
+            }
+        });
+
+        patchSource = "patchFile: 'js/" + jsonFileName + ".json'";
     }
     else
     {
-        cablesjs.push("cables.js");
-        cablesjs.push("ops.js");
+        // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
+        usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
+    }
+
+    let finalJsPath = "js/";
+    if (flat) finalJsPath = "";
+
+    const cablesJs = [];
+    if (combineJs)
+    {
+        cablesJs.push("patch.js");
+    }
+    else
+    {
+        cablesJs.push("cables.js");
+        cablesJs.push("ops.js");
     }
 
     const patchName = patchJson.name;
@@ -71,9 +87,9 @@ export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, m
                     "patchSource": patchSource,
                     "assetPath": "",
                     "jsPath": finalJsPath,
-                    "dependencies": deps,
-                    "cablesjs": cablesjs,
-                    "corelibs": coreLibs,
+                    "dependencies": usedDeps,
+                    "cablesjs": cablesJs,
+                    "corelibs": usedCoreLibs,
                 },
             },
         ),

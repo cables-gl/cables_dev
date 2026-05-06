@@ -7,19 +7,22 @@ import webpackAssetsConfig from "./webpack.assets.config.js";
 import webpackPatchFilesConfig from "./webpack.patchfiles.config.js";
 import webpackPatchJsonConfig from "./webpack.patchjson.config.js";
 import webpackOpDependenciesConfig from "./webpack.dependencies.config.js";
+import webpackCombineConfig from "./webpack.combine.config.js";
 
-export default (patchFile, sourceDir, targetDir, isLiveBuild = false, combinejs = false, flat = false, minify = false, sourceMap = false, minifyGlsl = false) =>
+export default (command, patchJson, sourceDir, targetDir, isLiveBuild = false, combineJs = false, flat = false, minify = false, sourceMap = false, minifyGlsl = false, clean = false) =>
 {
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const core = webpackConfigCore(patchFile, sourceDir, path.join(targetDir, "js"), isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const ops = webpackOpsConfig(patchFile, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const deps = webpackOpDependenciesConfig(patchFile, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const assets = webpackAssetsConfig(patchFile, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const files = webpackPatchFilesConfig(patchFile, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const json = webpackPatchJsonConfig(patchFile, sourceDir, path.join(targetDir, "js"), isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    const html = webpackHtmlConfig(patchFile, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl);
-    html.dependencies = ["core", "ops", "assets", "files", "json"];
+    const core = webpackConfigCore(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const ops = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const deps = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const assets = webpackAssetsConfig(command, patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const files = webpackPatchFilesConfig(command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const json = webpackPatchJsonConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    const combine = webpackCombineConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    combine.dependencies = [core.name, ops.name, json.name];
+    const html = webpackHtmlConfig(command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    html.dependencies = [assets.name, files.name, combine.name];
     return [
         core,
         ops,
@@ -27,6 +30,8 @@ export default (patchFile, sourceDir, targetDir, isLiveBuild = false, combinejs 
         assets,
         files,
         json,
+        combine,
         html,
     ];
+
 };

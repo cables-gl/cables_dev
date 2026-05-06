@@ -7,22 +7,28 @@ import { fileURLToPath } from "url";
 import CablesWebpackHelper from "./webpack.helper.js";
 import jsonfile from "jsonfile";
 
-export default (patchJson, sourceDir, targetDir, isLiveBuild, combinejs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
 {
+    command.log.info("assembling ops");
+
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     const opsGlob = path.join(sourceDir, "./**/Ops.**.js");
-    const opFiles = glob.sync(opsGlob);
+    const jsFiles = glob.sync(opsGlob);
 
     const opNames = [];
-    opFiles.forEach((opFile) => {
+    const opFiles = [];
+    jsFiles.forEach((opFile) => {
         const opName = path.basename(opFile, ".js");
-        const jsonFile = path.join(path.dirname(opFile), opName + ".json");
-        const opDocs = jsonfile.readFileSync(jsonFile);
-        CablesWebpackHelper.addOpToLookup(opDocs.id, opName);
-        opNames.push(opName);
+        if(path.dirname(opFile).includes(opName)) {
+            const jsonFile = path.join(path.dirname(opFile), opName + ".json");
+            const opDocs = jsonfile.readFileSync(jsonFile);
+            CablesWebpackHelper.addOpToLookup(opDocs.id, opName);
+            opNames.push(opName);
+            opFiles.push(opFile);
+        }
     });
 
     const plugins = [
