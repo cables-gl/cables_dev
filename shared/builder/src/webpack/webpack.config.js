@@ -16,19 +16,24 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild = false, c
 
     const coreConfig = webpackConfigCore(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
     const opsConfig = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
-    const depsConfig = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
+    const depsConfigs = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
+    const depsConfigNames = [];
+    depsConfigs.forEach((depsConfig) => {
+        depsConfigNames.push(depsConfig.name);
+    });
     const assetsConfig = webpackAssetsConfig(command, patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
     const filesConfig = webpackPatchFilesConfig(command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
     const jsonConfig = webpackPatchJsonConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
     const minifyConfig = webpackMinifyConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean);
+    minifyConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, ...depsConfigNames];
     const combineConfig = webpackCombineConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
-    combineConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, minifyConfig.name];
+    combineConfig.dependencies = [minifyConfig.name];
     const htmlConfig = webpackHtmlConfig(command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, false, sourceMap, minifyGlsl, clean);
     htmlConfig.dependencies = [assetsConfig.name, filesConfig.name, combineConfig.name];
     return [
         coreConfig,
         opsConfig,
-        ...depsConfig,
+        ...depsConfigs,
         assetsConfig,
         filesConfig,
         jsonConfig,
