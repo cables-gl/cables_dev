@@ -1,58 +1,78 @@
 import path from "path";
 import fs from "fs";
-import TerserPlugin from "terser-webpack-plugin";
+import { minify } from "terser";
 import { glob } from "glob";
+import jsonfile from "jsonfile";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, doMinify, sourceMap) =>
 {
-    command.log.info("minify js", targetDir, minify);
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const plugins = [];
+    const plugins = [
+        {
+            apply(compiler)
+            {
+                compiler.hooks.thisCompilation.tap("CablesWebpackMinifyPlugin", async (compilation) =>
+                {
+                    const code = {};
+                    if(doMinify) {
+                        // collect jsfiles
+                        const jsGlob = path.join(targetDir, "./**/**.js");
+                        const jsFiles = glob.sync(jsGlob);
+                        jsFiles.forEach((jsFile) =>
+                        {
+                            code[jsFile] = fs.readFileSync(jsFile, "utf8");
+                        });
+
+                        for (const file of jsFiles) {
+                            const code = fs.readFileSync(file, "utf8");
+
+                            const result = await minify(code, {
+                                compress: true,
+                                mangle: true,
+                                format: { comments: false },
+                                sourceMap: sourceMap ? {
+                                    filename: path.basename(file).replace(/\.js$/, ".min.js"),
+                                    url: path.basename(file) + ".map"
+                                } : false
+                            });
+
+                            const outFile = file.replace(/\.js$/, ".js");
+                            fs.writeFileSync(outFile, result.code ?? "", "utf8");
+
+                            if (sourceMap && result.map) {
+                                fs.writeFileSync(outFile + ".map", result.map, "utf8");
+                            }
+
+                            command.log.info("minified", outFile);
+                        }
+
+                        let jsonFileName = null;
+                        const patchFiles = fs.readdirSync(sourceDir);
+                        patchFiles.forEach((file) =>
+                        {
+                            if (path.basename(file).endsWith(".cables"))
+                            {
+                                jsonFileName = path.basename(file, ".cables") + ".json";
+                            }
+                        });
+                        if(jsonFileName) {
+                            const patchJson = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
+                            await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), patchJson);
+                        }
+
+                    }
+                });
+            }
+        }
+    ];
 
     return {
         "name": "minify",
-        "mode": isLiveBuild ? "production" : "development",
-        "entry": () => {
-            const entries = {};
-            if(minify) {
-                // collect jsfiles
-                const jsGlob = path.join(targetDir, "./**/**.js");
-                const jsFiles = glob.sync(jsGlob);
-                jsFiles.forEach((jsFile) =>
-                {
-                    entries[path.basename(jsFile, ".js")] = jsFile;
-                });
-
-                let jsonFileName = null;
-                const patchFiles = fs.readdirSync(sourceDir);
-                patchFiles.forEach((file) =>
-                {
-                    if (path.basename(file)
-                        .endsWith(".cables"))
-                    {
-                        jsonFileName = path.basename(file, ".cables");
-                    }
-                });
-
-                entries.cables = path.resolve(path.join(targetDir, "cables.js"));
-                entries.ops = path.resolve(path.join(targetDir, "ops.js"));
-            }
-            return entries;
-        },
+        "mode": buildMode,
         "output": {
-            "path": targetDir,
-            "filename": "[name].js",
+            "path": targetDir
         },
-        "plugins": plugins,
-        "optimization": {
-            "minimizer": [
-                new TerserPlugin({
-                    "extractComments": false,
-                    "terserOptions": { "format": { "comments": false } },
-                })],
-            "minimize": minify,
-        },
-
+        "plugins": plugins
     };
 };

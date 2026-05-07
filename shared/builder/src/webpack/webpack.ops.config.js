@@ -1,13 +1,12 @@
 import path from "path";
 import fs from "fs";
 import webpack from "webpack";
-import TerserPlugin from "terser-webpack-plugin";
 import { glob } from "glob";
 import { fileURLToPath } from "url";
 import CablesWebpackHelper from "./webpack.helper.js";
 import jsonfile from "jsonfile";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 {
     command.log.info("assembling ops");
 
@@ -82,21 +81,14 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
 
     return {
         "name": "ops",
-        "mode": isLiveBuild ? "production" : "development",
+        "mode": buildMode,
         "entry": opFiles,
-        "devtool": minify ? "source-map" : sourceMap,
         "output": {
             "path": targetDir,
             "filename": "ops.js",
         },
         "optimization": {
             "concatenateModules": true,
-            "minimizer": [
-                new TerserPlugin({
-                    "extractComments": false,
-                    "terserOptions": { "output": { "comments": false } },
-                })],
-            "minimize": minify,
             "usedExports": true,
         },
         "module": {

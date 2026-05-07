@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl, clean) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, clean) =>
 {
     command.log.info("combining js");
     fs.mkdirSync(targetDir, { "recursive": true });
@@ -94,8 +94,7 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
 
     return {
         "name": "combine",
-        "mode": isLiveBuild ? "production" : "development",
-        "devtool": minify ? "source-map" : sourceMap,
+        "mode": buildMode,
         "plugins": plugins,
         "output": {
             "path": targetDir,

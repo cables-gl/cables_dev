@@ -2,7 +2,7 @@ import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
 import fs from "fs";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 {
     command.log.info("assembling patchfiles");
 
@@ -23,8 +23,7 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
 
     return {
         "name": "files",
-        "mode": isLiveBuild ? "production" : "development",
-        "devtool": minify ? "source-map" : sourceMap,
+        "mode": buildMode,
         "plugins": plugins,
         "output": {
             "path": targetDir,

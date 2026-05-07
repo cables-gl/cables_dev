@@ -3,7 +3,7 @@ import fs from "fs";
 import webpack from "webpack";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat) =>
 {
 
     command.log.info("assembling patchjson");
@@ -47,12 +47,11 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
 
     return {
         "name": "patchjson",
-        "mode": isLiveBuild ? "production" : "development",
+        "mode": buildMode,
         "entry": {},
         "output": {
             "path": targetDir
         },
-        "devtool": minify ? "source-map" : sourceMap,
         "plugins": plugins
     };
 };

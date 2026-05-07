@@ -2,9 +2,8 @@ import path from "path";
 import fs from "fs";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
-import TerserPlugin from "terser-webpack-plugin";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 {
     command.log.info("assembling core");
 
@@ -23,11 +22,10 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
     ];
     return {
         "name": "core",
-        "mode": isLiveBuild ? "production" : "development",
+        "mode": buildMode,
         "entry": [
             path.join(__coreDir, "src", "core", "index.js")
         ],
-        "devtool": minify ? "source-map" : sourceMap,
         "output": {
             "path": targetDir,
             "filename": "cables.js",
@@ -38,11 +36,6 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
         },
         "optimization": {
             "concatenateModules": true,
-            "minimizer": [new TerserPlugin({
-                "extractComments": false,
-                "terserOptions": { "output": { "comments": false } }
-            })],
-            "minimize": minify,
             "usedExports": true
         },
         "module": {

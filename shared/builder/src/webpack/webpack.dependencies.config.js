@@ -1,12 +1,11 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import TerserPlugin from "terser-webpack-plugin";
 import { glob } from "glob";
 import jsonfile from "jsonfile";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 {
     command.log.info("assembling dependencies");
 
@@ -133,19 +132,14 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
     for (let i = 0; i < coreLibs.length; i++)
     {
         const namespace = coreLibs[i];
-        entryAndOutputObjects.push(createOutputEntryObjectsNamespace(namespace, isLiveBuild));
+        entryAndOutputObjects.push(createOutputEntryObjectsNamespace(namespace, buildMode));
     }
 
     const defaultConfig = {
-        "mode": "production",
+        "mode": buildMode,
         "devtool": false,
         "optimization": {
             "concatenateModules": true,
-            "minimizer": [new TerserPlugin({
-                "extractComments": false,
-                "terserOptions": { "output": { "comments": false } }
-            })],
-            "minimize": minify,
             "usedExports": true
         },
         "module": {

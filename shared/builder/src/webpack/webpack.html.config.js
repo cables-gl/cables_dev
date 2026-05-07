@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs, flat, minify, sourceMap, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat) =>
 {
     command.log.info("assembling html");
 
@@ -97,7 +97,7 @@ export default (command, patchJson, sourceDir, targetDir, isLiveBuild, combineJs
 
     return {
         "name": "html",
-        "mode": isLiveBuild ? "production" : "development",
+        "mode": buildMode,
         "output": {
             "path": targetDir,
             "filename": path.join("js", "index.html"),
