@@ -18,7 +18,7 @@ class HandlebarsHelper
                 let escaped = Handlebars.escapeExpression(str);
                 if (marked) escaped = marked.parse(escaped);
                 if (setOpLinks) escaped = this._setOpLinks(escaped, linkTarget);
-                return new Handlebars.SafeString(escaped);
+                return new Handlebars.SafeString("<div class=\"md\">" + escaped + "</div>");
             });
 
             Handlebars.registerHelper("round", (str) =>
