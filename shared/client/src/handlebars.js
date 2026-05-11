@@ -238,6 +238,24 @@ class HandlebarsHelper
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
 
+            Handlebars.registerHelper("tooltiprelativedate", (str) =>
+            {
+                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
+                let date = str;
+                let displayDate;
+                if (str && moment)
+                {
+                    const m = moment(str);
+                    displayDate = m.fromNow();
+                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                }
+                else
+                {
+                    displayDate = "";
+                }
+                return new Handlebars.SafeString(displayDate);
+            });
+
             Handlebars.registerHelper("textconstant", (str) =>
             {
                 const locale = "en";
