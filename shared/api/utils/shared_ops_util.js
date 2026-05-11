@@ -2700,7 +2700,7 @@ export default class SharedOpsUtil extends SharedUtil
             const existingNamespace = this.namespaceExists(newNamespace, opDocs);
             if (existingNamespace && newNamespace !== existingNamespace)
             {
-                problems.namespace_name_taken = "Namespace with same name (ignoring case) exists already: `" + existingNamespace + "`.";
+                problems.namespace_name_taken = "Namespace conflicts with : \"" + existingNamespace + "\", maybe wrong camel casing?";
             }
 
             if (oneNewName.endsWith(".")) problems.name_ends_with_dot = problemNewPrefix + "Op name cannot end with '.'.";
