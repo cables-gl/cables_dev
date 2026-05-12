@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import CablesWebpackHelper from "./webpack.helper.js";
 import jsonfile from "jsonfile";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl) =>
 {
     command.log.info("assembling ops");
 
@@ -98,6 +98,9 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
                     "test": /\.js/,
                     "use": {
                         "loader": path.resolve(path.join(__dirname, "./webpack.op.loader.js")),
+                        "options": {
+                            "minifyGlsl": minifyGlsl,
+                        }
                     },
                 },
             ],

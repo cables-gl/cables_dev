@@ -110,7 +110,7 @@ class CablesWebpackHelper
         return readable;
     }
 
-    makeExportable(p, keepAlso = [], assetPath = null)
+    makeExportable(p, keepAlso = [])
     {
         let readable = JSON.parse(JSON.stringify(p));
         readable = this.makeReadable(readable, true, false);

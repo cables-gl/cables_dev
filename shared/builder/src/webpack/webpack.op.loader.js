@@ -22,15 +22,14 @@ class CablesWebpackOpLoader {
         }
     }
 
-    build(code) {
+    build(code, options = {}) {
 
         const fn = this._filename;
         const dir = fs.readdirSync(path.dirname(fn));
         const prepareForExport = true;
         const opName = this._opName;
         const opId = this._opDocs.id;
-        const assetPath = ""; // FIXME
-        const minifyGlsl = false; // FIXME
+        const minifyGlsl = options.minifyGlsl;
 
         try
         {
@@ -68,7 +67,7 @@ class CablesWebpackOpLoader {
                         try
                         {
                             let subPatch = JSON.parse(content);
-                            subPatch = CablesWebpackHelper.makeExportable(subPatch, [], assetPath);
+                            subPatch = CablesWebpackHelper.makeExportable(subPatch);
                             subPatch = JSON.stringify(subPatch);
                             content = subPatch;
                         } catch (e)
@@ -143,7 +142,7 @@ class CablesWebpackOpLoader {
 
                 if (token.type === "whitespace")
                 {
-                    if (token.data.indexOf("\n") == 0 && token.data.endsWith(" ")) token.data = "\n";
+                    if (token.data.indexOf("\n") === 0 && token.data.endsWith(" ")) token.data = "\n";
 
                     for (let j = 0; j < 3; j++)
                         token.data = token.data.replaceAll("\n\n", "\n");
@@ -182,7 +181,8 @@ class CablesWebpackOpLoader {
 
 // do not use arrow-function, needs proper `this`
 export default function (code) {
+    const options = this.getOptions();
     const loader = new CablesWebpackOpLoader(this);
-    return loader.build(code)
+    return loader.build(code, options)
 }
 

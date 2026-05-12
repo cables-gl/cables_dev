@@ -33,7 +33,7 @@ export default (command, patchJson, sourceDir, targetDir, options) =>
     const clean = options.clean;
 
     const coreConfig = webpackConfigCore(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode);
-    const opsConfig = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode);
+    const opsConfig = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, minifyGlsl);
     const depsConfigs = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode);
     const depsConfigNames = [];
     depsConfigs.forEach((depsConfig) => {
