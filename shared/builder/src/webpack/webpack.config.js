@@ -31,12 +31,14 @@ export default (command, patchJson, sourceDir, targetDir, options) =>
     const sourceMap = options.sourcemaps;
     const minifyGlsl = options.minifyglsl;
     const clean = options.clean;
+    const indexHtml = options.indexHtml;
 
     const coreConfig = webpackConfigCore(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode);
     const opsConfig = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, minifyGlsl);
     const depsConfigs = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode);
     const depsConfigNames = [];
-    depsConfigs.forEach((depsConfig) => {
+    depsConfigs.forEach((depsConfig) =>
+    {
         depsConfigNames.push(depsConfig.name);
     });
     const assetsConfig = webpackAssetsConfig(command, patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), buildMode);
@@ -46,7 +48,7 @@ export default (command, patchJson, sourceDir, targetDir, options) =>
     minifyConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, ...depsConfigNames];
     const combineConfig = webpackCombineConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, clean);
     combineConfig.dependencies = [minifyConfig.name];
-    const htmlConfig = webpackHtmlConfig(command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat);
+    const htmlConfig = webpackHtmlConfig(command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml);
     htmlConfig.dependencies = [assetsConfig.name, filesConfig.name, combineConfig.name];
     return [
         coreConfig,

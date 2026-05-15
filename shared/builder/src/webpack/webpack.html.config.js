@@ -4,62 +4,66 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml) =>
 {
-    command.log.info("assembling html");
-
-    fs.mkdirSync(targetDir, { "recursive": true });
-
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    let deps = CablesWebpackHelper.getOpDependencies();
-    let coreLibs = CablesWebpackHelper.getCoreLibs();
-
-    let usedDeps = [];
-    let usedCoreLibs = [];
-    let patchSource = "patch: CABLES.exportedPatch";
-
-    if (!combineJs)
+    const plugins = [];
+    if (indexHtml)
     {
-        usedDeps = deps;
-        usedCoreLibs = coreLibs;
+        command.log.info("assembling html");
 
-        let jsonFileName = null;
-        const patchFiles = fs.readdirSync(sourceDir);
-        patchFiles.forEach((file) =>
+        fs.mkdirSync(targetDir, { "recursive": true });
+
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+        let deps = CablesWebpackHelper.getOpDependencies();
+        let coreLibs = CablesWebpackHelper.getCoreLibs();
+
+        let usedDeps = [];
+        let usedCoreLibs = [];
+        let patchSource = "patch: CABLES.exportedPatch";
+
+        if (!combineJs)
         {
-            if (path.basename(file)
-                .endsWith(".cables"))
+            usedDeps = deps;
+            usedCoreLibs = coreLibs;
+
+            let jsonFileName = null;
+            const patchFiles = fs.readdirSync(sourceDir);
+            patchFiles.forEach((file) =>
             {
-                jsonFileName = path.basename(file, ".cables");
-            }
-        });
+                if (path.basename(file)
+                    .endsWith(".cables"))
+                {
+                    jsonFileName = path.basename(file, ".cables");
+                }
+            });
 
-        patchSource = "patchFile: 'js/" + jsonFileName + ".json'";
-    }
-    else
-    {
+            patchSource = "patchFile: 'js/" + jsonFileName + ".json'";
+        }
+        else
+        {
         // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
-        usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
-    }
+            usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
+        }
 
-    let finalJsPath = "js/";
-    if (flat) finalJsPath = "";
+        let finalJsPath = "js/";
+        if (flat) finalJsPath = "";
 
-    const cablesJs = [];
-    if (combineJs)
-    {
-        cablesJs.push("patch.js");
-    }
-    else
-    {
-        cablesJs.push("cables.js");
-        cablesJs.push("ops.js");
-    }
+        const cablesJs = [];
+        if (combineJs)
+        {
+            cablesJs.push("patch.js");
+        }
+        else
+        {
+            cablesJs.push("cables.js");
+            cablesJs.push("ops.js");
+        }
 
-    const patchName = patchJson.name;
-    const plugins = [
-        new HtmlWebpackPlugin({
+        const patchName = patchJson.name;
+
+        plugins.push(
+            new HtmlWebpackPlugin({
                 "template": path.resolve(path.join(__dirname, "./patchview_export.hbs")),
                 "minify": false,
                 "title": patchName,
@@ -92,8 +96,9 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                     "corelibs": usedCoreLibs,
                 },
             },
-        ),
-    ];
+            )
+        );
+    }
 
     return {
         "name": "html",
@@ -102,11 +107,11 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
             "path": targetDir,
             "filename": path.join("js", "index.html"),
         },
-        module: {
-            rules: [
+        "module": {
+            "rules": [
                 {
-                    test: /\.hbs$/,
-                    loader: "handlebars-loader",
+                    "test": /\.hbs$/,
+                    "loader": "handlebars-loader",
                 },
             ],
         },
