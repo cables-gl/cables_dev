@@ -115,7 +115,6 @@ export default class SharedProjectsUtil extends SharedUtil
             "name": project.name,
             "description": project.description,
             "link": project.link,
-            "allowEdit": allowEdit,
             "cachedUsername": project.cachedUsername,
             "summary": project.summary,
             "tags": project.tags,
@@ -151,6 +150,8 @@ export default class SharedProjectsUtil extends SharedUtil
         }
 
         if (keepOps) readable.ops = project.ops;
+        if (allowEdit) readable.allowEdit = allowEdit;
+
         return readable;
     }
 
@@ -161,7 +162,7 @@ export default class SharedProjectsUtil extends SharedUtil
      * information for projects that are marked as an example for ops
      **
      * @param ps project or array of projects
-     * @param keepOps do not remove ops from the project (i.e. in export)
+     * @param keepOps do not remove ops from the project (e.g. in export)
      * @param allowEdit
      * @returns {({}|*[]|*)} project or array of projects
      */

@@ -286,12 +286,14 @@ export default class SharedExportService extends SharedUtil
     {
         const exportNumber = proj.exports;
         let proJson = this._projectsUtil.makeReadable(proj, true);
-
-        const keepInExport = ["_id", "ops", "shortId", "name", ...keepAlso];
+        const keepInExport = ["_id", "ops", "shortId", "name", "ui", ...keepAlso];
         for (let key in proJson)
         {
             if (!keepInExport.includes(key)) delete proJson[key];
         }
+        keepInExport.forEach((keep) => {
+            proJson[keep] = proj[keep];
+        })
         proJson.export = {
             "time": moment().format(CablesConstants.DATE_FORMAT_LOGDATE),
             "service": this.getName(),
