@@ -11,9 +11,8 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const __coreDir = path.join(__dirname, ".." , "..", "node_modules" , "cables");
-    const __devDir = path.join(__dirname, ".." , "..", "node_modules" , "cables_dev");
+    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables"))), "..", "..");
+    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev")));
 
     // collect opdependencies
     const opsJsonGlob = path.join(sourceDir, "./**/Ops.**.json");
@@ -23,21 +22,27 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
     opJsonFiles.forEach((file, i) =>
     {
         const opJson = jsonfile.readFileSync(file);
-        if(opJson.libs) {
-            opJson.libs.forEach((lib) => {
+        if (opJson.libs)
+        {
+            opJson.libs.forEach((lib) =>
+            {
                 const sourceFile = path.resolve(__devDir, "shared", "libs", lib);
                 const targetFile = path.resolve(targetDir, lib);
                 fs.copyFileSync(sourceFile, targetFile);
                 CablesWebpackHelper.addOpDependency(lib);
             });
         }
-        if(opJson.dependencies) {
-            for(let i = 0; i < opJson.dependencies.length; i++) {
+        if (opJson.dependencies)
+        {
+            for (let i = 0; i < opJson.dependencies.length; i++)
+            {
                 const dependency = opJson.dependencies[i];
                 const validTypes = ["commonjs", "module"];
-                if(validTypes.includes(dependency.type)) {
+                if (validTypes.includes(dependency.type))
+                {
                     const isRemote = /^https?:\/\//i.test(dependency.src);
-                    if(!isRemote) {
+                    if (!isRemote)
+                    {
                         const sourceFile = path.resolve(path.dirname(file), dependency.src);
                         const targetFile = path.resolve(targetDir, dependency.src);
                         fs.copyFileSync(sourceFile, targetFile);

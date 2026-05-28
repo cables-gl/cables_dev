@@ -9,8 +9,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const __coreDir = path.join(__dirname, ".." , "..", "node_modules" , "cables");
+    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables"))), "..", "..");
 
     const plugins = [
         new webpack.BannerPlugin({
