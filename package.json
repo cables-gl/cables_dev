@@ -2,7 +2,7 @@
     "name": "cables_dev",
     "version": "1.0.0",
     "description": "cables development environment",
-    "main": "index.js",
+    "main": "start.js",
     "type": "module",
     "scripts": {
         "start": "cross-env node start.js",
