@@ -84,6 +84,9 @@
             ".woff",
             ".woff2"
         ],
+        "hdr": [
+            ".hdr"
+        ],
         "mesh sequence": [
             ".seq.zip"
         ],
