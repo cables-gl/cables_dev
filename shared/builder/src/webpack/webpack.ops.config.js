@@ -3,10 +3,10 @@ import fs from "fs";
 import webpack from "webpack";
 import { glob } from "glob";
 import { fileURLToPath } from "url";
-import CablesWebpackHelper from "./webpack.helper.js";
 import jsonfile from "jsonfile";
+import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl) =>
+export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl, combineJs) =>
 {
     command.log.info("assembling ops");
 
@@ -19,9 +19,11 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl)
 
     const opNames = [];
     const opFiles = [];
-    jsFiles.forEach((opFile) => {
+    jsFiles.forEach((opFile) =>
+    {
         const opName = path.basename(opFile, ".js");
-        if(path.dirname(opFile).includes(opName)) {
+        if (path.dirname(opFile).includes(opName))
+        {
             const jsonFile = path.join(path.dirname(opFile), opName + ".json");
             const opDocs = jsonfile.readFileSync(jsonFile);
             CablesWebpackHelper.addOpToLookup(opDocs.id, opName);
@@ -56,15 +58,19 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl)
                     }
                 });
                 namespaces = CablesWebpackHelper.uniqueArray(namespaces);
-                namespaces.sort((a, b) => a.localeCompare(b));
+                namespaces.sort((a, b) => { return a.localeCompare(b); });
                 namespaces.forEach((namespace) =>
                 {
                     banner += namespace + "=" + namespace + "|| {};\n";
                 });
                 return banner;
             },
-        }),
-        new webpack.BannerPlugin({
+        })
+    ];
+
+    if (!combineJs)
+    {
+        plugins.push(new webpack.BannerPlugin({
             "entryOnly": true,
             "footer": true,
             "raw": true,
@@ -76,8 +82,8 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, minifyGlsl)
                 banner += "});\n";
                 return banner;
             },
-        })
-    ];
+        }));
+    }
 
     return {
         "name": "ops",
