@@ -1232,6 +1232,20 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
+    getOpDependencyCode(opName, dep)
+    {
+        if (!opName || !dep) return "";
+        const depFile = path.join(this.getOpAbsolutePath(opName), path.basename(dep));
+        try
+        {
+            return fs.readFileSync(depFile).toString();
+        }
+        catch (e)
+        {
+            this._log.warn("failed to read op dependency file", opName, dep, e);
+        }
+    }
+
     removeOpDependency(opName, dep)
     {
         if (!opName || !dep) return false;
@@ -2528,7 +2542,7 @@ export default class SharedOpsUtil extends SharedUtil
     updateAttachment(opName, attName, content, force = false)
     {
         let p = this.getOpAbsolutePath(opName);
-        p = path.join(p, sanitizeFileName(attName));
+        p = path.join(p, sanitizeFileName(path.basename(attName)));
 
         if (this.isCoreOp(opName))
         {
