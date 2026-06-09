@@ -201,9 +201,7 @@ export default class SharedOpsUtil extends SharedUtil
         const nameLookup = this._docsUtil.getCachedOpLookup();
         if (nameLookup && nameLookup.names)
         {
-            const opNames = Object.keys(nameLookup.names);
-            const opName = opNames.find((key) => { return key.toLowerCase() === objName.toLowerCase(); });
-            let lookupId = nameLookup.names[opName];
+            let lookupId = nameLookup.names[objName];
             if (!lookupId)
             {
                 const opDoc = this._docsUtil.buildOpDocs(objName);
