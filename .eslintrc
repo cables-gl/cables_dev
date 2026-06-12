@@ -101,10 +101,10 @@
             1,
             "always"
         ],
-        "comma-dangle": 0,
+        "comma-dangle": ["error", "never"],
         "nonblock-statement-body-position": 0,
         "curly": 0,
-        "object-shorthand": 0,
+        "object-shorthand": ["error", "never"],
         "prefer-spread": 0,
         "no-loop-func": 0,
         "no-trailing-spaces": 1,
