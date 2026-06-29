@@ -573,13 +573,16 @@ export default class SharedOpsUtil extends SharedUtil
                         "text": "uses deprecated asset lib " + lib
                     });
                 }
+                else
+                {
+                    srcWarnings.push({
+                        "type": "oldlib",
+                        "id": "deprecated lib: " + lib,
+                        "filename": lib,
+                        "text": "uses deprecated op lib " + lib
+                    });
+                }
 
-                srcWarnings.push({
-                    "type": "oldlib",
-                    "id": "deprecated lib: " + lib,
-                    "filename": lib,
-                    "text": "uses deprecated op lib " + lib
-                });
             });
         }
 
