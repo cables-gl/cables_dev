@@ -575,6 +575,7 @@ export default class SharedOpsUtil extends SharedUtil
                 srcWarnings.push({
                     "type": "oldlib",
                     "id": "deprecated lib: " + lib,
+                    "filename": lib,
                     "text": "uses deprecated op lib " + lib
                 });
             });
@@ -3139,8 +3140,8 @@ export default class SharedOpsUtil extends SharedUtil
                                     message
                                 } = format.message;
                                 this._log.info({
-                                    line,
-                                    message
+                                    "line": line,
+                                    "message": message
                                 });
                                 return;
                             }
