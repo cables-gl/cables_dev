@@ -601,12 +601,8 @@ export default class SharedDocUtil extends SharedUtil
                 }
                 catch (e2)
                 {
-                    this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
+                    this._log.warn("failed to read opdocs from file", opName, jsonFilename, e2);
                 }
-            }
-            else
-            {
-                this._log.error("failed to read opdocs from file", opName, jsonFilename, e);
             }
         }
 
