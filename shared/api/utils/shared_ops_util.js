@@ -568,6 +568,8 @@ export default class SharedOpsUtil extends SharedUtil
                     srcWarnings.push({
                         "type": "oldlib",
                         "id": "deprecated asset lib: " + lib,
+                        "filename": lib,
+                        "assetLib": true,
                         "text": "uses deprecated asset lib " + lib
                     });
                 }
