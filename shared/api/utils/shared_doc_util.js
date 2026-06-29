@@ -592,7 +592,22 @@ export default class SharedDocUtil extends SharedUtil
         }
         catch (e)
         {
-            if (fs.existsSync(jsonFilename)) this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
+            if (fs.existsSync(jsonFilename))
+            {
+                // try to read again to avoid raceconditons on different nodes
+                try
+                {
+                    js = jsonfile.readFileSync(jsonFilename);
+                }
+                catch (e2)
+                {
+                    this._log.warn("failed to read opdocs from file", opName, jsonFilename, e);
+                }
+            }
+            else
+            {
+                this._log.error("failed to read opdocs from file", opName, jsonFilename, e);
+            }
         }
 
         if (js)
