@@ -632,12 +632,6 @@ export default class SharedOpsUtil extends SharedUtil
                 });
             }
 
-            if (code.indexOf("void main()") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "inlineShaderCode",
-                "text": "found shader code in the .js, should be put to an attachment"
-            });
-
             if (code.indexOf("self.") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "self",
@@ -648,12 +642,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "type": "code",
                 "id": "mvMatrix",
                 "text": "use of `MvMatrix` is deprecated, use cgl.mMatrix / cgl.vMatrix instead."
-            });
-
-            if (code.indexOf("OP_PORT_TYPE_TEXTURE") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "texturePortType",
-                "text": "use `op.inTexture(\"name\")` to create a texture port "
             });
 
             if (opName.indexOf("Ops.Gl.ImageCompose") >= 0 && code.indexOf("checkOpInEffect") == -1 && opName.indexOf("ImageCompose") == -1) srcWarnings.push({
