@@ -574,7 +574,8 @@ export default class SharedProjectsUtil extends SharedUtil
      */
     getExportFileName(project, exportType)
     {
-        const projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + exportType + "_" + project.exports;
+        let projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + exportType;
+        if (project.exports) projectNameVer += "_" + project.exports;
         return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
     }
 
