@@ -129,4 +129,14 @@ export default class SharedUtil
     {
         return this._utilProvider.getUtil(UtilProvider.FILES_UTIL);
     }
+
+    /**
+     *
+     * @return {*}
+     * @protected
+     */
+    get _storageUtil()
+    {
+        return this._utilProvider.getUtil(UtilProvider.STORAGE_UTIL);
+    }
 }

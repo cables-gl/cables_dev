@@ -81,7 +81,7 @@ export default class SharedProjectsUtil extends SharedUtil
                         {
                             const fn = path.join(p, "screenshot." + ext);
                             this._log.verbose("save op screenshot to", fn);
-                            fs.writeFileSync(fn, bitmap);
+                            this._storageUtil.writeFileSync(fn, bitmap);
                         }
                         else this._log.error("invalid op screenshot path: ", op, p);
                     }
@@ -95,7 +95,7 @@ export default class SharedProjectsUtil extends SharedUtil
 
             if (proj.settings && proj.settings.manualScreenshot) this._log.event(null, "project", "screenshot", "manually_saved");
             const filenameScreenshot = this.getScreenShotFileName(proj, ext);
-            fs.writeFileSync(filenameScreenshot, bitmap);
+            this._storageUtil.writeFileSync(filenameScreenshot, bitmap);
             return filenameScreenshot;
         }
         else

@@ -1084,10 +1084,10 @@ export default class SharedDocUtil extends SharedUtil
         switch (cache)
         {
         case this.OP_LOOKUP_CACHE:
-            jsonfile.writeFileSync(this.opLookupFilename, data);
+            this._storageUtil.writeJsonFileSync(this.opLookupFilename, data);
             break;
         case this.OP_DOCS_CACHE:
-            jsonfile.writeFileSync(this.opdocsFilename, data);
+            this._storageUtil.writeJsonFileSync(this.opdocsFilename, data);
             break;
         }
     }

@@ -33,6 +33,7 @@
         "sanitize-filename": "1.6.3",
         "uuid-v4": "0.1.0",
         "uglify-js": "3.18.0",
+        "write-file-atomic": "6.0.0",
         "xml-writer": "1.7.0",
         "md5-file": "5.0.0"
     },

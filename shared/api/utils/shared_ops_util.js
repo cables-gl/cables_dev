@@ -356,7 +356,7 @@ export default class SharedOpsUtil extends SharedUtil
                     obj.changelog = obj.changelog.concat(changes);
                 }
                 obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
-                jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
+                this._storageUtil.writeJsonFileSync(filename, obj);
                 this._docsUtil.updateOpDocs(opName);
             }
         }
@@ -1100,7 +1100,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (newOpDocs.length > 0)
         {
             newOpDocs = this.addVersionInfoToOps(newOpDocs, true);
-            jsonfile.writeFileSync(collectionFile, newOpDocs, this.OPJSON_FORMAT);
+            this._storageUtil.writeJsonFileSync(collectionFile, newOpDocs);
         }
         else if (fs.existsSync(collectionFile))
         {
@@ -1213,7 +1213,7 @@ export default class SharedOpsUtil extends SharedUtil
 
                 opDoc.dependencies = deps;
                 opDoc = this._docsUtil.cleanOpDocData(opDoc);
-                jsonfile.writeFileSync(opDocFile, opDoc, this.OPJSON_FORMAT);
+                this._storageUtil.writeJsonFileSync(opDocFile, opDoc);
                 this._docsUtil.updateOpDocs(opName);
                 return true;
             }
@@ -1262,7 +1262,7 @@ export default class SharedOpsUtil extends SharedUtil
                     if (!(d.src === dep.src)) newDeps.push(d);
                 });
                 opDoc.dependencies = newDeps;
-                if (opDoc.dependencies) jsonfile.writeFileSync(opDocFile, opDoc, this.OPJSON_FORMAT);
+                if (opDoc.dependencies) this._storageUtil.writeJsonFileSync(opDocFile, opDoc);
                 this._docsUtil.updateOpDocs(opName);
                 return true;
             }
@@ -1282,7 +1282,7 @@ export default class SharedOpsUtil extends SharedUtil
         const absoluteFile = path.join(opDir, fileName);
         try
         {
-            fs.writeFileSync(absoluteFile, buffer);
+            this._storageUtil.writeFileSync(absoluteFile, buffer);
             return fileName;
         }
         catch (e)
@@ -1444,7 +1444,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (!existsPath) mkdirp.sync(dirName);
             existsPath = fs.existsSync(dirName);
         }
-        if (existsPath && !exists) jsonfile.writeFileSync(filename, {}, this.OPJSON_FORMAT);
+        if (existsPath && !exists) this._storageUtil.writeJsonFileSync(filename, {});
         if (!existsPath) return null;
 
         return filename;
@@ -2083,7 +2083,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (hasChanged)
         {
-            jsonfile.writeFileSync(jsonFile, jsonData, this.OPJSON_FORMAT);
+            this._storageUtil.writeJsonFileSync(jsonFile, jsonData);
             this._docsUtil.updateOpDocs(opName);
         }
         return jsonData;
@@ -2289,7 +2289,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (existsPath && !existsFile && create)
         {
-            jsonfile.writeFileSync(filename, { "name": name }, this.OPJSON_FORMAT);
+            this._storageUtil.writeJsonFileSync(filename, { "name": name });
             existsFile = true;
         }
         if (!existsPath || !existsFile) return null;
@@ -2311,7 +2311,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         if (existsPath && !existsFile && create)
         {
-            jsonfile.writeFileSync(filename, { "name": name }, this.OPJSON_FORMAT);
+            this._storageUtil.writeJsonFileSync(filename, { "name": name });
             existsFile = true;
         }
         if (!existsPath || !existsFile) return null;
@@ -2461,7 +2461,7 @@ export default class SharedOpsUtil extends SharedUtil
         mkdirp.sync(opDir);
         const fn = this.getOpAbsoluteFileName(opName);
         let returnedCode = this._helperUtil.removeTrailingSpaces(code);
-        fs.writeFileSync(fn, returnedCode);
+        this._storageUtil.writeFileSync(fn, returnedCode);
         this.updateOpJson(opName, author);
         return returnedCode;
     }
@@ -2497,7 +2497,7 @@ export default class SharedOpsUtil extends SharedUtil
             try
             {
                 const jsonFile = this.getOpJsonPath(opName);
-                jsonfile.writeFileSync(jsonFile, opJson, this.OPJSON_FORMAT);
+                this._storageUtil.writeJsonFileSync(jsonFile, opJson);
                 this._docsUtil.updateOpDocs(opName);
             }
             catch (e)
@@ -2527,7 +2527,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
             }
             content = this._helperUtil.removeTrailingSpaces(content);
-            fs.writeFileSync(p, content, "utf8");
+            this._storageUtil.writeFileSync(p, content, "utf8");
             return p;
         }
         return null;
@@ -2564,7 +2564,7 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (!subPatchProblems || force)
         {
-            fs.writeFileSync(p, content, "utf8");
+            this._storageUtil.writeFileSync(p, content, "utf8");
         }
         return subPatchProblems;
     }
@@ -2908,7 +2908,7 @@ export default class SharedOpsUtil extends SharedUtil
         const filename = this.getOpJsonPath(opName);
         const obj = jsonfile.readFileSync(filename);
         obj.coreLibs = libNames || [];
-        jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
+        this._storageUtil.writeJsonFileSync(filename, obj);
         return obj.coreLibs;
     }
 
@@ -2965,7 +2965,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         mkdirp.sync(newPath);
-        fs.writeFileSync(fn, code);
+        this._storageUtil.writeFileSync(fn, code);
 
         let newJson = {
             "id": uuidv4(),
@@ -3012,10 +3012,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         delete newJson.isReleased;
-        jsonfile.writeFileSync(newJsonFile, newJson, {
-            "encoding": "utf-8",
-            "spaces": 4
-        });
+        this._storageUtil.writeJsonFileSync(newJsonFile, newJson);
 
         const opId = newJson.id;
 
@@ -3055,7 +3052,7 @@ export default class SharedOpsUtil extends SharedUtil
         if (docsMd)
         {
             const filenameMd = path.join(newPath, newName + ".md");
-            fs.writeFileSync(filenameMd, docsMd);
+            this._storageUtil.writeFileSync(filenameMd, docsMd);
         }
         this._docsUtil.updateOpDocs(newName);
         this._docsUtil.addOpToLookup(opId, newName);
@@ -3151,10 +3148,7 @@ export default class SharedOpsUtil extends SharedUtil
                             const obj = jsonfile.readFileSync(jsonFile);
                             obj.layout = updates.layout;
                             if (obj.layout && obj.layout.name) delete obj.layout.name;
-                            jsonfile.writeFileSync(jsonFile, obj, {
-                                "encoding": "utf-8",
-                                "spaces": 4
-                            });
+                            this._storageUtil.writeJsonFileSync(jsonFile, obj);
                             result.layout = obj.layout;
                             rebuildOpDocs = true;
                             break;
@@ -3223,7 +3217,7 @@ export default class SharedOpsUtil extends SharedUtil
 
             try
             {
-                jsonfile.writeFileSync(filename, obj, this.OPJSON_FORMAT);
+                this._storageUtil.writeJsonFileSync(filename, obj);
                 return true;
             }
             catch (_err)
@@ -3292,7 +3286,7 @@ export default class SharedOpsUtil extends SharedUtil
             + "{\n"
             + "    result.set(myNumber.get() * 100);\n"
             + "};\n";
-        fs.writeFileSync(fn, code);
+        this._storageUtil.writeFileSync(fn, code);
 
         if (opDocDefaults.layout)
         {
@@ -3317,10 +3311,7 @@ export default class SharedOpsUtil extends SharedUtil
             result.coreLibs = newCoreLibNames;
         }
 
-        jsonfile.writeFileSync(jsonPath, newJson, {
-            "encoding": "utf-8",
-            "spaces": 4
-        });
+        this._storageUtil.writeJsonFileSync(jsonPath, newJson);
 
         let attProblems = null;
         if (attachments)
@@ -3790,7 +3781,7 @@ export default class SharedOpsUtil extends SharedUtil
             }
             else
             {
-                fs.writeFileSync(oldOpFile, format.formatedCode);
+                this._storageUtil.writeFileSync(oldOpFile, format.formatedCode);
             }
 
             const opFiles = fs.readdirSync(oldOpDir);
@@ -3810,7 +3801,7 @@ export default class SharedOpsUtil extends SharedUtil
                 }
                 else
                 {
-                    fs.writeFileSync(attFile, attFormat.formatedCode);
+                    this._storageUtil.writeFileSync(attFile, attFormat.formatedCode);
                 }
             }
         }
@@ -3866,7 +3857,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
 
         const oldNameChangelog = oldName.replace(this.PREFIX_OPS, "");
-        if (jsonChange) jsonfile.writeFileSync(newJson, newJsonData, this.OPJSON_FORMAT);
+        if (jsonChange) this._storageUtil.writeJsonFileSync(newJson, newJsonData);
         if (newName.includes(this.INFIX_DEPRECATED))
         {
             this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
