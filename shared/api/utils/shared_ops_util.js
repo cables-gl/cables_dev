@@ -2226,7 +2226,9 @@ export default class SharedOpsUtil extends SharedUtil
 
     getPatchOpDir(name, relative = false)
     {
-        const patchOpDir = name ? name.split(".", 3).join(".") : null;
+        let patchOpDir = name ? name.split(".", 3).join(".") : null;
+        if (patchOpDir.endsWith(".")) patchOpDir = patchOpDir.slice(0, -1);
+
         let collectionPath = path.join(patchOpDir, "/");
         if (!relative)
         {
