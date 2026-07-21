@@ -167,7 +167,7 @@ export default class SharedDocUtil extends SharedUtil
         return coreLibs;
     }
 
-    getProjectOpDependencies(project)
+    getProjectOpDependencies(project, includeTypeOp = false)
     {
         if (!project || !project.ops) return [];
 
@@ -221,6 +221,17 @@ export default class SharedDocUtil extends SharedUtil
                                             projectDependencies.push(dependencyDep);
                                         }
                                     });
+                                }
+
+                                if (includeTypeOp)
+                                {
+                                    const opDep = {
+                                        "type": dep.type,
+                                        "src": dep.src,
+                                        "op": opDoc.name,
+                                        "opId": opDoc.id
+                                    };
+                                    projectDependencies.push(opDep);
                                 }
                             }
                         }

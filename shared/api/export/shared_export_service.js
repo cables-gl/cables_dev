@@ -291,9 +291,10 @@ export default class SharedExportService extends SharedUtil
         {
             if (!keepInExport.includes(key)) delete proJson[key];
         }
-        keepInExport.forEach((keep) => {
+        keepInExport.forEach((keep) =>
+        {
             proJson[keep] = proj[keep];
-        })
+        });
         proJson.export = {
             "time": moment().format(CablesConstants.DATE_FORMAT_LOGDATE),
             "service": this.getName(),
@@ -793,7 +794,22 @@ export default class SharedExportService extends SharedUtil
 
         let libs = this._docsUtil.getProjectLibs(proj);
         let coreLibs = this._docsUtil.getCoreLibs(proj);
-        let dependencies = this._docsUtil.getProjectOpDependencies(proj);
+        let dependencies = this._docsUtil.getProjectOpDependencies(proj, options.addOpCode);
+
+        if (options.addOpCode)
+        {
+            dependencies.filter((dep) => { return dep.type === "op"; }).forEach((opDep) =>
+            {
+                const name = this._opsUtil.getOpNameById(opDep.src);
+                if (name)
+                {
+                    usedOps.push({
+                        "opId": opDep.src,
+                        "name": name
+                    });
+                }
+            });
+        }
 
         let allProjects = [];
         const replacedOpIds = {};
