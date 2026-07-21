@@ -22,6 +22,7 @@
         "@babel/core": "7.29.0",
         "@babel/eslint-parser": "7.28.6",
         "@babel/preset-env": "7.29.2",
+        "@babel/plugin-transform-modules-systemjs": "7.29.4",
         "fs-extra": "11.2.0",
         "glsl-tokenizer": "2.1.5",
         "image-size": "1.0.2",
