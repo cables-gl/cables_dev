@@ -11,7 +11,8 @@
         "pm2": "pm2 start pm2_ecosystem.config.cjs",
         "pm2:test": "npm_config_apiconfig=tests pm2 start pm2_ecosystem.config.cjs",
         "pm2:stop": "pm2 stop pm2_ecosystem.config.cjs",
-        "pm2:logs": "pm2 logs"
+        "pm2:logs": "pm2 logs",
+        "pm2:restart": "pm2 restart pm2_ecosystem.config.cjs"
     },
     "repository": {
         "type": "git",

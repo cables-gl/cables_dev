@@ -35,9 +35,12 @@ export default class SharedFilesUtil extends SharedUtil
         let fileName = this.getAssetFileName(file);
         if (file.isLibraryFile)
         {
-            assetPath = "library";
+            return path.join(this._cables.getAssetLibraryPath(), fileName);
         }
-        return path.join(this._cables.getAssetPath(), assetPath, fileName);
+        else
+        {
+            return path.join(this._cables.getAssetPath(), assetPath, fileName);
+        }
     }
 
     getFileInfo(fileDb)

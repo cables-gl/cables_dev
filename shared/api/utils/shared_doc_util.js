@@ -254,7 +254,7 @@ export default class SharedDocUtil extends SharedUtil
         return projectDependencies;
     }
 
-    getOpDocs(filterOldVersions, filterDeprecated)
+    getOpDocs(filterOldVersions = false, filterDeprecated = false, cacheUpdatedCb = false)
     {
         let opDocs = [];
         if (this._rebuildOpDocCache)
@@ -333,7 +333,7 @@ export default class SharedDocUtil extends SharedUtil
                     "opDocs": opDocs
                 };
 
-                this._writeCache(this.OP_DOCS_CACHE, newCache);
+                this._writeCache(this.OP_DOCS_CACHE, newCache, cacheUpdatedCb);
 
                 this.setCachedOpDocs(newCache);
                 let filteredOpDocs = [];
@@ -518,8 +518,20 @@ export default class SharedDocUtil extends SharedUtil
                 let error = false;
                 if (cachedLookup.names[op.name] && cachedLookup.names[op.name] !== op.id)
                 {
-                    this._log.warn("DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.name]);
-                    error = true;
+                    this._log.warn("FIXING DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.name]);
+                    const opDocs = this.getOpDocsFromFile(op.name);
+                    if (opDocs)
+                    {
+                        cachedLookup.names[op.name] = opDocs.id;
+                        cachedLookup.ids[opDocs.id] = op.name;
+                        changed = true;
+                    }
+                    else
+                    {
+                        this._log.warn("- failed, no opdocs file", op.name, op.id, cachedLookup.names[op.name]);
+                        error = true;
+                    }
+
                 }
 
                 if (error && haltOnError) throw new Error("OP LOOKUP CONSISTENCY ERROR!" + op.id + " " + op.name + " " + cachedLookup.ids[op.id]);
@@ -729,12 +741,18 @@ export default class SharedDocUtil extends SharedUtil
         return null;
     }
 
-    updateOpDocs(opName)
+    /**
+     *
+     * @param {string} opName
+     * @param {function} cb
+     * @returns {Array}
+     */
+    updateOpDocs(opName, cb = null)
     {
         if (!opName || this._opsUtil.isCoreOp(opName))
         {
             this._rebuildOpDocCache = opName || true;
-            return this.getOpDocs();
+            return this.getOpDocs(false, false, cb);
         }
         else
         {
@@ -1089,8 +1107,9 @@ export default class SharedDocUtil extends SharedUtil
     /**
      * @param {string} cache
      * @param {any} data
+     * @param {function|undefined} cacheUpdatedCb
      */
-    _writeCache(cache, data)
+    _writeCache(cache, data, cacheUpdatedCb = null)
     {
         switch (cache)
         {
@@ -1101,6 +1120,7 @@ export default class SharedDocUtil extends SharedUtil
             this._storageUtil.writeJsonFileSync(this.opdocsFilename, data);
             break;
         }
+        if (cacheUpdatedCb) cacheUpdatedCb();
     }
 
     setCachedOpDocs(data)
