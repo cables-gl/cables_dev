@@ -254,7 +254,14 @@ export default class SharedDocUtil extends SharedUtil
         return projectDependencies;
     }
 
-    getOpDocs(filterOldVersions = false, filterDeprecated = false, cacheUpdatedCb = false)
+    /**
+     *
+     * @param {boolean} filterOldVersions
+     * @param {boolean} filterDeprecated
+     * @param {function|null} cacheUpdatedCb
+     * @returns
+     */
+    getOpDocs(filterOldVersions = false, filterDeprecated = false, cacheUpdatedCb = null)
     {
         let opDocs = [];
         if (this._rebuildOpDocCache)
@@ -333,9 +340,6 @@ export default class SharedDocUtil extends SharedUtil
                     "opDocs": opDocs
                 };
 
-                this._writeCache(this.OP_DOCS_CACHE, newCache, cacheUpdatedCb);
-
-                this.setCachedOpDocs(newCache);
                 let filteredOpDocs = [];
                 if (filterDeprecated || filterOldVersions)
                 {
@@ -351,7 +355,19 @@ export default class SharedDocUtil extends SharedUtil
                 {
                     filteredOpDocs = opDocs;
                 }
-                return filteredOpDocs;
+
+                this.setCachedOpDocs(newCache);
+                if (cacheUpdatedCb)
+                {
+                    this._writeCache(this.OP_DOCS_CACHE, newCache, () =>
+                    {
+                        cacheUpdatedCb(newCache);
+                    });
+                }
+                else
+                {
+                    return filteredOpDocs;
+                }
             }
             catch (e)
             {
@@ -752,12 +768,27 @@ export default class SharedDocUtil extends SharedUtil
         if (!opName || this._opsUtil.isCoreOp(opName))
         {
             this._rebuildOpDocCache = opName || true;
-            return this.getOpDocs(false, false, cb);
+            if (cb)
+            {
+                this.getOpDocs(false, false, cb);
+            }
+            else
+            {
+                return this.getOpDocs(false, false, cb);
+            }
         }
         else
         {
             const collectionName = this._opsUtil.getCollectionName(opName);
-            return this._opsUtil.buildOpDocsForCollection(collectionName, [opName]);
+            const collectionDocs = this._opsUtil.buildOpDocsForCollection(collectionName, [opName]);
+            if (cb)
+            {
+                cb(collectionDocs);
+            }
+            else
+            {
+                return collectionDocs;
+            }
         }
     }
 
