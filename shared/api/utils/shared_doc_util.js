@@ -258,10 +258,9 @@ export default class SharedDocUtil extends SharedUtil
      *
      * @param {boolean} filterOldVersions
      * @param {boolean} filterDeprecated
-     * @param {function|null} cacheUpdatedCb
      * @returns
      */
-    getOpDocs(filterOldVersions = false, filterDeprecated = false, cacheUpdatedCb = null)
+    getOpDocs(filterOldVersions = false, filterDeprecated = false)
     {
         let opDocs = [];
         if (this._rebuildOpDocCache)
@@ -357,17 +356,8 @@ export default class SharedDocUtil extends SharedUtil
                 }
 
                 this.setCachedOpDocs(newCache);
-                if (cacheUpdatedCb)
-                {
-                    this._writeCache(this.OP_DOCS_CACHE, newCache, () =>
-                    {
-                        cacheUpdatedCb(newCache);
-                    });
-                }
-                else
-                {
-                    return filteredOpDocs;
-                }
+                this._writeCache(this.OP_DOCS_CACHE, newCache);
+                return filteredOpDocs;
             }
             catch (e)
             {
@@ -760,35 +750,20 @@ export default class SharedDocUtil extends SharedUtil
     /**
      *
      * @param {string} opName
-     * @param {function} cb
      * @returns {Array}
      */
-    updateOpDocs(opName, cb = null)
+    updateOpDocs(opName)
     {
         if (!opName || this._opsUtil.isCoreOp(opName))
         {
             this._rebuildOpDocCache = opName || true;
-            if (cb)
-            {
-                this.getOpDocs(false, false, cb);
-            }
-            else
-            {
-                return this.getOpDocs(false, false, cb);
-            }
+            return this.getOpDocs();
         }
         else
         {
             const collectionName = this._opsUtil.getCollectionName(opName);
-            const collectionDocs = this._opsUtil.buildOpDocsForCollection(collectionName, [opName]);
-            if (cb)
-            {
-                cb(collectionDocs);
-            }
-            else
-            {
-                return collectionDocs;
-            }
+            return this._opsUtil.buildOpDocsForCollection(collectionName, [opName]);
+
         }
     }
 
@@ -1138,9 +1113,8 @@ export default class SharedDocUtil extends SharedUtil
     /**
      * @param {string} cache
      * @param {any} data
-     * @param {function|undefined} cacheUpdatedCb
      */
-    _writeCache(cache, data, cacheUpdatedCb = null)
+    _writeCache(cache, data)
     {
         switch (cache)
         {
@@ -1151,7 +1125,6 @@ export default class SharedDocUtil extends SharedUtil
             this._storageUtil.writeJsonFileSync(this.opdocsFilename, data);
             break;
         }
-        if (cacheUpdatedCb) cacheUpdatedCb();
     }
 
     setCachedOpDocs(data)
