@@ -76,7 +76,7 @@ for dir in `find . -maxdepth 1 -type d -name 'Ops.Extension.Standalone.*'`; do
     cd $dir;
     name=`basename $dir`.json;
     set +e
-    json=`cat $name | jq -r '.dependencies[] | select( .type == "npm") | .src '`
+    json=`cat $name | jq -r '.dependencies[]? | select( .type == "npm") | .src '`
     set -e
     for m in $json; do
         echo "$name: installing $m";
