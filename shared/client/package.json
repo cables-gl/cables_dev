@@ -9,7 +9,7 @@
     },
     "main": "index.js",
     "engines": {
-        "node": "20.13.1"
+        "node": "24.18.1"
     },
     "type": "module",
     "license": "MIT"

@@ -16,13 +16,13 @@
         "start": "http-server dist/"
     },
     "engines": {
-        "node": "20.13.1"
+        "node": "24.18.1"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@enterthenamehere/esdoc": "2.6.0-dev.1",
-        "@enterthenamehere/esdoc-importpath-plugin":"2.6.0-dev.1",
+        "@enterthenamehere/esdoc-importpath-plugin": "2.6.0-dev.1",
         "@enterthenamehere/esdoc-standard-plugin": "2.6.0-dev.2",
         "@enterthenamehere/esdoc-publish-html-plugin": "2.6.0-dev.1",
         "@enterthenamehere/esdoc-inject-style-plugin": "2.6.0-dev.1",

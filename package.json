@@ -19,7 +19,7 @@
         "url": "git+https://github.com/cables-gl/cables_dev.git"
     },
     "engines": {
-        "node": "20.13.1"
+        "node": "24.18.1"
     },
     "author": "",
     "license": "ISC",
@@ -39,5 +39,8 @@
         "prettier-eslint": "16.3.0",
         "tree-kill": "1.2.2",
         "uglify-js": "3.18.0"
+    },
+    "allowScripts": {
+        "fsevents@2.3.3": true
     }
 }
