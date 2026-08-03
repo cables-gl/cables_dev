@@ -39,6 +39,6 @@
         "md5-file": "5.0.0"
     },
     "devDependencies": {
-        "@types/node": "20.13.0"
+        "@types/node": "24"
     }
 }
