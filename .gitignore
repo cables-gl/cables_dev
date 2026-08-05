@@ -1,5 +1,5 @@
 .env
-electron/
+./electron/
 data/
 docker-compose.yml
 gen/
