@@ -15,7 +15,8 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                 compiler.hooks.thisCompilation.tap("CablesWebpackMinifyPlugin", async (compilation) =>
                 {
                     const code = {};
-                    if(doMinify) {
+                    if (doMinify)
+                    {
                         // collect jsfiles
                         const jsGlob = path.join(targetDir, "./**/**.js");
                         const jsFiles = glob.sync(jsGlob);
@@ -24,23 +25,25 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                             code[jsFile] = fs.readFileSync(jsFile, "utf8");
                         });
 
-                        for (const file of jsFiles) {
-                            const code = fs.readFileSync(file, "utf8");
+                        for (const file of jsFiles)
+                        {
+                            const toMinify = fs.readFileSync(file, "utf8");
 
-                            const result = await minify(code, {
-                                compress: true,
-                                mangle: true,
-                                format: { comments: false },
-                                sourceMap: sourceMap ? {
-                                    filename: path.basename(file).replace(/\.js$/, ".min.js"),
-                                    url: path.basename(file) + ".map"
+                            const result = await minify(toMinify, {
+                                "compress": true,
+                                "mangle": true,
+                                "format": { "comments": false },
+                                "sourceMap": sourceMap ? {
+                                    "filename": path.basename(file).replace(/\.js$/, ".min.js"),
+                                    "url": path.basename(file) + ".map"
                                 } : false
                             });
 
                             const outFile = file.replace(/\.js$/, ".js");
                             fs.writeFileSync(outFile, result.code ?? "", "utf8");
 
-                            if (sourceMap && result.map) {
+                            if (sourceMap && result.map)
+                            {
                                 fs.writeFileSync(outFile + ".map", result.map, "utf8");
                             }
 
@@ -56,7 +59,8 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                                 jsonFileName = path.basename(file, ".cables") + ".json";
                             }
                         });
-                        if(jsonFileName) {
+                        if (jsonFileName)
+                        {
                             const patchJson = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
                             await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), patchJson);
                         }

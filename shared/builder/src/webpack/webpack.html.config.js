@@ -44,9 +44,13 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
         {
         // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
             usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
+            usedDeps.forEach((dep) =>
+            {
+                if (dep.type === "module") dep.module = true;
+            });
         }
 
-        let finalJsPath = "js/";
+        let finalJsPath = "./js/";
         if (flat) finalJsPath = "";
 
         const cablesJs = [];
