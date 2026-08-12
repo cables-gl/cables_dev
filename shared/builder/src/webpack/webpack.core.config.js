@@ -3,13 +3,14 @@ import fs from "fs";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode) =>
+export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
 {
-    command.log.info("assembling core");
+    if (!logger) logger = console;
+    logger.info("assembling core");
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables"))), "..", "..");
+    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
 
     const plugins = [
         new webpack.BannerPlugin({
@@ -51,9 +52,18 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
                 {
                     "test": /\.wgsl/,
                     "use": "raw-loader"
+                },
+                {
+                    "test": /\.cables/,
+                    "type": "json"
                 }
-            ].filter(Boolean)
+            ]
         },
-        "plugins": plugins
+        "plugins": plugins,
+        "externals": {
+            "socketcluster-client": "commonjs socketcluster-client",
+            "jwt-encode": "commonjs socketcluster-client"
+
+        }
     };
 };

@@ -4,16 +4,17 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml) =>
+export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml, logger = null) =>
 {
+    if (!logger) logger = console;
+
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const plugins = [];
     if (indexHtml)
     {
-        command.log.info("assembling html");
+        logger.info("assembling html");
 
         fs.mkdirSync(targetDir, { "recursive": true });
-
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
         let deps = CablesWebpackHelper.getOpDependencies();
         let coreLibs = CablesWebpackHelper.getCoreLibs();
@@ -107,9 +108,12 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
     return {
         "name": "html",
         "mode": buildMode,
+        "entry": [
+            path.resolve(path.join(__dirname, "./patchview_export.hbs"))
+        ],
         "output": {
             "path": targetDir,
-            "filename": path.join("js", "index.html"),
+            "filename": path.join("index.html"),
         },
         "module": {
             "rules": [
@@ -117,6 +121,10 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                     "test": /\.hbs$/,
                     "loader": "handlebars-loader",
                 },
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
             ],
         },
         "plugins": plugins,

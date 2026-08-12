@@ -5,14 +5,15 @@ import jsonfile from "jsonfile";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode) =>
+export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
 {
-    command.log.info("assembling dependencies");
+    if (!logger) logger = console;
+    logger.info("assembling dependencies");
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables"))), "..", "..");
-    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev")));
+    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
 
     // collect opdependencies
     const opsJsonGlob = path.join(sourceDir, "./**/Ops.**.json");
@@ -106,12 +107,9 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
 
         const output = {
             "name": "dependencies_" + namespace,
-            "entry": {
-                "main": {
-                    "import": path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile),
-                    "filename": namespace + ".js"
-                }
-            },
+            "entry": [
+                path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile)
+            ],
             "output": {
                 "path": targetDir,
                 "library": {
@@ -137,7 +135,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
     for (let i = 0; i < coreLibs.length; i++)
     {
         const namespace = coreLibs[i];
-        entryAndOutputObjects.push(createOutputEntryObjectsNamespace(namespace, buildMode));
+        entryAndOutputObjects.push(createOutputEntryObjectsNamespace(namespace));
     }
 
     const defaultConfig = {
@@ -160,6 +158,10 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
                 {
                     "test": /\.wgsl/,
                     "use": "raw-loader",
+                },
+                {
+                    "test": /\.cables/,
+                    "type": "json"
                 }
             ],
         },

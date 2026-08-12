@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import jsonfile from "jsonfile";
 import webpackConfigCore from "./webpack.core.config.js";
 import webpackOpsConfig from "./webpack.ops.config.js";
 import webpackHtmlConfig from "./webpack.html.config.js";
@@ -13,18 +14,25 @@ import webpackMinifyConfig from "./webpack.minify.config.js";
 /** @typedef {import("../build.js").CablesBuildOptions} CablesBuildOptions */
 
 /**
- * @param {CablesModule} command
- * @param {any} patchJson
- * @param {string} sourceDir
- * @param {string} targetDir
- * @param {CablesBuildOptions} options
+ * @param {any} config
+ * @param {CablesBuildOptions} config.options
+ * @param {any} [logger]
  * @return {*[]}
  */
-export default (command, patchJson, sourceDir, targetDir, options) =>
+export default (config, logger = null) =>
 {
+
+    if (!logger) logger = console;
+
+    const patchFile = config.entry;
+    const targetDir = config.output.path;
+    const options = config.options;
+    const sourceDir = path.resolve(path.dirname(patchFile));
+
+    const patchJson = jsonfile.readFileSync(patchFile);
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const buildMode = options.buildMode;
+    const buildMode = config.mode;
     const combineJs = options.combinejs;
     const flat = options.flat;
     const minify = options.minify;
@@ -33,22 +41,22 @@ export default (command, patchJson, sourceDir, targetDir, options) =>
     const clean = options.clean;
     const indexHtml = options.indexHtml;
 
-    const coreConfig = webpackConfigCore(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode);
-    const opsConfig = webpackOpsConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, minifyGlsl, combineJs);
-    const depsConfigs = webpackOpDependenciesConfig(command, patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode);
+    const coreConfig = webpackConfigCore(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, logger);
+    const opsConfig = webpackOpsConfig(patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, minifyGlsl, combineJs, logger);
+    const depsConfigs = webpackOpDependenciesConfig(patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, logger);
     const depsConfigNames = [];
     depsConfigs.forEach((depsConfig) =>
     {
         depsConfigNames.push(depsConfig.name);
     });
-    const assetsConfig = webpackAssetsConfig(command, patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), buildMode);
-    const filesConfig = webpackPatchFilesConfig(command, patchJson, sourceDir, targetDir, buildMode);
-    const jsonConfig = webpackPatchJsonConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat);
-    const minifyConfig = webpackMinifyConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat, minify, sourceMap);
+    const assetsConfig = webpackAssetsConfig(patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), buildMode, logger);
+    const filesConfig = webpackPatchFilesConfig(patchJson, sourceDir, targetDir, buildMode, logger);
+    const jsonConfig = webpackPatchJsonConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat, logger);
+    const minifyConfig = webpackMinifyConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat, minify, sourceMap, logger);
     minifyConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, ...depsConfigNames];
-    const combineConfig = webpackCombineConfig(command, patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, clean);
+    const combineConfig = webpackCombineConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, clean, logger);
     combineConfig.dependencies = [minifyConfig.name];
-    const htmlConfig = webpackHtmlConfig(command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml);
+    const htmlConfig = webpackHtmlConfig(patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml, logger);
     htmlConfig.dependencies = [assetsConfig.name, filesConfig.name, combineConfig.name];
     return [
         coreConfig,

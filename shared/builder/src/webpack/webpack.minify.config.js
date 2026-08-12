@@ -4,9 +4,15 @@ import { minify } from "terser";
 import { glob } from "glob";
 import jsonfile from "jsonfile";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat, doMinify, sourceMap) =>
+export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, doMinify, sourceMap, logger = null) =>
 {
+
+    if (!logger) logger = console;
     fs.mkdirSync(targetDir, { "recursive": true });
+
+    // collect jsfiles
+    const jsGlob = path.join(targetDir, "./**/**.js");
+    const jsFiles = glob.sync(jsGlob);
 
     const plugins = [
         {
@@ -17,9 +23,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                     const code = {};
                     if (doMinify)
                     {
-                        // collect jsfiles
-                        const jsGlob = path.join(targetDir, "./**/**.js");
-                        const jsFiles = glob.sync(jsGlob);
+
                         jsFiles.forEach((jsFile) =>
                         {
                             code[jsFile] = fs.readFileSync(jsFile, "utf8");
@@ -47,7 +51,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                                 fs.writeFileSync(outFile + ".map", result.map, "utf8");
                             }
 
-                            command.log.info("minified", outFile);
+                            logger.info("minified", outFile);
                         }
 
                         let jsonFileName = null;
@@ -73,10 +77,19 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
 
     return {
         "name": "minify",
+        "entry": jsFiles,
         "mode": buildMode,
         "output": {
             "path": targetDir
         },
-        "plugins": plugins
+        "plugins": plugins,
+        "module": {
+            "rules": [
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
+            ]
+        }
     };
 };

@@ -1,9 +1,10 @@
 import CopyPlugin from "copy-webpack-plugin";
 import fs from "fs";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode) =>
+export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
 {
-    command.log.info("assembling assets");
+    if (!logger) logger = console;
+    logger.info("assembling assets");
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -20,5 +21,13 @@ export default (command, patchJson, sourceDir, targetDir, buildMode) =>
         "output": {
             "path": targetDir,
         },
+        "module": {
+            "rules": [
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
+            ]
+        }
     };
 };

@@ -3,19 +3,23 @@ import fs from "fs";
 import webpack from "webpack";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, flat) =>
+export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, logger = null) =>
 {
 
-    command.log.info("assembling patchjson");
+    if (!logger) logger = console;
+    logger.info("assembling patchjson");
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
     let jsonFileName = null;
+    let cablesFile = null;
     const patchFiles = fs.readdirSync(sourceDir);
-    patchFiles.forEach((file) => {
+    patchFiles.forEach((file) =>
+    {
         if (path.basename(file).endsWith(".cables"))
         {
-            jsonFileName = path.basename(file, ".cables") + ".json";
+            cablesFile = path.resolve(path.join(sourceDir, file));
+            jsonFileName = path.resolve(path.basename(file, ".cables") + ".json");
         }
     });
 
@@ -26,19 +30,19 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
         {
             apply(compiler)
             {
-                compiler.hooks.thisCompilation.tap("CablesWebpackPatchJsonPlugin", compilation =>
+                compiler.hooks.thisCompilation.tap("CablesWebpackPatchJsonPlugin", (compilation) =>
                 {
                     compilation.hooks.processAssets.tap({
-                            name: "CablesWebpackPatchJsonPlugin",
-                            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
-                        }, () =>
-                        {
-                            const exportable = CablesWebpackHelper.makeExportable(patchJson, [], finalAssetPath);
-                            compilation.emitAsset(
-                                jsonFileName,
-                                new webpack.sources.RawSource(JSON.stringify(exportable, null, 4)),
-                            );
-                        },
+                        "name": "CablesWebpackPatchJsonPlugin",
+                        "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+                    }, () =>
+                    {
+                        const exportable = CablesWebpackHelper.makeExportable(patchJson, [], finalAssetPath);
+                        compilation.emitAsset(
+                            jsonFileName,
+                            new webpack.sources.RawSource(JSON.stringify(exportable, null, 4)),
+                        );
+                    },
                     );
                 });
             }
@@ -47,11 +51,21 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
 
     return {
         "name": "patchjson",
+        "entry": [
+            cablesFile
+        ],
         "mode": buildMode,
-        "entry": {},
         "output": {
             "path": targetDir
         },
-        "plugins": plugins
+        "plugins": plugins,
+        "module": {
+            "rules": [
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
+            ]
+        }
     };
 };

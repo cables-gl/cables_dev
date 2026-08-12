@@ -2,10 +2,26 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, clean) =>
+export default (patchJson, sourceDir, targetDir, buildMode, combineJs, clean, logger = null) =>
 {
-    command.log.info("combining js");
+    if (!logger) logger = console;
+    logger.info("combining js");
     fs.mkdirSync(targetDir, { "recursive": true });
+
+    let jsonFileName = null;
+    const patchFiles = fs.readdirSync(sourceDir);
+    patchFiles.forEach((file) =>
+    {
+        if (path.basename(file).endsWith(".cables"))
+        {
+            jsonFileName = path.basename(file, ".cables");
+        }
+    });
+
+    const jsonFile = path.resolve(path.join(targetDir, jsonFileName + ".json"));
+    const opsFile = path.resolve(path.join(targetDir, "ops.js"));
+    const coreFile = path.resolve(path.join(targetDir, "cables.js"));
+    const targetFile = path.resolve(path.join(targetDir, "patch.js"));
 
     const plugins = [
         {
@@ -15,21 +31,6 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                 {
                     if (combineJs)
                     {
-                        const targetFile = path.resolve(path.join(targetDir, "patch.js"));
-
-                        let jsonFileName = null;
-                        const patchFiles = fs.readdirSync(sourceDir);
-                        patchFiles.forEach((file) =>
-                        {
-                            if (path.basename(file).endsWith(".cables"))
-                            {
-                                jsonFileName = path.basename(file, ".cables");
-                            }
-                        });
-
-                        const jsonFile = path.resolve(path.join(targetDir, jsonFileName + ".json"));
-                        const opsFile = path.resolve(path.join(targetDir, "ops.js"));
-                        const coreFile = path.resolve(path.join(targetDir, "cables.js"));
 
                         const proJson = fs.readFileSync(jsonFile);
                         const opsCode = fs.readFileSync(opsFile);
@@ -58,7 +59,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                             jsCode += "// start " + lib + "\n";
                             jsCode += fs.readFileSync(sourceFile, "utf8");
                             jsCode += "// end " + lib + "\n";
-                            if(clean) fs.rmSync(sourceFile);
+                            if (clean) fs.rmSync(sourceFile);
                         }
 
                         for (let i = 0; i < depScripts.length; i++)
@@ -70,7 +71,7 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                                 jsCode += "// start " + lib.src + "\n";
                                 jsCode += fs.readFileSync(sourceFile, "utf8");
                                 jsCode += "// end " + lib.src + "\n";
-                                if(clean) fs.rmSync(sourceFile);
+                                if (clean) fs.rmSync(sourceFile);
                             }
                         }
 
@@ -81,7 +82,8 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
                         jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
                         fs.writeFileSync(targetFile, jsCode);
 
-                        if(clean) {
+                        if (clean)
+                        {
                             fs.rmSync(coreFile);
                             fs.rmSync(opsFile);
                             fs.rmSync(jsonFile);
@@ -94,10 +96,23 @@ export default (command, patchJson, sourceDir, targetDir, buildMode, combineJs, 
 
     return {
         "name": "combine",
+        "entry": [
+            jsonFile,
+            opsFile,
+            coreFile
+        ],
         "mode": buildMode,
         "plugins": plugins,
         "output": {
             "path": targetDir,
         },
+        "module": {
+            "rules": [
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
+            ]
+        }
     };
 };
