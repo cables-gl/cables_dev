@@ -19,8 +19,9 @@ class CablesWebpackHelper
 
     addOpDependency(src, type = "commonjs", moduleExport = null)
     {
-        const existingDependency = this._opDependencies.find((dep) => { return dep.src === src && dep.type === type && dep.export === moduleExport;});
-        if(!existingDependency) {
+        const existingDependency = this._opDependencies.find((dep) => { return dep.src === src && dep.type === type && dep.export === moduleExport; });
+        if (!existingDependency)
+        {
             this._opDependencies.push({
                 "src": src,
                 "type": type,
@@ -192,6 +193,35 @@ class CablesWebpackHelper
             }
         }
         return a;
+    }
+
+    removeEmptyChunk(name = "main.js")
+    {
+        return {
+            apply(compiler)
+            {
+                compiler.hooks.thisCompilation.tap("RemoveEmptyChunk", (compilation) =>
+                {
+                    compilation.hooks.processAssets.tapAsync(
+                        {
+                            "name": "RemoveEmptyChunk",
+                            "stage": compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE
+                        },
+                        (assets, callback) =>
+                        {
+                            for (const assetName of Object.keys(assets))
+                            {
+                                if (assetName.startsWith(name))
+                                {
+                                    delete assets[assetName];
+                                }
+                            }
+                            callback();
+                        }
+                    );
+                });
+            }
+        };
     }
 
 }

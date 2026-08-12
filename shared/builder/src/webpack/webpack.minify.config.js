@@ -3,6 +3,7 @@ import fs from "fs";
 import { minify } from "terser";
 import { glob } from "glob";
 import jsonfile from "jsonfile";
+import CablesWebpackHelper from "./webpack.helper.js";
 
 export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, doMinify, sourceMap, logger = null) =>
 {
@@ -72,12 +73,12 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, doM
                     }
                 });
             }
-        }
+        },
+        CablesWebpackHelper.removeEmptyChunk()
     ];
 
     return {
         "name": "minify",
-        "entry": jsFiles,
         "mode": buildMode,
         "output": {
             "path": targetDir

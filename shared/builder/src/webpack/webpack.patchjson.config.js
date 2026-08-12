@@ -12,14 +12,12 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, log
     fs.mkdirSync(targetDir, { "recursive": true });
 
     let jsonFileName = null;
-    let cablesFile = null;
     const patchFiles = fs.readdirSync(sourceDir);
     patchFiles.forEach((file) =>
     {
         if (path.basename(file).endsWith(".cables"))
         {
-            cablesFile = path.resolve(path.join(sourceDir, file));
-            jsonFileName = path.resolve(path.basename(file, ".cables") + ".json");
+            jsonFileName = path.basename(file, ".cables") + ".json";
         }
     });
 
@@ -37,7 +35,7 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, log
                         "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
                     }, () =>
                     {
-                        const exportable = CablesWebpackHelper.makeExportable(patchJson, [], finalAssetPath);
+                        const exportable = CablesWebpackHelper.makeExportable(patchJson, []);
                         compilation.emitAsset(
                             jsonFileName,
                             new webpack.sources.RawSource(JSON.stringify(exportable, null, 4)),
@@ -46,17 +44,15 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, log
                     );
                 });
             }
-        }
+        },
+        CablesWebpackHelper.removeEmptyChunk()
     ];
 
     return {
         "name": "patchjson",
-        "entry": [
-            cablesFile
-        ],
         "mode": buildMode,
         "output": {
-            "path": targetDir
+            "path": targetDir,
         },
         "plugins": plugins,
         "module": {

@@ -1,5 +1,6 @@
 import CopyPlugin from "copy-webpack-plugin";
 import fs from "fs";
+import CablesWebpackHelper from "./webpack.helper.js";
 
 export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
 {
@@ -12,6 +13,7 @@ export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
         new CopyPlugin({
             "patterns": [sourceDir],
         }),
+        CablesWebpackHelper.removeEmptyChunk()
     ];
 
     return {
@@ -19,7 +21,7 @@ export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
         "mode": buildMode,
         "plugins": plugins,
         "output": {
-            "path": targetDir,
+            "path": targetDir
         },
         "module": {
             "rules": [

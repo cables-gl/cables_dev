@@ -103,17 +103,14 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, ind
             },
             )
         );
+        plugins.push(CablesWebpackHelper.removeEmptyChunk());
     }
 
     return {
         "name": "html",
         "mode": buildMode,
-        "entry": [
-            path.resolve(path.join(__dirname, "./patchview_export.hbs"))
-        ],
         "output": {
             "path": targetDir,
-            "filename": path.join("index.html"),
         },
         "module": {
             "rules": [

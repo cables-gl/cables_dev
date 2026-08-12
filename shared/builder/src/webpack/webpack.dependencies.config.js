@@ -107,11 +107,10 @@ export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
 
         const output = {
             "name": "dependencies_" + namespace,
-            "entry": [
-                path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile)
-            ],
+            "entry": path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile),
             "output": {
                 "path": targetDir,
+                "filename": namespace + ".js",
                 "library": {
                     "name": libraryNamespace.toUpperCase(),
                     "type": "assign-properties"

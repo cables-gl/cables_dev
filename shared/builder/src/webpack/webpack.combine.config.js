@@ -92,15 +92,11 @@ export default (patchJson, sourceDir, targetDir, buildMode, combineJs, clean, lo
                 });
             },
         },
+        CablesWebpackHelper.removeEmptyChunk()
     ];
 
     return {
         "name": "combine",
-        "entry": [
-            jsonFile,
-            opsFile,
-            coreFile
-        ],
         "mode": buildMode,
         "plugins": plugins,
         "output": {
