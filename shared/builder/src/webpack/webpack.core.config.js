@@ -19,6 +19,7 @@ export default (config, patchJson, logger = null) =>
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
+    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
 
     const plugins = [
         new webpack.BannerPlugin({
@@ -71,7 +72,14 @@ export default (config, patchJson, logger = null) =>
         "externals": {
             "socketcluster-client": "commonjs socketcluster-client",
             "jwt-encode": "commonjs socketcluster-client"
-
-        }
+        },
+        "resolve": {
+            "alias": {
+                "cables-shared-client": path.resolve(
+                    __devDir,
+                    "shared/client"
+                )
+            }
+        },
     };
 };
