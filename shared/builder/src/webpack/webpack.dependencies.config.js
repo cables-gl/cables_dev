@@ -150,7 +150,11 @@ export default (config, patchJson, logger = null) =>
         entryAndOutputObjects.push(createOutputEntryObjectsNamespace(namespace));
     }
 
-    const defaultConfig = {
+    let plugins = [];
+    if (config.plugins?.dependencies) plugins = plugins.concat(config.plugins.dependencies);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let defaultConfig = {
         "mode": buildMode,
         "devtool": false,
         "optimization": {
@@ -177,10 +181,14 @@ export default (config, patchJson, logger = null) =>
                 }
             ],
         },
+        "plugins": plugins,
         "resolve": {
             "extensions": [".json", ".js", ".jsx"],
         },
     };
+
+    if (config.overrides?.dependencies) defaultConfig = { ...defaultConfig, ...config.overrides.dependencies };
+    if (config.overrides?.all) defaultConfig = { ...defaultConfig, ...config.overrides.all };
 
     const configs = [];
     for (let i = 0; i < entryAndOutputObjects.length; i++)

@@ -24,7 +24,7 @@ export default (config, patchJson, logger = null) =>
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const plugins = [];
+    let plugins = [];
     if (indexHtml)
     {
         logger.info("assembling html");
@@ -120,7 +120,10 @@ export default (config, patchJson, logger = null) =>
         plugins.push(CablesWebpackHelper.removeEmptyChunk());
     }
 
-    return {
+    if (config.plugins?.html) plugins = plugins.concat(config.plugins.html);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "html",
         "mode": buildMode,
         "entry": patchFile,
@@ -141,4 +144,8 @@ export default (config, patchJson, logger = null) =>
         },
         "plugins": plugins,
     };
+    if (config.overrides?.html) result = { ...result, ...config.overrides.html };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

@@ -35,7 +35,7 @@ export default (config, patchJson, logger = null) =>
     const coreFile = path.resolve(path.join(targetDir, "cables.js"));
     const targetFile = path.resolve(path.join(targetDir, "patch.js"));
 
-    const plugins = [
+    let plugins = [
         {
             apply(compiler)
             {
@@ -104,7 +104,10 @@ export default (config, patchJson, logger = null) =>
         CablesWebpackHelper.removeEmptyChunk()
     ];
 
-    return {
+    if (config.plugins?.combine) plugins = plugins.concat(config.plugins.combine);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "combine",
         "mode": buildMode,
         "plugins": plugins,
@@ -121,4 +124,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
+    if (config.overrides?.combine) result = { ...result, ...config.overrides.combine };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

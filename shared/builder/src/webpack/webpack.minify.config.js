@@ -28,7 +28,7 @@ export default (config, patchJson, logger = null) =>
     const jsGlob = path.join(targetDir, "./**/**.js");
     const jsFiles = glob.sync(jsGlob);
 
-    const plugins = [
+    let plugins = [
         {
             apply(compiler)
             {
@@ -90,7 +90,10 @@ export default (config, patchJson, logger = null) =>
         CablesWebpackHelper.removeEmptyChunk()
     ];
 
-    return {
+    if (config.plugins?.minify) plugins = plugins.concat(config.plugins.minify);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "minify",
         "mode": buildMode,
         "entry": patchFile,
@@ -107,4 +110,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
+    if (config.overrides?.minify) result = { ...result, ...config.overrides.minify };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

@@ -35,7 +35,7 @@ export default (config, patchJson, logger = null) =>
     let finalAssetPath = "assets/";
     if (flat) finalAssetPath = "";
 
-    const plugins = [
+    let plugins = [
         {
             apply(compiler)
             {
@@ -59,7 +59,10 @@ export default (config, patchJson, logger = null) =>
         CablesWebpackHelper.removeEmptyChunk()
     ];
 
-    return {
+    if (config.plugins?.patchjson) plugins = plugins.concat(config.plugins.patchjson);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "patchjson",
         "mode": buildMode,
         "entry": patchFile,
@@ -76,4 +79,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
+    if (config.overrides?.patchjson) result = { ...result, ...config.overrides.patchjson };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

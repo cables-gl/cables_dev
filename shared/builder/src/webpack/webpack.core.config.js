@@ -21,15 +21,19 @@ export default (config, patchJson, logger = null) =>
     const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
     const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
 
-    const plugins = [
+    let plugins = [
         new webpack.BannerPlugin({
             "entryOnly": true,
             "footer": true,
             "raw": true,
             "banner": "\n\nvar CABLES = CABLES || {};" // FIXME: buildInfo?
-        })
+        }),
     ];
-    return {
+
+    if (config.plugins?.core) plugins = plugins.concat(config.plugins.core);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "core",
         "mode": buildMode,
         "entry": [
@@ -82,4 +86,9 @@ export default (config, patchJson, logger = null) =>
             }
         },
     };
+
+    if (config.overrides?.core) result = { ...result, ...config.overrides.core };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

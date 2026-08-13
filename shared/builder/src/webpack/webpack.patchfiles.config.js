@@ -35,14 +35,17 @@ export default (config, patchJson, logger = null) =>
     if (fs.existsSync(legalFile)) patterns.push(legalFile);
     if (fs.existsSync(docsFile)) patterns.push(docsFile);
 
-    const plugins = [
+    let plugins = [
         new CopyPlugin({
             "patterns": patterns,
         }),
         CablesWebpackHelper.removeEmptyChunk()
     ];
 
-    return {
+    if (config.plugins?.files) plugins = plugins.concat(config.plugins.files);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "files",
         "mode": buildMode,
         "plugins": plugins,
@@ -59,4 +62,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
+    if (config.overrides?.files) result = { ...result, ...config.overrides.files };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

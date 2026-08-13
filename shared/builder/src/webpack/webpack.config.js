@@ -33,6 +33,28 @@ import webpackMinifyConfig from "./webpack.minify.config.js";
  * @property {string} entry
  * @property {object} output
  * @property {string} output.path
+ * @property {Object} [plugins]
+ * @property {array} [plugins.all]
+ * @property {array} [plugins.core]
+ * @property {array} [plugins.ops]
+ * @property {array} [plugins.dependencies]
+ * @property {array} [plugins.assets]
+ * @property {array} [plugins.files]
+ * @property {array} [plugins.patchjson]
+ * @property {array} [plugins.minify]
+ * @property {array} [plugins.combine]
+ * @property {array} [plugins.html]
+ * @property {Object} [overrides]
+ * @property {Object} [overrides.all]
+ * @property {Object} [overrides.core]
+ * @property {Object} [overrides.ops]
+ * @property {Object} [overrides.dependencies]
+ * @property {Object} [overrides.assets]
+ * @property {Object} [overrides.files]
+ * @property {Object} [overrides.patchjson]
+ * @property {Object} [overrides.minify]
+ * @property {Object} [overrides.combine]
+ * @property {Object} [overrides.html]
  * @property {CablesBuildOptions} [options]
  */
 /**

@@ -20,14 +20,17 @@ export default (config, patchJson, logger = null) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const plugins = [
+    let plugins = [
         new CopyPlugin({
             "patterns": [sourceDir],
         }),
         CablesWebpackHelper.removeEmptyChunk()
     ];
 
-    return {
+    if (config.plugins?.assets) plugins = plugins.concat(config.plugins.assets);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "assets",
         "mode": buildMode,
         "entry": patchFile,
@@ -44,4 +47,9 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
+
+    if (config.overrides?.assets) result = { ...result, ...config.overrides.assets };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };

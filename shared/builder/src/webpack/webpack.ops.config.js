@@ -44,7 +44,7 @@ export default (config, patchJson, logger = null) =>
         }
     });
 
-    const plugins = [
+    let plugins = [
         new webpack.BannerPlugin({
             "entryOnly": true,
             "footer": false,
@@ -97,7 +97,10 @@ export default (config, patchJson, logger = null) =>
         }));
     }
 
-    return {
+    if (config.plugins?.ops) plugins = plugins.concat(config.plugins.ops);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let result = {
         "name": "ops",
         "mode": buildMode,
         "entry": opFiles,
@@ -129,4 +132,9 @@ export default (config, patchJson, logger = null) =>
         },
         "plugins": plugins,
     };
+
+    if (config.overrides?.ops) result = { ...result, ...config.overrides.ops };
+    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+
+    return result;
 };
