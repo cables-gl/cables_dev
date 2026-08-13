@@ -11,12 +11,28 @@ import webpackOpDependenciesConfig from "./webpack.dependencies.config.js";
 import webpackCombineConfig from "./webpack.combine.config.js";
 import webpackMinifyConfig from "./webpack.minify.config.js";
 
-/** @typedef {import("../build.js").CablesBuildOptions} CablesBuildOptions */
+/**
+ * @typedef {Object} CablesBuildOptions
+ * @property {boolean} combinejs
+ * @property {boolean} flat
+ * @property {boolean} minify
+ * @property {boolean} sourcemaps
+ * @property {boolean} minifyglsl
+ * @property {boolean} clean
+ * @property {boolean} indexHtml
+ */
 
 /**
- * @param {any} config
- * @param {CablesBuildOptions} config.options
- * @param {any} [logger]
+ * @typedef {Object} CablesWebpackConfig
+ * @property {string} [mode="production"]
+ * @property {string} entry
+ * @property {object} output
+ * @property {string} output.path
+ * @property {CablesBuildOptions} [options]
+ */
+/**
+ * @param {CablesWebpackConfig} config
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
  * @return {*[]}
  */
 export default (config, logger = null) =>
