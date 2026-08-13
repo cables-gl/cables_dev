@@ -41,21 +41,30 @@
     <canvas id="glcanvas" width="100vw" height="100vh" tabindex="1"></canvas>
 </div>
 
+{{#if dependencies}}
+<!-- dependencies -->
 {{#each dependencies}}
     {{#if module}}
-    <script type="module">import * as {{export}} from "{{../jsPath}}{{src}}"; window.{{export}}={{export}};</script>;
+<script type="module">import * as {{export}} from "{{../jsPath}}{{src}}"; window.{{export}}={{export}};</script>;
     {{else}}
-    <script type="text/javascript" src="{{../jsPath}}{{src}}"></script>
+<script type="text/javascript" src="{{../jsPath}}{{src}}"></script>
     {{/if}}
 {{/each}}
+{{/if}}
 
+{{#if cablesjs}}
+<!-- cables -->
 {{#each cablesjs}}
-    <script type="text/javascript" src="{{../jsPath}}{{.}}"></script>
+<script type="text/javascript" src="{{../jsPath}}{{.}}"></script>
 {{/each}}
+{{/if}}
 
+{{#if corelibs}}
+<!-- corelibs -->
 {{#each corelibs}}
-    <script type="text/javascript" src="{{../jsPath}}{{.}}.js"></script>
+<script type="text/javascript" src="{{../jsPath}}{{.}}.js"></script>
 {{/each}}
+{{/if}}
 
 <script type="text/javascript">
 

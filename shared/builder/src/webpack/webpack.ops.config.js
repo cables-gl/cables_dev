@@ -19,8 +19,8 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.join(path.resolve(path.dirname(config.entry)), "ops");
     const targetDir = path.join(config.output.path, "js");
     const buildMode = config.mode || "production";
-    const minifyGlsl = config.options.minifyglsl || false;
-    const combineJs = config.options.combinejs || true;
+    const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
+    const minifyGlsl = config.options?.hasOwnProperty("minifyglsl") ? config.options.minifyglsl : false;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

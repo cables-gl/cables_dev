@@ -16,7 +16,7 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.resolve(path.dirname(patchFile));
     const targetDir = path.join(config.output.path, "js");
     const buildMode = config.mode || "production";
-    const combineJs = config.options?.combinejs || true;
+    const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -108,6 +108,7 @@ export default (config, patchJson, logger = null) =>
         "name": "combine",
         "mode": buildMode,
         "plugins": plugins,
+        "entry": patchFile,
         "output": {
             "path": targetDir,
         },

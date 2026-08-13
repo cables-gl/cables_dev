@@ -17,9 +17,9 @@ export default (config, patchJson, logger = null) =>
     const targetDir = config.output.path;
     const sourceDir = path.resolve(path.dirname(patchFile));
     const buildMode = config.mode || "production";
-    const combineJs = config.options.combinejs || true;
-    const flat = config.options.flat || false;
-    const indexHtml = config.options.index || true;
+    const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
+    const indexHtml = config.options?.hasOwnProperty("index") ? config.options.index : true;
+    const flat = config.options?.hasOwnProperty("flat") ? config.options.flat : false;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -57,11 +57,12 @@ export default (config, patchJson, logger = null) =>
         {
         // dependencies to other ops are resolved earlier, code of local commonjs libraries is minified into patch.js, we only need cdn things and esm-modules here
             usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
-            usedDeps.forEach((dep) =>
-            {
-                if (dep.type === "module") dep.module = true;
-            });
         }
+
+        usedDeps.forEach((dep) =>
+        {
+            if (dep.type === "module") dep.module = true;
+        });
 
         let finalJsPath = "./js/";
         if (flat) finalJsPath = "";
@@ -122,6 +123,7 @@ export default (config, patchJson, logger = null) =>
     return {
         "name": "html",
         "mode": buildMode,
+        "entry": patchFile,
         "output": {
             "path": targetDir,
         },

@@ -29,7 +29,7 @@ export default (config, patchJson, logger = null) =>
     const opJsonFiles = glob.sync(opsJsonGlob);
 
     let coreLibs = [];
-    opJsonFiles.forEach((file, i) =>
+    opJsonFiles.forEach((file) =>
     {
         const opJson = jsonfile.readFileSync(file);
         if (opJson.libs)
@@ -114,9 +114,14 @@ export default (config, patchJson, logger = null) =>
             });
         }
 
+        const namespacePath = path.resolve(__coreDir, "src", "corelibs", namespace, namespaceEntryFile);
         const output = {
             "name": "dependencies_" + namespace,
-            "entry": path.join(__coreDir, "src", "corelibs", namespace, namespaceEntryFile),
+            "entry": {
+                "main": {
+                    "import": namespacePath,
+                }
+            },
             "output": {
                 "path": targetDir,
                 "filename": namespace + ".js",
@@ -126,7 +131,6 @@ export default (config, patchJson, logger = null) =>
                 }
             }
         };
-
         const libraryExternals = {
             "cables": "CABLES",
             "cables-shared-client": "CABLES.SHARED",

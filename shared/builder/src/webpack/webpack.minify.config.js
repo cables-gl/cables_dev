@@ -19,8 +19,8 @@ export default (config, patchJson, logger = null) =>
 
     const targetDir = path.join(config.output.path, "js");
     const buildMode = config.mode || "production";
-    const doMinify = config.options.minify || true;
-    const sourceMap = config.options.sourcemaps || false;
+    const doMinify = config.options?.hasOwnProperty("minify") ? config.options.minify : true;
+    const sourceMap = config.options?.hasOwnProperty("sourcemaps") ? config.options.sourcemaps : false;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -93,6 +93,7 @@ export default (config, patchJson, logger = null) =>
     return {
         "name": "minify",
         "mode": buildMode,
+        "entry": patchFile,
         "output": {
             "path": targetDir
         },

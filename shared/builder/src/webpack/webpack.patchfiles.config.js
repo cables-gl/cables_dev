@@ -46,6 +46,7 @@ export default (config, patchJson, logger = null) =>
         "name": "files",
         "mode": buildMode,
         "plugins": plugins,
+        "entry": patchFile,
         "output": {
             "path": targetDir,
         },

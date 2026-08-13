@@ -30,6 +30,7 @@ export default (config, patchJson, logger = null) =>
     return {
         "name": "assets",
         "mode": buildMode,
+        "entry": patchFile,
         "plugins": plugins,
         "output": {
             "path": targetDir
