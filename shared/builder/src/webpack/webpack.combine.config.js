@@ -2,10 +2,23 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, buildMode, combineJs, clean, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
     logger.info("combining js");
+
+    const patchFile = config.entry;
+    const sourceDir = path.resolve(path.dirname(patchFile));
+    const targetDir = path.join(config.output.path, "js");
+    const buildMode = config.mode || "production";
+    const combineJs = config.options?.combinejs || false;
+    const clean = config.options?.clean || false;
+
     fs.mkdirSync(targetDir, { "recursive": true });
 
     let jsonFileName = null;

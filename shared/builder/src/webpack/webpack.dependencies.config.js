@@ -5,10 +5,19 @@ import jsonfile from "jsonfile";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
     logger.info("assembling dependencies");
+
+    const sourceDir = path.join(path.resolve(path.dirname(config.entry)), "ops");
+    const targetDir = path.join(config.output.path, "js");
+    const buildMode = config.mode;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

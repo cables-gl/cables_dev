@@ -3,10 +3,18 @@ import fs from "fs";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
 
-export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
     logger.info("assembling core");
+
+    const targetDir = path.join(config.output.path, "js");
+    const buildMode = config.mode || "production";
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

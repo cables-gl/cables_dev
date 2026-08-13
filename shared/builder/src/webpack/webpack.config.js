@@ -13,13 +13,19 @@ import webpackMinifyConfig from "./webpack.minify.config.js";
 
 /**
  * @typedef {Object} CablesBuildOptions
- * @property {boolean} combinejs
- * @property {boolean} flat
- * @property {boolean} minify
- * @property {boolean} sourcemaps
- * @property {boolean} minifyglsl
- * @property {boolean} clean
- * @property {boolean} indexHtml
+ * @property {("html"|"patch"|"code")} [type="html"]
+ * @property {string|null} [destination]
+ * @property {boolean|null} [index=true]
+ * @property {boolean|null} [extract=true]
+ * @property {string|null} [jsonfilename]
+ * @property {boolean|null} [combinejs=true]
+ * @property {boolean|null} [dev=false]
+ * @property {("auto"|"all"|"none")} [assets="auto"]
+ * @property {boolean|null} [flat=false]
+ * @property {boolean|null} [minify=true]
+ * @property {boolean|null} [sourcemaps=false]
+ * @property {boolean|null} [minifyglsl=false]
+ * @property {boolean|null} [clean=false]
  */
 
 /**
@@ -41,38 +47,24 @@ export default (config, logger = null) =>
     if (!logger) logger = console;
 
     const patchFile = config.entry;
-    const targetDir = config.output.path;
-    const options = config.options;
-    const sourceDir = path.resolve(path.dirname(patchFile));
-
     const patchJson = jsonfile.readFileSync(patchFile);
-    fs.mkdirSync(targetDir, { "recursive": true });
 
-    const buildMode = config.mode;
-    const combineJs = options.combinejs;
-    const flat = options.flat;
-    const minify = options.minify;
-    const sourceMap = options.sourcemaps;
-    const minifyGlsl = options.minifyglsl;
-    const clean = options.clean;
-    const indexHtml = options.indexHtml;
-
-    const coreConfig = webpackConfigCore(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, logger);
-    const opsConfig = webpackOpsConfig(patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, minifyGlsl, combineJs, logger);
-    const depsConfigs = webpackOpDependenciesConfig(patchJson, path.join(sourceDir, "ops"), path.join(targetDir, "js"), buildMode, logger);
+    const coreConfig = webpackConfigCore(config, patchJson, logger);
+    const opsConfig = webpackOpsConfig(config, patchJson, logger);
+    const depsConfigs = webpackOpDependenciesConfig(config, patchJson, logger);
     const depsConfigNames = [];
     depsConfigs.forEach((depsConfig) =>
     {
         depsConfigNames.push(depsConfig.name);
     });
-    const assetsConfig = webpackAssetsConfig(patchJson, path.join(sourceDir, "assets"), path.join(targetDir, "assets"), buildMode, logger);
-    const filesConfig = webpackPatchFilesConfig(patchJson, sourceDir, targetDir, buildMode, logger);
-    const jsonConfig = webpackPatchJsonConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat, logger);
-    const minifyConfig = webpackMinifyConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, flat, minify, sourceMap, logger);
+    const assetsConfig = webpackAssetsConfig(config, patchJson, logger);
+    const filesConfig = webpackPatchFilesConfig(config, patchJson, logger);
+    const jsonConfig = webpackPatchJsonConfig(config, patchJson, logger);
+    const minifyConfig = webpackMinifyConfig(config, patchJson, logger);
     minifyConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, ...depsConfigNames];
-    const combineConfig = webpackCombineConfig(patchJson, sourceDir, path.join(targetDir, "js"), buildMode, combineJs, clean, logger);
+    const combineConfig = webpackCombineConfig(config, patchJson, logger);
     combineConfig.dependencies = [minifyConfig.name];
-    const htmlConfig = webpackHtmlConfig(patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml, logger);
+    const htmlConfig = webpackHtmlConfig(config, patchJson, logger);
     htmlConfig.dependencies = [assetsConfig.name, filesConfig.name, combineConfig.name];
     return [
         coreConfig,

@@ -3,10 +3,20 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, buildMode, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
     logger.info("assembling patchfiles");
+
+    const patchFile = config.entry;
+    const targetDir = config.output.path;
+    const sourceDir = path.resolve(path.dirname(patchFile));
+    const buildMode = config.mode;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

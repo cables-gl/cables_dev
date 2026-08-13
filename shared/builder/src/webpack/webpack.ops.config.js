@@ -6,10 +6,21 @@ import { fileURLToPath } from "url";
 import jsonfile from "jsonfile";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, buildMode, minifyGlsl, combineJs, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
     logger.info("assembling ops");
+
+    const sourceDir = path.join(path.resolve(path.dirname(config.entry)), "ops");
+    const targetDir = path.join(config.output.path, "js");
+    const buildMode = config.mode || "production";
+    const minifyGlsl = config.options.minifyglsl || false;
+    const combineJs = config.options.combinejs || true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

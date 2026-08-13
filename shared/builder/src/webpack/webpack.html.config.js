@@ -4,17 +4,30 @@ import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
-export default (patchJson, sourceDir, targetDir, buildMode, combineJs, flat, indexHtml, logger = null) =>
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null) =>
 {
     if (!logger) logger = console;
+
+    const patchFile = config.entry;
+    const targetDir = config.output.path;
+    const sourceDir = path.resolve(path.dirname(patchFile));
+    const buildMode = config.mode;
+    const combineJs = config.options.combinejs;
+    const flat = config.options.flat;
+    const indexHtml = config.options.index;
+
+    fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const plugins = [];
     if (indexHtml)
     {
         logger.info("assembling html");
-
-        fs.mkdirSync(targetDir, { "recursive": true });
 
         let deps = CablesWebpackHelper.getOpDependencies();
         let coreLibs = CablesWebpackHelper.getCoreLibs();
