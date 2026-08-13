@@ -25,7 +25,6 @@ import webpackMinifyConfig from "./webpack.minify.config.js";
  * @property {boolean|null} [minify=true]
  * @property {boolean|null} [sourcemaps=false]
  * @property {boolean|null} [minifyglsl=false]
- * @property {boolean|null} [clean=false]
  */
 
 /**
