@@ -16,7 +16,7 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.resolve(path.dirname(patchFile));
     const targetDir = path.join(config.output.path, "js");
     const buildMode = config.mode || "production";
-    const combineJs = config.options?.combinejs || false;
+    const combineJs = config.options?.combinejs || true;
     const clean = config.options?.clean || false;
 
     fs.mkdirSync(targetDir, { "recursive": true });
@@ -72,7 +72,7 @@ export default (config, patchJson, logger = null) =>
                             jsCode += "// start " + lib + "\n";
                             jsCode += fs.readFileSync(sourceFile, "utf8");
                             jsCode += "// end " + lib + "\n";
-                            if (clean) fs.rmSync(sourceFile);
+                            fs.rmSync(sourceFile);
                         }
 
                         for (let i = 0; i < depScripts.length; i++)
@@ -84,7 +84,7 @@ export default (config, patchJson, logger = null) =>
                                 jsCode += "// start " + lib.src + "\n";
                                 jsCode += fs.readFileSync(sourceFile, "utf8");
                                 jsCode += "// end " + lib.src + "\n";
-                                if (clean) fs.rmSync(sourceFile);
+                                fs.rmSync(sourceFile);
                             }
                         }
 
@@ -95,12 +95,9 @@ export default (config, patchJson, logger = null) =>
                         jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
                         fs.writeFileSync(targetFile, jsCode);
 
-                        if (clean)
-                        {
-                            fs.rmSync(coreFile);
-                            fs.rmSync(opsFile);
-                            fs.rmSync(jsonFile);
-                        }
+                        fs.rmSync(coreFile);
+                        fs.rmSync(opsFile);
+                        fs.rmSync(jsonFile);
                     }
                 });
             },

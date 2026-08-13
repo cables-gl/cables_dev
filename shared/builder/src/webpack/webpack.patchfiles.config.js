@@ -16,7 +16,7 @@ export default (config, patchJson, logger = null) =>
     const patchFile = config.entry;
     const targetDir = config.output.path;
     const sourceDir = path.resolve(path.dirname(patchFile));
-    const buildMode = config.mode;
+    const buildMode = config.mode || "production";
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

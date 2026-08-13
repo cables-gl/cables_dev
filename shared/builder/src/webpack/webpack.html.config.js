@@ -16,10 +16,10 @@ export default (config, patchJson, logger = null) =>
     const patchFile = config.entry;
     const targetDir = config.output.path;
     const sourceDir = path.resolve(path.dirname(patchFile));
-    const buildMode = config.mode;
-    const combineJs = config.options.combinejs;
-    const flat = config.options.flat;
-    const indexHtml = config.options.index;
+    const buildMode = config.mode || "production";
+    const combineJs = config.options.combinejs || true;
+    const flat = config.options.flat || false;
+    const indexHtml = config.options.index || true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -45,8 +45,7 @@ export default (config, patchJson, logger = null) =>
             const patchFiles = fs.readdirSync(sourceDir);
             patchFiles.forEach((file) =>
             {
-                if (path.basename(file)
-                    .endsWith(".cables"))
+                if (path.basename(file).endsWith(".cables"))
                 {
                     jsonFileName = path.basename(file, ".cables");
                 }
@@ -106,6 +105,7 @@ export default (config, patchJson, logger = null) =>
 
                 },
                 "templateParameters": {
+                    "patchName": patchName,
                     "patchSource": patchSource,
                     "assetPath": "",
                     "jsPath": finalJsPath,

@@ -17,7 +17,7 @@ export default (config, patchJson, logger = null) =>
 
     const sourceDir = path.join(path.resolve(path.dirname(config.entry)), "ops");
     const targetDir = path.join(config.output.path, "js");
-    const buildMode = config.mode;
+    const buildMode = config.mode || "production";
 
     fs.mkdirSync(targetDir, { "recursive": true });
 

@@ -18,9 +18,9 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.resolve(path.dirname(patchFile));
 
     const targetDir = path.join(config.output.path, "js");
-    const buildMode = config.mode;
-    const doMinify = config.options.minify;
-    const sourceMap = config.options.sourcemaps;
+    const buildMode = config.mode || "production";
+    const doMinify = config.options.minify || true;
+    const sourceMap = config.options.sourcemaps || false;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
