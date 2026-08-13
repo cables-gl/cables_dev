@@ -16,19 +16,23 @@ export default (config, patchJson, logger = null) =>
     const patchFile = config.entry;
     const sourceDir = path.join(path.resolve(path.dirname(patchFile)), "assets");
     const targetDir = path.join(config.output.path, "assets");
-    const buildMode = config.mode || "production";
+    const buildMode = config.mode || "production";
 
-    fs.mkdirSync(targetDir, { "recursive": true });
+    let plugins = [];
+    if (fs.existsSync(sourceDir))
+    {
+        fs.mkdirSync(targetDir, { "recursive": true });
 
-    let plugins = [
-        new CopyPlugin({
-            "patterns": [sourceDir],
-        }),
-        CablesWebpackHelper.removeEmptyChunk()
-    ];
+        plugins = [
+            new CopyPlugin({
+                "patterns": [sourceDir],
+            }),
+            CablesWebpackHelper.removeEmptyChunk()
+        ];
 
-    if (config.plugins?.assets) plugins = plugins.concat(config.plugins.assets);
-    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+        if (config.plugins?.assets) plugins = plugins.concat(config.plugins.assets);
+        if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+    }
 
     let result = {
         "name": "assets",
