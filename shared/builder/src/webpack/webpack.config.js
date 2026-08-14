@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import jsonfile from "jsonfile";
+import { glob } from "glob";
 import webpackConfigCore from "./webpack.core.config.js";
 import webpackOpsConfig from "./webpack.ops.config.js";
 import webpackHtmlConfig from "./webpack.html.config.js";
@@ -67,7 +68,32 @@ export default (config, logger = null) =>
 
     if (!logger) logger = console;
 
-    const patchFile = config.entry;
+    config.entry = path.resolve(config.entry);
+    let patchFile = config.entry;
+    const isDir = fs.lstatSync(config.entry).isDirectory();
+    if (isDir)
+    {
+        const projectFileGlop = path.join(config.entry, "./*.cables");
+        const projectFiles = glob.sync(projectFileGlop);
+        if (!projectFiles.length)
+        {
+            throw new Error("no projectfile found in " + config.entry);
+        }
+        else if (projectFiles.length > 1)
+        {
+            let message = "multiple projectfiles found in " + config.entry + ":\n\n";
+            projectFiles.forEach((file) =>
+            {
+                message += "    - " + file + "\n";
+            });
+            throw new Error(message);
+        }
+        else
+        {
+            patchFile = projectFiles[0];
+            config.entry = patchFile;
+        }
+    }
     const patchJson = jsonfile.readFileSync(patchFile);
 
     const coreConfig = webpackConfigCore(config, patchJson, logger);
