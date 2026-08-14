@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import { glob } from "glob";
 import jsonfile from "jsonfile";
 import fs from "fs";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
@@ -21,8 +22,8 @@ export default (config, patchJson, logger = null) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables"))), "..", "..");
-    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
+    const __coreDir = config.options?.coreDir || path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
+    const __devDir = config.options?.devDir || path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
 
     // collect opdependencies
     const opsJsonGlob = path.join(sourceDir, "./**/Ops.**.json");
@@ -140,6 +141,21 @@ export default (config, patchJson, logger = null) =>
             libraryExternals.three = "THREE";
         }
         output.externals = libraryExternals;
+
+        if (config.options?.analyze)
+        {
+            let reportsPath = config.options.analyze.path ? path.resolve(config.options.analyze.path) : path.join(__dirname, "reports");
+            const analyzer = new BundleAnalyzerPlugin(
+                {
+                    "analyzerMode": config.options.analyze.mode || "static",
+                    "openAnalyzer": false,
+                    "reportTitle": "cables dependency " + namespace,
+                    "reportFilename": path.join(reportsPath, "report_" + namespace + ".html"),
+                    "bundleDir": targetDir
+                });
+            output.plugins = output.plugins || [];
+            output.plugins.push(analyzer);
+        }
         return output;
     };
 

@@ -18,8 +18,8 @@ export default (config, patchJson, logger = null) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    const __coreDir = path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
-    const __devDir = path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
+    const __coreDir = config.options?.coreDir || path.resolve(path.dirname(fileURLToPath(import.meta.resolve("cables/package.json"))));
+    const __devDir = config.options?.devDir || path.dirname(fileURLToPath(import.meta.resolve("cables_dev/package.json")));
 
     let plugins = [
         new webpack.BannerPlugin({
