@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import webpack from "webpack";
 import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
@@ -7,7 +8,7 @@ import CablesWebpackHelper from "./webpack.helper.js";
  * @param {Object} patchJson
  * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = null, dependencies = []) =>
 {
     if (!logger) logger = console;
     logger.info("combining js");
@@ -20,30 +21,22 @@ export default (config, patchJson, logger = null) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    let jsonFileName = null;
-    const patchFiles = fs.readdirSync(sourceDir);
-    patchFiles.forEach((file) =>
-    {
-        if (path.basename(file).endsWith(".cables"))
-        {
-            jsonFileName = path.basename(file, ".cables");
-        }
-    });
-
-    const jsonFile = path.resolve(path.join(targetDir, jsonFileName + ".json"));
     const opsFile = path.resolve(path.join(targetDir, "ops.js"));
     const coreFile = path.resolve(path.join(targetDir, "cables.js"));
     const targetFile = path.resolve(path.join(targetDir, "patch.js"));
+    const assetName = path.basename(targetFile);
 
     let plugins = [
         {
             apply(compiler)
             {
-                compiler.hooks.thisCompilation.tap("InlinePlugin", () =>
+                compiler.hooks.thisCompilation.tap("InlinePlugin", (compilation) =>
                 {
-                    if (combineJs)
+                    if (!combineJs) return;
+                    compilation.hooks.afterOptimizeAssets.tap("InlinePluginProcessAssets", (assets) =>
                     {
-
+                        let jsonFileName = path.basename(config.entry, ".cables") + ".json";
+                        const jsonFile = path.resolve(path.join(targetDir, jsonFileName));
                         const proJson = fs.readFileSync(jsonFile);
                         const opsCode = fs.readFileSync(opsFile);
 
@@ -92,12 +85,16 @@ export default (config, patchJson, logger = null) =>
                         jsCode = jsCode.replaceAll(/[\u00A0]/g, " ");
 
                         jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
-                        fs.writeFileSync(targetFile, jsCode);
+
+                        const source = new webpack.sources.RawSource(jsCode);
+                        compilation.emitAsset(assetName, source);
+
+                        // fs.writeFileSync(targetFile, jsCode);
 
                         fs.rmSync(coreFile);
                         fs.rmSync(opsFile);
                         fs.rmSync(jsonFile);
-                    }
+                    });
                 });
             },
         },
@@ -107,13 +104,13 @@ export default (config, patchJson, logger = null) =>
     if (config.plugins?.combine) plugins = plugins.concat(config.plugins.combine);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "combine",
         "mode": buildMode,
         "plugins": plugins,
         "entry": patchFile,
         "output": {
-            "path": targetDir,
+            "path": targetDir
         },
         "module": {
             "rules": [
@@ -122,10 +119,10 @@ export default (config, patchJson, logger = null) =>
                     "type": "json"
                 }
             ]
-        }
+        },
+        "dependencies": ["core", "ops", "patchjson", ...dependencies],
     };
-    if (config.overrides?.combine) result = { ...result, ...config.overrides.combine };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
-
-    return result;
+    if (config.overrides?.combine) buildConfig = { ...buildConfig, ...config.overrides.combine };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    return buildConfig;
 };

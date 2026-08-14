@@ -123,7 +123,7 @@ export default (config, patchJson, logger = null) =>
     if (config.plugins?.html) plugins = plugins.concat(config.plugins.html);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "html",
         "mode": buildMode,
         "entry": patchFile,
@@ -143,9 +143,10 @@ export default (config, patchJson, logger = null) =>
             ],
         },
         "plugins": plugins,
+        "dependencies": ["assets", "files", "combine"]
     };
-    if (config.overrides?.html) result = { ...result, ...config.overrides.html };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.overrides?.html) buildConfig = { ...buildConfig, ...config.overrides.html };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
 
-    return result;
+    return buildConfig;
 };

@@ -34,7 +34,7 @@ export default (config, patchJson, logger = null) =>
         if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
     }
 
-    let result = {
+    let buildConfig = {
         "name": "assets",
         "mode": buildMode,
         "entry": patchFile,
@@ -52,8 +52,8 @@ export default (config, patchJson, logger = null) =>
         }
     };
 
-    if (config.overrides?.assets) result = { ...result, ...config.overrides.assets };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.overrides?.assets) buildConfig = { ...buildConfig, ...config.overrides.assets };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
 
-    return result;
+    return buildConfig;
 };

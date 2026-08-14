@@ -99,20 +99,20 @@ export default (config, logger = null) =>
     const coreConfig = webpackConfigCore(config, patchJson, logger);
     const opsConfig = webpackOpsConfig(config, patchJson, logger);
     const depsConfigs = webpackOpDependenciesConfig(config, patchJson, logger);
+    const assetsConfig = webpackAssetsConfig(config, patchJson, logger);
+    const filesConfig = webpackPatchFilesConfig(config, patchJson, logger);
+    const jsonConfig = webpackPatchJsonConfig(config, patchJson, logger);
+
     const depsConfigNames = [];
     depsConfigs.forEach((depsConfig) =>
     {
         depsConfigNames.push(depsConfig.name);
     });
-    const assetsConfig = webpackAssetsConfig(config, patchJson, logger);
-    const filesConfig = webpackPatchFilesConfig(config, patchJson, logger);
-    const jsonConfig = webpackPatchJsonConfig(config, patchJson, logger);
-    const minifyConfig = webpackMinifyConfig(config, patchJson, logger);
-    minifyConfig.dependencies = [coreConfig.name, opsConfig.name, jsonConfig.name, ...depsConfigNames];
-    const combineConfig = webpackCombineConfig(config, patchJson, logger);
-    combineConfig.dependencies = [minifyConfig.name];
+
+    const combineConfig = webpackCombineConfig(config, patchJson, logger, depsConfigNames);
+    const minifyConfig = webpackMinifyConfig(config, patchJson, logger, depsConfigNames);
     const htmlConfig = webpackHtmlConfig(config, patchJson, logger);
-    htmlConfig.dependencies = [assetsConfig.name, filesConfig.name, combineConfig.name];
+
     return [
         coreConfig,
         opsConfig,
@@ -120,9 +120,9 @@ export default (config, logger = null) =>
         assetsConfig,
         filesConfig,
         jsonConfig,
-        minifyConfig,
         combineConfig,
-        htmlConfig,
+        minifyConfig,
+        htmlConfig
     ];
 
 };

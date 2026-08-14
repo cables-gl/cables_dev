@@ -10,7 +10,7 @@ import CablesWebpackHelper from "./webpack.helper.js";
  * @param {Object} patchJson
  * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = null, dependencies = []) =>
 {
     if (!logger) logger = console;
 
@@ -93,7 +93,7 @@ export default (config, patchJson, logger = null) =>
     if (config.plugins?.minify) plugins = plugins.concat(config.plugins.minify);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "minify",
         "mode": buildMode,
         "entry": patchFile,
@@ -108,10 +108,11 @@ export default (config, patchJson, logger = null) =>
                     "type": "json"
                 }
             ]
-        }
+        },
+        "dependencies": ["combine"]
     };
-    if (config.overrides?.minify) result = { ...result, ...config.overrides.minify };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.overrides?.minify) buildConfig = { ...buildConfig, ...config.overrides.minify };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
 
-    return result;
+    return buildConfig;
 };

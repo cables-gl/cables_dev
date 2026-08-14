@@ -4,6 +4,7 @@ import webpack from "webpack";
 import { glob } from "glob";
 import { fileURLToPath } from "url";
 import jsonfile from "jsonfile";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
@@ -100,7 +101,7 @@ export default (config, patchJson, logger = null) =>
     if (config.plugins?.ops) plugins = plugins.concat(config.plugins.ops);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "ops",
         "mode": buildMode,
         "entry": opFiles,
@@ -133,8 +134,23 @@ export default (config, patchJson, logger = null) =>
         "plugins": plugins,
     };
 
-    if (config.overrides?.ops) result = { ...result, ...config.overrides.ops };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.options?.analyze)
+    {
+        let reportsPath = config.options.analyze.path ? path.resolve(config.options.analyze.path) : path.join(__dirname, "reports");
+        const analyzer = new BundleAnalyzerPlugin(
+            {
+                "analyzerMode": config.options.analyze.mode || "static",
+                "openAnalyzer": false,
+                "reportTitle": "cables " + buildConfig.name,
+                "reportFilename": path.join(reportsPath, "report_" + buildConfig.name + ".html"),
+                "bundleDir": targetDir
+            });
+        buildConfig.plugins = buildConfig.plugins || [];
+        buildConfig.plugins.push(analyzer);
+    }
 
-    return result;
+    if (config.overrides?.ops) buildConfig = { ...buildConfig, ...config.overrides.ops };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+
+    return buildConfig;
 };

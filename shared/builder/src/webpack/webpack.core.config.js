@@ -2,6 +2,8 @@ import path from "path";
 import fs from "fs";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
@@ -28,12 +30,13 @@ export default (config, patchJson, logger = null) =>
             "raw": true,
             "banner": "\n\nvar CABLES = CABLES || {};" // FIXME: buildInfo?
         }),
+        CablesWebpackHelper.removeEmptyChunk()
     ];
 
     if (config.plugins?.core) plugins = plugins.concat(config.plugins.core);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "core",
         "mode": buildMode,
         "entry": [
@@ -87,8 +90,23 @@ export default (config, patchJson, logger = null) =>
         },
     };
 
-    if (config.overrides?.core) result = { ...result, ...config.overrides.core };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.options?.analyze)
+    {
+        let reportsPath = config.options.analyze.path ? path.resolve(config.options.analyze.path) : path.join(__dirname, "reports");
+        const analyzer = new BundleAnalyzerPlugin(
+            {
+                "analyzerMode": config.options.analyze.mode || "static",
+                "openAnalyzer": false,
+                "reportTitle": "cables " + buildConfig.name,
+                "reportFilename": path.join(reportsPath, "report_" + buildConfig.name + ".html"),
+                "bundleDir": targetDir
+            });
+        buildConfig.plugins = buildConfig.plugins || [];
+        buildConfig.plugins.push(analyzer);
+    }
 
-    return result;
+    if (config.overrides?.core) buildConfig = { ...buildConfig, ...config.overrides.core };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+
+    return buildConfig;
 };

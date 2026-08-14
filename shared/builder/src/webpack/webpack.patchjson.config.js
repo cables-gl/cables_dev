@@ -22,16 +22,7 @@ export default (config, patchJson, logger = null) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    let jsonFileName = null;
-    const patchFiles = fs.readdirSync(sourceDir);
-    patchFiles.forEach((file) =>
-    {
-        if (path.basename(file).endsWith(".cables"))
-        {
-            jsonFileName = path.basename(file, ".cables") + ".json";
-        }
-    });
-
+    let jsonFileName = path.basename(config.entry, ".cables") + ".json";
     let finalAssetPath = "assets/";
     if (flat) finalAssetPath = "";
 
@@ -62,7 +53,7 @@ export default (config, patchJson, logger = null) =>
     if (config.plugins?.patchjson) plugins = plugins.concat(config.plugins.patchjson);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
-    let result = {
+    let buildConfig = {
         "name": "patchjson",
         "mode": buildMode,
         "entry": patchFile,
@@ -79,8 +70,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
-    if (config.overrides?.patchjson) result = { ...result, ...config.overrides.patchjson };
-    if (config.overrides?.all) result = { ...result, ...config.overrides.all };
+    if (config.overrides?.patchjson) buildConfig = { ...buildConfig, ...config.overrides.patchjson };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
 
-    return result;
+    return buildConfig;
 };

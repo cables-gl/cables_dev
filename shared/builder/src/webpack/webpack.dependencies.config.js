@@ -11,7 +11,7 @@ import CablesWebpackHelper from "./webpack.helper.js";
  * @param {Object} patchJson
  * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = null, dependencies = []) =>
 {
     if (!logger) logger = console;
     logger.info("assembling dependencies");
