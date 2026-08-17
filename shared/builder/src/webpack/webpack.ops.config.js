@@ -22,6 +22,7 @@ export default (config, patchJson, logger = null) =>
     const buildMode = config.mode || "production";
     const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
     const minifyGlsl = config.options?.hasOwnProperty("minifyglsl") ? config.options.minifyglsl : false;
+    const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -112,6 +113,7 @@ export default (config, patchJson, logger = null) =>
         "optimization": {
             "concatenateModules": true,
             "usedExports": true,
+            "minimize": minify
         },
         "module": {
             "rules": [

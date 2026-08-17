@@ -19,6 +19,7 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.resolve(path.dirname(patchFile));
     const buildMode = config.mode || "production";
     const flat = config.options?.hasOwnProperty("flat") ? config.options.flat : false;
+    const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -61,6 +62,9 @@ export default (config, patchJson, logger = null) =>
             "path": targetDir,
         },
         "plugins": plugins,
+        "optimization": {
+            "minimize": minify
+        },
         "module": {
             "rules": [
                 {

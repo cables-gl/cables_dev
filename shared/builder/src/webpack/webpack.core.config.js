@@ -17,6 +17,7 @@ export default (config, patchJson, logger = null) =>
 
     const targetDir = path.join(config.output.path, "js");
     const buildMode = config.mode || "production";
+    const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -52,7 +53,8 @@ export default (config, patchJson, logger = null) =>
         },
         "optimization": {
             "concatenateModules": true,
-            "usedExports": true
+            "usedExports": true,
+            "minimize": minify
         },
         "module": {
             "rules": [

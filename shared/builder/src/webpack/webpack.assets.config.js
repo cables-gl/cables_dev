@@ -17,6 +17,7 @@ export default (config, patchJson, logger = null) =>
     const sourceDir = path.join(path.resolve(path.dirname(patchFile)), "assets");
     const targetDir = path.join(config.output.path, "assets");
     const buildMode = config.mode || "production";
+    const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     let plugins = [];
     if (fs.existsSync(sourceDir))
@@ -41,6 +42,9 @@ export default (config, patchJson, logger = null) =>
         "plugins": plugins,
         "output": {
             "path": targetDir
+        },
+        "optimization": {
+            "minimize": minify
         },
         "module": {
             "rules": [

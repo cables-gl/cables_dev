@@ -20,6 +20,7 @@ export default (config, patchJson, logger = null) =>
     const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
     const indexHtml = config.options?.hasOwnProperty("index") ? config.options.index : true;
     const flat = config.options?.hasOwnProperty("flat") ? config.options.flat : false;
+    const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -129,6 +130,9 @@ export default (config, patchJson, logger = null) =>
         "entry": patchFile,
         "output": {
             "path": targetDir,
+        },
+        "optimization": {
+            "minimize": minify
         },
         "module": {
             "rules": [
