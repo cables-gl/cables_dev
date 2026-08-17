@@ -994,11 +994,11 @@ export default class SharedExportService extends SharedUtil
             this._log.verbose("combine files!", options.coreSrcFile);
 
             jsCode += "\n";
+            jsCode += "// start patch.json\n";
             jsCode += "if(!CABLES.exportedPatches) CABLES.exportedPatches={};";
-            jsCode += "CABLES.exportedPatches['" + proj.shortId + "']=" + proJson + ";";
-
-            jsCode += "\n";
+            jsCode += "CABLES.exportedPatches['" + proj.shortId + "']=" + proJson + ";\n";
             jsCode += "if(!CABLES.exportedPatch){CABLES.exportedPatch=CABLES.exportedPatches['" + proj.shortId + "']}";
+            jsCode += "// end patch.json\n";
             jsCode += "\n";
             jsCode += opsCode;
             jsCode += "\n";
