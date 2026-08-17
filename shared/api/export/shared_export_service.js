@@ -997,7 +997,7 @@ export default class SharedExportService extends SharedUtil
             jsCode += "// start patch.json\n";
             jsCode += "if(!CABLES.exportedPatches) CABLES.exportedPatches={};";
             jsCode += "CABLES.exportedPatches['" + proj.shortId + "']=" + proJson + ";\n";
-            jsCode += "if(!CABLES.exportedPatch){CABLES.exportedPatch=CABLES.exportedPatches['" + proj.shortId + "']}";
+            jsCode += "if(!CABLES.exportedPatch){CABLES.exportedPatch=CABLES.exportedPatches['" + proj.shortId + "']};\n";
             jsCode += "// end patch.json\n";
             jsCode += "\n";
             jsCode += opsCode;
