@@ -81,6 +81,9 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                             }
                         }
 
+                        jsCode += "window.CABLES=CABLES\n";
+                        jsCode += "window.Ops =Ops\n";
+
                         jsCode = jsCode.replaceAll(/[\u2028]/g, " ");
                         jsCode = jsCode.replaceAll(/[\u2029]/g, " ");
                         jsCode = jsCode.replaceAll(/[\u00A0]/g, " ");
