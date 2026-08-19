@@ -4,6 +4,7 @@ import { glob } from "glob";
 import jsonfile from "jsonfile";
 import fs from "fs";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+import TerserPlugin from "terser-webpack-plugin";
 import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
@@ -177,7 +178,17 @@ export default (config, patchJson, logger = null, dependencies = []) =>
         "optimization": {
             "concatenateModules": true,
             "usedExports": true,
-            "minimize": minify
+            "minimize": minify,
+            "minimizer": [
+                new TerserPlugin({
+                    "extractComments": false,
+                    "terserOptions": {
+                        "format": {
+                            "comments": false,
+                        },
+                    },
+                }),
+            ],
         },
         "module": {
             "rules": [
