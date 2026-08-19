@@ -38,10 +38,11 @@ export default (config, patchJson, logger = null) =>
                         "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
                     }, () =>
                     {
-                        const exportable = CablesWebpackHelper.makeExportable(patchJson, []);
+                        let exportable = CablesWebpackHelper.makeExportable(patchJson, []);
+                        exportable = JSON.stringify(exportable, null, minify ? 0 : 4);
                         compilation.emitAsset(
                             jsonFileName,
-                            new webpack.sources.RawSource(JSON.stringify(exportable, null, 4)),
+                            new webpack.sources.RawSource(exportable),
                         );
                     },
                     );

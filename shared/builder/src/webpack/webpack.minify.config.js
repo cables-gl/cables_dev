@@ -77,7 +77,7 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                                 jsonFileName = path.basename(file, ".cables") + ".json";
                             }
                         });
-                        if (jsonFileName)
+                        if (jsonFileName && !config.options.combinejs)
                         {
                             const patchJson = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
                             await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), patchJson);
