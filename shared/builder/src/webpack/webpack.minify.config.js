@@ -21,6 +21,7 @@ export default (config, patchJson, logger = null, dependencies = []) =>
     const buildMode = config.mode || "production";
     const doMinify = config.options?.hasOwnProperty("minify") ? config.options.minify : true;
     const sourceMap = config.options?.hasOwnProperty("sourcemaps") ? config.options.sourcemaps : false;
+    const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
@@ -77,10 +78,10 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                                 jsonFileName = path.basename(file, ".cables") + ".json";
                             }
                         });
-                        if (jsonFileName && !config.options.combinejs)
+                        if (jsonFileName && !combineJs)
                         {
-                            const patchJson = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
-                            await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), patchJson);
+                            const json = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
+                            await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), json);
                         }
 
                     }
