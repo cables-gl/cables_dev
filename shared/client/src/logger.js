@@ -36,6 +36,7 @@ export default class Logger
         console.groupCollapsed("[" + this.initiator + "] " + t);
     }
 
+    /* minimalcore:start */
     /**
      * @param {any[][]} t
      */
@@ -49,57 +50,91 @@ export default class Logger
         console.groupEnd();
     }
 
+    /* minimalcore:end */
+
     error()
     {
 
+        /* minimalcore:start */
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments)) || !CABLES.UI)
         {
+
+            /* minimalcore:end */
             console.error("[" + this.initiator + "]", ...arguments);
+
+        /* minimalcore:start */
         }
 
         if (this._options && this._options.onError)
         {
+
+            /* minimalcore:end */
             this._options.onError(this.initiator, ...arguments);
-            // console.log("emitevent onerror...");
-            // CABLES.patch.emitEvent("onError", this.initiator, ...arguments);
-            // CABLES.logErrorConsole("[" + this.initiator + "]", ...arguments);
+
+        /* minimalcore:start */
         }
+
+        /* minimalcore:end */
 
     }
 
     errorGui()
     {
+
+        /* minimalcore:start */
         if (CABLES.UI) CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 2 }, ...arguments);
+
+        /* minimalcore:end */
     }
 
     warn()
     {
+
+        /* minimalcore:start */
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 1 }, ...arguments)))
             console.warn("[" + this.initiator + "]", ...arguments);
         return null;
+
+        /* minimalcore:end */
     }
 
     verbose()
     {
+
+        /* minimalcore:start */
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
+
+        /* minimalcore:end */
     }
 
     info()
     {
+
+        /* minimalcore:start */
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
             console.info("[" + this.initiator + "]", ...arguments);
+
+        /* minimalcore:end */
     }
 
     log()
     {
+
+        /* minimalcore:start */
         if ((CABLES.UI && CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments)) || !CABLES.logSilent)
             console.log("[" + this.initiator + "]", ...arguments);
+
+        /* minimalcore:end */
     }
 
     logGui()
     {
+
+        /* minimalcore:start */
         if (CABLES.UI) CABLES.UI.logFilter.filterLog({ "initiator": this.initiator, "level": 0 }, ...arguments);
+
+        /* minimalcore:end */
     }
 
     userInteraction(text)
