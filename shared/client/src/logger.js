@@ -36,7 +36,6 @@ export default class Logger
         console.groupCollapsed("[" + this.initiator + "] " + t);
     }
 
-    /* minimalcore:start */
     /**
      * @param {any[][]} t
      */
@@ -49,8 +48,6 @@ export default class Logger
     {
         console.groupEnd();
     }
-
-    /* minimalcore:end */
 
     error()
     {
@@ -65,16 +62,13 @@ export default class Logger
         /* minimalcore:start */
         }
 
+        /* minimalcore:end */
         if (this._options && this._options.onError)
         {
 
-            /* minimalcore:end */
             this._options.onError(this.initiator, ...arguments);
 
-        /* minimalcore:start */
         }
-
-        /* minimalcore:end */
 
     }
 
