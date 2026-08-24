@@ -455,13 +455,13 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
-    getOpFullCode(fn, opName, opId, prepareForExport = false, minifyGlsl = false)
+    getOpFullCode(fn, opName, opId, prepareForExport = false, minifyGlsl = false, code = null)
     {
         if (!fn || !opName || !opId) return "";
 
         try
         {
-            const code = fs.readFileSync(fn, "utf8");
+            code = code || fs.readFileSync(fn, "utf8");
             let codeAttachments = "const attachments=op.attachments={";
             let codeAttachmentsInc = "";
             let staticAttachments = "static staticAttachments={";
@@ -638,40 +638,66 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": ""
             });
 
-            if (code.indexOf("cgl.mvMatrix") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "mvMatrix",
-                "text": "use of `MvMatrix` is deprecated, use cgl.mMatrix / cgl.vMatrix instead."
+            const deprecatedFunctions = {
+                "cgl.mvMatrix": {
+                    "type": "code",
+                    "id": "mvMatrix",
+                    "text": "`cgl.mMatrix` or `cgl.vMatrix`"
+                },
+                ".onValueChange": {
+                    "type": "code",
+                    "id": "onValueChanged",
+                    "text": "`port.onChange`"
+                },
+                ".inValueEditor": {
+                    "type": "code",
+                    "id": "inValueEditor",
+                    "text": "`op.inStringEditor()`"
+                },
+                ".inFile": {
+                    "type": "code",
+                    "id": "inFile",
+                    "text": "`op.inUrl()`"
+                },
+                "op.outValue": {
+                    "type": "code",
+                    "id": "op.outValue",
+                    "text": "`op.outNumber`, or `op.outString`"
+                },
+                "op.addInPort(": {
+                    "type": "code",
+                    "id": "port",
+                    "text": "`op.inValue` or `op.inTrigger` etc. to create ports..."
+                },
+                "op.outFunction": {
+                    "type": "code",
+                    "id": "outFunction",
+                    "text": "`op.outTrigger`"
+                },
+                "op.inFunction": {
+                    "type": "code",
+                    "id": "inFunction",
+                    "text": "`op.inTrigger`"
+                }
+            };
+
+            Object.keys(deprecatedFunctions).forEach((search) =>
+            {
+                const deprecationInfo = deprecatedFunctions[search];
+                if (code.includes(search))
+                {
+                    srcWarnings.push({
+                        "type": deprecationInfo.type,
+                        "id": deprecationInfo.id,
+                        "text": "do not use deprecated `" + search + "`, replace it with " + deprecationInfo.text
+                    });
+                }
             });
 
             if (opName.indexOf("Ops.Gl.ImageCompose") >= 0 && code.indexOf("checkOpInEffect") == -1 && opName.indexOf("ImageCompose") == -1) srcWarnings.push({
                 "type": "code",
                 "id": "no_check_effect",
                 "text": "every textureEffect op should use `if(!CGL.TextureEffect.checkOpInEffect(op)) return;` in the rendering function to automatically show a warning to the user if he is trying to use it outside of an imageCompose"
-            });
-
-            if (code.indexOf(".onValueChange") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "onValueChanged",
-                "text": "do not use `port.onValueChanged=`, now use `port.onChange=`"
-            });
-
-            if (code.indexOf(".inValueEditor") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "inValueEditor",
-                "text": "do not use `op.inValueEditor()`, now use `op.inStringEditor()`"
-            });
-
-            if (code.indexOf(".inFile") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "inFile",
-                "text": "do not use `op.inFile()`, now use `op.inUrl()`"
-            });
-
-            if (code.indexOf("op.outValue") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "op.outValue",
-                "text": "use `op.outNumber`, or `op.outString` "
             });
 
             if (code.indexOf("\"use strict\";") > -1) srcWarnings.push({
@@ -692,12 +718,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "text": "do not use `port.val`, now use `port.get()`"
             });
 
-            if (code.indexOf("op.addInPort(") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "port",
-                "text": "use `op.inValue` or `op.inTrigger` etc. to create ports..."
-            });
-
             if (code.indexOf("colorPick: 'true'") > -1 || code.indexOf("colorPick:'true'") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "colorpick",
@@ -708,17 +728,6 @@ export default class SharedOpsUtil extends SharedUtil
                 "type": "code",
                 "id": "blendmode",
                 "text": "do not directly set `.onChange` for blendMode select. use this now: `CGL.TextureEffect.setupBlending(op,shader,blendMode,amount);`"
-            });
-
-            if (code.indexOf("op.outFunction") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "outFunction",
-                "text": "use `op.outTrigger` instead of `op.outFunction` "
-            });
-            if (code.indexOf("op.inFunction") > -1) srcWarnings.push({
-                "type": "code",
-                "id": "inFunction",
-                "text": "use `op.inTrigger` instead of `op.inFunction` "
             });
 
             if (code.indexOf("{{BLENDCODE}}") > -1) srcWarnings.push({
