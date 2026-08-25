@@ -12,7 +12,9 @@
         "pm2:test": "npm_config_apiconfig=tests pm2 start pm2_ecosystem.config.cjs",
         "pm2:stop": "pm2 stop pm2_ecosystem.config.cjs",
         "pm2:logs": "pm2 logs",
-        "pm2:restart": "pm2 restart pm2_ecosystem.config.cjs"
+        "pm2:restart": "pm2 restart pm2_ecosystem.config.cjs",
+        "types": "tsc -p tsconfig.build-types.json",
+        "types:watch": "tsc -p tsconfig.build-types.json --watch"
     },
     "repository": {
         "type": "git",
@@ -38,6 +40,7 @@
         "prettier": "3.2.5",
         "prettier-eslint": "16.3.0",
         "tree-kill": "1.2.2",
+        "typescript": "6.0.3",
         "uglify-js": "3.18.0"
     },
     "allowScripts": {

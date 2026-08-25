@@ -5,15 +5,20 @@
         "checkJs": true,
         "allowJs": true,
         "moduleResolution": "bundler",
-        "typeRoots": [
-            "cables/node_modules/@webgpu/types"
-        ]
+        "typeRoots": ["cables/node_modules/@webgpu/types"],
+        "paths": {
+            "cables": ["./gen/types/cables/src/core/index.d.ts"],
+            "cables-corelibs": ["./gen/types/shared/client/index.d.ts"],
+            "cables-ui": ["./gen/types/cables_ui/src/ui/*"],
+            "cables-shared-api": ["./gen/types/shared/client/index.d.ts"],
+            "cables-shared-client": ["./gen/types/shared/client/index.d.ts"],
+        },
     },
     "include": [
         "shared/api/**/*",
-        "shared/client/src/**/*",
+        "shared/client/**/*",
         "cables_ui/src/**/*",
         "cables/src/core/**/*",
-        "cables/src/corelibs/**/*"
-    ]
+        "cables/src/corelibs/**/*",
+    ],
 }

@@ -24,6 +24,11 @@ let commands = [
         "prefixColor": "green",
         "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
+    {
+        "command": "npm run types:watch",
+        "name": "types",
+        "prefixColor": "magenta"
+    }
 ];
 
 if (!electron)
@@ -68,8 +73,8 @@ const { result } = concurrently(
     {
         "prefix": "name",
         "killOthers": ["failure"],
-        "restartTries": 3,
-    },
+        "restartTries": 3
+    }
 );
 
 result.then(() =>
