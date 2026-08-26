@@ -5,7 +5,8 @@
         "checkJs": true,
         "allowJs": true,
         "moduleResolution": "bundler",
-        "typeRoots": ["cables/node_modules/@webgpu/types"],
+        "typeRoots": ["cables/node_modules/@webgpu/types", "./gen/types"],
+        "strict": false,
         "paths": {
             "cables": ["./gen/types/cables/src/core/index.d.ts"],
             "cables-corelibs": ["./gen/types/shared/client/index.d.ts"],

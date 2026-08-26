@@ -36,7 +36,7 @@ export default class SharedUtil
 
     /**
      *
-     * @returns {import("./shared_logger.js")}
+     * @returns {import("./shared_logger.js").default}
      * @protected
      */
     get _log()
@@ -46,7 +46,7 @@ export default class SharedUtil
 
     /**
      *
-     * @returns {import("../cables.js")}
+     * @returns {import("../cables.js").default}
      * @protected
      */
     get _cables()
@@ -56,7 +56,7 @@ export default class SharedUtil
 
     /**
      *
-     * @returns {import("./shared_ops_util.js")}
+     * @returns {import("./shared_ops_util.js").default}
      * @protected
      */
     get _opsUtil()
@@ -66,7 +66,7 @@ export default class SharedUtil
 
     /**
      *
-     * @returns {import("./shared_doc_util.js")}
+     * @returns {import("./shared_doc_util.js").default}
      * @protected
      */
     get _docsUtil()
@@ -76,7 +76,7 @@ export default class SharedUtil
 
     /**
      *
-     * @returns {import("./shared_subpatchop_util.js")}
+     * @returns {import("./shared_subpatchop_util.js").default}
      * @protected
      */
     get _subPatchOpUtil()
@@ -86,7 +86,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_teams_util.js")}
+     * @return {import("./shared_teams_util.js").default}
      * @protected
      */
     get _teamsUtil()
@@ -96,7 +96,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_helper_util.js")}
+     * @return {import("./shared_helper_util.js").default}
      * @protected
      */
     get _helperUtil()
@@ -106,7 +106,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_projects_util.js")}
+     * @return {import("./shared_projects_util.js").default}
      * @protected
      */
     get _projectsUtil()
@@ -116,7 +116,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_libs_util.js")}
+     * @return {import("./shared_libs_util.js").default}
      * @protected
      */
     get _libsUtil()
@@ -126,7 +126,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_files_util.js")}
+     * @return {import("./shared_files_util.js").default}
      * @protected
      */
     get _filesUtil()
@@ -136,7 +136,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {import("./shared_storage_util.js")}
+     * @return {import("./shared_storage_util.js").default}
      * @protected
      */
     get _storageUtil()
