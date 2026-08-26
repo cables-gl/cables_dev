@@ -1073,6 +1073,14 @@ export default class SharedOpsUtil extends SharedUtil
         return opDocs;
     }
 
+    /**
+     *
+     * @param {string} collectionName
+     * @param {Array<string>|null} [opNames]
+     * @param {Array<string>|null} [collectionOps]
+     * @param {boolean} [updateLookup=true]
+     * @returns
+     */
     buildOpDocsForCollection(collectionName, opNames = null, collectionOps = null, updateLookup = true)
     {
         const collectionFile = this.getCollectionOpDocFile(collectionName);
@@ -3745,6 +3753,19 @@ export default class SharedOpsUtil extends SharedUtil
         return xw.toString();
     }
 
+    /**
+     *
+     * @param {string} oldName
+     * @param {string} newName
+     * @param {object} currentUser
+     * @param {boolean} formatCode
+     * @param {boolean} removeOld
+     * @param {boolean} newId
+     * @param {string} oldOpDir
+     * @param {string} newOpDir
+     * @param {function|null} [cb]
+     * @returns
+     */
     _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
     {
         newName = this.sanitizeOpName(newName);

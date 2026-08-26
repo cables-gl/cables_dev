@@ -11,12 +11,15 @@ export default class SharedUtil
 
     /**
      *
-     *
+     * @param {UtilProvider} utilProvider
+     * @param {boolean} [register=true]
      */
     constructor(utilProvider, register = true)
     {
         if (utilProvider)
         {
+
+            /** @type {UtilProvider} */
             this._utilProvider = utilProvider;
             if (register) this._utilProvider.register(this.utilName, this);
         }
@@ -24,6 +27,7 @@ export default class SharedUtil
 
     /**
      * @abstract
+     * @returns {string}
      */
     get utilName()
     {
@@ -32,7 +36,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @returns {import("./shared_logger.js")}
      * @protected
      */
     get _log()
@@ -42,7 +46,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @returns {import("../cables.js")}
      * @protected
      */
     get _cables()
@@ -52,7 +56,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @returns {import("./shared_ops_util.js")}
      * @protected
      */
     get _opsUtil()
@@ -62,7 +66,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @returns {import("./shared_doc_util.js")}
      * @protected
      */
     get _docsUtil()
@@ -72,7 +76,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @returns {import("./shared_subpatchop_util.js")}
      * @protected
      */
     get _subPatchOpUtil()
@@ -82,7 +86,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_teams_util.js")}
      * @protected
      */
     get _teamsUtil()
@@ -92,7 +96,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_helper_util.js")}
      * @protected
      */
     get _helperUtil()
@@ -102,7 +106,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_projects_util.js")}
      * @protected
      */
     get _projectsUtil()
@@ -112,7 +116,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_libs_util.js")}
      * @protected
      */
     get _libsUtil()
@@ -122,7 +126,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_files_util.js")}
      * @protected
      */
     get _filesUtil()
@@ -132,7 +136,7 @@ export default class SharedUtil
 
     /**
      *
-     * @return {*}
+     * @return {import("./shared_storage_util.js")}
      * @protected
      */
     get _storageUtil()
