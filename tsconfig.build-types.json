@@ -10,7 +10,7 @@
         "emitDeclarationOnly": true,
         "outDir": "./gen/types",
         "rootDir": ".",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "strict": false,
         "skipLibCheck": true,
         "noEmitOnError": false,
