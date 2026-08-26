@@ -1,9 +1,17 @@
 import concurrently from "concurrently";
 import kill from "tree-kill";
 import fs from "fs";
+import { Writable } from "stream";
 
 const args = process.argv ? process.argv.slice(2) : [];
 const electron = args && args[0] === "standalone";
+
+const devNull = new Writable({
+    "write": function (chunk, encoding, callback)
+    {
+        callback();
+    }
+});
 
 let commands = [
     {
@@ -25,9 +33,8 @@ let commands = [
         "env": { "cables_electron": electron, "NODE_OPTIONS": "--disable-warning=ExperimentalWarning" }
     },
     {
-        "command": "npm run types:watch",
-        "name": "types",
-        "prefixColor": "magenta"
+        "command": "tsc -p tsconfig.build-types.json --watch",
+        "name": "types"
     }
 ];
 
@@ -73,7 +80,8 @@ const { result } = concurrently(
     {
         "prefix": "name",
         "killOthers": ["failure"],
-        "restartTries": 3
+        "restartTries": 3,
+        "hide": ["types"]
     }
 );
 
