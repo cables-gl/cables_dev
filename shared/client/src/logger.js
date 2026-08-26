@@ -4,7 +4,7 @@ export default class Logger
 
     /**
      * @param {any} initiator
-     * @param {Object} options
+     * @param {Object} [options]
      */
     constructor(initiator, options)
     {

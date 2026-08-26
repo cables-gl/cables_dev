@@ -1,5 +1,7 @@
-cables/build/*
+cables/build/**
 cables_ui/dist/
+shared/libs/**
+cables_abi/public/assets/**
 cables_electron/dist/
 jsdoc/dist/
 cables_api/public/landing/standalone/patch/**
