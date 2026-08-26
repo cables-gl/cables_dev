@@ -539,7 +539,7 @@ export default class SharedDocUtil extends SharedUtil
                     }
                 }
 
-                if (cachedLookup.ids[op.id] && cachedLookup.ids[op.id] !== op.name)
+                if (cachedLookup.ids[op.id] && cachedLookup.ids[op.id] !== op.name && this._opsUtil.opExists(cachedLookup.ids[op.id], true))
                 {
                     this._log.error("DUPLICATE OP ID!", op.id, op.name, cachedLookup.ids[op.id]);
                     error = true;
