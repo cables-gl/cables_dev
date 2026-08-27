@@ -922,6 +922,7 @@ export default class SharedOpsUtil extends SharedUtil
     userHasWriteRightsOp(user, opName, teams = [], project = null, ignoreAdmin = false)
     {
         if (!user) return false;
+        if (user.isAdmin) return true;
         if (!opName) return false;
         if (!opName.startsWith(this.PREFIX_OPS)) return false;
         if (opName.indexOf("..") > -1) return false;
