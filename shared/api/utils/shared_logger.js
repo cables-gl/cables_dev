@@ -2,7 +2,6 @@ import moment from "moment-mini";
 import path from "path";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
-import cables from "../cables.js";
 
 /**
  * @abstract
@@ -23,8 +22,6 @@ export default class SharedLogger extends SharedUtil
             "error",
             "uncaught"
         ];
-
-        this._logLevelIndex = this._levels.findIndex((level) => { return level == this._logLevel; });
 
         // register console output, will include "verbose"
         this._services.push({
@@ -211,9 +208,9 @@ export default class SharedLogger extends SharedUtil
             let index = line ? line.indexOf("at ") : "unknown";
             let clean = line ? line.slice(index + 2, line.length).trim() : "unknown";
             return {
-                line,
-                index,
-                clean,
+                "line": line,
+                "index": index,
+                "clean": clean,
                 "stack": err.stack
             };
         }
@@ -259,9 +256,10 @@ export default class SharedLogger extends SharedUtil
             this._logLevel = this._cables ? this._cables.getLogLevel() : "info";
             if (!this._logLevel) return false;
         }
-        if (this._logLevelIndex < 0) return false;
+        const _logLevelIndex = this._levels.findIndex((level) => { return level == this._logLevel; });
+        if (_logLevelIndex < 0) return false;
         const levelIndex = this._levels.findIndex((level) => { return level === logLevel; });
         if (levelIndex < 0) return false;
-        return this._logLevelIndex > levelIndex;
+        return _logLevelIndex > levelIndex;
     }
 }
