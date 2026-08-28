@@ -1111,9 +1111,17 @@ export default class SharedOpsUtil extends SharedUtil
             newOpDocs = this.addVersionInfoToOps(newOpDocs, true);
             jsonfile.writeFileSync(collectionFile, newOpDocs, this.OPJSON_FORMAT);
         }
-        else if (fs.existsSync(collectionFile))
+        else
         {
-            fs.removeSync(collectionFile);
+            try
+            {
+                fs.removeSync(collectionFile);
+            }
+            catch (e)
+            {
+                // only log when removal failed, this prevents an additional check with fs.existsSync for now empty collections
+                if (fs.existsSync(collectionFile)) this._log.error("failed to remove opdoc collections cache file", collectionFile, e.message || e);
+            }
         }
         if (updateLookup) this._docsUtil.addOpsToLookup(newOpDocs);
         return newOpDocs;
@@ -1133,9 +1141,9 @@ export default class SharedOpsUtil extends SharedUtil
         Object.keys(collections).forEach((collectionName) =>
         {
             const collectionFile = this.getCollectionOpDocFile(collectionName);
-            if (forceRebuild || !fs.existsSync(collectionFile))
+            if (forceRebuild)
             {
-                if (forceRebuild) this._log.info("forced recreation of cache for", collectionName);
+                this._log.info("forced recreation of cache for", collectionName);
                 this.buildOpDocsForCollection(collectionName);
             }
             let cacheDocs = [];
@@ -1146,7 +1154,26 @@ export default class SharedOpsUtil extends SharedUtil
             catch (e)
             {
                 // if collection contains no ops anymore, file is not created, so only log json parse errors here
+<<<<<<< HEAD
                 if (fs.existsSync(collectionFile)) this._log.warn("failed to read collection opdocs from", collectionFile, e.message || e);
+=======
+                if (fs.existsSync(collectionFile))
+                {
+                    this._log.error("failed to read collection opdocs from", collectionFile, e.message || e);
+                }
+                else
+                {
+                    this.buildOpDocsForCollection(collectionName);
+                    try
+                    {
+                        cacheDocs = jsonfile.readFileSync(collectionFile);
+                    }
+                    catch (e)
+                    {
+                        if (fs.existsSync(collectionFile)) this._log.error("failed to create opdoc cache file", collectionFile, e.message || e);
+                    }
+                }
+>>>>>>> 53349d6 (faster build of user/team/patch/extension opdocs)
             }
             cacheDocs.forEach((cacheDoc) =>
             {
