@@ -118,8 +118,20 @@ export default class SharedHelperUtil extends SharedUtil
         name = name.split(" ").join("_");
         name = name.replace(/\./g, "_");
         if (name.match(/^\d/)) name = "u_" + name;
-        // TODO: this should be a list of reserved words - cables-gl/cables/issues/8530
-        if (name === "constructor") name = "u_" + name;
+        const reservedWords = [
+            "constructor",
+            "prototype",
+            "arguments",
+            "eval",
+            "yield",
+            "await",
+            "let",
+            "const",
+            "var",
+            "class",
+            "function"
+        ];
+        if (reservedWords.includes(name)) name = "u" + name;
         return name;
     }
 
