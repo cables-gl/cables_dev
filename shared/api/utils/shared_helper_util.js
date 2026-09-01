@@ -117,7 +117,9 @@ export default class SharedHelperUtil extends SharedUtil
         name = name.toLowerCase();
         name = name.split(" ").join("_");
         name = name.replace(/\./g, "_");
-        if (name.match(/^\d/))name = "u_" + name;
+        if (name.match(/^\d/)) name = "u_" + name;
+        // TODO: this should be a list of reserved words - cables-gl/cables/issues/8530
+        if (name === "constructor") name = "u_" + name;
         return name;
     }
 
