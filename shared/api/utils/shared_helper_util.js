@@ -131,7 +131,7 @@ export default class SharedHelperUtil extends SharedUtil
             "class",
             "function"
         ];
-        if (reservedWords.includes(name)) name = "u" + name;
+        if (reservedWords.includes(name)) name = "u_" + name;
         return name;
     }
 
