@@ -24,10 +24,23 @@ export {
  * @typedef OpDoc
  * @property {String} id
  * @property {String} name
+ * @property {String} content
+ * @property {String} shortName
+ * @property {String} shortNameDisplay
+ * @property {String} authorName
+ * @property {String} exampleProjectId
+ * @property {String[]} libs
+ * @property {String[]} corelibs
+ * @property {String[]} attachmentFiles
+ * @property {String[]} youtubeids
  * @property {String} summary
- * @property {String} [description]
+ * @property {Number} version
+ * @property {Number} created
  * @property {Object} [layout]
- * @property {boolean} userOp
- * @property {boolean} old
- * @property {boolean} isExtended
+ * @property {Boolean} userOp
+ * @property {Boolean} isReleased
+ * @property {Boolean} hasExample
+ * @property {Boolean} oldVersion
+ * @property {Boolean} allowEdit
+ * @property {Boolean} isExtended
  */
