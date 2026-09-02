@@ -1007,7 +1007,7 @@ export default class SharedOpsUtil extends SharedUtil
 
             for (const i in dirUser)
             {
-                if ((dirUser[i] + "").startsWith(this.getUserNamespace(sessionUser.username)) && this.isOpNameValid(dirUser[i]))
+                if ((dirUser[i] + "").startsWith(this.getUserNamespace(sessionUser)) && this.isOpNameValid(dirUser[i]))
                 {
                     dir.push(dirUser[i]);
                 }
@@ -1355,9 +1355,19 @@ export default class SharedOpsUtil extends SharedUtil
         return this.PREFIX_PATCHOPS + namespace + ".";
     }
 
-    getUserNamespace(username)
+    /**
+     *
+     * @param {User|string} user
+     * @returns {string}
+     */
+    getUserNamespace(user)
     {
-        return this.PREFIX_USEROPS + this._helperUtil.sanitizeUsername(username) + ".";
+        let username = user || "";
+        if (typeof username !== "string")
+        {
+            username = user.usernameLowercase || this._helperUtil.sanitizeUsername(user.username);
+        }
+        return this.PREFIX_USEROPS + username + ".";
     }
 
     getAllPatchOpNames()
@@ -3014,11 +3024,6 @@ export default class SharedOpsUtil extends SharedUtil
             "id": uuidv4(),
             "created": Date.now()
         };
-        if (this.isPatchOp(newName))
-        {
-            const oldId = this.getOpIdByObjName(oldName);
-            if (oldId) newJson.cloneOf = oldId;
-        }
         const oldJsonFile = this.getOpJsonPath(oldName);
         if (oldJsonFile)
         {
@@ -3045,8 +3050,21 @@ export default class SharedOpsUtil extends SharedUtil
 
         if (this.getOpNameWithoutVersion(oldName) !== this.getOpNameWithoutVersion(newName))
         {
+            const oldId = this.getOpIdByObjName(oldName);
+
             const change = {
-                "message": "op created",
+                "message": "cloned op from " + oldName,
+                "type": "new op",
+                "author": user.username,
+                "date": Date.now()
+            };
+            if (oldId) change.cloneOf = oldId;
+            newJson.changelog.push(change);
+        }
+        else
+        {
+            const change = {
+                "message": "created new version of " + oldName,
                 "type": "new op",
                 "author": user.username,
                 "date": Date.now()
