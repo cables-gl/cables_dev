@@ -19,3 +19,15 @@ export {
     CablesConstants,
     BuildWatcher
 };
+
+/**
+ * @typedef OpDoc
+ * @property {String} id
+ * @property {String} name
+ * @property {String} summary
+ * @property {String} [description]
+ * @property {Object} [layout]
+ * @property {boolean} userOp
+ * @property {boolean} old
+ * @property {boolean} isExtended
+ */
