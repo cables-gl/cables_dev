@@ -218,17 +218,28 @@ class HandlebarsHelper
                 return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
             });
 
-            Handlebars.registerHelper("relativedate", (str) =>
+            Handlebars.registerHelper("relativedate", (str, options) =>
             {
                 if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
                 let date = str;
                 let displayDate;
+                const showFuture = options?.hash?.future;
                 if (str && moment)
                 {
+                    const now = moment();
                     const m = moment(str);
-                    displayDate = m.fromNow();
-                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
-                    date = m.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                    if (!showFuture && now.isBefore(m))
+                    {
+                        displayDate = now.fromNow();
+                        date = now.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                    }
+                    else
+                    {
+                        displayDate = m.fromNow();
+                        if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                        date = m.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                    }
+
                 }
                 else
                 {
