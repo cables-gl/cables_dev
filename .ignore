@@ -1,11 +1,13 @@
 cables/build/**
 cables_ui/dist/
 shared/libs/**
+shared/client/src/handlebars.js**
 cables_api/public/assets/**
 cables_electron/dist/
 jsdoc/dist/
 cables_api/public/landing/standalone/patch/**
 cables_api/public/landing/standalone/hero/js/*
+cables_api/public/landing/standalone/all.js
 cables_api/public/libs_core/**
 **/node_modules/**
 **/public/js/
