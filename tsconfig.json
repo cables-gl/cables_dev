@@ -22,5 +22,4 @@
         "cables/src/core/**/*",
         "cables/src/corelibs/**/*",
     ],
-    "exclude": ["cables/src/ops/**"],
 }
