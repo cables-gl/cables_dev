@@ -27,7 +27,7 @@ class Helper
     /**
      * checks value for !isNan and isFinite
      *
-     * @param {string} n
+     * @param {string|number} n
      * @return {boolean}
      */
     isNumeric(n)
