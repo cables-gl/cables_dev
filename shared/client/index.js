@@ -30,7 +30,7 @@ export {
  * @property {String} authorName
  * @property {String} exampleProjectId
  * @property {String[]} libs
- * @property {String[]} corelibs
+ * @property {String[]} coreLibs
  * @property {String[]} attachmentFiles
  * @property {String[]} youtubeids
  * @property {String} summary
