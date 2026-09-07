@@ -22,6 +22,7 @@
         "cables_ui/src/**/*",
         "cables_ui/libs/ui/index.d.ts",
         "cables_ui/libs/ui/assets.d.ts",
+        "cables_ui/libs/ui/extendjs.d.ts",
         "cables/src/core/**/*",
         "cables/src/corelibs/**/*",
     ],

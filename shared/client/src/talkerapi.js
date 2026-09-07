@@ -144,7 +144,7 @@ export default class TalkerAPI extends Events
     /**
      * send message via cables-talkerapi
      * @param {string} cmd name of the event
-     * @param {object} data payload
+     * @param {object} [data] payload
      * @param {function} [callback]
      */
     send(cmd, data, callback)
