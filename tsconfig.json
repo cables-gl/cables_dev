@@ -9,9 +9,9 @@
         "strict": false,
         "paths": {
             "cables": ["./gen/types/cables/src/core/index.d.ts"],
-            "cables-corelibs": ["./gen/types/shared/client/index.d.ts"],
+            "cables-corelibs": ["./gen/types/cables/src/corelibs/index.d.ts"],
             "cables-ui": ["./gen/types/cables_ui/src/ui/*"],
-            "cables-shared-api": ["./gen/types/shared/client/index.d.ts"],
+            "cables-shared-api": ["./gen/types/shared/api/index.d.ts"],
             "cables-shared-client": ["./gen/types/shared/client/index.d.ts"],
         },
     },
