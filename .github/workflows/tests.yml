@@ -6,30 +6,30 @@ on:
             core:
                 type: boolean
                 description: "core"
-                default: 'true'
+                default: "true"
                 required: false
             servers:
                 type: boolean
                 description: "servers"
-                default: 'true'
+                default: "true"
                 required: false
             exports:
                 type: boolean
                 description: "exports"
-                default: 'true'
+                default: "true"
                 required: false
             api:
                 type: boolean
                 description: "api"
-                default: 'true'
+                default: "true"
                 required: false
             views:
                 type: boolean
                 description: "views"
-                default: 'true'
+                default: "true"
                 required: false
     schedule:
-        -   cron: '0 3 * * *'
+        - cron: "0 3 * * *"
 
 jobs:
     build:
@@ -44,239 +44,239 @@ jobs:
                 ports:
                     - 6379:6379
         steps:
-            -   uses: actions/checkout@v4
-            -   name: install nodejs
-                uses: actions/setup-node@v4
-                with:
-                    node-version-file: ".nvmrc"
-                    check-latest: false
-            -   name: install nvm
-                run: |
-                    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
-                    echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
-                    sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
-                    sudo chmod +x /usr/local/bin/nvm
-            -   name: checkout api
-                uses: actions/checkout@v4
-                with:
-                    repository: "undev-studio/cables_api"
-                    ref: develop
-                    token: ${{ secrets.undev_token }}
-                    path: "cables_api/"
-                    fetch-depth: 0
-            -   name: checkout asset library
-                uses: actions/checkout@v4
-                with:
-                    repository: "cables-gl/cables-asset-library"
-                    ref: master
-                    token: ${{ secrets.undev_token }}
-                    path: "cables_api/public/assets/library"
-                    fetch-depth: 0
-            -   name: setup repos
-                run: |
-                    ./install_local.sh https --community
-            -   name: configure mochajs for github
-                run: |
-                    echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
-            -   name: core tests
-                if: ${{ !contains(inputs.core, 'false') }}
-                timeout-minutes: 10
-                continue-on-error: true
-                run: |
-                    cd cables/
-                    npm run test
-            -   name: checkout docs
-                uses: actions/checkout@v4
-                with:
-                    repository: "cables-gl/cables_docs"
-                    ref: develop
-                    token: ${{ secrets.undev_token }}
-                    path: "cables_docs/"
-                    fetch-depth: 0
-            -   name: build api
-                run: |
-                    cd cables_api/
-                    npm install --no-save
-                    touch scss/svgicons.scss
-                    npm run build
-            -   name: Server dev/live Tests
-                if: ${{ !contains(inputs.servers, 'false') }}
-                timeout-minutes: 10
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    npm run test:servers
-                env:
-                    CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
-            -   name: Store dev/live Tests Summary Results
-                if: ${{ !contains(inputs.servers, 'false') }}
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "devlive-report"
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            -   name: Publish dev/live Tests Results on discord
-                if: ${{ !contains(inputs.servers, 'false') }}
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    node hooks/discord_testresults.js ctrf/ctrf-report.json
-                env:
-                    CABLES_TEST_TITLE: "HTTP dev/live Tests"
-                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
-            -   name: checkout electron for exe export
-                if: ${{ !contains(inputs.exports, 'false') }}
-                uses: actions/checkout@v4
-                with:
-                    repository: "cables-gl/cables-exe-export"
-                    ref: develop
-                    token: ${{ secrets.undev_token }}
-                    path: "electron"
-                    fetch-depth: 0
-            -   name: create exe-export LFS file list
-                if: ${{ !contains(inputs.exports, 'false') }}
-                run: |
-                    cd electron/
-                    git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-            -   name: restore exe-export LFS cache
-                if: ${{ !contains(inputs.exports, 'false') }}
-                uses: actions/cache@v4
-                id: exe-export-lfs-cache
-                with:
-                    path: electron/.git/lfs
-                    key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
-            -   name: pull exe-export LFS files
-                if: ${{ !contains(inputs.exports, 'false') }}
-                run: |
-                    cd electron/
-                    git lfs pull
-            -   name: Export Tests
-                if: ${{ !contains(inputs.exports, 'false') }}
-                timeout-minutes: 10
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    npm run test:export
-            -   name: Store Export Tests Summary Results
-                if: ${{ !contains(inputs.exports, 'false') }}
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "export-report"
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            -   name: Publish Export Tests Results on discord
-                if: ${{ !contains(inputs.exports, 'false') }}
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    node hooks/discord_testresults.js ctrf/ctrf-report.json
-                env:
-                    CABLES_TEST_TITLE: "Export Tests"
-                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
-            -   name: Install PM2 locally
-                run: npm install pm2@6.0.13 -g
-            -   name: Run PM2
-                run: |
-                    npm run pm2:test &
-                shell: bash
-            -   name: Wait for Express on port 5711
-                run: |
-                    echo "Waiting for tcp:5711..."
-                    time npx wait-on http://localhost:5711/login --timeout 30000 -v
-                    echo "Port 5711 is up!"
-                    echo "Waiting for tcp:5713..."
-                    time npx wait-on http://localhost:5713/api/ops/code --timeout 30000 -v
-                    echo "Port 5713 is up!"
-            -   name: Check what listens on 5711
-                run: |
-                    echo "Listening on 5711:"
-                    ss -tlnp | grep 5711 || netstat -tlnp | grep 5711
-            -   name: Try HTTP hit
-                run: |
-                    echo "curl GET http://127.0.0.1:5711/login"
-                    curl -v http://127.0.0.1:5711/login
-            -   name: API Tests
-                if: ${{ !contains(inputs.api, 'false') }}
-                timeout-minutes: 10
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    npm run test:api
-            -   name: Store API Tests Summary Results
-                if: ${{ !contains(inputs.api, 'false') }}
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "api-report"
-            -   name: Publish API Tests Results on discord
-                if: ${{ !contains(inputs.api, 'false') }}
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    node hooks/discord_testresults.js ctrf/ctrf-report.json
-                env:
-                    CABLES_TEST_TITLE: "API Tests"
-                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
-            -   name: Views Tests
-                if: ${{ !contains(inputs.views, 'false') }}
-                timeout-minutes: 10
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    npm run test:views
-            -   name: Store Views Tests Summary Results
-                if: ${{ !contains(inputs.views, 'false') }}
-                uses: ctrf-io/github-test-reporter@v1
-                with:
-                    report-path: './cables_api/ctrf/*.json'
-                    github-report: true
-                    summary-delta-report: true
-                    insights-report: true
-                    flaky-rate-report: true
-                    fail-rate-report: true
-                    slowest-report: true
-                    upload-artifact: true
-                    suite-folded-report: true
-                    artifact-name: "views-report"
-            -   name: Publish Views Tests Results on discord
-                if: ${{ !contains(inputs.views, 'false') }}
-                continue-on-error: true
-                run: |
-                    cd cables_api/
-                    node hooks/discord_testresults.js ctrf/ctrf-report.json
-                env:
-                    CABLES_TEST_TITLE: "Views Tests"
-                    DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
-            -   name: Upload PM2 logs
-                uses: actions/upload-artifact@v4
-                with:
-                    name: pm2-logs
-                    path: |
-                        ~/.pm2/logs/*.log
-                    if-no-files-found: warn
+            - uses: actions/checkout@v4
+            - name: install nodejs
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  check-latest: false
+            - name: install nvm
+              run: |
+                  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
+                  echo -n 'nvm "$@" && echo $NVM_BIN >> $GITHUB_PATH' >>  ~/.nvm/nvm.sh
+                  sudo cp ~/.nvm/nvm.sh /usr/local/bin/nvm
+                  sudo chmod +x /usr/local/bin/nvm
+            - name: checkout api
+              uses: actions/checkout@v4
+              with:
+                  repository: "undev-studio/cables_api"
+                  ref: develop
+                  token: ${{ secrets.undev_token }}
+                  path: "cables_api/"
+                  fetch-depth: 0
+            - name: checkout asset library
+              uses: actions/checkout@v4
+              with:
+                  repository: "cables-gl/cables-asset-library"
+                  ref: master
+                  token: ${{ secrets.undev_token }}
+                  path: "cables_api/public/assets/library"
+                  fetch-depth: 0
+            - name: setup repos
+              run: |
+                  ./install_local.sh https --community
+            - name: configure mochajs for github
+              run: |
+                  echo '{"reporter": "mocha-ctrf-json-reporter"}' > ./.mocharc.json
+            - name: core tests
+              if: ${{ !contains(inputs.core, 'false') }}
+              timeout-minutes: 10
+              continue-on-error: true
+              run: |
+                  cd cables/
+                  npm run test
+            - name: checkout docs
+              uses: actions/checkout@v4
+              with:
+                  repository: "cables-gl/cables_docs"
+                  ref: develop
+                  token: ${{ secrets.undev_token }}
+                  path: "cables_docs/"
+                  fetch-depth: 0
+            - name: build api
+              run: |
+                  cd cables_api/
+                  npm install --no-save
+                  touch scss/svgicons.scss
+                  npm run build
+            - name: Server dev/live Tests
+              if: ${{ !contains(inputs.servers, 'false') }}
+              timeout-minutes: 10
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  npm run test:servers
+              env:
+                  CABLES_USER_APIKEY: ${{ secrets.cables_user_apikey }}
+            - name: Store dev/live Tests Summary Results
+              if: ${{ !contains(inputs.servers, 'false') }}
+              uses: ctrf-io/github-test-reporter@v1
+              with:
+                  report-path: "./cables_api/ctrf/*.json"
+                  github-report: true
+                  summary-delta-report: true
+                  insights-report: true
+                  flaky-rate-report: true
+                  fail-rate-report: true
+                  slowest-report: true
+                  upload-artifact: true
+                  suite-folded-report: true
+                  artifact-name: "devlive-report"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Publish dev/live Tests Results on discord
+              if: ${{ !contains(inputs.servers, 'false') }}
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  node hooks/discord_testresults.js ctrf/ctrf-report.json
+              env:
+                  CABLES_TEST_TITLE: "HTTP dev/live Tests"
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
+            - name: checkout electron for exe export
+              if: ${{ !contains(inputs.exports, 'false') }}
+              uses: actions/checkout@v4
+              with:
+                  repository: "cables-gl/cables-exe-export"
+                  ref: develop
+                  token: ${{ secrets.undev_token }}
+                  path: "electron"
+                  fetch-depth: 0
+            - name: create exe-export LFS file list
+              if: ${{ !contains(inputs.exports, 'false') }}
+              run: |
+                  cd electron/
+                  git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+            - name: restore exe-export LFS cache
+              if: ${{ !contains(inputs.exports, 'false') }}
+              uses: actions/cache@v4
+              id: exe-export-lfs-cache
+              with:
+                  path: electron/.git/lfs
+                  key: ${{ runner.os }}-lfs-${{ hashFiles('electron/.lfs-assets-id') }}-v1
+            - name: pull exe-export LFS files
+              if: ${{ !contains(inputs.exports, 'false') }}
+              run: |
+                  cd electron/
+                  git lfs pull
+            - name: Export Tests
+              if: ${{ !contains(inputs.exports, 'false') }}
+              timeout-minutes: 10
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  npm run test:export
+            - name: Store Export Tests Summary Results
+              if: ${{ !contains(inputs.exports, 'false') }}
+              uses: ctrf-io/github-test-reporter@v1
+              with:
+                  report-path: "./cables_api/ctrf/*.json"
+                  github-report: true
+                  summary-delta-report: true
+                  insights-report: true
+                  flaky-rate-report: true
+                  fail-rate-report: true
+                  slowest-report: true
+                  upload-artifact: true
+                  suite-folded-report: true
+                  artifact-name: "export-report"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Publish Export Tests Results on discord
+              if: ${{ !contains(inputs.exports, 'false') }}
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  node hooks/discord_testresults.js ctrf/ctrf-report.json
+              env:
+                  CABLES_TEST_TITLE: "Export Tests"
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
+            - name: Install PM2 locally
+              run: npm install pm2@6.0.13 -g
+            - name: Run PM2
+              run: |
+                  npm run pm2:test &
+              shell: bash
+            - name: Wait for Express on port 5711
+              run: |
+                  echo "Waiting for tcp:5711..."
+                  time npx wait-on http://localhost:5711/login --timeout 30000 -v
+                  echo "Port 5711 is up!"
+                  echo "Waiting for tcp:5713..."
+                  time npx wait-on http://localhost:5713/api/ops/ops.core.js --timeout 30000 -v
+                  echo "Port 5713 is up!"
+            - name: Check what listens on 5711
+              run: |
+                  echo "Listening on 5711:"
+                  ss -tlnp | grep 5711 || netstat -tlnp | grep 5711
+            - name: Try HTTP hit
+              run: |
+                  echo "curl GET http://127.0.0.1:5711/login"
+                  curl -v http://127.0.0.1:5711/login
+            - name: API Tests
+              if: ${{ !contains(inputs.api, 'false') }}
+              timeout-minutes: 10
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  npm run test:api
+            - name: Store API Tests Summary Results
+              if: ${{ !contains(inputs.api, 'false') }}
+              uses: ctrf-io/github-test-reporter@v1
+              with:
+                  report-path: "./cables_api/ctrf/*.json"
+                  github-report: true
+                  summary-delta-report: true
+                  insights-report: true
+                  flaky-rate-report: true
+                  fail-rate-report: true
+                  slowest-report: true
+                  upload-artifact: true
+                  suite-folded-report: true
+                  artifact-name: "api-report"
+            - name: Publish API Tests Results on discord
+              if: ${{ !contains(inputs.api, 'false') }}
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  node hooks/discord_testresults.js ctrf/ctrf-report.json
+              env:
+                  CABLES_TEST_TITLE: "API Tests"
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
+            - name: Views Tests
+              if: ${{ !contains(inputs.views, 'false') }}
+              timeout-minutes: 10
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  npm run test:views
+            - name: Store Views Tests Summary Results
+              if: ${{ !contains(inputs.views, 'false') }}
+              uses: ctrf-io/github-test-reporter@v1
+              with:
+                  report-path: "./cables_api/ctrf/*.json"
+                  github-report: true
+                  summary-delta-report: true
+                  insights-report: true
+                  flaky-rate-report: true
+                  fail-rate-report: true
+                  slowest-report: true
+                  upload-artifact: true
+                  suite-folded-report: true
+                  artifact-name: "views-report"
+            - name: Publish Views Tests Results on discord
+              if: ${{ !contains(inputs.views, 'false') }}
+              continue-on-error: true
+              run: |
+                  cd cables_api/
+                  node hooks/discord_testresults.js ctrf/ctrf-report.json
+              env:
+                  CABLES_TEST_TITLE: "Views Tests"
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_TESTRESULTS_WEBHOOK }}
+            - name: Upload PM2 logs
+              uses: actions/upload-artifact@v4
+              with:
+                  name: pm2-logs
+                  path: |
+                      ~/.pm2/logs/*.log
+                  if-no-files-found: warn
