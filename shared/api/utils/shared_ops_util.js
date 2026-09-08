@@ -2135,7 +2135,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (hasChanged)
         {
             this._storageUtil.writeJsonFileSync(jsonFile, jsonData);
-            this._docsUtil.updateOpDocs(opName);
         }
         return jsonData;
     }
@@ -2551,14 +2550,15 @@ export default class SharedOpsUtil extends SharedUtil
             {
                 const jsonFile = this.getOpJsonPath(opName);
                 this._storageUtil.writeJsonFileSync(jsonFile, opJson);
-                this._docsUtil.updateOpDocs(opName);
             }
             catch (e)
             {
                 this._log.error("failed to update op-json", e);
             }
         }
-        return this.cleanOpJson(opName, author, true);
+        const clean = this.cleanOpJson(opName, author, true);
+        this._docsUtil.updateOpDocs(opName);
+        return clean;
     }
 
     addAttachment(opName, attName, content)
