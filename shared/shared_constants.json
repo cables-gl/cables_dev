@@ -112,6 +112,9 @@
         ],
         "opdependency": [
             "*"
+        ],
+        "opattachment": [
+            "*"
         ]
     },
     "EDITABLE_FILETYPES": [
