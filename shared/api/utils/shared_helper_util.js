@@ -1,5 +1,5 @@
 import fs from "fs";
-import uuid from "uuid-v4";
+import uuid, { isUUID } from "uuid-v4";
 import moment from "moment-mini";
 import path from "path";
 import mkdirp from "mkdirp";
@@ -466,6 +466,16 @@ export default class SharedHelperUtil extends SharedUtil
     generateUUID()
     {
         return uuid();
+    }
+
+    /**
+     *
+     * @param {string} theUUID
+     * @returns {boolean}
+     */
+    isUUID(theUUID)
+    {
+        return isUUID(theUUID);
     }
 
     sortAndReduce(arr)
