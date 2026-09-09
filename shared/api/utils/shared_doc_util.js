@@ -1007,6 +1007,7 @@ export default class SharedDocUtil extends SharedUtil
                 const duration = (end - start);
                 this._log.info("updating", opCount, "ops took " + duration / 1000 + "s");
                 this._log.event(null, "server", "opcache", "rebuild", { "count": opCount, "duration": duration, "scopes": scopes });
+                this.updateOpDocs();
                 if (cb) cb(docs);
             });
         }, 1000);
