@@ -4063,7 +4063,23 @@ export default class SharedOpsUtil extends SharedUtil
                     }
                 });
                 envDocs.environments = this._helperUtil.uniqueArray(envDocs.environments);
-                cb(null, envDocs);
+                if (envDocs.name && envDocs.id)
+                {
+                    const envOpName = this.getOpNameById(envDocs.id) || envDocs.name;
+                    if (this._opsUtil.opExists(envOpName, true))
+                    {
+                        this._docsUtil.addOpToLookup(envDocs.id, envOpName);
+                        cb("OP_CACHE_REBUILT", envDocs);
+                    }
+                    else
+                    {
+                        cb(null, envDocs);
+                    }
+                }
+                else
+                {
+                    cb(null, envDocs);
+                }
             });
     }
 
