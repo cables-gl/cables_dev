@@ -9,6 +9,7 @@
         "strict": false,
         "paths": {
             "cables": ["./gen/types/cables/src/core/index.d.ts"],
+            "cables/*": ["./gen/types/cables/*"],
             "cables-corelibs": ["./gen/types/cables/src/corelibs/index.d.ts"],
             "cables-corelibs/*": ["./gen/types/cables/src/corelibs/*"],
             "cables-ui": ["./gen/types/cables_ui/src/ui/*"],
