@@ -116,17 +116,21 @@ class Ele
         this.clickable(el, cb);
     }
 
+    /** @callback clickableCallback
+     * @param {event} e
+     */
+
     /**
      * makes an element clickable and executes the callback, also add keyboard support, when hitting enter on the element is same as clicking
      *
-     * @param {Object} el
-     * @param {whatever|function} cb
+     * @param {HTMLElement} el
+     * @param {clickableCallback} cb
      */
     clickable(el, cb)
     {
         if (!el) return;
 
-        if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", 0);
+        if (el.getAttribute("tabindex") == null) el.setAttribute("tabindex", "0");
         el.classList.add("eleAsButton");
         if (cb)
         {
@@ -137,11 +141,17 @@ class Ele
     }
 
     /**
+     * @callback eleClickableCallback
+     * @param {Event}
+     * @param {Dataset}
+     */
+
+    /**
      * makes elements matching the query clickable and runs the callback on them when clicked
      *
      * @param {HTMLElement|Element} parent
      * @param {String} query
-     * @param {Function} cb
+     * @param {eleClickableCallback} cb
      */
     clickables(parent, query, cb)
     {
