@@ -7,6 +7,7 @@
         "moduleResolution": "bundler",
         "typeRoots": ["cables/node_modules/@webgpu/types", "./gen/types"],
         "strict": false,
+        "skipLibCheck": true,
         "paths": {
             "cables": ["./gen/types/cables/src/core/index.d.ts"],
             "cables/*": ["./gen/types/cables/*"],
