@@ -22,25 +22,36 @@ export {
 
 /**
  * @typedef OpDoc
- * @property {String} id
- * @property {String} name
- * @property {String} content
- * @property {String} shortName
- * @property {String} shortNameDisplay
- * @property {String} authorName
- * @property {String} exampleProjectId
- * @property {String[]} libs
- * @property {String[]} coreLibs
- * @property {String[]} attachmentFiles
- * @property {String[]} youtubeids
- * @property {String} summary
- * @property {Number} version
- * @property {Number} created
+ * @property {String} [id]
+ * @property {String} [name]
+ * @property {String} [content]
+ * @property {String} [namespace]
+ * @property {String} [nameNoVersion]
+ * @property {String} [shortName]
+ * @property {String} [shortNameDisplay]
+ * @property {String} [authorName]
+ * @property {String} [exampleProjectId]
+ * @property {String[]} [libs]
+ * @property {String[]} [coreLibs]
+ * @property {String[]} [attachmentFiles]
+ * @property {String[]} [youtubeids]
+ * @property {String} [summary]
+ * @property {Number} [version]
+ * @property {Number} [created]
  * @property {Object} [layout]
- * @property {Boolean} userOp
- * @property {Boolean} isReleased
- * @property {Boolean} hasExample
- * @property {Boolean} oldVersion
- * @property {Boolean} allowEdit
- * @property {Boolean} isExtended
+ * @property {Boolean} [userOp]
+ * @property {Boolean} [isReleased]
+ * @property {Boolean} [hasExample]
+ * @property {Boolean} [oldVersion]
+ * @property {Boolean} [allowEdit]
+ * @property {Boolean} [isExtended]
+ * @property {String} [hasPublicRepo=false]
+ * @property {boolean} [hidden=false]
+ * @property {Object[]} [credits]
+ * @property {Object[]} [changelog]
+ * @property {Object[]} [todos]
+ * @property {Object[]} [dependencies]
+ * @property {Object[]} [issues]
+ * @property {String} [caniusequery]
+ * @property {String} [cloneOf]
  */
