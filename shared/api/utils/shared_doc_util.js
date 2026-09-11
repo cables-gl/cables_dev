@@ -5,6 +5,8 @@ import path from "path";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
+/** @typedef {import("cables-shared-client").OpDoc} OpDoc */
+
 /**
  * @abstract
  */
@@ -108,6 +110,10 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    /**
+     * @param {string} opName
+     * @returns {OpDoc|null}
+     */
     getOpDocsFromFile(opName)
     {
         const p = this._opsUtil.getOpAbsoluteJsonFilename(opName);
@@ -258,10 +264,12 @@ export default class SharedDocUtil extends SharedUtil
      *
      * @param {boolean} filterOldVersions
      * @param {boolean} filterDeprecated
-     * @returns
+     * @returns {OpDoc[]}
      */
     getOpDocs(filterOldVersions = false, filterDeprecated = false)
     {
+
+        /** @type {OpDoc[]} */
         let opDocs = [];
         if (this._rebuildOpDocCache)
         {
@@ -602,11 +610,16 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {string} opName
+     * @returns {OpDoc}
+     */
     buildOpDocs(opName)
     {
-        let docObj = null;
 
-        docObj = {
+        /** @type {OpDoc} */
+        let docObj = {
             "name": opName,
             "content": ""
         };
@@ -849,6 +862,11 @@ export default class SharedDocUtil extends SharedUtil
         return cleanDocs;
     }
 
+    /**
+     *
+     * @param {OpDoc} opDoc
+     * @returns {OpDoc}
+     */
     makeImportable(opDoc)
     {
         if (!opDoc) return {};
