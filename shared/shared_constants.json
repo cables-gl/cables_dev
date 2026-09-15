@@ -111,9 +111,11 @@
             ".vtt"
         ],
         "opdependency": [
-            "*"
+            ".js",
+            ".cjs",
+            ".mjs"
         ],
-        "opattachment": [
+        "opattachment_static": [
             "*"
         ]
     },
