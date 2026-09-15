@@ -166,6 +166,24 @@ class Ele
     }
 
     /**
+     * @callback eleOnCallback
+     * @param {Event} event
+     * @param {HTMLElement} target
+     */
+
+    /**
+     * @param {HTMLElement} el
+     * @param {String} type
+     * @param {eleOnCallback} cb
+     * @param {AddEventListenerOptions} [options]
+     */
+    on(el, type, cb, options)
+    {
+        if (!el) return;
+        return el.addEventListener(type, (e) => { cb(e, /** @type {HTMLElement} */ (e.target)); }, options);
+    }
+
+    /**
      * can be used for making element keyboard usable and continue using inline onclick e.g. onkeypress="ele.keyClick(event,this)"
      *
      * @param {KeyboardEvent} event
