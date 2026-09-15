@@ -1,9 +1,4 @@
 /**
- * @callback whatever
- * @param {...any} param
- */
-
-/**
   * @typedef myElement
   * @type {HTMLElement}
   * @extends {HTMLInputElement}
