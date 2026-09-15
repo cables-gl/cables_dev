@@ -142,8 +142,8 @@ class Ele
 
     /**
      * @callback eleClickableCallback
-     * @param {Event}
-     * @param {Dataset}
+     * @param {Event} event
+     * @param {DOMStringMap} dataset
      */
 
     /**
@@ -160,7 +160,7 @@ class Ele
         {
             this.clickable(clickEles[i], (e) =>
             {
-                cb(e, e.currentTarget.dataset);
+                cb(e, /** @type {HTMLElement} */ (e.currentTarget).dataset);
             });
         }
     }
