@@ -46,28 +46,28 @@ $NPM_EXE install
 
 echo "BUILDING shared"
 cd shared
-git pull
+git pull --no-edit
 $NPM_EXE install
 $NPM_EXE run build
 cd ..
 
 echo "BUILDING cables"
 cd cables
-git pull
+git pull --no-edit
 $NPM_EXE install
 $NPM_EXE run build
 cd ..
 
 echo "BUILDING cables_ui"
 cd cables_ui
-git pull
+git pull --no-edit
 $NPM_EXE install
 $NPM_EXE run build
 cd ..
 
 echo "BUILDING cables_electron"
 cd cables_electron
-git pull
+git pull --no-edit
 $NPM_EXE install
 $NPM_EXE run build
 echo "INSTALLING standalone op-modules"

@@ -22,9 +22,14 @@ fi
 
 branch=`git rev-parse --abbrev-ref HEAD`
 git fetch || true
+
+# set pull/merge strategy
+git config --local pull.ff false
+git config --local pull.rebase false
+
 reslog=$(git log HEAD..origin/${branch} --oneline)
 if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-  git pull
+  git pull --no-edit
 fi
 
 ls ~/.nvm/nvm.sh > /dev/null 2>&1
@@ -65,8 +70,13 @@ if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
 
 # ignore errors here, since branch might not be on remote
 git fetch || true
+
+# set pull/merge strategy
+git config --local pull.ff false
+git config --local pull.rebase false
+
 if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-  git pull origin "$branch" || true
+  git pull --no-edit origin "$branch" || true
   # merge current remote develop if branch is not master or tag
   if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
     echo -e "${RED}not merging origin/develop into master/tag!${NC}"
@@ -97,10 +107,15 @@ if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
 
 # ignore errors here, since branch might not be on remote
 git fetch || true
+
+# set pull/merge strategy
+git config --local pull.ff false
+git config --local pull.rebase false
+
 if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
 
 if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-  git pull origin "$branch" || true
+  git pull --no-edit origin "$branch" || true
   # merge current remote develop if branch is not master or tag
   if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
     echo -e "${RED}not merging origin/develop into master/tag!${NC}"
@@ -133,10 +148,15 @@ if [ -d cables_api ]; then
 
       # ignore errors here, since branch might not be on remote
       git fetch || true
+
+      # set pull/merge strategy
+      git config --local pull.ff false
+      git config --local pull.rebase false
+
       if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
 
       if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-        git pull origin "$branch" || true
+        git pull --no-edit origin "$branch" || true
         # merge current remote develop if branch is not master or tag
         if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
           echo -e "${RED}not merging origin/develop into master/tag!${NC}"
@@ -169,10 +189,15 @@ if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
 
 # ignore errors here, since branch might not be on remote
 git fetch || true
+
+# set pull/merge strategy
+git config --local pull.ff false
+git config --local pull.rebase false
+
 if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
 
 if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-  git pull origin "${branch}" || true
+  git pull --no-edit origin "${branch}" || true
   # merge current remote develop if branch is not master or tag
   if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
     echo -e "${RED}not merging origin/develop into master/tag!${NC}"
@@ -202,10 +227,15 @@ if [ -d cables_electron ]; then
   branch=`git rev-parse --abbrev-ref HEAD`
   # ignore errors here, since branch might not be on remote
   git fetch || true
+
+  # set pull/merge strategy
+  git config --local pull.ff false
+  git config --local pull.rebase false
+
   if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
 
   if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-    git pull origin "${branch}" || true
+    git pull --no-edit origin "${branch}" || true
     # merge current remote develop if branch is not master or tag
     if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
       echo -e "${RED}not merging origin/develop into master/tag!${NC}"

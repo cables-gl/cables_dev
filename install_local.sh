@@ -85,7 +85,7 @@ if [ "$CLEAN" = "true" ]; then
   rm -rf node_modules/
 fi
 git checkout develop
-git pull
+git pull --no-edit
 npm install --no-save
 cd ..
 
@@ -100,7 +100,7 @@ if [ "$CLEAN" = "true" ]; then
   rm -rf node_modules/
 fi
 git checkout develop
-git pull
+git pull --no-edit
 npm install --no-save
 cd ..
 
@@ -116,7 +116,7 @@ if [ "$COMMUNITY_BUILD" = "true" ]; then
     rm -rf node_modules/
   fi
   git checkout develop
-  git pull
+  git pull --no-edit
   npm install --no-save
   cd ..
 
@@ -150,7 +150,7 @@ if [ "$CLEAN" = "true" ]; then
   rm -rf node_modules/
 fi
 git checkout develop
-git pull
+git pull --no-edit
 npm install --no-save
 cd ..
 
@@ -164,7 +164,7 @@ if [ "$CLEAN" = "true" ]; then
   echo -e "  ...deleting node modules";
   rm -rf node_modules/
 fi
-git pull
+git pull --no-edit
 git checkout develop
 npm install --no-save
 cd ..
