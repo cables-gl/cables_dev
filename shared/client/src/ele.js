@@ -161,21 +161,23 @@ class Ele
     }
 
     /**
+     * @template T
      * @callback eleOnCallback
      * @param {Event} event
-     * @param {HTMLElement} target
+     * @param {T} target
      */
 
     /**
-     * @param {HTMLElement} el
+     * @template {HTMLElement} T
+     * @param {T} el
      * @param {String} type
-     * @param {eleOnCallback} cb
+     * @param {eleOnCallback<T>} cb
      * @param {AddEventListenerOptions} [options]
      */
     on(el, type, cb, options)
     {
         if (!el) return;
-        return el.addEventListener(type, (e) => { cb(e, /** @type {HTMLElement} */ (e.target)); }, options);
+        return el.addEventListener(type, (e) => { cb(e, /** @type {T} */ (e.target)); }, options);
     }
 
     /**

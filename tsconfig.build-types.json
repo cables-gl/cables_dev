@@ -16,6 +16,16 @@
         "noEmitOnError": false,
         "incremental": true,
         "tsBuildInfoFile": "./gen/types/.tsbuildinfo",
+        "paths": {
+            "cables": ["./cables/src/core/index.js"],
+            "cables/*": ["./cables/*"],
+            "cables-corelibs": ["./cables/src/corelibs/index.js"],
+            "cables-corelibs/*": ["./cables/src/corelibs/*"],
+            "cables-ui": ["./cables_ui/src/ui/index.js"],
+            "cables-shared-api": ["./shared/api/index.js"],
+            "cables-shared-client": ["./shared/client/index.js"],
+            "cables-shared-client/*": ["./shared/client/*"],
+        },
     },
     "include": [
         "./index.d.ts",
