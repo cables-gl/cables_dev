@@ -145,7 +145,7 @@ export default class TalkerAPI extends Events
 
     /**
      * @callback TalkerApiCallback
-     * @param {Object} err
+     * @param {import("cables-shared-client").ApiError} err
      * @param {Object} res
      */
 

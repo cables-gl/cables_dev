@@ -21,6 +21,11 @@ export {
 };
 
 /**
+ * @typedef ApiError
+ * @property {string} msg
+ */
+
+/**
  * @typedef OpDoc
  * @property {String} [id]
  * @property {String} [name]
@@ -54,4 +59,9 @@ export {
  * @property {Object[]} [issues]
  * @property {String} [caniusequery]
  * @property {String} [cloneOf]
+ * @property {string} description
+ * @property {string} teamName
+ * @property {string} teamLink
+ * @property {string} numOps
+ * @property {array} ops
  */
