@@ -21,8 +21,16 @@ export {
 };
 
 /**
+ * @typedef ApiErrorData
+ * @property {string} msg
+ * @property {string} stderr
+ * @property {string} [opName]
+ */
+
+/**
  * @typedef ApiError
  * @property {string} msg
+ * @property {ApiErrorData} data
  */
 
 /**
@@ -64,4 +72,51 @@ export {
  * @property {string} teamLink
  * @property {string} numOps
  * @property {array} ops
+ */
+
+/**
+ * @typedef SerializedLink
+ * @property {string} portIn
+ * @property {string} portOut
+ * @property {string} objIn
+ * @property {string} objOut
+ */
+
+/**
+ * @typedef SerializedPort
+ * @property {string} name
+ * @property {string} title
+ * @property {number} order
+ * @property {string} [useVariable]
+ * @property {import("cables/src/core/anim.js").SerializedAnim} [anim]
+ * @property {boolean} [animated]
+ * @property {boolean} [expose]
+ * @property {any} [value]
+ * @property {SerializedLink[]} [links]
+ */
+
+/**
+ * @typedef SerializedOp
+ * @property {string} opId
+ * @property {string} objName
+ * @property {string} id
+ * @property {Object} storage
+ * @property {Object} attribs
+ * @property {import("cables/src/core/core_op.js").OpUiAttribs} uiAttribs
+ * @property {SerializedPort[]} portsIn
+ * @property {SerializedPort[]} portsOut
+ */
+
+/**
+ * @typedef SerializedPatchUi
+ * @property {Object} [viewBoxesGl]
+ * @property {Object} [outline]
+ */
+/**
+ * @typedef SerializedPatch
+ * @property {string} name
+ * @property {string} shortId
+ * @property {string} _id
+ * @property {SerializedOp[]} ops
+ * @property {SerializedPatchUi} ui
  */
