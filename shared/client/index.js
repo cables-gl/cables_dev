@@ -21,6 +21,11 @@ export {
 };
 
 /**
+ * @typedef ApiError
+ * @property {string} msg
+ */
+
+/**
  * @typedef OpDoc
  * @property {String} [id]
  * @property {String} [name]
