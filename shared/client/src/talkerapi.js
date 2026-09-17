@@ -116,6 +116,8 @@ export default class TalkerAPI extends Events
         // eslint-disable-next-line no-undef
         this._talker = new Talker.default(target, "*");
         this._callbackCounter = 0;
+
+        /** @type {Object<string,TalkerApiCallback>} */
         this._callbacks = {};
 
         this._talker.onMessage = (msg) =>
@@ -142,10 +144,16 @@ export default class TalkerAPI extends Events
     }
 
     /**
+     * @callback TalkerApiCallback
+     * @param {Object} err
+     * @param {Object} res
+     */
+
+    /**
      * send message via cables-talkerapi
      * @param {string} cmd name of the event
      * @param {object} [data] payload
-     * @param {function} [callback]
+     * @param {TalkerApiCallback} [callback]
      */
     send(cmd, data, callback)
     {
