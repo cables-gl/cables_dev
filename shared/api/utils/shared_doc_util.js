@@ -825,6 +825,11 @@ export default class SharedDocUtil extends SharedUtil
         return this._helperUtil.cleanJson(obj);
     }
 
+    /**
+     *
+     * @param {OpDoc[]} opDocs
+     * @returns {OpDoc[]}
+     */
     makeReadable(opDocs)
     {
         // dereference array, so we do not alter cached values
@@ -834,7 +839,6 @@ export default class SharedDocUtil extends SharedUtil
             delete opDoc.changelog;
             if (!opDoc.version) delete opDoc.version;
             delete opDoc.versionString;
-            delete opDoc.nameNoVersion;
             delete opDoc.relatedops;
             delete opDoc.collections;
             if (opDoc.newestVersion && (opDoc.newestVersion.name === opDoc.name))
