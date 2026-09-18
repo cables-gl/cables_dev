@@ -113,7 +113,6 @@ export default class TalkerAPI extends Events
     {
         super();
 
-        console.log("TALKER", Talker);
         // eslint-disable-next-line no-undef
         this._talker = new Talker.default(target, "*");
         this._callbackCounter = 0;
