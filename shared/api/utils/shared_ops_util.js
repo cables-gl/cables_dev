@@ -4085,7 +4085,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpDependenciesScriptTags(dependencies, prefix = "", addOpToUrl = false)
     {
-        if (!dependencies) return [];
+        if (!dependencies) return "";
         let scriptTags = "";
         this.getDependencyUrls(dependencies, prefix, addOpToUrl).forEach((dep) =>
         {
