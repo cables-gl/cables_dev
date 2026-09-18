@@ -1,4 +1,4 @@
-import Talker from "../libs/talker.cjs";
+import Talker from "talker.js/dist/common_js/talker.min.js";
 import Events from "./eventtarget.js";
 
 /**
@@ -113,6 +113,7 @@ export default class TalkerAPI extends Events
     {
         super();
 
+        console.log("TALKER", Talker);
         // eslint-disable-next-line no-undef
         this._talker = new Talker.default(target, "*");
         this._callbackCounter = 0;

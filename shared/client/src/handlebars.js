@@ -155,116 +155,51 @@ class HandlebarsHelper
                 return accum;
             });
 
-            Handlebars.registerHelper("logdate", (str) =>
+            Handlebars.registerHelper("logdate", (str, options) =>
             {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date;
-                if (str && moment)
-                {
-                    date = moment(str).format(CablesConstants.DATE_FORMAT_LOGDATE);
-                }
-                else
-                {
-                    date = "";
-                }
-                return new Handlebars.SafeString("<span title=\"" + date + "\">" + date + "</span>");
+                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
+                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
+                const date = helper.formatDate(str, "logdate", showFuture);
+                let output = "<span title=\"" + date.date + "\">" + date.date + "</span>";
+                if (!showTitle) output = "<span>" + date.date + "</span>";
+                return new Handlebars.SafeString(output);
             });
 
-            Handlebars.registerHelper("displaydate", (str) =>
+            Handlebars.registerHelper("displaydate", (str, options) =>
             {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date = str;
-                let displayDate;
-                if (str && moment)
-                {
-                    const m = moment(str);
-                    date = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DATE);
-                    displayDate = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY);
-                }
-                else
-                {
-                    displayDate = "";
-                }
-                return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
+                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
+                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
+                const date = helper.formatDate(str, "displaydate", showFuture);
+                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
+                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
+                return new Handlebars.SafeString(output);
             });
 
-            Handlebars.registerHelper("tooltipdate", (str) =>
+            Handlebars.registerHelper("tooltipdate", (str, options) =>
             {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let displayDate;
-                if (str && moment)
-                {
-                    const m = moment(str);
-                    displayDate = m.format(CablesConstants.DATE_FORMAT_TOOLTIPDATE);
-                }
-                else
-                {
-                    displayDate = "";
-                }
-                return new Handlebars.SafeString(displayDate);
+                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
+                const date = helper.formatDate(str, "tooltipdate", showFuture);
+                return new Handlebars.SafeString(date.displayDate);
             });
 
-            Handlebars.registerHelper("displaydateNoTime", (str) =>
+            Handlebars.registerHelper("displaydateNoTime", (str, options) =>
             {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date = str;
-                let displayDate = str;
-                if (moment)
-                {
-                    const m = moment(str);
-                    date = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DATE);
-                    displayDate = m.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY);
-                }
-                return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
+                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
+                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
+                const date = helper.formatDate(str, "displaydateNoTime", showFuture);
+                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
+                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
+                return new Handlebars.SafeString(output);
             });
 
             Handlebars.registerHelper("relativedate", (str, options) =>
             {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date = str;
-                let displayDate;
-                const showFuture = options?.hash?.future;
-                if (str && moment)
-                {
-                    const now = moment();
-                    const m = moment(str);
-                    if (!showFuture && now.isBefore(m))
-                    {
-                        displayDate = now.fromNow();
-                        date = now.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
-                    }
-                    else
-                    {
-                        displayDate = m.fromNow();
-                        if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
-                        date = m.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
-                    }
-
-                }
-                else
-                {
-                    date = "";
-                    displayDate = "";
-                }
-                return new Handlebars.SafeString("<span title=\"" + date + "\">" + displayDate + "</span>");
-            });
-
-            Handlebars.registerHelper("tooltiprelativedate", (str) =>
-            {
-                if (helper.isNumeric(str) && String(str).length < 11) str *= 1000;
-                let date = str;
-                let displayDate;
-                if (str && moment)
-                {
-                    const m = moment(str);
-                    displayDate = m.fromNow();
-                    if (m.isBefore(moment().subtract(7, "days"))) displayDate = moment(date).format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
-                }
-                else
-                {
-                    displayDate = "";
-                }
-                return new Handlebars.SafeString(displayDate);
+                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
+                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
+                const date = helper.formatDate(str, "relativedate", showFuture);
+                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
+                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
+                return new Handlebars.SafeString(output);
             });
 
             Handlebars.registerHelper("textconstant", (str) =>

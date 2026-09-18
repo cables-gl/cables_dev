@@ -1,3 +1,5 @@
+import CablesConstants from "../client_contstants.js";
+
 /**
  * Shared helper methods for cables uis
  */
@@ -57,6 +59,72 @@ class Helper
             return obj[parts[0]];
         }
         return this.pathLookup(obj[parts[0]], parts.slice(1).join("."));
+    }
+
+    /**
+     *
+     * @param {string} str
+     * @param {"logdate"|"displaydate"|"tooltipdate"|"displaydateNoTime"|"relativedate"} format
+     * @param {boolean} [showFuture=false]
+     * @returns {{date: string, displayDate: string}}
+     */
+    formatDate(str, format, showFuture = false)
+    {
+        let date = "";
+        let displayDate = "";
+
+        /** @type {string|number} */
+        let parseableDate = str;
+        if (this.isNumeric(str))
+        {
+            let timestamp = parseInt(str);
+            if (String(str).length < 11)
+            {
+                timestamp *= 1000;
+            }
+            parseableDate = timestamp;
+        }
+        if (!parseableDate || !moment) return { "date": str, "displayDate": str };
+
+        let momentDate = moment(parseableDate);
+        switch (format)
+        {
+        case "logdate":
+            date = momentDate.format(CablesConstants.DATE_FORMAT_LOGDATE);
+            displayDate = date;
+            break;
+        case "displaydate":
+            date = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DATE);
+            displayDate = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY);
+            break;
+        case "tooltipdate":
+            date = momentDate.format(CablesConstants.DATE_FORMAT_TOOLTIPDATE);
+            displayDate = date;
+            break;
+        case "displaydateNoTime":
+            date = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY);
+            displayDate = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_NO_TIME_DISPLAY);
+            break;
+        case "relativedate":
+            const now = moment();
+            if (!showFuture && now.isBefore(momentDate))
+            {
+                date = now.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+                displayDate = now.fromNow();
+            }
+            else
+            {
+                displayDate = momentDate.fromNow();
+                if (momentDate.isBefore(now.subtract(CablesConstants.DATE_FORMAT_RELATIVEDATE_CUTOFF_DAYS, "days"))) displayDate = momentDate.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_SHORT);
+                date = momentDate.format(CablesConstants.DATE_FORMAT_RELATIVEDATE_FULL);
+            }
+            break;
+        }
+
+        return {
+            "date": date,
+            "displayDate": displayDate
+        };
     }
 
 }
