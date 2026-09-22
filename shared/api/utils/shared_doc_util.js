@@ -468,11 +468,21 @@ export default class SharedDocUtil extends SharedUtil
         return this.getCachedLookup();
     }
 
+    /**
+     *
+     * @param {String} opId
+     * @param {String} opName
+     */
     addOpToLookup(opId, opName)
     {
         this.addOpsToLookup([{ "id": opId, "name": opName }]);
     }
 
+    /**
+     *
+     * @param {String[]} opNames
+     * @returns
+     */
     removeOpNamesFromLookup(opNames)
     {
         if (!opNames) return;
@@ -510,12 +520,23 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @returns
+     */
     removeOpNameFromLookup(opName)
     {
         if (!opName) return;
         this.removeOpNamesFromLookup([opName]);
     }
 
+    /**
+     *
+     * @param {OpDoc[]} ops
+     * @param {Boolean} [clearFiles]
+     * @param {Boolean} [haltOnError]
+     */
     addOpsToLookup(ops, clearFiles = false, haltOnError = false)
     {
         if (!ops || ops.length === 0) return;
