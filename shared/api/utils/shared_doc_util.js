@@ -468,11 +468,21 @@ export default class SharedDocUtil extends SharedUtil
         return this.getCachedLookup();
     }
 
+    /**
+     *
+     * @param {String} opId
+     * @param {String} opName
+     */
     addOpToLookup(opId, opName)
     {
         this.addOpsToLookup([{ "id": opId, "name": opName }]);
     }
 
+    /**
+     *
+     * @param {String[]} opNames
+     * @returns
+     */
     removeOpNamesFromLookup(opNames)
     {
         if (!opNames) return;
@@ -510,12 +520,23 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @returns
+     */
     removeOpNameFromLookup(opName)
     {
         if (!opName) return;
         this.removeOpNamesFromLookup([opName]);
     }
 
+    /**
+     *
+     * @param {OpDoc[]} ops
+     * @param {Boolean} [clearFiles]
+     * @param {Boolean} [haltOnError]
+     */
     addOpsToLookup(ops, clearFiles = false, haltOnError = false)
     {
         if (!ops || ops.length === 0) return;
@@ -825,6 +846,11 @@ export default class SharedDocUtil extends SharedUtil
         return this._helperUtil.cleanJson(obj);
     }
 
+    /**
+     *
+     * @param {OpDoc[]} opDocs
+     * @returns {OpDoc[]}
+     */
     makeReadable(opDocs)
     {
         // dereference array, so we do not alter cached values
@@ -834,7 +860,6 @@ export default class SharedDocUtil extends SharedUtil
             delete opDoc.changelog;
             if (!opDoc.version) delete opDoc.version;
             delete opDoc.versionString;
-            delete opDoc.nameNoVersion;
             delete opDoc.relatedops;
             delete opDoc.collections;
             if (opDoc.newestVersion && (opDoc.newestVersion.name === opDoc.name))

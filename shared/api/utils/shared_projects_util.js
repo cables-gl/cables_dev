@@ -151,6 +151,7 @@ export default class SharedProjectsUtil extends SharedUtil
 
         if (keepOps) readable.ops = project.ops;
         if (allowEdit) readable.allowEdit = allowEdit;
+        if (project.allowEdit) readable.allowEdit = project.allowEdit;
 
         return readable;
     }

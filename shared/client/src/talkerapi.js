@@ -1,4 +1,4 @@
-import Talker from "../libs/talker.cjs";
+import Talker from "talker.js/dist/common_js/talker.min.js";
 import Events from "./eventtarget.js";
 
 /**

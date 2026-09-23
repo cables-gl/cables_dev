@@ -12,5 +12,8 @@
         "node": "24.18.1"
     },
     "type": "module",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "talker.js": "1.1.0"
+    }
 }
