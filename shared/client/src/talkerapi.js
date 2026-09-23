@@ -84,7 +84,7 @@ export default class TalkerAPI extends Events
     static CMD_ADD_OP_CREDITS = "addOpCredits";
 
     /** @readonly */
-    static CMD_REMOVE_OP_CREDITS = "removeOpCredits";
+    static CMD_REMOVE_OP_CREDITS = "removeOpCredit";
 
     // notify ui
     static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
@@ -170,10 +170,22 @@ export default class TalkerAPI extends Events
     */
 
     /**
+     * @typedef TalkerApiRemoveOpCreditResponse
+     * @property {String} test
+     *
+    */
+
+    /**
+     * @overload
+     * @param {typeof TalkerAPI.CMD_REMOVE_OP_CREDITS} cmd
+     * @param {{opId: string, credits: OpCredits}} data
+     * @param {TalkerApiCallback<TalkerApiAddOpCreditResponse>} [callback]
+     */
+    /**
      * @overload
      * @param {typeof TalkerAPI.CMD_ADD_OP_CREDITS} cmd
      * @param {{opId: string, credits: OpCredits}} data
-     * @param {TalkerApiCallback<TalkerApiAddOpCreditResponse>} [callback]
+     * @param {TalkerApiCallback<TalkerApiRemoveOpCreditResponse>} [callback]
      */
     /**
      * @overload
