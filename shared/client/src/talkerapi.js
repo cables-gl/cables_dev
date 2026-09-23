@@ -2,6 +2,14 @@ import Talker from "talker.js/dist/common_js/talker.min.js";
 import Events from "./eventtarget.js";
 
 /**
+ * @template T
+ * @typedef {import("cables-shared-client").ApiResponse<T>} ApiResponse
+*/
+
+/** @typedef {import("cables-shared-client").OpCredits} OpCredits */
+/** @typedef {import("cables-shared-client").ApiError} ApiError */
+
+/**
  * wrapper for talkerapi to communicate ui <-> backend even in iframed setups
  *
  * @name TalkerAPI
@@ -71,6 +79,12 @@ export default class TalkerAPI extends Events
     static CMD_SAVE_OP_DEPENDENCY = "saveOpDependency";
     static CMD_SEND_ERROR_REPORT = "errorReport";
     static CMD_SEND_PATCH = "sendPatch";
+
+    /** @readonly */
+    static CMD_ADD_OP_CREDITS = "addOpCredits";
+
+    /** @readonly */
+    static CMD_REMOVE_OP_CREDITS = "removeOpCredits";
 
     // notify ui
     static CMD_UI_REFRESH_FILEMANAGER = "refreshFileManager";
@@ -144,11 +158,29 @@ export default class TalkerAPI extends Events
     }
 
     /**
+     * @template [T=any]
      * @callback TalkerApiCallback
-     * @param {import("cables-shared-client").ApiError} err
-     * @param {Object} res
+     * @param {ApiError} err
+     * @param {ApiResponse<T>} res
      */
+    /**
+     * @typedef TalkerApiAddOpCreditResponse
+     * @property {String} test
+     *
+    */
 
+    /**
+     * @overload
+     * @param {typeof TalkerAPI.CMD_ADD_OP_CREDITS} cmd
+     * @param {{opId: string, credits: OpCredits}} data
+     * @param {TalkerApiCallback<TalkerApiAddOpCreditResponse>} [callback]
+     */
+    /**
+     * @overload
+     * @param {string} cmd name of the event
+     * @param {object} [data] payload
+     * @param {TalkerApiCallback} [callback]
+     */
     /**
      * send message via cables-talkerapi
      * @param {string} cmd name of the event
