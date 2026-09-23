@@ -109,6 +109,14 @@ export default class SharedHelperUtil extends SharedUtil
         return array;
     }
 
+    /**
+     *
+     * @param {Array} [items]
+     * @param {Number} [limit=0]
+     * @param {Number} [offset=0]
+     * @param {Number} [fullCount]
+     * @returns {import("cables-shared-client").ApiPagination}
+     */
     getPaginationInfo(items = [], limit = 0, offset = 0, fullCount = null)
     {
         let count = items.length;

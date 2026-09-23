@@ -34,6 +34,29 @@ export {
  */
 
 /**
+ * @typedef ApiPagination
+ * @property {Number} count
+ * @property {Number} offset
+ * @property {Number} limit
+ * @property {Number} pages
+ * @property {Number} currentPage
+ * @property {Number} itemsOnPage
+ * @property {Number} nextPage
+ * @property {Number} prevPage
+ */
+
+/**
+ * @template T
+ * @typedef ApiResponse
+ * @property {Boolean} success
+ * @property {String} msg
+ * @property {Number} code
+ * @property {T} [data]
+ * @property {ApiPagination} [pagination]
+ *
+ */
+
+/**
  * @typedef OpCredits
  * @property {String} title
  * @property {String} author
