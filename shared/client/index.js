@@ -43,6 +43,10 @@ export {
  * @property {String} [version]
  * @property {Number} [date]
  */
+/**
+ * @typedef OpVersion
+ * @property {String} name
+ */
 
 /**
  * @typedef OpDoc
@@ -59,6 +63,8 @@ export {
  * @property {String[]} [coreLibs]
  * @property {String[]} [attachmentFiles]
  * @property {String[]} [youtubeids]
+ * @property {String[]} [youtubeids]
+ * @property {OpVersion[]} [versions]
  * @property {String} [summary]
  * @property {Number} [version]
  * @property {Number} [created]
@@ -125,11 +131,17 @@ export {
  */
 
 /**
+ * @typedef PatchSummary
+ * @property {string} [title]
+ * @property {string[]} [exampleForOps]
+ */
+
+/**
  * @typedef SerializedPatch
  * @property {string} _id
  * @property {string} name
  * @property {string} shortId
- * @property {string} summary
+ * @property {PatchSummary} summary
  * @property {SerializedOp[]} ops
  * @property {SerializedPatchUi} ui
  */
