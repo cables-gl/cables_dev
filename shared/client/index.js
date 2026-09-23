@@ -23,13 +23,14 @@ export {
 /**
  * @typedef ApiErrorData
  * @property {string} msg
- * @property {string} stderr
+ * @deprecated @property {string} stderr
  * @property {string} [opName]
  */
 
 /**
  * @typedef ApiError
  * @property {string} msg
+ * @property {number} code
  * @property {ApiErrorData} data
  */
 
@@ -112,11 +113,32 @@ export {
  * @property {Object} [viewBoxesGl]
  * @property {Object} [outline]
  */
+
 /**
  * @typedef SerializedPatch
+ * @property {string} _id
  * @property {string} name
  * @property {string} shortId
- * @property {string} _id
+ * @property {string} summary
  * @property {SerializedOp[]} ops
  * @property {SerializedPatchUi} ui
+ */
+
+/**
+ * @typedef ErrorReport
+ * @property {string} title
+ * @property {string} patchTitle
+ * @property {string[]} log
+ * @property {string} url
+ * @property {string} cablesUrl
+ * @property {string} projectId
+ * @property {string} infoLanguage
+ * @property {number} time
+ * @property {string} username
+ * @property {string} userId
+ * @property {string} glRenderer
+ * @property {string} platformVersion
+ * @property {string} browserDescription
+ * @property {Object} browserInfo
+ * @property {string[]} history
  */
