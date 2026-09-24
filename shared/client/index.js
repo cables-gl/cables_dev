@@ -23,24 +23,53 @@ export {
 /**
  * @typedef ApiErrorData
  * @property {string} msg
- * @property {string} stderr
+ * @deprecated @property {string} stderr
  * @property {string} [opName]
  */
 
 /**
  * @typedef ApiError
  * @property {string} msg
+ * @property {number} code
  * @property {ApiErrorData} data
  */
 
 /**
- * @typedef OpCredits
+ * @typedef ApiPagination
+ * @property {Number} count
+ * @property {Number} offset
+ * @property {Number} limit
+ * @property {Number} pages
+ * @property {Number} currentPage
+ * @property {Number} itemsOnPage
+ * @property {Number} nextPage
+ * @property {Number} prevPage
+ */
+
+/**
+ * @template T
+ * @typedef ApiResponse
+ * @property {Boolean} success
+ * @property {String} msg
+ * @property {Number} code
+ * @property {T} [data]
+ * @property {ApiPagination} [pagination]
+ *
+ */
+
+/**
+ * @typedef OpCredit
  * @property {String} title
  * @property {String} author
- * @property {URL} [url]
+ * @property {String} [username]
+ * @property {String} [url]
  * @property {String} [licence]
  * @property {String} [version]
  * @property {Number} [date]
+ */
+/**
+ * @typedef OpVersion
+ * @property {String} name
  */
 
 /**
@@ -58,6 +87,8 @@ export {
  * @property {String[]} [coreLibs]
  * @property {String[]} [attachmentFiles]
  * @property {String[]} [youtubeids]
+ * @property {String[]} [youtubeids]
+ * @property {OpVersion[]} [versions]
  * @property {String} [summary]
  * @property {Number} [version]
  * @property {Number} [created]
@@ -70,7 +101,7 @@ export {
  * @property {Boolean} [isExtended]
  * @property {String} [hasPublicRepo=false]
  * @property {boolean} [hidden=false]
- * @property {OpCredits[]} [credits]
+ * @property {OpCredit[]} [credits]
  * @property {Object[]} [changelog]
  * @property {Object[]} [todos]
  * @property {Object[]} [dependencies]
@@ -122,11 +153,38 @@ export {
  * @property {Object} [viewBoxesGl]
  * @property {Object} [outline]
  */
+
+/**
+ * @typedef PatchSummary
+ * @property {string} [title]
+ * @property {string[]} [exampleForOps]
+ */
+
 /**
  * @typedef SerializedPatch
+ * @property {string} _id
  * @property {string} name
  * @property {string} shortId
- * @property {string} _id
+ * @property {PatchSummary} summary
  * @property {SerializedOp[]} ops
  * @property {SerializedPatchUi} ui
+ */
+
+/**
+ * @typedef ErrorReport
+ * @property {string} title
+ * @property {string} patchTitle
+ * @property {string[]} log
+ * @property {string} url
+ * @property {string} cablesUrl
+ * @property {string} projectId
+ * @property {string} infoLanguage
+ * @property {number} time
+ * @property {string} username
+ * @property {string} userId
+ * @property {string} glRenderer
+ * @property {string} platformVersion
+ * @property {string} browserDescription
+ * @property {Object} browserInfo
+ * @property {string[]} history
  */
