@@ -338,6 +338,12 @@ export default class SharedOpsUtil extends SharedUtil
         return info;
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {Array} changes
+     * @param {Boolean} [update]
+     */
     _writeOpChangelog(opName, changes, update = false)
     {
         const filename = this.getOpAbsoluteJsonFilename(opName);
@@ -356,6 +362,37 @@ export default class SharedOpsUtil extends SharedUtil
                     obj.changelog = obj.changelog.concat(changes);
                 }
                 obj.changelog = obj.changelog.sort((a, b) => { return a.date - b.date; });
+                this._storageUtil.writeJsonFileSync(filename, obj);
+                this._docsUtil.updateOpDocs(opName);
+            }
+        }
+        catch (e) {}
+    }
+
+    /**
+     *
+     * @param {String} opName
+     * @param {Array} changes
+     * @param {Boolean} [update]
+     */
+    _writeOpCredits(opName, changes, update = false)
+    {
+        const filename = this.getOpAbsoluteJsonFilename(opName);
+        try
+        {
+            const obj = jsonfile.readFileSync(filename);
+            if (obj)
+            {
+                if (update)
+                {
+                    obj.credits = changes || [];
+                }
+                else
+                {
+                    obj.credits = obj.credits || [];
+                    obj.credits = obj.credits.concat(changes);
+                }
+                obj.credits = obj.credits.sort((a, b) => { return a.date - b.date; });
                 this._storageUtil.writeJsonFileSync(filename, obj);
                 this._docsUtil.updateOpDocs(opName);
             }
@@ -451,6 +488,55 @@ export default class SharedOpsUtil extends SharedUtil
                     changelog.splice(oldEntryIndex, 1);
                     this._writeOpChangelog(opName, changelog, true);
                 }
+            }
+        }
+    }
+
+    addOpCredit(user, opName, credit)
+    {
+        let changes = [];
+        const opDocs = this._docsUtil.getDocForOp(opName);
+        if (opDocs)
+        {
+            const credits = opDocs.credits || [];
+            credit.username = user.username;
+            credit.date = Date.now();
+            credits.push(credit);
+            changes = credits;
+        }
+        this._writeOpCredits(opName, changes, true);
+    }
+
+    removeOpCredit(opName, credit)
+    {
+        if (!opName || !credit) return;
+
+        const opDocs = this._docsUtil.getOpDocsFromFile(opName);
+        if (opDocs)
+        {
+            let oldEntryIndex = -1;
+            const credits = opDocs.credits || [];
+            if (credit.date)
+            {
+                const timestamp = Number(credit.date);
+                oldEntryIndex = credits.findIndex((change) => { return change.hasOwnProperty("date") && change.date === timestamp; });
+            }
+            else
+            {
+                oldEntryIndex = credits.findIndex((change) =>
+                {
+                    const title = change.title;
+                    const author = change.author;
+                    let found = false;
+                    if (title && (title == credit.title)) found = true;
+                    if (found && (author !== credit.author)) found = false;
+                    return found;
+                });
+            }
+            if (oldEntryIndex !== -1)
+            {
+                credits.splice(oldEntryIndex, 1);
+                this._writeOpCredits(opName, credits, true);
             }
         }
     }

@@ -58,10 +58,11 @@ export {
  */
 
 /**
- * @typedef OpCredits
+ * @typedef OpCredit
  * @property {String} title
  * @property {String} author
- * @property {URL} [url]
+ * @property {String} [username]
+ * @property {String} [url]
  * @property {String} [licence]
  * @property {String} [version]
  * @property {Number} [date]
@@ -100,7 +101,7 @@ export {
  * @property {Boolean} [isExtended]
  * @property {String} [hasPublicRepo=false]
  * @property {boolean} [hidden=false]
- * @property {OpCredits[]} [credits]
+ * @property {OpCredit[]} [credits]
  * @property {Object[]} [changelog]
  * @property {Object[]} [todos]
  * @property {Object[]} [dependencies]
