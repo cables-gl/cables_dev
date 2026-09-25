@@ -5,9 +5,9 @@ import Events from "./eventtarget.js";
  * @template T
  * @typedef {import("cables-shared-client").ApiResponse<T>} ApiResponse
 */
-
-/** @typedef {import("cables-shared-client").OpCredits} OpCredits */
 /** @typedef {import("cables-shared-client").ApiError} ApiError */
+/** @typedef {import("cables-shared-client").OpDoc} OpDoc */
+/** @typedef {import("cables-shared-client").OpCredit} OpCredit */
 
 /**
  * wrapper for talkerapi to communicate ui <-> backend even in iframed setups
@@ -81,6 +81,9 @@ export default class TalkerAPI extends Events
     static CMD_SEND_PATCH = "sendPatch";
 
     /** @readonly */
+    static CMD_SET_OP_SUMMARY = "opSetSummary";
+
+    /** @readonly */
     static CMD_ADD_OP_CREDITS = "addOpCredits";
 
     /** @readonly */
@@ -107,7 +110,7 @@ export default class TalkerAPI extends Events
     // electron
     static CMD_ELECTRON_RENAME_OP = "opRename";
     static CMD_ELECTRON_DELETE_OP = "opDelete";
-    static CMD_ELECTRON_SET_OP_SUMMARY = "opSetSummary";
+    static CMD_ELECTRON_SET_OP_SUMMARY = TalkerAPI.CMD_SET_OP_SUMMARY;
     static CMD_ELECTRON_GET_PROJECT_OPDIRS = "getProjectOpDirs";
     static CMD_ELECTRON_OPEN_DIR = "openDir";
     static CMD_ELECTRON_SELECT_FILE = "selectFile";
@@ -163,40 +166,35 @@ export default class TalkerAPI extends Events
      * @param {ApiError} err
      * @param {ApiResponse<T>} res
      */
-    /**
-     * @typedef TalkerApiAddOpCreditResponse
-     * @property {String} test
-     *
-    */
-
-    /**
-     * @typedef TalkerApiRemoveOpCreditResponse
-     * @property {String} test
-     *
-    */
 
     /**
      * @overload
+     * @param {typeof TalkerAPI.CMD_SET_OP_SUMMARY} cmd
+     * @param {{opId: String, name: String, summary: String }} data
+     * @param {TalkerApiCallback<OpDoc>} [callback]
+     */
+    /**
+     * @overload
      * @param {typeof TalkerAPI.CMD_REMOVE_OP_CREDITS} cmd
-     * @param {{opId: string, credits: OpCredits}} data
-     * @param {TalkerApiCallback<TalkerApiAddOpCreditResponse>} [callback]
+     * @param {{opId: String, credit: OpCredit}} data
+     * @param {TalkerApiCallback<OpDoc>} [callback]
      */
     /**
      * @overload
      * @param {typeof TalkerAPI.CMD_ADD_OP_CREDITS} cmd
-     * @param {{opId: string, credits: OpCredits}} data
-     * @param {TalkerApiCallback<TalkerApiRemoveOpCreditResponse>} [callback]
+     * @param {{opId: String, credit: OpCredit}} data
+     * @param {TalkerApiCallback<OpDoc>} [callback]
      */
     /**
      * @overload
-     * @param {string} cmd name of the event
-     * @param {object} [data] payload
+     * @param {String} cmd name of the event
+     * @param {Object} [data] payload
      * @param {TalkerApiCallback} [callback]
      */
     /**
      * send message via cables-talkerapi
-     * @param {string} cmd name of the event
-     * @param {object} [data] payload
+     * @param {String} cmd name of the event
+     * @param {Object} [data] payload
      * @param {TalkerApiCallback} [callback]
      */
     send(cmd, data, callback)
