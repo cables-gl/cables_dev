@@ -793,7 +793,7 @@ export default class SharedDocUtil extends SharedUtil
 
     /**
      *
-     * @param {string} opName
+     * @param {string} [opName]
      * @returns {Array}
      */
     updateOpDocs(opName)

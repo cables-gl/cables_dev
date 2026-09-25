@@ -3998,6 +3998,20 @@ export default class SharedOpsUtil extends SharedUtil
 
         fs.renameSync(path.join(newOpDir, oldName + ".js"), newOpFile);
 
+        const newOpId = uuidv4();
+
+        const oldJson = path.join(oldOpDir, oldName + ".json");
+        const newJson = path.join(newOpDir, newName + ".json");
+        const newJsonData = jsonfile.readFileSync(oldJson);
+        fs.rmSync(path.join(newOpDir, oldName + ".json"));
+
+        let jsonChange = false;
+        if (!removeOld || newId)
+        {
+            jsonChange = true;
+            newJsonData.id = newOpId;
+        }
+
         const oldMd = path.join(oldOpDir, oldName + ".md");
         const newMd = path.join(newOpDir, newName + ".md");
         if (fs.existsSync(oldMd))
@@ -4005,15 +4019,6 @@ export default class SharedOpsUtil extends SharedUtil
             fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
         }
 
-        const oldJson = path.join(oldOpDir, oldName + ".json");
-        const newJson = path.join(newOpDir, newName + ".json");
-        if (fs.existsSync(oldJson))
-        {
-            fs.renameSync(path.join(newOpDir, oldName + ".json"), newJson);
-        }
-
-        let jsonChange = false;
-        const newJsonData = jsonfile.readFileSync(newJson);
         if (this.isPatchOp(newName) && newJsonData)
         {
             delete newJsonData.exampleProjectId;
@@ -4030,7 +4035,7 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (newJsonData)
             {
-                newJsonData.id = uuidv4();
+                newJsonData.id = newOpId;
                 delete newJsonData.isReleased;
                 if (currentUser) newJsonData.authorName = currentUser.username;
                 const oldId = this.getOpIdByObjName(oldName);
