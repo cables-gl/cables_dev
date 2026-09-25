@@ -541,6 +541,36 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {String} summary
+     * @returns {import("cables-shared-client").OpDoc}
+     */
+    setSummary(opName, summary)
+    {
+        if (summary === "No Summary") summary = "";
+        const opDocFile = this.getOpAbsoluteJsonFilename(opName);
+        let opDoc = null;
+        try
+        {
+            opDoc = jsonfile.readFileSync(opDocFile);
+            if (opDoc)
+            {
+                opDoc.summary = summary;
+                opDoc = this._docsUtil.cleanOpDocData(opDoc);
+                this._storageUtil.writeJsonFileSync(opDocFile, opDoc);
+                this._docsUtil.updateOpDocs(opName);
+            }
+        }
+        catch (e)
+        {
+            this._log.error("failed to set summary for op", opName, e.message);
+        }
+        return opDoc;
+
+    }
+
     getOpFullCode(fn, opName, opId, prepareForExport = false, minifyGlsl = false, code = null)
     {
         if (!fn || !opName || !opId) return "";
