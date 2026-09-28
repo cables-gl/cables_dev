@@ -4035,10 +4035,8 @@ export default class SharedOpsUtil extends SharedUtil
         const newJsonData = jsonfile.readFileSync(oldJson);
         fs.rmSync(path.join(newOpDir, oldName + ".json"));
 
-        let jsonChange = false;
         if (!removeOld || newId)
         {
-            jsonChange = true;
             newJsonData.id = newOpId;
         }
 
@@ -4052,7 +4050,6 @@ export default class SharedOpsUtil extends SharedUtil
         if (this.isPatchOp(newName) && newJsonData)
         {
             delete newJsonData.exampleProjectId;
-            jsonChange = true;
         }
 
         if (removeOld)
@@ -4071,12 +4068,11 @@ export default class SharedOpsUtil extends SharedUtil
                 const oldId = this.getOpIdByObjName(oldName);
                 if (oldId) newJsonData.cloneOf = oldId;
                 this._docsUtil.addOpToLookup(newJsonData.id, newName);
-                jsonChange = true;
             }
         }
 
         const oldNameChangelog = oldName.replace(this.PREFIX_OPS, "");
-        if (jsonChange) this._storageUtil.writeJsonFileSync(newJson, newJsonData);
+        this._storageUtil.writeJsonFileSync(newJson, newJsonData);
         if (newName.includes(this.INFIX_DEPRECATED))
         {
             this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
