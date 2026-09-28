@@ -682,16 +682,16 @@ export default class SharedDocUtil extends SharedUtil
         if (js)
         {
             docObj = { ...docObj, ...this.makeImportable(js) };
-            docObj.shortName = shortName;
-            docObj.namespace = namespace;
-            docObj.name = opName;
-            docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
-            docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
-            docObj.version = this._opsUtil.getVersionFromOpName(opName);
-            docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
-            docObj.hidden = (this._opsUtil.isDeprecated(opName));
             if (js.isReleased) docObj.isReleased = js.isReleased;
         }
+        docObj.shortName = shortName;
+        docObj.namespace = namespace;
+        docObj.name = opName;
+        docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
+        docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
+        docObj.version = this._opsUtil.getVersionFromOpName(opName);
+        docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
+        docObj.hidden = (this._opsUtil.isDeprecated(opName));
 
         const mdFile = path.join(dirName, opName + ".md");
         try
