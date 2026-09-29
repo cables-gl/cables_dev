@@ -1278,7 +1278,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     addOpDocsForCollections(opNames, opDocs = [], forceRebuild = false)
     {
-        if (!opNames || opNames.length == 0) return [];
+        if (!opNames || opNames.length == 0) return opDocs;
         const allOpDocs = [...opDocs];
         const collections = {};
         opNames.forEach((opName) =>

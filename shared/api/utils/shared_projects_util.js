@@ -592,4 +592,19 @@ export default class SharedProjectsUtil extends SharedUtil
         }
         return newName;
     }
+
+    getCollectionNamespacesUsedInProject(proj)
+    {
+        if (!proj || !proj.ops) return [];
+        const collections = [];
+        proj.ops.forEach((op) =>
+        {
+            const opName = this._opsUtil.getOpNameById(op.opId);
+            if (opName && this._opsUtil.isCollection(opName))
+            {
+                collections.push(this._opsUtil.getCollectionNamespace(opName));
+            }
+        });
+        return this._helperUtil.uniqueArray(collections);
+    }
 }
