@@ -3204,7 +3204,7 @@ export default class SharedOpsUtil extends SharedUtil
         else
         {
             const change = {
-                "message": "created new version of " + oldName,
+                "message": "created as a new version of " + oldName,
                 "type": "new op",
                 "author": user.username,
                 "date": Date.now()
@@ -4098,7 +4098,8 @@ export default class SharedOpsUtil extends SharedUtil
             });
         }
 
-        log.push("Successfully renamed " + oldName + " to " + newName);
+        const opLink = this._cables.getConfig().url + "/op/" + newName;
+        log.push("Successfully renamed " + oldName + " to [" + newName + "](" + opLink + ")");
 
         if (cb) cb(null, log, newJsonData);
         return true;
