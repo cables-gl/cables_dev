@@ -3146,11 +3146,10 @@ export default class SharedOpsUtil extends SharedUtil
         let newJsonFile;
         if (targetDir)
         {
-            newPath = targetDir;
-            let opPath = path.join(newPath, this.getOpTargetDir(newName, true));
-            mkdirp.sync(opPath);
-            fn = path.join(opPath, this.getOpFileName(newName));
-            newJsonFile = path.join(opPath, this.getOpJsonFilename(newName));
+            newPath = path.join(targetDir, this.getOpTargetDir(newName, true));
+            mkdirp.sync(newPath);
+            fn = path.join(newPath, this.getOpFileName(newName));
+            newJsonFile = path.join(newPath, this.getOpJsonFilename(newName));
         }
         else
         {
@@ -3950,6 +3949,7 @@ export default class SharedOpsUtil extends SharedUtil
      */
     _renameOp(oldName, newName, currentUser, formatCode, removeOld, newId, oldOpDir, newOpDir, cb = null)
     {
+
         newName = this.sanitizeOpName(newName);
         if (!this.isPatchOp(newName))
         {
