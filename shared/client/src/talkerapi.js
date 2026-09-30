@@ -8,6 +8,7 @@ import Events from "./eventtarget.js";
 /** @typedef {import("cables-shared-client").ApiError} ApiError */
 /** @typedef {import("cables-shared-client").OpDoc} OpDoc */
 /** @typedef {import("cables-shared-client").OpCredit} OpCredit */
+/** @typedef {import("cables-shared-client").RawApiResponse} RawApiResponse */
 
 /**
  * wrapper for talkerapi to communicate ui <-> backend even in iframed setups
@@ -162,6 +163,12 @@ export default class TalkerAPI extends Events
 
     /**
      * @template [T=any]
+     * @callback GenericTalkerApiCallback
+     * @param {ApiError} err
+     * @param {RawApiResponse} res
+     */
+    /**
+     * @template [T=any]
      * @callback TalkerApiCallback
      * @param {ApiError} err
      * @param {ApiResponse<T>} res
@@ -189,13 +196,13 @@ export default class TalkerAPI extends Events
      * @overload
      * @param {String} cmd name of the event
      * @param {Object} [data] payload
-     * @param {TalkerApiCallback} [callback]
+     * @param {GenericTalkerApiCallback} [callback]
      */
     /**
      * send message via cables-talkerapi
      * @param {String} cmd name of the event
      * @param {Object} [data] payload
-     * @param {TalkerApiCallback} [callback]
+     * @param {GenericTalkerApiCallback} [callback]
      */
     send(cmd, data, callback)
     {
