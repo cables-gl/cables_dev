@@ -47,6 +47,11 @@ export {
  */
 
 /**
+ * @typedef {any} RawApiResponse
+ *
+ */
+
+/**
  * @template T
  * @typedef ApiResponse
  * @property {Boolean} success
