@@ -499,9 +499,27 @@ export default class SharedOpsUtil extends SharedUtil
         if (opDocs)
         {
             const credits = opDocs.credits || [];
+            const existingCreditIndex = credits.findIndex((existingCredit) =>
+            {
+                if (credit.date && credit.date === existingCredit.date)
+                {
+                    return true;
+                }
+                // try match old credits that have no date
+                if (credit.title && credit.title === existingCredit.title) return true;
+                if (credit.url && credit.url === existingCredit.url) return true;
+                return false;
+            });
             credit.username = user.username;
             credit.date = Date.now();
-            credits.push(credit);
+            if (existingCreditIndex >= 0)
+            {
+                credits[existingCreditIndex] = credit;
+            }
+            else
+            {
+                credits.push(credit);
+            }
             changes = credits;
         }
         this._writeOpCredits(opName, changes, true);
