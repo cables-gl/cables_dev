@@ -156,6 +156,7 @@ export {
 /**
  * @typedef SerializedPatchUi
  * @property {Object} [viewBoxesGl]
+ * @property {string} [currentSubPatch]
  * @property {Object} [outline]
  */
 
@@ -166,6 +167,32 @@ export {
  */
 
 /**
+ * @typedef BuildInfoBuild
+ * @property {BuildInfoGit} [git]
+ * @property {number} [created]
+ * @property {number} [version]
+ * @property {BuildInfoPlatform} [platform]
+ */
+/**
+ * @typedef BuildInfoGit
+ * @property {string} [branch]
+ * @property {string} [tag]
+ * @property {string} [message]
+ */
+/**
+ * @typedef BuildInfoPlatform
+ * @property {string} [node]
+ * @property {string} [npm]
+ */
+/**
+ * @typedef BuildInfo
+ * @property {string} [host]
+ * @property {BuildInfoBuild} [ui]
+ * @property {BuildInfoBuild} [core]
+ * @property {BuildInfoBuild} [api]
+ */
+
+/**
  * @typedef SerializedPatch
  * @property {string} _id
  * @property {string} name
@@ -173,6 +200,7 @@ export {
  * @property {PatchSummary} summary
  * @property {SerializedOp[]} ops
  * @property {SerializedPatchUi} ui
+ * @property {BuildInfo} buildInfo
  */
 
 /**
