@@ -37,6 +37,27 @@ the repository to bring all of the above together to have a running version of t
 with the cables code and ops. runs (and builds/packs) an electron executable that can be
 used to create patches locally, or develop on core and ui features on your local machine.
 
+
+
+## AI coding disclaimer and policy
+
+cables is not vibecoded and never will be  
+cables is actively developed and maintained by humans for more than 10 years
+
+We are now using AI assistance, with human reviews, for the following tasks:
+
+- Documentation generation/project structure
+- Testing and test generation
+- Finding bugs and fixing small bugs
+- Code analysis/reviews/rubber ducking
+
+We accept contributions involving AI coding as long as:
+
+- They are verified to work properly by a human
+- The code quality is up to human-written code standards
+- Include non-regression tests whenever applicable (which itself can be AI-generated)
+
+
 ## Giving Feedback
 
 ### Issue Workflow
@@ -54,6 +75,8 @@ Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporter
 This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/entrust/), a fund established by [NLnet](https://nlnet.nl/) with financial support
 from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
 Content and Technology under grant agreement No 101069594.
+
+
 
 ## More...
 - [tools involved](docs/toolchain.md)
