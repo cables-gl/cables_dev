@@ -37,25 +37,9 @@ the repository to bring all of the above together to have a running version of t
 with the cables code and ops. runs (and builds/packs) an electron executable that can be
 used to create patches locally, or develop on core and ui features on your local machine.
 
-## Giving Feedback
 
-### Issue Workflow
 
-- create an issue, pick "Bug report" or "Feature Request" from the templates
-- the issue will be assigned a "new" label
-- we will check on these issues regularly, add them to a milestone and remove the "new" label
-- once we added the feature or fixed the bug in any release (also dev/nightly) we will close the issue
-- stable releases will have a changelog with all the closed issues
-
-## Appreciation
-
-Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporters](https://cables.gl/support) for making this possible. If you like this project, think about [supporting it](https://cables.gl/support).
-
-This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/entrust/), a fund established by [NLnet](https://nlnet.nl/) with financial support
-from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
-Content and Technology under grant agreement No 101069594.
-
-### AI coding disclaimer and policy
+## AI coding disclaimer and policy
 
 cables is not vibecoded and never will be  
 cables is actively developed and maintained by humans for more than 10 years
@@ -73,6 +57,25 @@ We accept contributions involving AI coding as long as:
 - They are verified to work properly by a human
 - The code quality is up to human-written code standards
 - Include non-regression tests whenever applicable (which itself can be AI-generated)
+
+
+## Giving Feedback
+
+### Issue Workflow
+
+- create an issue, pick "Bug report" or "Feature Request" from the templates
+- the issue will be assigned a "new" label
+- we will check on these issues regularly, add them to a milestone and remove the "new" label
+- once we added the feature or fixed the bug in any release (also dev/nightly) we will close the issue
+- stable releases will have a changelog with all the closed issues
+
+## Appreciation
+
+Thanks to the [cables community](https://discord.gg/cablesgl) and our [supporters](https://cables.gl/support) for making this possible. If you like this project, think about [supporting it](https://cables.gl/support).
+
+This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/entrust/), a fund established by [NLnet](https://nlnet.nl/) with financial support
+from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
+Content and Technology under grant agreement No 101069594.
 
 
 
