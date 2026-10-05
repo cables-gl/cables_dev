@@ -79,7 +79,7 @@ export {
 
 /**
  * @typedef OpDoc
- * @property {String} [id]
+ * @property {import("cables/src/core/core_op.js").OpId} [id]
  * @property {String} [name]
  * @property {String} [content]
  * @property {String} [namespace]
@@ -124,8 +124,8 @@ export {
  * @typedef SerializedLink
  * @property {string} portIn
  * @property {string} portOut
- * @property {string} objIn
- * @property {string} objOut
+ * @property {import("cables/src/core/core_op.js").OpInstanceId} objIn
+ * @property {import("cables/src/core/core_op.js").OpInstanceId} objOut
  */
 
 /**
