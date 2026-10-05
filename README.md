@@ -55,6 +55,26 @@ This project was partly funded through the [NGI0 Entrust Fund](https://nlnet.nl/
 from the European Commission's [Next Generation Internet](https://www.ngi.eu/) programme, under the aegis of [DG Communications Networks](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en),
 Content and Technology under grant agreement No 101069594.
 
+### AI coding disclaimer and policy
+
+cables is not vibecoded and never will be  
+cables is actively developed and maintained by humans for more than 10 years
+
+We are now using AI assistance, with human reviews, for the following tasks:
+
+    - Documentation generation/project structure
+    - Tests generation
+    - Testing
+    - Finding Bugs and fixing small bugs
+    - Code analysis/reviews/rubber ducking
+
+We accept contributions involving AI coding as long as:
+
+    - They are verified to work properly by a human
+    - The code quality is up to human-written code standards
+    - Include non-regression tests whenever applicable (which itself can be AI-generated)
+
+
 ## More...
 - [tools involved](docs/toolchain.md)
 - [howto create_new_ops](docs/howto_create_new_ops.md)
