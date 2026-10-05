@@ -47,9 +47,8 @@ cables is actively developed and maintained by humans for more than 10 years
 We are now using AI assistance, with human reviews, for the following tasks:
 
 - Documentation generation/project structure
-- Tests generation
-- Testing
-- Finding Bugs and fixing small bugs
+- Testing and test generation
+- Finding bugs and fixing small bugs
 - Code analysis/reviews/rubber ducking
 
 We accept contributions involving AI coding as long as:
