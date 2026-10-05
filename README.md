@@ -62,17 +62,18 @@ cables is actively developed and maintained by humans for more than 10 years
 
 We are now using AI assistance, with human reviews, for the following tasks:
 
-    - Documentation generation/project structure
-    - Tests generation
-    - Testing
-    - Finding Bugs and fixing small bugs
-    - Code analysis/reviews/rubber ducking
+- Documentation generation/project structure
+- Tests generation
+- Testing
+- Finding Bugs and fixing small bugs
+- Code analysis/reviews/rubber ducking
 
 We accept contributions involving AI coding as long as:
 
-    - They are verified to work properly by a human
-    - The code quality is up to human-written code standards
-    - Include non-regression tests whenever applicable (which itself can be AI-generated)
+- They are verified to work properly by a human
+- The code quality is up to human-written code standards
+- Include non-regression tests whenever applicable (which itself can be AI-generated)
+
 
 
 ## More...
