@@ -1,4 +1,6 @@
 import writeFileAtomic from "write-file-atomic";
+import mkdirp from "mkdirp";
+import path from "path";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
@@ -15,12 +17,13 @@ export default class SharedStorageUtil extends SharedUtil
 
     /**
      *
-     * @param {String} fileName
+     * @param {String} filename
      * @param {any} data
      */
-    writeFileSync(fileName, data)
+    writeFileSync(filename, data)
     {
-        writeFileAtomic.sync(fileName, data);
+        mkdirp(path.dirname(filename));
+        writeFileAtomic.sync(filename, data);
     }
 
     /**
@@ -33,6 +36,7 @@ export default class SharedStorageUtil extends SharedUtil
      */
     writeJsonFileSync(filename, data, spaces = 4, replacer = null)
     {
+        mkdirp(path.dirname(filename));
         const json = JSON.stringify(data, replacer, spaces);
         return writeFileAtomic.sync(filename, json);
     }

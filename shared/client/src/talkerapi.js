@@ -111,7 +111,6 @@ export default class TalkerAPI extends Events
     // electron
     static CMD_ELECTRON_RENAME_OP = "opRename";
     static CMD_ELECTRON_DELETE_OP = "opDelete";
-    static CMD_ELECTRON_SET_OP_SUMMARY = TalkerAPI.CMD_SET_OP_SUMMARY;
     static CMD_ELECTRON_GET_PROJECT_OPDIRS = "getProjectOpDirs";
     static CMD_ELECTRON_OPEN_DIR = "openDir";
     static CMD_ELECTRON_SELECT_FILE = "selectFile";
