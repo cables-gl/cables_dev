@@ -553,7 +553,7 @@ export default class SharedDocUtil extends SharedUtil
                 let error = false;
                 if (cachedLookup.names[op.name] && cachedLookup.names[op.name] !== op.id)
                 {
-                    this._log.warn("FIXING DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.name]);
+                    this._log.debug("FIXING DUPLICATE OP NAME", op.name, op.id, cachedLookup.names[op.name]);
                     const opDocs = this.getOpDocsFromFile(op.name);
                     if (opDocs)
                     {

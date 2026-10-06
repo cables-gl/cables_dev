@@ -3586,17 +3586,7 @@ export default class SharedOpsUtil extends SharedUtil
                 typeof port.value == "string" &&
                 port.name &&
                 port.value.length &&
-                (port.display === "file" ||
-                    port.name.toLowerCase().includes("file") ||
-                    port.name.toLowerCase().includes("url") ||
-                    // port names in cubemapfromtextures !
-                    port.name.toLowerCase().includes("posx") ||
-                    port.name.toLowerCase().includes("posy") ||
-                    port.name.toLowerCase().includes("posz") ||
-                    port.name.toLowerCase().includes("negx") ||
-                    port.name.toLowerCase().includes("negy") ||
-                    port.name.toLowerCase().includes("negz")) &&
-                port.value.toLowerCase().includes("assets/")
+                port.display === "file"
             )
             {
                 if (!port.value.toLowerCase().includes("assets/library"))
