@@ -126,15 +126,13 @@ export default class SharedDocUtil extends SharedUtil
         return null;
     }
 
-    getOpDocMd(opname)
+    getOpDocMd(opName)
     {
-        if (this._opsUtil.isOpNameValid(opname))
+        if (this._opsUtil.isOpNameValid(opName))
         {
-            const opPath = this._opsUtil.getOpAbsolutePath(opname);
-            if (opPath)
+            const fn = this._opsUtil.getOpAbsoluteMarkdownFilename(opName);
+            if (fn)
             {
-                const fn = path.join(opPath, opname + ".md");
-
                 try
                 {
                     return fs.readFileSync(fn, "utf8");
@@ -645,10 +643,9 @@ export default class SharedDocUtil extends SharedUtil
             "content": ""
         };
 
-        const dirName = this._opsUtil.getOpSourceDir(opName);
         docObj.attachmentFiles = this._opsUtil.getAttachmentFiles(opName) || [];
 
-        const jsonFilename = path.join(dirName, opName + ".json");
+        const jsonFilename = this._opsUtil.getOpAbsoluteJsonFilename(opName);
 
         const parts = opName.split(".");
         const shortName = parts[parts.length - 1];
@@ -693,7 +690,7 @@ export default class SharedDocUtil extends SharedUtil
         docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
         docObj.hidden = (this._opsUtil.isDeprecated(opName));
 
-        const mdFile = path.join(dirName, opName + ".md");
+        const mdFile = this._opsUtil.getOpAbsoluteMarkdownFilename(opName);
         try
         {
             const mdFileContent = fs.readFileSync(mdFile);

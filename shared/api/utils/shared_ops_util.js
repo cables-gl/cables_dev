@@ -163,6 +163,13 @@ export default class SharedOpsUtil extends SharedUtil
         return path.join(p, "/", this.getOpJsonFilename(opName));
     }
 
+    getOpAbsoluteMarkdownFilename(opName)
+    {
+        const p = this.getOpAbsolutePath(opName);
+        if (!p) return null;
+        return path.join(p, opName + ".md");
+    }
+
     getOpJsonFilename(opName)
     {
         if (!opName) return null;
@@ -3269,7 +3276,7 @@ export default class SharedOpsUtil extends SharedUtil
         const docsMd = this._docsUtil.getOpDocMd(oldName);
         if (docsMd)
         {
-            const filenameMd = path.join(newPath, newName + ".md");
+            const filenameMd = this.getOpAbsoluteMarkdownFilename(newName);
             this._storageUtil.writeFileSync(filenameMd, docsMd);
         }
         this._docsUtil.updateOpDocs(newName);
@@ -4048,8 +4055,8 @@ export default class SharedOpsUtil extends SharedUtil
             newJsonData.id = newOpId;
         }
 
-        const oldMd = path.join(oldOpDir, oldName + ".md");
-        const newMd = path.join(newOpDir, newName + ".md");
+        const oldMd = this.getOpAbsoluteMarkdownFilename(oldName);
+        const newMd = this.getOpAbsoluteMarkdownFilename(newName);
         if (fs.existsSync(oldMd))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
