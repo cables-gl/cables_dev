@@ -81,7 +81,7 @@ export {
 /**
  * @typedef OpDependency
  * @property {string} src
- * @property {"commonjs"|"module"|"npm"|"op"} type
+ * @property {"commonjs"|"module"|"npm"|"op"|"corelib"} type
  * @property {String} [export]
  */
 
