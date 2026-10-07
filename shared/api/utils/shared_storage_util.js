@@ -22,7 +22,7 @@ export default class SharedStorageUtil extends SharedUtil
      */
     writeFileSync(filename, data)
     {
-        mkdirp(path.dirname(filename));
+        mkdirp.sync(path.dirname(filename));
         writeFileAtomic.sync(filename, data);
     }
 
@@ -36,7 +36,7 @@ export default class SharedStorageUtil extends SharedUtil
      */
     writeJsonFileSync(filename, data, spaces = 4, replacer = null)
     {
-        mkdirp(path.dirname(filename));
+        mkdirp.sync(path.dirname(filename));
         const json = JSON.stringify(data, replacer, spaces);
         return writeFileAtomic.sync(filename, json);
     }
