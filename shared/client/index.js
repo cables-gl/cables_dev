@@ -143,9 +143,9 @@ export {
 
 /**
  * @typedef SerializedOp
- * @property {string} opId
- * @property {string} objName
- * @property {string} id
+ * @property {import("cables/src/core/core_op.js").OpId} opId
+ * @property {import("cables/src/core/core_op.js").OpName} objName
+ * @property {import("cables/src/core/core_op.js").OpInstanceId} id
  * @property {Object} storage
  * @property {Object} attribs
  * @property {import("cables/src/core/core_op.js").OpUiAttribs} uiAttribs
