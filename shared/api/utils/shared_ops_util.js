@@ -3754,6 +3754,7 @@ export default class SharedOpsUtil extends SharedUtil
                     xw.writeAttribute("height", "6");
                     xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsIn[i].type));
                     xw.endElement();
+                    if (opDoc.layout.portsIn[i].type == 2) this._writeSvgObjPortInfill(xw, opDoc.layout.portsIn[i], i * 14, 0);
                 }
 
                 for (let i = 0; i < opDoc.layout.portsIn.length; i++)
@@ -3788,6 +3789,7 @@ export default class SharedOpsUtil extends SharedUtil
                     xw.writeAttribute("height", "6");
                     xw.writeAttribute("fill", this.opGetPortColor(opDoc.layout.portsOut[i].type));
                     xw.endElement();
+                    if (opDoc.layout.portsOut[i].type == 2) this._writeSvgObjPortInfill(xw, opDoc.layout.portsOut[i], i * 14, height - 6);
                 }
 
                 for (let i = 0; i < opDoc.layout.portsOut.length; i++)
@@ -3836,11 +3838,33 @@ export default class SharedOpsUtil extends SharedUtil
         type = Number(type);
         if (type === 0) return "#5CB59E";
         if (type === 1) return "#F0D165";
-        if (type === 2) return "#AB5A94";
+        if (type === 2) return "#757575";
         if (type === 3) return "#8084D4";
         if (type === 4) return "#ffffff";
         if (type === 5) return "#d57272";
         return "#F00";
+    }
+
+    opGetObjTypeColor(objType)
+    {
+        if (objType === "texture") return "#AF4E94";
+        return "#C970B0";
+    }
+
+    _writeSvgObjPortInfill(xw, port, x, y)
+    {
+        const portWidth = 11;
+        const portHeight = 6;
+        const infillHeight = portHeight * 0.75;
+        const inset = portHeight - infillHeight;
+
+        xw.startElement("rect");
+        xw.writeAttribute("x", x + inset);
+        xw.writeAttribute("y", y + inset / 2);
+        xw.writeAttribute("width", portWidth - 2 * inset);
+        xw.writeAttribute("height", infillHeight);
+        xw.writeAttribute("fill", this.opGetObjTypeColor(port.objType));
+        xw.endElement();
     }
 
     opGetNamespaceColor(ns)
