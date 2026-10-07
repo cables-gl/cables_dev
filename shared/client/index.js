@@ -219,5 +219,6 @@ export {
  * @property {string} platformVersion
  * @property {string} browserDescription
  * @property {Object} browserInfo
+ * @property {BuildInfo} buildInfo
  * @property {string[]} history
  */
