@@ -145,8 +145,8 @@ export default class SharedOpsUtil extends SharedUtil
     isSubPatchOp(op, parentOnly = false)
     {
         if (!op || !op.storage) return false;
-        if (parentOnly && (!op.storage.subPatchVer || op.storage.subPatchVer < 2)) return false;
         if (op.storage.blueprintVer > 1) return true;
+        if (parentOnly && (!op.storage.subPatchVer || op.storage.subPatchVer < 2)) return false;
         return !!op.storage.subPatchVer;
     }
 

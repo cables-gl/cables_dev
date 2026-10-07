@@ -72,9 +72,17 @@ export {
  * @property {String} [version]
  * @property {Number} [date]
  */
+
 /**
  * @typedef OpVersion
  * @property {String} name
+ */
+
+/**
+ * @typedef OpDependency
+ * @property {string} src
+ * @property {"commonjs"|"module"|"npm"|"op"|"corelib"} type
+ * @property {String} [export]
  */
 
 /**
@@ -109,7 +117,7 @@ export {
  * @property {OpCredit[]} [credits]
  * @property {Object[]} [changelog]
  * @property {Object[]} [todos]
- * @property {Object[]} [dependencies]
+ * @property {OpDependency[]} [dependencies]
  * @property {Object[]} [issues]
  * @property {String} [caniusequery]
  * @property {String} [cloneOf]
