@@ -171,6 +171,8 @@ export {
 /**
  * @typedef PatchSummary
  * @property {string} [title]
+ * @property {boolean} [isTest]
+ * @property {boolean} [isPublic]
  * @property {string[]} [exampleForOps]
  */
 
