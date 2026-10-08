@@ -3130,6 +3130,12 @@ export default class SharedOpsUtil extends SharedUtil
         return obj.coreLibs;
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {Object<String, String>} attachments
+     * @returns
+     */
     updateAttachments(opName, attachments)
     {
         let problems = null;
@@ -3456,6 +3462,16 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {User} author
+     * @param {String} [code]
+     * @param {import("cables-shared-client/src/talkerapi.js").OpDoc} [opDocDefaults]
+     * @param {Object<String,String>} [attachments]
+     * @param {String} [targetDir]
+     * @returns
+     */
     createOp(opName, author, code = null, opDocDefaults = null, attachments = null, targetDir = null)
     {
         opName = this.sanitizeOpName(opName);
