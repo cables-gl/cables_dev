@@ -238,6 +238,14 @@ export {
  */
 
 /**
+ * @typedef OpDir
+ * @property {String} dir
+ * @property {Boolean} fixedPlace
+ * @property {Number} numUsedOps
+ * @property {Boolean} [selected]
+ */
+
+/**
  * @typedef SerializedPort
  * @property {string} name
  * @property {string} title
