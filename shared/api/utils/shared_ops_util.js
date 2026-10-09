@@ -2231,9 +2231,10 @@ export default class SharedOpsUtil extends SharedUtil
      * @param {String} opName
      * @param {User} author
      * @param {Boolean} createMissing
+     * @param {String} license
      * @return {Object} cleaned up json
      */
-    cleanOpJson(opName, author = null, createMissing = false)
+    cleanOpJson(opName, author = null, createMissing = false, license = "MIT")
     {
         const jsonFile = this.getOpJsonPath(opName);
         if (!jsonFile)
@@ -2242,7 +2243,7 @@ export default class SharedOpsUtil extends SharedUtil
             return;
         }
 
-        const defaults = this.getOpDefaults(opName, author);
+        const defaults = this.getOpDefaults(opName, author, license);
         let hasChanged = false;
         let jsonData = {};
         try
@@ -2308,14 +2309,15 @@ export default class SharedOpsUtil extends SharedUtil
      *
      * @param {String} opName
      * @param {User} author
+     * @param {String} [license="MIT"]
      *
      */
-    getOpDefaults(opName, author = null)
+    getOpDefaults(opName, author = null, license = "MIT")
     {
         const defaults = {
             "id": uuidv4(),
             "created": Date.now(),
-            "license": "MIT"
+            "license": license || "MIT"
         };
         if (author) defaults.authorName = author.username;
         return defaults;
@@ -3470,9 +3472,10 @@ export default class SharedOpsUtil extends SharedUtil
      * @param {import("cables-shared-client/src/talkerapi.js").OpDoc} [opDocDefaults]
      * @param {Object<String,String>} [attachments]
      * @param {String} [targetDir]
+     * @param {String} [license="MIT"]
      * @returns
      */
-    createOp(opName, author, code = null, opDocDefaults = null, attachments = null, targetDir = null)
+    createOp(opName, author, code = null, opDocDefaults = null, attachments = null, targetDir = null, license = "MIT")
     {
         opName = this.sanitizeOpName(opName);
         if (!opDocDefaults) opDocDefaults = {};
@@ -3502,7 +3505,7 @@ export default class SharedOpsUtil extends SharedUtil
         }
         mkdirp.sync(basePath);
 
-        const opDefaults = this.getOpDefaults(opName, author);
+        const opDefaults = this.getOpDefaults(opName, author, license);
         let newJson = opDefaults;
         if (opDocDefaults)
         {
