@@ -240,7 +240,7 @@ export {
 /**
  * @typedef OpDir
  * @property {String} dir
- * @property {Boolean} fixedPlace
+ * @property {Boolean} removable
  * @property {Number} numUsedOps
  * @property {Boolean} [selected]
  */
