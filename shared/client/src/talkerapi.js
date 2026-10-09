@@ -125,6 +125,8 @@ export default class TalkerAPI extends Events
     static CMD_ADD_OP_PACKAGE = "addOpPackage";
     static CMD_ELECTRON_EXECUTE_OP = "executeOp";
     static CMD_ELECTRON_GET_DESKTOP_CAPTURE_SOURCES = "getDesktopCaptureSources";
+    static CMD_ELECTRON_SET_SERIAL_PORT = "setSerialPort";
+    static CMD_ELECTRON_GET_SERIAL_PORT = "getSerialPort";
 
     constructor(target)
     {
