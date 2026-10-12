@@ -1265,18 +1265,20 @@ export default class SharedOpsUtil extends SharedUtil
         {
             if (rebuildOps.includes(opName))
             {
-                newOpDocs.push(this._docsUtil.buildOpDocs(opName));
+                const opDoc = this._docsUtil.buildOpDocs(opName);
+                if (opDoc) newOpDocs.push(opDoc);
             }
             else
             {
-                const opDocs = collectionDocs.find((docs) => { return docs.name === opName; });
+                const opDocs = collectionDocs.find((docs) => { return docs && docs.name === opName; });
                 if (opDocs)
                 {
                     newOpDocs.push(opDocs);
                 }
                 else
                 {
-                    newOpDocs.push(this._docsUtil.buildOpDocs(opName));
+                    const opDoc = this._docsUtil.buildOpDocs(opName);
+                    if (opDoc) newOpDocs.push(opDoc);
                 }
             }
         });

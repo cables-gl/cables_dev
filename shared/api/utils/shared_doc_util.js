@@ -681,29 +681,39 @@ export default class SharedDocUtil extends SharedUtil
             docObj = { ...docObj, ...this.makeImportable(js) };
             if (js.isReleased) docObj.isReleased = js.isReleased;
         }
-        docObj.shortName = shortName;
-        docObj.namespace = namespace;
-        docObj.name = opName;
-        docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
-        docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
-        docObj.version = this._opsUtil.getVersionFromOpName(opName);
-        docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
-        docObj.hidden = (this._opsUtil.isDeprecated(opName));
 
-        const mdFile = this._opsUtil.getOpAbsoluteMarkdownFilename(opName);
-        try
+        if (docObj.id)
         {
-            const mdFileContent = fs.readFileSync(mdFile);
-            if (mdFileContent)
+            docObj.shortName = shortName;
+            docObj.namespace = namespace;
+            docObj.name = opName;
+            docObj.nameNoVersion = this._opsUtil.getOpNameWithoutVersion(opName);
+            docObj.shortNameDisplay = this._opsUtil.getOpNameWithoutVersion(shortName);
+            docObj.version = this._opsUtil.getVersionFromOpName(opName);
+            docObj.hasPublicRepo = this._opsUtil.isCoreOp(opName) || this._opsUtil.isExtension(opName);
+            docObj.hidden = (this._opsUtil.isDeprecated(opName));
+
+            const mdFile = this._opsUtil.getOpAbsoluteMarkdownFilename(opName);
+            try
             {
-                docObj.content = mdFileContent.toString();
+                const mdFileContent = fs.readFileSync(mdFile);
+                if (mdFileContent)
+                {
+                    docObj.content = mdFileContent.toString();
+                }
+                else
+                {
+                    docObj.content = "";
+                }
             }
-            else
-            {
-                docObj.content = "";
-            }
+            catch (e) {}
         }
-        catch (e) {}
+        else
+        {
+            this._log.error("OP HAS NO ID/OPDOCS", opName, this._opsUtil.getOpAbsolutePath(opName));
+            return null;
+        }
+
         return docObj;
     }
 
@@ -738,7 +748,8 @@ export default class SharedDocUtil extends SharedUtil
                 {
                     const docFile = this._opsUtil.getCollectionOpDocFile(collectionName);
                     const collectionDocs = jsonfile.readFileSync(docFile);
-                    opNames = collectionDocs.map((collectionDoc) => { return collectionDoc.name; });
+                    const validDocs = collectionDocs.filter((collectionDoc) => { return collectionDoc && collectionDoc.name; });
+                    opNames = validDocs.map((collectionDoc) => { return collectionDoc.name; });
                     opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
                 }
                 catch (e)
