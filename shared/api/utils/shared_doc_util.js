@@ -846,10 +846,13 @@ export default class SharedDocUtil extends SharedUtil
     /**
      *
      * @param {OpDoc[]} opDocs
+     * @param {Boolean} [includeOpDir=false]
      * @returns {OpDoc[]}
      */
-    makeReadable(opDocs)
+    makeReadable(opDocs, includeOpDir = false)
     {
+        if (!includeOpDir && this._cables.isLocal()) includeOpDir = true;
+
         // dereference array, so we do not alter cached values
         const cleanDocs = this._helperUtil.copy(opDocs);
         cleanDocs.forEach((opDoc) =>
@@ -859,10 +862,12 @@ export default class SharedDocUtil extends SharedUtil
             delete opDoc.versionString;
             delete opDoc.relatedops;
             delete opDoc.collections;
+
             if (opDoc.newestVersion && (opDoc.newestVersion.name === opDoc.name))
             {
                 delete opDoc.newestVersion;
             }
+
             if (opDoc.dependencies)
             {
                 opDoc.dependencies.forEach((dep) =>
@@ -879,6 +884,18 @@ export default class SharedDocUtil extends SharedUtil
                         }
                     }
                 });
+            }
+
+            if (includeOpDir)
+            {
+                const relativeDir = this._opsUtil.getOpSourceDir(opDoc.name, true);
+                const absolute = this._opsUtil.getOpSourceDir(opDoc.name);
+                const opDir = absolute.replace(relativeDir, "");
+                if (opDir !== this._cables.getOpsPath())
+                {
+                    opDoc.opDir = opDir;
+                }
+                opDoc.opDirFull = absolute;
             }
         });
         return cleanDocs;
