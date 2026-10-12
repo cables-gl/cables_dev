@@ -1414,10 +1414,13 @@ export default class SharedOpsUtil extends SharedUtil
                     const opNameById = this.getOpNameById(newDependency.src);
                     if (!opNameById) return false;
                 }
-                const oldDepIndex = deps.findIndex((d) => { return d.src === newDependency.src });
-                if (oldDepIndex === -1) {
+                const oldDepIndex = deps.findIndex((d) => { return d.src === newDependency.src; });
+                if (oldDepIndex === -1)
+                {
                     deps.push(newDependency);
-                } else {
+                }
+                else
+                {
                     deps[oldDepIndex] = newDependency;
                 }
 

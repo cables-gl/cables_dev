@@ -710,7 +710,9 @@ export default class SharedDocUtil extends SharedUtil
         }
         else
         {
-            this._log.error("OP HAS NO ID/OPDOCS", opName, this._opsUtil.getOpAbsolutePath(opName));
+            // its okay for namespace json files to not have id's, only log error for ops
+            const isCollectionName = this._opsUtil.isCollection(opName) && this._opsUtil.getCollectionName(opName) === opName;
+            if (!isCollectionName) this._log.error("OP HAS NO ID/OPDOCS", opName, this._opsUtil.getOpAbsolutePath(opName));
             return null;
         }
 
