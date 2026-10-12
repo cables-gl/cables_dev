@@ -21,6 +21,11 @@ export {
 };
 
 /**
+ * @typedef activityFeed
+ * @property {number} count
+ */
+
+/**
  * @typedef ApiErrorData
  * @property {string} msg
  * @deprecated @property {string} stderr
