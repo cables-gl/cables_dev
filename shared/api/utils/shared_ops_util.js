@@ -3278,7 +3278,7 @@ export default class SharedOpsUtil extends SharedUtil
         const docsMd = this._docsUtil.getOpDocMd(oldName);
         if (docsMd)
         {
-            const filenameMd = this.getOpAbsoluteMarkdownFilename(newName);
+            const filenameMd = path.join(newPath, newName + ".md");
             this._storageUtil.writeFileSync(filenameMd, docsMd);
         }
         this._docsUtil.updateOpDocs(newName);
