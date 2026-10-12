@@ -4142,6 +4142,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
         }
+        else if (this.getOpNameWithoutVersion(oldName) === this.getOpNameWithoutVersion(newName))
+        {
+            this.addOpChangelog(currentUser.username, newName, { "type": "new op", "message": "created as a new version of " + oldName });
+        }
         else
         {
             this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });

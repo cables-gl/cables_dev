@@ -655,7 +655,7 @@ export default class SharedDocUtil extends SharedUtil
         parts.pop();
         const namespace = parts.join(".");
 
-        let js = {};
+        let js = null;
         try
         {
             js = jsonfile.readFileSync(jsonFilename);
