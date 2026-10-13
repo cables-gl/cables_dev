@@ -89,6 +89,7 @@ export {
  * @property {"commonjs"|"module"|"npm"|"op"|"corelib"} type
  * @property {String} [export]
  * @property {String} [readable]
+ * @property {String} opName
  */
 
 /**
@@ -234,6 +235,7 @@ export {
  * @property {string} numOps
  * @property {array} ops
  * @property {OpDoc} [newestVersion]
+ * @property {String} [opDirFull]
  */
 
 /**
