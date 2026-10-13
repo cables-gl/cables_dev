@@ -88,6 +88,7 @@ export {
  * @property {string} src
  * @property {"commonjs"|"module"|"npm"|"op"|"corelib"} type
  * @property {String} [export]
+ * @property {String} [readable]
  */
 
 /**
@@ -232,6 +233,7 @@ export {
  * @property {string} teamLink
  * @property {string} numOps
  * @property {array} ops
+ * @property {OpDoc} [newestVersion]
  */
 
 /**
