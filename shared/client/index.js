@@ -183,6 +183,7 @@ export {
  * @property {boolean} [editorAudioMute]
  * @property {string} [keybind_escape]
  * @property {Array<{id: string, cmd: string}>} [inputbinds]
+ * @property {String} opLicense
  *
  * cables_electron
  * @property {boolean} [openlastproject]
