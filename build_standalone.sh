@@ -70,20 +70,18 @@ cd cables_electron
 git pull --no-edit
 $NPM_EXE install
 $NPM_EXE run build
-echo "INSTALLING standalone op-modules"
-cd dist/ops/extensions/Ops.Extension.Standalone/
-for dir in `find . -maxdepth 1 -type d -name 'Ops.Extension.Standalone.*'`; do
-    cd $dir;
-    name=`basename $dir`.json;
-    set +e
-    json=`cat $name | jq -r '.dependencies[]? | select( .type == "npm") | .src '`
-    set -e
-    for m in $json; do
-        echo "$name: installing $m";
-        npm install --prefix ./ $m --no-save;
-    done
-    cd ..
+
+echo "INSTALLING op npm dependencies"
+grep -rlE --include='Ops.*.json' '"type": *"npm"' dist/ops | while read -r json; do
+    dir=$(dirname "$json")
+    # only op jsons, not extension/collection jsons
+    [ "$(basename "$json" .json)" = "$(basename "$dir")" ] || continue
+    packages=$(jq -r '[.dependencies[]? | select(.type == "npm") | .src] | unique | join(" ")' "$json")
+    [ -z "$packages" ] && continue
+    echo "$(basename "$dir"): installing $packages"
+    (cd "$dir" && $NPM_EXE install --prefix ./ $packages --no-save)
 done
+
 echo "PACKAGING cables_electron"
 $NPM_EXE run dist$BUILD_OS $ARGS
 cd ..
