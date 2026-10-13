@@ -50,6 +50,10 @@ jobs:
               with:
                   node-version-file: ".nvmrc"
                   check-latest: false
+            - name: install imagemagick
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y imagemagick
             - name: install nvm
               run: |
                   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
