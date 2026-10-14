@@ -886,7 +886,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (code.indexOf("colorPick: 'true'") > -1 || code.indexOf("colorPick:'true'") > -1) srcWarnings.push({
                 "type": "code",
                 "id": "colorpick",
-                "text": "how to create a colorpicker the nice way: \n const r = op.inValueSlider(\"r\", Math.random());\n\nconst g = op.inValueSlider(\"g\", Math.random());\nconst b = op.inValueSlider(\"b\", Math.random()); \nr.setUiAttribs({ colorPick: true }); "
+                "text": "how to create a colorpicker the nice way: \n const r = op.inFloatSlider(\"r\", Math.random());\n\nconst g = op.inFloatSlider(\"g\", Math.random());\nconst b = op.inFloatSlider(\"b\", Math.random()); \nr.setUiAttribs({ colorPick: true }); "
             });
 
             if (code.indexOf("blendMode.onChange") > -1) srcWarnings.push({
