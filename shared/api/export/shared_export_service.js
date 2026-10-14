@@ -1158,8 +1158,7 @@ export default class SharedExportService extends SharedUtil
         usedOps.forEach((op) =>
         {
             const opName = this._opsUtil.getOpNameById(op.opId);
-            let includeOp = !this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName);
-            if (includeAllOps || includeOp)
+            if (includeAllOps || this._isOpCodeIncluded(opName))
             {
                 const sourceDir = this._opsUtil.getOpSourceDir(opName);
                 const targetDir = this._getOpExportSubdir(opName);
@@ -1179,6 +1178,15 @@ export default class SharedExportService extends SharedUtil
             }
         });
         return opsAdded;
+    }
+
+    /**
+     * @param {String} opName
+     * @returns {Boolean}
+     */
+    _isOpCodeIncluded(opName)
+    {
+        return !this._opsUtil.isCoreOp(opName) && !this._opsUtil.isExtensionOp(opName);
     }
 
     _addProjectHtmlCode(proj, options, libs, coreLibs, template = "/patchview/patchview_export.html", dependencies = [])
