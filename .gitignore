@@ -10,6 +10,8 @@ gen/
 .vscode
 docker-compose.yml
 .mocharc.json
+.stfolder
+.stignore
 
 # OS generated files #
 ######################

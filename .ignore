@@ -14,3 +14,5 @@ cables_api/public/libs_core/**
 **/gen/**
 **/public/js/libs_core/*
 **/public/libs_core/*
+.stfolder
+.stignore

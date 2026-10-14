@@ -326,6 +326,7 @@ export {
  * @property {string} _id
  * @property {string} name
  * @property {string} shortId
+ * @property {boolean} isOpExample
  * @property {PatchSummary} summary
  * @property {SerializedOp[]} ops
  * @property {SerializedPatchUi} ui
