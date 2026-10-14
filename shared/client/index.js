@@ -351,3 +351,128 @@ export {
  * @property {BuildInfo} buildInfo
  * @property {string[]} history
  */
+
+/**
+ * @typedef CablesJSONPaths
+ * @property {string} ops
+ * @property {string} libs
+ * @property {string} corelibs
+ * @property {string} assets
+ * @property {string} [libraryassets]
+ * @property {string} [userops]
+ * @property {string} [teamops]
+ * @property {string} [extensionops]
+ * @property {string} [patchops]
+ * @property {string} [docs_md]
+ * @property {string} [electron]
+ * @property {string} [changelog]
+ * @property {string} [ui]
+ * @property {string} [uiDist]
+ * @property {string} [standaloneDist]
+ * @property {string} [js]
+ */
+
+/**
+ * @typedef CablesJSONSourcePaths
+ * @property {string} ops
+ * @property {string} libs
+ * @property {string} corelibs
+ * @property {string} uiDist
+ */
+
+/**
+ * @typedef CablesJSONSocketCluster
+ * @property {Object} [server]
+ * @property {string} [server.interface]
+ * @property {number} [server.port]
+ * @property {number} [server.logLevel]
+ * @property {Object} [server.options]
+ * @property {string} [server.secret]
+ * @property {Object} [client]
+ * @property {boolean} [client.enabled]
+ * @property {string} [client.hostname]
+ * @property {number} [client.port]
+ * @property {boolean} [client.secure]
+ */
+
+/**
+ * @typedef CablesJSONObjectStorageBucket
+ * @property {boolean} enabled
+ * @property {string} name
+ * @property {string} accessKey
+ * @property {string} secret
+ * @property {string} region
+ * @property {string} endpoint
+ * @property {string} [url]
+ */
+
+/**
+ * @typedef CablesJSONObjectStorage
+ * @property {boolean} enabled
+ * @property {string} [bucket]
+ * @property {string} [accessKey]
+ * @property {string} [secret]
+ * @property {string} [region]
+ * @property {string} [endpoint]
+ * @property {{enabled: boolean, buckets: CablesJSONObjectStorageBucket[]}} [archive]
+ * @property {{enabled: boolean, buckets: CablesJSONObjectStorageBucket[]}} [backups]
+ * @property {{enabled: boolean, buckets: CablesJSONObjectStorageBucket[]}} [assets]
+ * @property {{enabled: boolean, buckets: CablesJSONObjectStorageBucket[]}} [dummyclient]
+ */
+
+/**
+ * @typedef CablesJSONExternalOps
+ * @property {string} repo
+ * @property {string} ref
+ */
+
+/**
+ * @typedef CablesJSON
+ * @property {string} env
+ * @property {string} url
+ * @property {CablesJSONPaths} path
+ * @property {{level: "debug"|"verbose"|"info"|"warn"|"error"|"uncaught"}} logger
+ * @property {boolean} [minifyJs]
+ * @property {boolean|string} [sourceMap]
+ * @property {string} [communityUrl]
+ * @property {CablesJSONSourcePaths} [sourcePath]
+ * @property {CablesJSONExternalOps[]} [externalOps]
+ * @property {boolean} [isPackaged]
+ * @property {boolean} [forceSendErrorReports]
+ * @property {string} [uiIndexHtml]
+ * @property {string} [interfaceIp]
+ * @property {number} [port]
+ * @property {{interfaceIp: string, port: number, url: string}} [sandbox]
+ * @property {string} [mongo]
+ * @property {string} [sessionSecret]
+ * @property {number} [maxFileSizeMb]
+ * @property {boolean} [watchOps]
+ * @property {boolean} [watchBuildWhenLocal]
+ * @property {boolean} [localOpPermissions]
+ * @property {boolean} [rateLimiting]
+ * @property {number} [rateLimitWindow]
+ * @property {number} [rateLimit]
+ * @property {boolean} [enableCaptcha]
+ * @property {boolean} [random404Patch]
+ * @property {string[]} [crossDomainOrigins]
+ * @property {string[]} [landingDemos]
+ * @property {string[]} [ignoreFiles]
+ * @property {string} [webhooksSecret]
+ * @property {{name: string, cmd: string, secret: string}[]} [webhooks]
+ * @property {CablesJSONSocketCluster} [socketcluster]
+ * @property {{updateWarning: boolean, path: {core: string, api: string, ui: string, shared: string}}} [buildInfo]
+ * @property {CablesJSONObjectStorage} [objectStorage]
+ * @property {{backend: string, auth: Object}} [caching]
+ * @property {Object<string, string>} [discord]
+ * @property {{nodejs: {enabled: boolean}, delay: {enabled: boolean, min: number, max: number}}} [debug]
+ * @property {{is_testenvironment: boolean, user: Object|null, admin: Object|null, hostUrl?: string, apiKey?: string}} [tests]
+ * @property {{active: boolean, host: string, apiKey: {id: string, key: string}}} [elastic]
+ * @property {{elastic: {active: boolean, eventsIndex: string}}} [analytics]
+ * @property {{requests: {slow: number}, assetSpace: {enabled: boolean, path: string, thresholdGb: number}}} [monitor]
+ * @property {{adminActive: boolean, creatorAccessToken: string, clientId: string, clientSecret: string}} [patreon]
+ * @property {{token: {mail: string, public: string, private: string}}} [webPush]
+ * @property {{discussions: {apikey: string}}} [github]
+ * @property {{enabled: boolean, debugMode: boolean, endpoint: string, user: string, token: string, templates: Object<string, number>}} [listmonk]
+ * @property {number} [temporaryPatchRetentionDays]
+ * @property {number} [validateOpCodeSizeThresholdBytes]
+ */

@@ -48,6 +48,10 @@ export default class Cables extends SharedUtil
         return UtilProvider.CABLES;
     }
 
+    /**
+     *
+     * @returns import("cables-shared-client).CablesJSON
+     */
     getConfig()
     {
         if (!this._config)
