@@ -93,6 +93,19 @@ export {
  */
 
 /**
+ * @typedef OpDirInfo
+ * @property {String} dir
+ * @property {Number} [numOps]
+ * @property {Number} [numUsedOps]
+ * @property {Object<String,String>} [opLocations]
+ * @property {Boolean} removable
+ * @property {Boolean} [selected]
+ * @property {"user"|"dev"|"patch"} type
+ * @property {String[]} [opNames]
+ * @property {Boolean} [showOptions]
+ */
+
+/**
  *
  * @typedef UserSettings
  *
