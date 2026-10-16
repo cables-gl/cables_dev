@@ -93,6 +93,10 @@ export {
  */
 
 /**
+ * @typedef {"user"|"dev"|"patch"} OpDirType
+ */
+
+/**
  * @typedef OpDirInfo
  * @property {String} dir
  * @property {Number} [numOps]
@@ -100,7 +104,7 @@ export {
  * @property {Object<String,String>} [opLocations]
  * @property {Boolean} removable
  * @property {Boolean} [selected]
- * @property {"user"|"dev"|"patch"} type
+ * @property {OpDirType} type
  * @property {String[]} [opNames]
  * @property {Boolean} [showOptions]
  */
@@ -249,7 +253,7 @@ export {
  * @property {string} numOps
  * @property {array} ops
  * @property {OpDoc} [newestVersion]
- * @property {String} [opDirFull]
+ * @property {{dir: string, type: OpDirType}} [opDir]
  */
 
 /**

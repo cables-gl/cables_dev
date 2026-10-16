@@ -901,14 +901,10 @@ export default class SharedDocUtil extends SharedUtil
 
             if (includeOpDir)
             {
-                const relativeDir = this._opsUtil.getOpSourceDir(opDoc.name, true);
-                const absolute = this._opsUtil.getOpSourceDir(opDoc.name);
-                const opDir = absolute.replace(relativeDir, "");
-                if (opDir !== this._cables.getOpsPath())
-                {
-                    opDoc.opDir = opDir;
-                }
-                opDoc.opDirFull = absolute;
+                opDoc.opDir = {
+                    "dir": this._opsUtil.getOpSourceDir(opDoc.name),
+                    "type": "dev"
+                };
             }
         });
         return cleanDocs;
