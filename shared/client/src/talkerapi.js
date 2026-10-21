@@ -121,6 +121,7 @@ export default class TalkerAPI extends Events
     static CMD_ELECTRON_REMOVE_OPDIR = "removeOpDir";
     static CMD_ELECTRON_EXPORT_PATCH = "exportPatchBundle";
     static CMD_ELECTRON_EXPORT_PATCH_HTML = "exportPatch";
+    static CMD_ELECTRON_UPLOAD_PATCH = "uploadPatchToServer";
     static CMD_ELECTRON_ADD_OPDIR = "addOpDir";
     static CMD_ADD_OP_PACKAGE = "addOpPackage";
     static CMD_ELECTRON_EXECUTE_OP = "executeOp";
