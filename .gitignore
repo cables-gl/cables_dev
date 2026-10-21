@@ -3,6 +3,8 @@
 data/
 docker-compose.yml
 gen/
+electron_ops/
+cables-mcp/
 
 # misc
 .idea/
