@@ -940,6 +940,8 @@ export default class SharedDocUtil extends SharedUtil
         if (opDoc.issues) docObj.issues = opDoc.issues;
         if (opDoc.caniusequery) docObj.caniusequery = opDoc.caniusequery;
         if (opDoc.cloneOf) docObj.cloneOf = opDoc.cloneOf;
+        if (opDoc.flags && opDoc.flags.length) docObj.flags = opDoc.flags;
+        if (opDoc.tags && opDoc.tags.length) docObj.tags = opDoc.tags;
 
         return docObj;
     }
