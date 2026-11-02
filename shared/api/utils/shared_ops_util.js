@@ -2305,6 +2305,18 @@ export default class SharedOpsUtil extends SharedUtil
             hasChanged = true;
         }
 
+        if (jsonData.hasOwnProperty("tags") && !jsonData.tags.length)
+        {
+            delete jsonData.tags;
+            hasChanged = true;
+        }
+
+        if (jsonData.hasOwnProperty("flags") && !jsonData.flags.length)
+        {
+            delete jsonData.flags;
+            hasChanged = true;
+        }
+
         if (hasChanged)
         {
             this._storageUtil.writeJsonFileSync(jsonFile, jsonData);
