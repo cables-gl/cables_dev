@@ -16,7 +16,7 @@
         "start": "http-server dist/"
     },
     "engines": {
-        "node": "24.18.1"
+        "node": "24.22.1"
     },
     "author": "",
     "license": "ISC",

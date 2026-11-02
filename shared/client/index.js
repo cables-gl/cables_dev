@@ -254,6 +254,8 @@ export {
  * @property {array} ops
  * @property {OpDoc} [newestVersion]
  * @property {{dir: string, type: OpDirType}} [opDir]
+ * @property {String[]} tags
+ * @property {String[]} flags
  */
 
 /**
