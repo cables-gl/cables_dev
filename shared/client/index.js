@@ -255,7 +255,7 @@ export {
  * @property {OpDoc} [newestVersion]
  * @property {{dir: string, type: OpDirType}} [opDir]
  * @property {String[]} tags
- * @property {String[]} flags
+ * @property {"genAi"|"standalone"|"isReleased"} flags
  */
 
 /**
