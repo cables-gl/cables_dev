@@ -572,12 +572,15 @@ export default class SharedProjectsUtil extends SharedUtil
     /**
      * @param {Project} project
      * @param {String} exportType
+     * @param {String|null} [fileType="zip"]
      */
-    getExportFileName(project, exportType)
+    getExportFileName(project, exportType, fileType = "zip")
     {
         let projectNameVer = sanitizeFileName(project.name).replace(/ /g, "_") + "_" + exportType;
         if (project.exports) projectNameVer += "_" + project.exports;
-        return "cables_" + sanitizeFileName(projectNameVer) + ".zip";
+        let fileName = "cables_" + sanitizeFileName(projectNameVer);
+        if (fileType) fileName += "." + fileType;
+        return fileName;
     }
 
     findNewAssetFilename(targetDir, fileName)
