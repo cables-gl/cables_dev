@@ -37,7 +37,7 @@ export default class SharedStorageUtil extends SharedUtil
     writeJsonFileSync(filename, data, spaces = 4, replacer = null)
     {
         mkdirp.sync(path.dirname(filename));
-        const json = JSON.stringify(data, replacer, spaces);
+        const json = JSON.stringify(data, replacer, spaces) + "\n";
         return writeFileAtomic.sync(filename, json);
     }
 
