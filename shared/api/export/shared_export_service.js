@@ -12,44 +12,43 @@ import { UtilProvider } from "../utils/util_provider.js";
 import { CablesConstants } from "../index.js";
 
 /**
- * abstract class to handle different exports, see implementations like HtmlExport
+ * @typedef ExportOptions
  *
- * @abstract
- *
- * @param {UtilProvider} utilProvider
- * @param {Object} exportOptions
- * @param {"true"|"false"} exportOptions.hideMadeWithCables
- * @param {"true"|"false"} exportOptions.combineJS
- * @param {String} exportOptions.jsonName
- * @param {"true"|"false"} exportOptions.removeIndexHtml
- * @param {"true"|"false"} exportOptions.minify
- * @param {"true"|"false"} exportOptions.sourcemaps
- * @param {String} exportOptions.assets
- * @param {"true"|"false"} exportOptions.minifyGlsl
- * @param {Object} user
- *
- * @property {Object} options
  * @property {Boolean} [ignoreBackupBeforeExport=false]
- * @property {Boolean} options.hideMadeWithCables
- * @property {Boolean} options.combineJS
- * @property {String} options.jsonName
- * @property {Boolean} options.removeIndexHtml
- * @property {Boolean} options.flat
- * @property {Boolean} [options.minify=true]
- * @property {Boolean} options.sourcemaps
- * @property {"auto"|"all"|"none"} [options.handleAssets="auto"]
- * @property {String} options.minifyGlsl
- * @property {Boolean} options.opDocs
- * @property {Boolean} options.rewriteAssetPorts
- * @property {Boolean} options.flattenAssetNames
- * @property {Boolean} options.assetsInSubdirs
- * @property {String} [options.coreSrcFile="js/cables.js"]
- * @property {String} [options.coreSrcMapFile="js/cables.js.map"]
- * @property {String} [options.template="/patchview/patchview_export.html"]
+ * @property {Boolean|String} [hideMadeWithCables=true]
+ * @property {Boolean|String} [combineJS=true]
+ * @property {String} [jsonName]
+ * @property {Boolean} [removeIndexHtml]
+ * @property {Boolean} [flat=false]
+ * @property {Boolean|String} [minify=true]
+ * @property {Boolean} [sourcemaps=false]
+ * @property {"auto"|"all"|"none"} [handleAssets="auto"]
+ * @property {String} [minifyGlsl]
+ * @property {Boolean} [opDocs]
+ * @property {Boolean} [rewriteAssetPorts]
+ * @property {Boolean} [flattenAssetNames]
+ * @property {Boolean} [assetsInSubdirs]
+ * @property {String} [coreSrcFile="js/cables.js"]
+ * @property {String} [coreSrcMapFile="js/cables.js.map"]
+ * @property {String} [template="/patchview/patchview_export.html"]
+ * @property {String} [logLevel="debug"]
+ * @property {Boolean} [incrementExportCount=true]
  *
  */
+
+/**
+ * abstract class to handle different exports, see implementations like HtmlExport
+ * @abstract
+*/
 export default class SharedExportService extends SharedUtil
 {
+
+    /**
+     *
+     * @param {UtilProvider} utilProvider
+     * @param {ExportOptions} exportOptions
+     * @param {Object} user
+     */
     constructor(utilProvider, exportOptions, user)
     {
         super(utilProvider, false);
@@ -63,6 +62,7 @@ export default class SharedExportService extends SharedUtil
         this.files = {};
         this.archive = null;
 
+        /** @type ExportOptions */
         this.options = exportOptions || {};
         this.options.logLevel = exportOptions.logLevel ? exportOptions.logLevel : "debug";
         this.options.hideMadeWithCables = exportOptions.hideMadeWithCables === "true";
@@ -172,6 +172,11 @@ export default class SharedExportService extends SharedUtil
         return this.constructor.getName();
     }
 
+    /**
+     *
+     * @param {String} content
+     * @param {{type?: string, name: string}} options
+     */
     append(content, options)
     {
         let type = "content";
@@ -186,6 +191,13 @@ export default class SharedExportService extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} filePath
+     * @param {String} zipFilePath
+     * @param {("auto"|"all"|"none")} handleAssets
+     * @returns {String}
+     */
     appendFile(filePath, zipFilePath, handleAssets)
     {
         let newChecksum = "";
@@ -734,7 +746,7 @@ export default class SharedExportService extends SharedUtil
 
                             if (this.assetInfos.length > 0)
                             {
-                                let table = "List of Files:<br/><table>";
+                                let table = "List of assets:<br/><table>";
                                 let filesInLog = [];
                                 for (const i in this.assetInfos)
                                 {

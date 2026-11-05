@@ -3363,6 +3363,24 @@ export default class SharedOpsUtil extends SharedUtil
             const keys = Object.keys(updates);
             if (keys.length > 0)
             {
+                let format = null;
+                if (updates.hasOwnProperty("code"))
+                {
+                    format = this.validateAndFormatOpCode(updates.code);
+                    if (format.error)
+                    {
+                        const {
+                            line,
+                            message
+                        } = format.message;
+                        this._log.info({
+                            "line": line,
+                            "message": message
+                        });
+                        return;
+                    }
+                }
+
                 const jsonFile = this.getOpJsonPath(opName, !opExists);
                 let attProblems = null;
                 for (let i = 0; i < keys.length; i++)
@@ -3374,24 +3392,9 @@ export default class SharedOpsUtil extends SharedUtil
                         {
                         case "code":
                             let code = updates.code;
-                            const format = this.validateAndFormatOpCode(code);
-                            if (format.error)
-                            {
-                                const {
-                                    line,
-                                    message
-                                } = format.message;
-                                this._log.info({
-                                    "line": line,
-                                    "message": message
-                                });
-                                return;
-                            }
-
-                            const formatedCode = format.formatedCode;
                             if (options.formatCode || this.isCoreOp(opName))
                             {
-                                code = formatedCode;
+                                code = format.formatedCode;
                             }
                             result.code = this.updateOpCode(opName, user, updates.code);
                             rebuildOpDocs = true;
