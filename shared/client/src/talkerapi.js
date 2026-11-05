@@ -74,6 +74,7 @@ export default class TalkerAPI extends Events
     static CMD_TOGGLE_MULTIPLAYER_SESSION = "toggleMultiplayerSession";
     static CMD_CHECK_OP_NAME = "checkOpName";
     static CMD_GET_RECENT_PATCHES = "getRecentPatches";
+    static CMD_GET_PATCHLIST_PATCHES = "getPatchlistPatches";
     static CMD_GET_OP_DEPENDENCY = "getOpDependency";
     static CMD_ADD_OP_DEPENDENCY = "addOpDependency";
     static CMD_REMOVE_OP_DEPENDENCY = "removeOpDependency";
