@@ -572,8 +572,22 @@ export default class SharedDocUtil extends SharedUtil
                     const opDocs = this.getOpDocsFromFile(cachedName);
                     if (opDocs && opDocs.id === op.id)
                     {
-                        this._log.error("DUPLICATE OP ID!!!", op.id, op.name, cachedLookup.ids[op.id]);
-                        error = true;
+                        const cachedIsCore = this._opsUtil.isCoreOp(cachedName);
+                        const opIsCore = this._opsUtil.isCoreOp(op.name);
+                        if (cachedIsCore !== opIsCore && this.preferCoreOpsOnDuplicateId())
+                        {
+                            if (!opIsCore)
+                            {
+                                this._log.warn("DUPLICATE OP ID: Ignoring op", op.id, op.name, "keeping", cachedName);
+                                return;
+                            }
+                            this._log.warn("DUPLICATE OP ID: Using op", op.id, op.name, "instead of", cachedName);
+                        }
+                        else
+                        {
+                            this._log.error("DUPLICATE OP ID!!!", op.id, op.name, cachedLookup.ids[op.id]);
+                            error = true;
+                        }
                     }
                 }
 
@@ -1195,5 +1209,14 @@ export default class SharedDocUtil extends SharedUtil
     getCachedLookup()
     {
         return this.cachedLookup;
+    }
+
+    /**
+     * on live core ops win over team/user/patch/extension ops with the same id, elsewhere this is an error
+     * @returns {Boolean}
+     */
+    preferCoreOpsOnDuplicateId()
+    {
+        return this._cables.isLive();
     }
 }
