@@ -1352,7 +1352,7 @@ export default class SharedOpsUtil extends SharedUtil
                 // keep this to update cache during runtime...
                 if (cacheDoc)
                 {
-                    const cachedName = this.getOpIdByObjName(cacheDoc.name);
+                    this.getOpIdByObjName(cacheDoc.name);
                     if (opNames.some((name) => { return cacheDoc.name.startsWith(name); })) allOpDocs.push(cacheDoc);
                 }
             });

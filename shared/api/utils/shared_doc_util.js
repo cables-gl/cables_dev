@@ -764,16 +764,25 @@ export default class SharedDocUtil extends SharedUtil
                 {
                     const docFile = this._opsUtil.getCollectionOpDocFile(collectionName);
                     const collectionDocs = jsonfile.readFileSync(docFile);
-                    const validDocs = collectionDocs.filter((collectionDoc) => { return collectionDoc && collectionDoc.name; });
-                    opNames = validDocs.map((collectionDoc) => { return collectionDoc.name; });
-                    opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
+                    const foundNames = {};
+                    collectionDocs.forEach((collectionDoc) =>
+                    {
+                        if (!collectionDoc || !collectionDoc.name || foundNames[collectionDoc.name]) return;
+                        foundNames[collectionDoc.name] = true;
+                        // keep this to update the lookup during runtime...
+                        this._opsUtil.getOpIdByObjName(collectionDoc.name);
+                        opDocs.push(collectionDoc);
+                    });
                 }
                 catch (e)
                 {
-                    // file does not exists or is not parseable, fallback to filesystem
+                    // file does not exist or is not parseable
                 }
             }
-            opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
+            else
+            {
+                opDocs = this._opsUtil.addOpDocsForCollections(opNames, opDocs);
+            }
         }
         opDocs = this._opsUtil.addVersionInfoToOps(opDocs);
         if (currentUser) opDocs = this._opsUtil.addPermissionsToOps(opDocs, currentUser);
