@@ -168,47 +168,86 @@ fi
 CORE_CHANGES=$(changed_since "${CORE_BEFORE}" package.json package-lock.json src/corelibs/package.json src/corelibs/package-lock.json)
 cd "$BASEDIR"
 
-if [ -d cables_api ]; then
-  if [ -f cables_api/package.json ]; then
+if [ -d cables_docs ]; then
     echo -e ""
-      echo -e "${GREEN}UPDATING API...${NC}"
-      cd cables_api
+    echo -e "${GREEN}UPDATING DOCS...${NC}"
+    cd cables_docs
 
-      if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
+    if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
         git -c advice.detachedHead=false checkout "${1}"
-      fi
-      # get current branch
-      branch=`git rev-parse --abbrev-ref HEAD`
-      if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+    fi
+    # get current branch
+    branch=`git rev-parse --abbrev-ref HEAD`
+    if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
 
-      # ignore errors here, since branch might not be on remote
-      git fetch || true
+    # ignore errors here, since branch might not be on remote
+    git fetch || true
 
-      # set pull/merge strategy
-      git config --local pull.ff true
-      git config --local pull.rebase false
+    # set pull/merge strategy
+    git config --local pull.ff true
+    git config --local pull.rebase false
 
-      if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+    if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
 
-      if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
-        API_BEFORE=$(git rev-parse HEAD)
+    if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
+
+        DOCS_BEFORE=$(git rev-parse HEAD)
+
         git pull --no-edit origin "$branch" || true
         # merge current remote develop if branch is not master or tag
         if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
-          echo -e "${RED}not merging origin/develop into master/tag!${NC}"
+            echo -e "${RED}not merging origin/develop into master/tag!${NC}"
         else
-          echo -e "merging current state of origin/develop into ${branch}";
-          git merge origin/develop;
+            echo -e "merging current state of origin/develop into ${branch}";
+            git merge origin/develop;
         fi
-        if [ "$CLEAN" = true ]; then
-          rm -rf node_modules/
-        fi
-        npm_install_if_needed "${API_BEFORE}" "${SHARED_API_CHANGES}${SHARED_CLIENT_CHANGES}"
-        npm run build
-      else
-        echo -e "no changes in git, skipping update"
-        npm_install_if_needed "" "${SHARED_API_CHANGES}${SHARED_CLIENT_CHANGES}"
-      fi
+    else
+        echo -e "no changes in git"
+    fi
+fi
+cd "$BASEDIR"
+
+if [ -d cables_api ]; then
+  if [ -f cables_api/package.json ]; then
+    echo -e ""
+    echo -e "${GREEN}UPDATING API...${NC}"
+    cd cables_api
+
+    if [ -n "${1}" ] && ! [[ "${1}" =~ ^(clean|force)$ ]]; then
+    git -c advice.detachedHead=false checkout "${1}"
+    fi
+    # get current branch
+    branch=`git rev-parse --abbrev-ref HEAD`
+    if [[ "${branch}" = "HEAD" && "${1}" =~ ^tags/v.*$ ]]; then branch=$1; fi
+
+    # ignore errors here, since branch might not be on remote
+    git fetch || true
+
+    # set pull/merge strategy
+    git config --local pull.ff true
+    git config --local pull.rebase false
+
+    if ! [[ "${branch}" =~ ^tags/v.*$ ]]; then reslog=$(git log HEAD..origin/${branch} --oneline); fi
+
+    if [[ "${reslog}" != "" || "${FORCE}" = true ]] ; then
+    API_BEFORE=$(git rev-parse HEAD)
+    git pull --no-edit origin "$branch" || true
+    # merge current remote develop if branch is not master or tag
+    if [[ "${branch}" =~ ^(master|tags/v.*)$ || "${1}" =~ ^tags/v.*$ ]]; then
+        echo -e "${RED}not merging origin/develop into master/tag!${NC}"
+    else
+        echo -e "merging current state of origin/develop into ${branch}";
+        git merge origin/develop;
+    fi
+    if [ "$CLEAN" = true ]; then
+        rm -rf node_modules/
+    fi
+    npm_install_if_needed "${API_BEFORE}" "${SHARED_API_CHANGES}${SHARED_CLIENT_CHANGES}"
+    npm run build
+    else
+    echo -e "no changes in git, skipping update"
+    npm_install_if_needed "" "${SHARED_API_CHANGES}${SHARED_CLIENT_CHANGES}"
+    fi
   fi
 fi
 cd "$BASEDIR"
