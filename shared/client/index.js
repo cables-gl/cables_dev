@@ -146,7 +146,6 @@ export {
  * @property {boolean} [hideSizeBar]
  * @property {boolean} [presentationmode]
  * @property {0|1|2|3|4|false} [canvasmode]
- * @property {boolean} [hideCanvasUi]
  * @property {boolean} [bgpreview]
  * @property {boolean} [bgpreviewMax]
  * @property {"corner"|false} [texpreviewMode]
