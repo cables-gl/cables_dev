@@ -15,8 +15,15 @@ class HandlebarsHelper
             Handlebars.registerHelper("md", (str, setOpLinks = false, linkTarget = "") =>
             {
                 if (!str) return "";
-                let escaped = Handlebars.escapeExpression(str);
-                if (marked) escaped = marked.parse(escaped);
+                let escaped;
+                if (marked)
+                {
+                    // parse raw markdown first (escaping beforehand breaks `code`, > quotes etc.), escape raw html tokens instead
+                    const renderer = new marked.Renderer();
+                    renderer.html = (token) => { return Handlebars.escapeExpression(typeof token === "string" ? token : token.text); };
+                    escaped = marked.parse(String(str), { renderer });
+                }
+                else escaped = Handlebars.escapeExpression(str);
                 if (setOpLinks) escaped = this._setOpLinks(escaped, linkTarget);
                 return new Handlebars.SafeString("<div class=\"markdown\">" + escaped + "</div>");
             });
