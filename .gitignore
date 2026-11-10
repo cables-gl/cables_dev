@@ -10,6 +10,8 @@ gen/
 .vscode
 docker-compose.yml
 .mocharc.json
+electron_ops
+cables_mcp
 
 # OS generated files #
 ######################
