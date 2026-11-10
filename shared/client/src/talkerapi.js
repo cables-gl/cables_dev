@@ -107,6 +107,7 @@ export default class TalkerAPI extends Events
     static CMD_UI_SET_SAVED_STATE = "setSavedState";
     static CMD_UI_SETTING_MANUAL_SCREENSHOT = "manualScreenshot";
     static CMD_UI_UPDATE_PATCH_NAME = "uiUpdatePatchName";
+    static CMD_UI_UPDATE_PATCH_SUMMARY = "uiUpdatePatchSummary";
     static CMD_UI_SAVE_SCREENSHOT = "saveScreenshot";
 
     // electron
