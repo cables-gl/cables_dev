@@ -866,6 +866,8 @@ export default class SharedDocUtil extends SharedUtil
         delete obj.todos;
         if (obj.youtubeids) delete obj.youtubeid;
         if (obj.youtubeids) obj.youtubeids = obj.youtubeids.filter(Boolean);
+        if (obj.flags) obj.flags = obj.flags.map((f) => { return f.trim(); }).filter(Boolean);
+        if (obj.tags) obj.tags = obj.tags.map((t) => { return t.trim(); }).filter(Boolean);
         if (obj.relatedops)
         {
             for (let i = 0; i < obj.relatedops.length; i++)obj.relatedops[i] = obj.relatedops[i].trim();
