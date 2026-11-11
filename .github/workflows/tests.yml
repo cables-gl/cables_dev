@@ -36,9 +36,14 @@ jobs:
         runs-on: ubuntu-latest
         services:
             mongodb:
-                image: mongo:8
+                image: mongo:8.0
                 ports:
                     - 27017:27017
+                env:
+                    GLIBC_TUNABLES: glibc.pthread.rseq=1
+                options: >-
+                    --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1})'"
+                    --health-interval 10s --health-timeout 5s --health-retries 10
             redis:
                 image: redis:6-alpine
                 ports:
@@ -217,6 +222,11 @@ jobs:
               run: |
                   echo "curl GET http://127.0.0.1:5711/login"
                   curl -v http://127.0.0.1:5711/login
+            - name: Check mongo
+              if: always()
+              run: |
+                  docker ps -a
+                  docker logs $(docker ps -aqf "ancestor=mongo:8.0") --tail 100
             - name: API Tests
               if: ${{ !contains(inputs.api, 'false') }}
               timeout-minutes: 10
