@@ -23,7 +23,7 @@ import { CablesConstants } from "../index.js";
  * @property {Boolean|String} [minify=true]
  * @property {Boolean} [sourcemaps=false]
  * @property {"auto"|"all"|"none"} [handleAssets="auto"]
- * @property {String} [minifyGlsl]
+ * @property {Boolean|String} [minifyGlsl=true]
  * @property {Boolean} [opDocs]
  * @property {Boolean} [rewriteAssetPorts]
  * @property {Boolean} [flattenAssetNames]
@@ -70,10 +70,10 @@ export default class SharedExportService extends SharedUtil
         this.options.jsonName = exportOptions.jsonName;
         this.options.removeIndexHtml = exportOptions.removeIndexHtml;
         this.options.flat = exportOptions.flat;
-        this.options.minify = exportOptions.hasOwnProperty("minify") ? exportOptions.minify : "true";
+        this.options.minify = exportOptions.hasOwnProperty("minify") ? exportOptions.minify === "true" : true;
         this.options.sourcemaps = exportOptions.sourcemaps;
         this.options.handleAssets = exportOptions.assets || "auto";
-        this.options.minifyGlsl = exportOptions.minifyGlsl;
+        this.options.minifyGlsl = exportOptions.hasOwnProperty("minifyGlsl") ? exportOptions.minifyGlsl : "true";
         this.options.incrementExportCount = exportOptions.hasOwnProperty("incrementExportCount") ? exportOptions.incrementExportCount : true;
 
         this.options.ignoreBackupBeforeExport = exportOptions.ignoreBackupBeforeExport || false;
