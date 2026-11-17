@@ -2974,7 +2974,7 @@ export default class SharedOpsUtil extends SharedUtil
             }
             if (oneOldName && !this.opJsonValid(oneOldName))
             {
-                problems.source_json_invalid = problemOldPrefix + "Source op has an invalid json file.";
+                problems.source_json_invalid = problemOldPrefix + "Source op has invalid json file.";
                 return problems;
             }
 
