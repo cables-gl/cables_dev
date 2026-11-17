@@ -2019,6 +2019,25 @@ export default class SharedOpsUtil extends SharedUtil
     }
 
     /**
+     * @param {String} opName
+     * @returns {Boolean}
+     */
+    opJsonValid(opName)
+    {
+        const jsonFile = this.getOpAbsoluteJsonFilename(opName);
+        if (!jsonFile) return false;
+        try
+        {
+            const opJson = jsonfile.readFileSync(jsonFile);
+            return !!(opJson && opJson.id);
+        }
+        catch (e)
+        {
+            return false;
+        }
+    }
+
+    /**
      * @param {string} opName
      * @param {boolean} [checkOpFile] force checking of op existing on filesystem
      */
@@ -2953,6 +2972,11 @@ export default class SharedOpsUtil extends SharedUtil
                 problems.source_does_not_exist = problemOldPrefix + "Source op does not exist.";
                 return problems;
             }
+            if (oneOldName && !this.opJsonValid(oneOldName))
+            {
+                problems.source_json_invalid = problemOldPrefix + "Source op has an invalid json file.";
+                return problems;
+            }
 
             const newNamespace = this.getNamespace(oneNewName);
             const oldNamespace = this.getNamespace(oneOldName);
@@ -3371,6 +3395,11 @@ export default class SharedOpsUtil extends SharedUtil
     updateOp(user, opName, updates, options = {})
     {
         const opExists = this.opExists(opName, true);
+        if (opExists && !this.opJsonValid(opName))
+        {
+            this._log.error("not updating op with invalid json file", opName);
+            return null;
+        }
         let rebuildOpDocs = !opExists;
         if (updates)
         {
@@ -4147,12 +4176,6 @@ export default class SharedOpsUtil extends SharedUtil
             delete newJsonData.exampleProjectId;
         }
 
-        if (removeOld)
-        {
-            fs.rmSync(oldOpDir, { "recursive": true, "force": true });
-            this._docsUtil.replaceOpNameInLookup(oldName, newName);
-        }
-
         if (!removeOld || newId)
         {
             if (newJsonData)
@@ -4168,6 +4191,18 @@ export default class SharedOpsUtil extends SharedUtil
 
         const oldNameChangelog = oldName.replace(this.PREFIX_OPS, "");
         this._storageUtil.writeJsonFileSync(newJson, newJsonData);
+
+        if (removeOld)
+        {
+            if (!fs.existsSync(newOpFile) || !fs.existsSync(newJson) || (fs.existsSync(oldMd) && !fs.existsSync(newMd)))
+            {
+                log.push("ERROR: new op files missing, not removing old op!");
+                if (cb) cb("RENAME_INCOMPLETE", log);
+                return false;
+            }
+            fs.rmSync(oldOpDir, { "recursive": true, "force": true });
+            this._docsUtil.replaceOpNameInLookup(oldName, newName);
+        }
         if (newName.includes(this.INFIX_DEPRECATED))
         {
             this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
