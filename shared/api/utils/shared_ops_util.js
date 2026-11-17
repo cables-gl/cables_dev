@@ -4135,8 +4135,8 @@ export default class SharedOpsUtil extends SharedUtil
             newJsonData.id = newOpId;
         }
 
-        const oldMd = this.getOpAbsoluteMarkdownFilename(oldName);
-        const newMd = this.getOpAbsoluteMarkdownFilename(newName);
+        const oldMd = path.join(oldOpDir, oldName + ".md");
+        const newMd = path.join(newOpDir, newName + ".md");
         if (fs.existsSync(oldMd))
         {
             fs.renameSync(path.join(newOpDir, oldName + ".md"), newMd);
