@@ -337,6 +337,10 @@ export default class SharedDocUtil extends SharedUtil
                             this._log.error("NO OP ID", opName);
                         }
                     }
+                    else if (!rebuildOpName)
+                    {
+                        this._opsUtil.opJsonValid(opName, true);
+                    }
                 }
 
                 opDocs = this._opsUtil.addVersionInfoToOps(opDocs, true);
@@ -685,7 +689,6 @@ export default class SharedDocUtil extends SharedUtil
                 }
                 catch (e2)
                 {
-                    this._log.error("failed to read opdocs from file, ignoring op", opName, jsonFilename, e2);
                     this.removeOpNameFromLookup(opName);
                     return null;
                 }
@@ -726,9 +729,6 @@ export default class SharedDocUtil extends SharedUtil
         }
         else
         {
-            // its okay for namespace json files to not have id's, only log error for ops
-            const isCollectionName = this._opsUtil.isCollection(opName) && this._opsUtil.getCollectionName(opName) === opName;
-            if (js && !isCollectionName) this._log.error("OP HAS NO ID/OPDOCS", opName, this._opsUtil.getOpAbsolutePath(opName));
             return null;
         }
 
@@ -1129,6 +1129,12 @@ export default class SharedDocUtil extends SharedUtil
             const collectionOpNames = collections[collection];
             docs = docs.concat(this._opsUtil.buildOpDocsForCollection(collection, collectionOpNames, collectionOpNames, false));
         }
+
+        const builtOpNames = this._helperUtil.uniqueArray(docs.map((opDoc) => { return opDoc.name; }));
+        opNames.forEach((opName) =>
+        {
+            if (opName && !builtOpNames.includes(opName)) this._opsUtil.opJsonValid(opName, true);
+        });
 
         // make sure all ops are in lookup table, since we skipped adding individual ones in the line above
         this.addOpsToLookup(docs, clearFiles, haltOnError);

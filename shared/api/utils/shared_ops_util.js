@@ -421,7 +421,7 @@ export default class SharedOpsUtil extends SharedUtil
         let changes = [];
         if (update && referenceDate !== null)
         {
-            const opDocs = this._docsUtil.getDocForOp(opName);
+            const opDocs = this._docsUtil.getOpDocsFromFile(opName);
             if (opDocs)
             {
                 const timestamp = Number(referenceDate);
@@ -511,7 +511,7 @@ export default class SharedOpsUtil extends SharedUtil
     addOpCredit(user, opName, credit)
     {
         let changes = [];
-        const opDocs = this._docsUtil.getDocForOp(opName);
+        const opDocs = this._docsUtil.getOpDocsFromFile(opName);
         if (opDocs)
         {
             const credits = opDocs.credits || [];
@@ -2020,19 +2020,27 @@ export default class SharedOpsUtil extends SharedUtil
 
     /**
      * @param {String} opName
+     * @param {Boolean} [logErrors=false]
      * @returns {Boolean}
      */
-    opJsonValid(opName)
+    opJsonValid(opName, logErrors = false)
     {
         const jsonFile = this.getOpAbsoluteJsonFilename(opName);
-        if (!jsonFile) return false;
+        if (!jsonFile)
+        {
+            if (logErrors) this._log.error("invalid op json, no json file found", opName);
+            return false;
+        }
         try
         {
             const opJson = jsonfile.readFileSync(jsonFile);
-            return !!(opJson && opJson.id);
+            if (opJson && opJson.id) return true;
+            if (logErrors) this._log.error("invalid op json, no id", opName, jsonFile);
+            return false;
         }
         catch (e)
         {
+            if (logErrors) this._log.error("invalid op json", opName, jsonFile, e.message);
             return false;
         }
     }
