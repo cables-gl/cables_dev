@@ -21,7 +21,7 @@ class HandlebarsHelper
                     // parse raw markdown first (escaping beforehand breaks `code`, > quotes etc.), escape raw html tokens instead
                     const renderer = new marked.Renderer();
                     renderer.html = (token) => { return Handlebars.escapeExpression(typeof token === "string" ? token : token.text); };
-                    escaped = marked.parse(String(str), { renderer });
+                    escaped = marked.parse(String(str), { "renderer": renderer });
                 }
                 else escaped = Handlebars.escapeExpression(str);
                 if (setOpLinks) escaped = this._setOpLinks(escaped, linkTarget);
@@ -75,7 +75,6 @@ class HandlebarsHelper
 
             Handlebars.registerHelper("opLayout", (opName) =>
             {
-
                 return new Handlebars.SafeString(gui.opDocs.getLayoutSvg(opName));
             });
 

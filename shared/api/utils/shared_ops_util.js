@@ -10,6 +10,15 @@ import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
 
 /**
+ * @typedef OpCodeWarning
+ * @property {String} type
+ * @property {String} id
+ * @property {String} text
+ * @property {String} [filename]
+ * @property {Boolean} [assetLib]
+ */
+
+/**
  * @abstract
  */
 export default class SharedOpsUtil extends SharedUtil
@@ -719,6 +728,12 @@ export default class SharedOpsUtil extends SharedUtil
         return "";
     }
 
+    /**
+     *
+     * @param {String} opName
+     * @param {String} [jsFile=null]
+     * @returns {OpCodeWarning[]}
+     */
     getOpCodeWarnings(opName, jsFile = null)
     {
         const srcWarnings = [];
