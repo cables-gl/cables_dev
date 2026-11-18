@@ -2920,7 +2920,7 @@ export default class SharedOpsUtil extends SharedUtil
                 });
             });
         }
-        else
+        if (!forAllVersions || renames.length === 0)
         {
             renames.push({
                 "old": oldName,
@@ -2975,14 +2975,9 @@ export default class SharedOpsUtil extends SharedUtil
             const problemNewPrefix = renames.length ? "<a href=\"/op/" + oneNewName + "\">" + oneNewName + "</a>: " : "";
             const problemOldPrefix = renames.length ? "<a href=\"/op/" + oneOldName + "\">" + oneOldName + "</a>: " : "";
 
-            if (oneOldName && !oldOpExists)
+            if (oneOldName && (!oldOpExists || !this.opJsonValid(oneOldName)))
             {
                 problems.source_does_not_exist = problemOldPrefix + "Source op does not exist.";
-                return problems;
-            }
-            if (oneOldName && !this.opJsonValid(oneOldName))
-            {
-                problems.source_json_invalid = problemOldPrefix + "Source op has invalid json file.";
                 return problems;
             }
 
