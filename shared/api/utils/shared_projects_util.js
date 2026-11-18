@@ -599,18 +599,19 @@ export default class SharedProjectsUtil extends SharedUtil
     /**
      *
      * @param {Object} proj
+     * @param {Object[]} [allOps]
      * @returns {{opId: String, objName: String}[]}
      */
-    getMissingOps(proj)
+    getMissingOps(proj, allOps = null)
     {
         if (!proj || !proj.ops) return [];
+        if (!allOps) allOps = proj.ops.concat(this._subPatchOpUtil.getOpsUsedInSubPatches(proj));
         const opsById = {};
-        proj.ops.concat(this._subPatchOpUtil.getOpsUsedInSubPatches(proj)).forEach((op) =>
+        allOps.forEach((op) =>
         {
             if (op && op.opId && !opsById[op.opId]) opsById[op.opId] = op;
         });
 
-        let patchOpNames = null;
         const missingOps = [];
         Object.keys(opsById).forEach((opId) =>
         {
@@ -618,23 +619,6 @@ export default class SharedProjectsUtil extends SharedUtil
             let opName = this._opsUtil.getOpNameById(opId);
             const inLookup = !!opName;
             if (!opName && op.objName) opName = op.objName;
-            if (!opName)
-            {
-                if (!patchOpNames)
-                {
-                    patchOpNames = {};
-                    const patchOpNamespace = this._opsUtil.getPatchOpsNamespaceForProject(proj);
-                    if (patchOpNamespace)
-                    {
-                        this._opsUtil.getCollectionOpNames(patchOpNamespace).forEach((patchOpName) =>
-                        {
-                            const patchOpDoc = this._docsUtil.getOpDocsFromFile(patchOpName);
-                            if (patchOpDoc && patchOpDoc.id) patchOpNames[patchOpDoc.id] = patchOpName;
-                        });
-                    }
-                }
-                opName = patchOpNames[opId];
-            }
 
             let opDoc = null;
             if (opName && this._opsUtil.opFileExists(opName)) opDoc = this._docsUtil.getOpDocsFromFile(opName);
