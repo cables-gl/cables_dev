@@ -788,10 +788,10 @@ export default class SharedOpsUtil extends SharedUtil
         {
             let code = jsFile || fs.readFileSync(fn, "utf8");
 
-            if (!info.id) srcWarnings.push({
+            if (!this.opJsonValid(opName)) srcWarnings.push({
                 "type": "json",
-                "id": "noId",
-                "text": "has no op id"
+                "id": "invalidJson",
+                "text": "has invalid json-file"
             });
             if (!info) srcWarnings.push({
                 "type": "json",
