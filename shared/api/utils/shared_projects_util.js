@@ -596,6 +596,58 @@ export default class SharedProjectsUtil extends SharedUtil
         return newName;
     }
 
+    /**
+     *
+     * @param {Object} proj
+     * @returns {{opId: String, objName: String}[]}
+     */
+    getMissingOps(proj)
+    {
+        if (!proj || !proj.ops) return [];
+        const opsById = {};
+        proj.ops.concat(this._subPatchOpUtil.getOpsUsedInSubPatches(proj)).forEach((op) =>
+        {
+            if (op && op.opId && !opsById[op.opId]) opsById[op.opId] = op;
+        });
+
+        let patchOpNames = null;
+        const missingOps = [];
+        Object.keys(opsById).forEach((opId) =>
+        {
+            const op = opsById[opId];
+            let opName = this._opsUtil.getOpNameById(opId);
+            const inLookup = !!opName;
+            if (!opName && op.objName) opName = op.objName;
+            if (!opName)
+            {
+                if (!patchOpNames)
+                {
+                    patchOpNames = {};
+                    const patchOpNamespace = this._opsUtil.getPatchOpsNamespaceForProject(proj);
+                    if (patchOpNamespace)
+                    {
+                        this._opsUtil.getCollectionOpNames(patchOpNamespace).forEach((patchOpName) =>
+                        {
+                            const patchOpDoc = this._docsUtil.getOpDocsFromFile(patchOpName);
+                            if (patchOpDoc && patchOpDoc.id) patchOpNames[patchOpDoc.id] = patchOpName;
+                        });
+                    }
+                }
+                opName = patchOpNames[opId];
+            }
+
+            let opDoc = null;
+            if (opName && this._opsUtil.opFileExists(opName)) opDoc = this._docsUtil.getOpDocsFromFile(opName);
+            if (!opDoc || opDoc.id !== opId)
+            {
+                missingOps.push({ "opId": opId, "objName": opName || op.objName || "" });
+                return;
+            }
+            if (!inLookup) this._docsUtil.addOpToLookup(opId, opName);
+        });
+        return missingOps;
+    }
+
     getCollectionNamespacesUsedInProject(proj)
     {
         if (!proj || !proj.ops) return [];
