@@ -246,16 +246,45 @@ export {
  * @property {Object[]} [issues]
  * @property {String} [caniusequery]
  * @property {String} [cloneOf]
- * @property {string} description
- * @property {string} teamName
- * @property {string} teamLink
- * @property {string} teamId
- * @property {string} numOps
- * @property {array} ops
+ * @property {string} [description]
+ * @property {string} [teamName]
+ * @property {string} [teamLink]
+ * @property {string} [teamId]
+ * @property {string} [numOps]
+ * @property {array} [ops]
  * @property {OpDoc} [newestVersion]
  * @property {{dir: string, type: OpDirType}} [opDir]
  * @property {String[]} tags
  * @property {"genAi"|"standalone"|"isReleased"} flags
+ */
+
+/**
+ * @typedef OpDocsAll
+ * @property {OpDoc[]} opDocs
+ * @property {String[]} coreLibs
+ * @property {String[]} libs
+ * @property {NamespaceDoc[]} extensions
+ * @property {NamespaceDoc[]} teamNamespaces
+ */
+
+/**
+ * @typedef NamespaceDoc
+ * @property {String} name
+ * @property {String} summary
+ * @property {String} shortName
+ * @property {String} nameSpace
+ * @property {String} shortNameDisplay
+ * @property {Number} numOps
+ * @property {String[]} [ops]
+ * @property {String} [teamName]
+ * @property {String} [description]
+ * @property {String} [teamLink]
+ * @property {String} [teamId]
+ * @property {String} [license]
+ * @property {String} [description]
+ * @property {"private"|"unlisted"|"public"|"hidden"} visibility
+ * @property {Boolean} [currentUserIsMember]
+ * @property {Boolean} [currentUserIsOwner]
  */
 
 /**

@@ -1033,6 +1033,13 @@ export default class SharedDocUtil extends SharedUtil
         return extensions;
     }
 
+    /**
+     *
+     * @param {String} extensionName
+     * @param {Boolean} [filterOldVersions]
+     * @param {Boolean} [filterDeprecated]
+     * @returns
+     */
     getExtensionDoc(extensionName, filterOldVersions = false, filterDeprecated = false)
     {
         const extensionOps = this._opsUtil.getCollectionOpNames(extensionName);
@@ -1040,6 +1047,13 @@ export default class SharedDocUtil extends SharedUtil
         return this._getNamespaceDocs(extensionName, shortName, null, extensionOps, filterOldVersions, filterDeprecated);
     }
 
+    /**
+     *
+     * @param {Function} cb
+     * @param {("core"|"users"|"teams"|"extensions"|"patches")[]} scopes
+     * @param {Boolean} [clearFiles]
+     * @param {Boolean} [haltOnError]
+     */
     rebuildOpCaches(cb, scopes = ["core"], clearFiles = false, haltOnError = false)
     {
         // do this in a separate thread to not block the main-loop
@@ -1108,7 +1122,15 @@ export default class SharedDocUtil extends SharedUtil
 
     }
 
-    async _updateOpCache(title, opNames, clearFiles, haltOnError)
+    /**
+     *
+     * @param {String} title
+     * @param {String[]} opNames
+     * @param {Boolean} [clearFiles]
+     * @param {Boolean} [haltOnError]
+     * @returns {Promise<OpDoc[]>}
+     */
+    async _updateOpCache(title, opNames, clearFiles = false, haltOnError = false)
     {
         if (opNames.length === 0) return [];
         this._log.info("updating", opNames.length, "ops in", title);
@@ -1159,6 +1181,16 @@ export default class SharedDocUtil extends SharedUtil
         return opDocs;
     }
 
+    /**
+     *
+     * @param {String} namespaceName
+     * @param {String} shortName
+     * @param {Object} team
+     * @param {String[]} [opNames]
+     * @param {Boolean} [filterOldVersions]
+     * @param {Boolean} [filterDeprecated]
+     * @returns {import("cables-shared-client").NamespaceDoc}
+     */
     _getNamespaceDocs(namespaceName, shortName, team, opNames = [], filterOldVersions = false, filterDeprecated = false)
     {
         if (opNames && (filterOldVersions || filterDeprecated))
@@ -1178,14 +1210,17 @@ export default class SharedDocUtil extends SharedUtil
             "nameSpace": namespaceName,
             "shortNameDisplay": shortName,
             "numOps": opNames.length,
-            "ops": opNames
+            "ops": opNames,
+            "visibility": null
         };
+
         if (team)
         {
             extDocs.teamName = team.name;
             extDocs.teamId = team._id;
             extDocs.description = team.description;
             extDocs.teamLink = team.link;
+            extDocs.summary = team.summary;
         }
 
         const extInfo = this._opsUtil.getCollectionDocs(namespaceName);
@@ -1223,8 +1258,8 @@ export default class SharedDocUtil extends SharedUtil
     }
 
     /**
-     * @param {string} cache
-     * @param {any} data
+     * @param {String} cache
+     * @param {Object} data
      */
     _writeCache(cache, data)
     {
@@ -1239,11 +1274,19 @@ export default class SharedDocUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {OpDoc[]} data
+     */
     setCachedOpDocs(data)
     {
         this.cachedOpDocs = data;
     }
 
+    /**
+     *
+     * @returns {OpDoc[]}
+     */
     getCachedOpDocs()
     {
         return this.cachedOpDocs;

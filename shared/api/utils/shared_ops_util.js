@@ -2535,6 +2535,11 @@ export default class SharedOpsUtil extends SharedUtil
         }
     }
 
+    /**
+     *
+     * @param {String} name
+     * @returns {import("cables-shared-client").NamespaceDoc}
+     */
     getCollectionDocs(name)
     {
         const file = this.getCollectionJsonPath(name, false);
