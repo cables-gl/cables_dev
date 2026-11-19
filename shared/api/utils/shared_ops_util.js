@@ -122,7 +122,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (firstChar === "-") return false;
         }
 
-        if (name.endsWith(".json")) return false;
+        if (this.getOpShortName(name).toLowerCase() === "json") return false;
 
         return name.startsWith(this.PREFIX_OPS);
     }
@@ -3009,6 +3009,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (!opExists && this.opNameTaken(oneNewName)) problems.name_taken = problemNewPrefix + "Op with same name (ignoring case) exists already.";
             if (oneNewName.length < this.OP_NAME_MIN_LENGTH) problems.name_too_short = problemNewPrefix + "Op name too short (min. " + this.OP_NAME_MIN_LENGTH + " characters).";
             if (oneNewName.indexOf("..") !== -1) problems.name_contains_doubledot = problemNewPrefix + "Op name contains '..'.";
+            if (this.getOpShortName(oneNewName).toLowerCase() === "json") problems.name_illegal_json = problemNewPrefix + "Op name cannot be 'JSON'.";
             let matchString = "[^abcdefghijklmnopqrstuvwxyz._ABCDEFGHIJKLMNOPQRSTUVWXYZ0-9";
             // patchops can have - because they contain the patch shortid
             if (this.isPatchOp(oneNewName) || this.isTeamOp(oneNewName))
