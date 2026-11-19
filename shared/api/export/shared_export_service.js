@@ -70,10 +70,10 @@ export default class SharedExportService extends SharedUtil
         this.options.jsonName = exportOptions.jsonName;
         this.options.removeIndexHtml = exportOptions.removeIndexHtml;
         this.options.flat = exportOptions.flat;
-        this.options.minify = exportOptions.hasOwnProperty("minify") ? exportOptions.minify === "true" : true;
+        this.options.minify = exportOptions.hasOwnProperty("minify") ? (exportOptions.minify === true || exportOptions.minify === "true") : true;
         this.options.sourcemaps = exportOptions.sourcemaps;
         this.options.handleAssets = exportOptions.assets || "auto";
-        this.options.minifyGlsl = exportOptions.hasOwnProperty("minifyGlsl") ? exportOptions.minifyGlsl : "true";
+        this.options.minifyGlsl = exportOptions.hasOwnProperty("minifyGlsl") ? (exportOptions.minifyGlsl === true || exportOptions.minifyGlsl === "true") : true;
         this.options.incrementExportCount = exportOptions.hasOwnProperty("incrementExportCount") ? exportOptions.incrementExportCount : true;
 
         this.options.ignoreBackupBeforeExport = exportOptions.ignoreBackupBeforeExport || false;
