@@ -214,7 +214,7 @@ export default class SharedProjectsUtil extends SharedUtil
             {
                 if (op.objName)
                 {
-                    this._log.warn("NO OPID IN EXPORT", p.should, op.objName);
+                    this._log.warn("NO OPID IN EXPORT", p.shortId, op.objName);
                 }
                 else
                 {
