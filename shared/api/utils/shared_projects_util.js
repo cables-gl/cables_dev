@@ -596,6 +596,42 @@ export default class SharedProjectsUtil extends SharedUtil
         return newName;
     }
 
+    /**
+     *
+     * @param {Object} proj
+     * @param {Object[]} [allOps]
+     * @returns {{opId: String, objName: String}[]}
+     */
+    getMissingOps(proj, allOps = null)
+    {
+        if (!proj || !proj.ops) return [];
+        if (!allOps) allOps = proj.ops.concat(this._subPatchOpUtil.getOpsUsedInSubPatches(proj));
+        const opsById = {};
+        allOps.forEach((op) =>
+        {
+            if (op && op.opId && !opsById[op.opId]) opsById[op.opId] = op;
+        });
+
+        const missingOps = [];
+        Object.keys(opsById).forEach((opId) =>
+        {
+            const op = opsById[opId];
+            let opName = this._opsUtil.getOpNameById(opId);
+            const inLookup = !!opName;
+            if (!opName && op.objName) opName = op.objName;
+
+            let opDoc = null;
+            if (opName && this._opsUtil.opFileExists(opName)) opDoc = this._docsUtil.getOpDocsFromFile(opName);
+            if (!opDoc || opDoc.id !== opId)
+            {
+                missingOps.push({ "opId": opId, "objName": opName || op.objName || "" });
+                return;
+            }
+            if (!inLookup) this._docsUtil.addOpToLookup(opId, opName);
+        });
+        return missingOps;
+    }
+
     getCollectionNamespacesUsedInProject(proj)
     {
         if (!proj || !proj.ops) return [];
