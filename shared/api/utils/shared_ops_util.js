@@ -791,7 +791,7 @@ export default class SharedOpsUtil extends SharedUtil
             if (!this.opJsonValid(opName)) srcWarnings.push({
                 "type": "json",
                 "id": "invalidJson",
-                "text": "has invalid json-file"
+                "text": "has invalid json"
             });
             if (!info) srcWarnings.push({
                 "type": "json",
@@ -3400,7 +3400,7 @@ export default class SharedOpsUtil extends SharedUtil
         const opExists = this.opExists(opName, true);
         if (opExists && !this.opJsonValid(opName))
         {
-            this._log.error("not updating op with invalid json file", opName);
+            this._log.error("not updating op with invalid json", opName);
             return null;
         }
         let rebuildOpDocs = !opExists;

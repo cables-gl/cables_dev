@@ -164,7 +164,7 @@ export default class SharedDocUtil extends SharedUtil
                     const obj = jsonfile.readFileSync(filename);
                     if (obj.coreLibs) coreLibs = coreLibs.concat(obj.coreLibs);
                 }
-                catch (ex) { if (!fs.existsSync(filename)) this._log.error("no ops meta info found", opName, filename); }
+                catch (ex) { if (!fs.existsSync(filename)) this._log.error("could not find/parse opdocs", opName, filename); }
             }
         }
         coreLibs = this._helperUtil.uniqueArray(coreLibs);
@@ -1214,7 +1214,7 @@ export default class SharedDocUtil extends SharedUtil
                     const obj = jsonfile.readFileSync(filename);
                     if (obj.libs)libs = libs.concat(obj.libs);
                 }
-                catch (ex) { if (fs.existsSync(filename)) this._log.error("no ops meta info found", opName, filename); }
+                catch (ex) { if (fs.existsSync(filename)) this._log.error("could not find/parse opdocs", opName, filename); }
             }
         }
         libs = this._helperUtil.uniqueArray(libs);
