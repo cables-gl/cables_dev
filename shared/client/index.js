@@ -249,6 +249,7 @@ export {
  * @property {string} description
  * @property {string} teamName
  * @property {string} teamLink
+ * @property {string} teamId
  * @property {string} numOps
  * @property {array} ops
  * @property {OpDoc} [newestVersion]

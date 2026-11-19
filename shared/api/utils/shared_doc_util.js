@@ -1183,6 +1183,7 @@ export default class SharedDocUtil extends SharedUtil
         if (team)
         {
             extDocs.teamName = team.name;
+            extDocs.teamId = team._id;
             extDocs.description = team.description;
             extDocs.teamLink = team.link;
         }
