@@ -4281,7 +4281,13 @@ export default class SharedOpsUtil extends SharedUtil
 
         const promises = [];
         const myUrl = new URL(this._cables.getConfig().url);
-        envUrls.forEach((envUrl) => { promises.push(fetch(envUrl)); });
+        envUrls.forEach((envUrl) =>
+        {
+            const request = fetch(envUrl, { "signal": AbortSignal.timeout(3000) })
+                .then((response) => { return response.json(); })
+                .then((json) => { return { "envName": envUrl.hostname, "result": json }; });
+            promises.push(request);
+        });
 
         const envDocs = {
             "id": null,
@@ -4292,18 +4298,15 @@ export default class SharedOpsUtil extends SharedUtil
         };
 
         Promise.allSettled(promises)
-            .then((results) =>
+            .then((settledRequests) =>
             {
-                const successfulRequests = results.filter((result) => { return result.status && result.status === "fulfilled"; });
-                return Promise.all(successfulRequests.map((r) => { return r.value.json(); }));
-            })
-            .then((results) =>
-            {
-                results.forEach((result, i) =>
+                settledRequests.forEach((settled) =>
                 {
+                    if (settled.status !== "fulfilled") return;
+                    const envName = settled.value.envName;
+                    const result = settled.value.result;
                     if (result.opDocs && result.opDocs.length > 0)
                     {
-                        const envName = envUrls[i].hostname;
                         envDocs.environments.push(envName);
                         const envDoc = result.opDocs[0];
                         envDocs.docs[envName] = envDoc;
@@ -4312,7 +4315,6 @@ export default class SharedOpsUtil extends SharedUtil
                     }
                     else if (result.error && result.code === 403 && result.data && result.data.name)
                     {
-                        const envName = envUrls[i].hostname;
                         envDocs.environments.push(envName);
                         const envDoc = {
                             "id": result.data.id,

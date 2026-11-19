@@ -51,9 +51,22 @@ export default class SharedSubPatchOpUtil extends SharedUtil
         let opsInSubPatches = [];
         if (!subPatch || !subPatch.ops) return opsInSubPatches;
         const v2Bps = subPatch.ops.filter((op) => { return this._opsUtil.isSubPatchOp(op, true); });
-        const uniqueOps = [...new Map(v2Bps.map((item) => { return [item.opId, item]; })).values()];
+        const lastOpById = {};
+        const uniqueIds = [];
+        v2Bps.forEach((op) =>
+        {
+            if (!lastOpById.hasOwnProperty(op.opId)) uniqueIds.push(op.opId);
+            lastOpById[op.opId] = op;
+        });
+        const uniqueOps = uniqueIds.map((opId) => { return lastOpById[opId]; });
         opsInSubPatches = opsInSubPatches.concat(this._getOpsUsedInSubPatch({ "ops": uniqueOps }));
-        opsInSubPatches = opsInSubPatches.filter((obj, index) => { return opsInSubPatches.findIndex((item) => { return item.opId === obj.opId; }) === index; });
+        const seenIds = {};
+        opsInSubPatches = opsInSubPatches.filter((op) =>
+        {
+            if (seenIds[op.opId]) return false;
+            seenIds[op.opId] = true;
+            return true;
+        });
         return opsInSubPatches;
     }
 
