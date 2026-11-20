@@ -36,7 +36,7 @@ export {
  * @typedef ApiError
  * @property {string} msg
  * @property {number} code
- * @property {ApiErrorData} data
+ * @property {ApiErrorData} [data]
  */
 
 /**
