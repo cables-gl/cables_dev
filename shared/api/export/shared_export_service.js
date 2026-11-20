@@ -15,7 +15,6 @@ import { CablesConstants } from "../index.js";
  * @typedef ExportOptions
  *
  * @property {Boolean} [ignoreBackupBeforeExport=false]
- * @property {Boolean|String} [hideMadeWithCables=true]
  * @property {Boolean|String} [combineJS=true]
  * @property {String} [jsonName]
  * @property {Boolean} [removeIndexHtml]
@@ -65,7 +64,6 @@ export default class SharedExportService extends SharedUtil
         /** @type ExportOptions */
         this.options = exportOptions || {};
         this.options.logLevel = exportOptions.logLevel ? exportOptions.logLevel : "debug";
-        this.options.hideMadeWithCables = exportOptions.hideMadeWithCables === "true";
         this.options.combineJS = exportOptions.hasOwnProperty("combineJS") ? exportOptions.combineJS === "true" : false;
         this.options.jsonName = exportOptions.jsonName;
         this.options.removeIndexHtml = exportOptions.removeIndexHtml;
@@ -1213,24 +1211,6 @@ export default class SharedExportService extends SharedUtil
             this.addLog("adding dependency of op: " + dep.op + " - " + dep.src, "debug");
         });
 
-        let preloadCssTags = "";
-        let preloadJsTags = "";
-        if (proj.preloadAssets)
-        {
-            proj.preloadAssets.forEach((preloadAsset) =>
-            {
-                if (preloadAsset.type === "CSS")
-                {
-                    preloadCssTags += "<link rel=\"stylesheet\" href=\"" + preloadAsset.url + "\">\n";
-                }
-                else if (preloadAsset.type === "javascript")
-                {
-                    preloadCssTags += "<script src=\"" + preloadAsset.url + "\">\n";
-                }
-            });
-        }
-        indexhtml = indexhtml.replace("<preloadcss/>", preloadCssTags);
-        indexhtml = indexhtml.replace("<preloadjs/>", preloadJsTags);
 
         if (options.combineJS)
         {
