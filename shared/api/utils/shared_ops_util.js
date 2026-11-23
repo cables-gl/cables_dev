@@ -3731,7 +3731,7 @@ export default class SharedOpsUtil extends SharedUtil
                 if (token.type == "line-comment") continue;
                 if (token.type == "block-comment") continue;
 
-                if (token.type == "whitespace" && token.data == "\n" && tokens[i - 1].type == "line-comment") continue;
+                if (token.type == "whitespace" && token.data == "\n" && tokens[i - 1].type == "line-comment" && (i < 2 || tokens[i - 2].data.includes("\n"))) continue;
 
                 if (token.type == "whitespace")
                 {
