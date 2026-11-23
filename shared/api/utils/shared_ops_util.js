@@ -3755,7 +3755,6 @@ export default class SharedOpsUtil extends SharedUtil
 
                 if (token.type == "whitespace" && token.data == " ")
                 {
-                    if (tokens[i - 1].type == "ident" && tokens[i + 1].type == "ident") continue;
                     if (tokens[i - 1].type == "ident" && tokens[i + 1].type == "operator") continue;
                     if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "ident") continue;
                     if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "float") continue;
