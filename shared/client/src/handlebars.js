@@ -161,51 +161,28 @@ class HandlebarsHelper
                 return accum;
             });
 
-            Handlebars.registerHelper("logdate", (str, options) =>
+            const timeTag = (str, format, options) =>
             {
                 const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
                 const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
-                const date = helper.formatDate(str, "logdate", showFuture);
-                let output = "<span title=\"" + date.date + "\">" + date.date + "</span>";
-                if (!showTitle) output = "<span>" + date.date + "</span>";
+                const date = helper.formatDate(str, format, showFuture);
+                const iso = helper.formatDate(str, "isodate").date;
+                let output = "<time datetime=\"" + iso + "\"";
+                if (showTitle && date.date !== date.displayDate) output += " title=\"" + date.date + "\"";
+                output += ">" + date.displayDate + "</time>";
                 return new Handlebars.SafeString(output);
-            });
+            };
 
-            Handlebars.registerHelper("displaydate", (str, options) =>
-            {
-                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
-                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
-                const date = helper.formatDate(str, "displaydate", showFuture);
-                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
-                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
-                return new Handlebars.SafeString(output);
-            });
+            Handlebars.registerHelper("logdate", (str, options) => { return timeTag(str, "logdate", options); });
+            Handlebars.registerHelper("displaydate", (str, options) => { return timeTag(str, "displaydate", options); });
+            Handlebars.registerHelper("displaydateNoTime", (str, options) => { return timeTag(str, "displaydateNoTime", options); });
+            Handlebars.registerHelper("relativedate", (str, options) => { return timeTag(str, "relativedate", options); });
 
             Handlebars.registerHelper("tooltipdate", (str, options) =>
             {
                 const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
                 const date = helper.formatDate(str, "tooltipdate", showFuture);
                 return new Handlebars.SafeString(date.displayDate);
-            });
-
-            Handlebars.registerHelper("displaydateNoTime", (str, options) =>
-            {
-                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
-                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
-                const date = helper.formatDate(str, "displaydateNoTime", showFuture);
-                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
-                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
-                return new Handlebars.SafeString(output);
-            });
-
-            Handlebars.registerHelper("relativedate", (str, options) =>
-            {
-                const showFuture = options?.hash?.hasOwnProperty("future") && options.hash.future === "true";
-                const showTitle = !options?.hash?.hasOwnProperty("title") || options.hash.title !== "false";
-                const date = helper.formatDate(str, "relativedate", showFuture);
-                let output = "<span title=\"" + date.date + "\">" + date.displayDate + "</span>";
-                if (!showTitle) output = "<span>" + date.displayDate + "</span>";
-                return new Handlebars.SafeString(output);
             });
 
             Handlebars.registerHelper("textconstant", (str) =>

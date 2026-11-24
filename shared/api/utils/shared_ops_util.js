@@ -3726,17 +3726,17 @@ export default class SharedOpsUtil extends SharedUtil
         {
             const token = tokens[i];
 
+            // a comment ending in \ also comments out the next line in webgl2 but not in webgl1, so it is kept as it is
+            if (token.type == "line-comment" && !token.data.includes("\n")) continue;
+            // a space, so the words around it stay apart: float/*c*/a
+            if (token.type == "block-comment")
+            {
+                token.type = "whitespace";
+                token.data = " ";
+            }
+
             if (i > 0)
             {
-                // a comment ending in \ also comments out the next line in webgl2 but not in webgl1, so it is kept as it is
-                if (token.type == "line-comment" && !token.data.includes("\n")) continue;
-                // a space, so the words around it stay apart: float/*c*/a
-                if (token.type == "block-comment")
-                {
-                    token.type = "whitespace";
-                    token.data = " ";
-                }
-
                 if (token.type == "whitespace" && token.data == "\n" && tokens[i - 1].type == "line-comment" && !tokens[i - 1].data.includes("\n") && (i < 2 || tokens[i - 2].data.includes("\n"))) continue;
 
                 if (token.type == "whitespace")

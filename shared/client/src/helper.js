@@ -93,6 +93,10 @@ class Helper
             date = momentDate.format(CablesConstants.DATE_FORMAT_LOGDATE);
             displayDate = date;
             break;
+        case "isodate":
+            date = momentDate.toISOString();
+            displayDate = date;
+            break;
         case "displaydate":
             date = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DATE);
             displayDate = momentDate.format(CablesConstants.DATE_FORMAT_DISPLAYDATE_DISPLAY);
