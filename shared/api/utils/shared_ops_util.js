@@ -2914,7 +2914,7 @@ export default class SharedOpsUtil extends SharedUtil
             const newNamespace = this.getNamespace(oneNewName);
             const oldNamespace = this.getNamespace(oneOldName);
             if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = problemNewPrefix + "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
-            if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.patch_op_illegal_namespace = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
+            if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.namespace_illegal_patch_op = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
 
             const existingNamespace = this.namespaceExists(newNamespace, opDocs);
             if (existingNamespace && newNamespace !== existingNamespace)
