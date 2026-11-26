@@ -107,6 +107,7 @@ export {
  * @property {OpDirType} type
  * @property {String[]} [opNames]
  * @property {Boolean} [showOptions]
+ * @property {Boolean} [showOpOptions]
  */
 
 /**
