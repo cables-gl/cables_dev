@@ -28,8 +28,7 @@
         "node": ">=20.10"
     },
     "scripts": {
-        "build": "webpack",
-        "clean": "node -e \"require('fs').rmSync('gen', { recursive: true, force: true })\""
+        "build": "webpack"
     },
     "dependencies": {
         "copy-webpack-plugin": "14.0.0",

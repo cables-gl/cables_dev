@@ -62,39 +62,61 @@ npm run build
 
 ### Config
 
-| key           | description                                                                                                                                                     |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`        | webpack mode, default `production`                                                                                                                              |
-| `entry`       | the export folder, or the `.cables` file in it                                                                                                                  |
-| `output.path` | target folder of the build                                                                                                                                      |
-| `options`     | build options, see below                                                                                                                                        |
-| `plugins`     | additional webpack plugins per build step (`core`, `ops`, `dependencies`, `assets`, `files`, `patchjson`, `combine`, `minify`, `html`) or for all steps (`all`) |
-| `overrides`   | webpack config values to override per build step, same keys as `plugins`                                                                                        |
+All keys with their defaults, only `entry` and `output.path` are required:
 
-### Options
+```js
+cablesBuildConfig({
+    mode: "production", // webpack mode
+    entry: "./export", // the export folder, or the .cables file in it
+    output: {
+        path: "./build", // target folder of the build
+    },
+    options: {
+        type: "html", // "html" or "headless"
 
-see [cables-cli](https://github.com/cables-gl/cables-cli) for export options, build-specific options are
+        // see export options of cables-cli
+        index: true,
+        jsonfilename: undefined,
+        combinejs: true,
+        flat: false,
+        assets: "auto",
+        minify: true,
+        sourcemaps: false,
+        minifyglsl: true,
 
-| option        | default                              | description                                                                                                                                                |
-| ------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`        | `html`                               | `html` or `headless`                                                                                                                                       |
-| `loglevel`    | `info`                               | `error`, `warn`, `info`, `verbose` or `debug`, sets the webpack stats of every build step and the build log, `stats` in `overrides` take precedence        |
-| `cache`       | `false`                              | `true` or a folder: keep a webpack filesystem cache between builds (default folder `node_modules/.cache/webpack`)                                          |
-| `clean`       | `false`                              | remove the output folder before building, the build warns if it is not empty                                                                               |
-| `opsDirs`     | `[]`                                 | more folders to look for ops in, after the `ops/` folder next to the `.cables` file                                                                        |
-| `coreFile`    | `_build/cables.js` of a buildable export | an already built `cables.js` that is copied instead of building the core from `coreDir` |
-| `coreDir`     | `cables/` in the cables_dev checkout | checkout of the [cables](https://github.com/cables-gl/cables) repository to build the core and corelibs from                                               |
-| `libsDir`     | `_build/libs` of a buildable export, else `shared/libs` in `devDir` | folder with the libs ops can use |
-| `corelibsDir` | `_build/corelibs` of a buildable export | folder with already built corelibs (`<name>.js`) that are copied instead of building them from `coreDir` |
-| `devDir`      | the cables_dev checkout              | checkout of [cables_dev](https://github.com/cables-gl/cables_dev) for shared libs and client code, needed from npm unless `coreFile` and `libsDir` are set |
+        // build
+        loglevel: "info", // "error", "warn", "info", "verbose" or "debug"
+        clean: false, // remove the output folder before building
+
+        // code lookup
+        opsDirs: [], // additional op directories
+        coreFile: "_build/cables.js",
+        coreDir: undefined, // local dir of the cables repository to build core and corelibs from
+        libsDir: "_build/libs", // folder with the libs ops are using
+        corelibsDir: "_build/corelibs", // folder with corelibs (<name>.js)
+        assetLibraryDir: undefined, // folder of the asset library
+        devDir: undefined, // checkout of cables_dev
+    },
+    // additional webpack plugins per build-step
+    // steps are:
+    //  all, core, ops, dependencies, assets, files, patchjson, combine, minify, html, headless
+    plugins: {
+        all: [],
+    },
+    // webpack config values to override per build step, same steps as above
+    overrides: {
+        all: {},
+    },
+});
+```
 
 ## Development (in cables_dev/shared/builder)
 
-`webpack.config.js` in this folder is the dev config: it builds from the `cables` checkout and this
-cables_dev repository and writes everything into `gen/` (ignored by git):
+`webpack.config.js` in this folder is a dev config.
+
+to use the example config to build into ../../gen/build
 
 ```
-cables export -t patch --allops -d gen/export PATCHID
-npm run build      # build into gen/build, bundle reports in gen/reports
-npm run clean      # remove gen/
+cables export -t patch --allops -d ../../gen/export PATCHID
+npm run build
 ```
