@@ -57,8 +57,11 @@ The export will contain `_build/` with the core, libs and corelibs of the patch 
 ```
 cd export/_build
 npm install
-npm run build
+npm run build            # html export
+npm run build:headless   # headless export to run with node, see type below
 ```
+
+Build options can be set from the command line with webpack's `--env`, e.g. `npm run build -- --env minify=false --env flat`.
 
 ### Config
 
@@ -87,6 +90,7 @@ cablesBuildConfig({
         // build
         loglevel: "info", // "error", "warn", "info", "verbose" or "debug"
         clean: false, // remove the output folder before building
+        install: true, // headless only: run npm install in the output folder when ops have npm dependencies
 
         // code lookup
         opsDirs: [], // additional op directories
