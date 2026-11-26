@@ -32,6 +32,10 @@ import { CablesConstants } from "../index.js";
  * @property {String} [template="/patchview/patchview_export.html"]
  * @property {String} [logLevel="debug"]
  * @property {Boolean} [incrementExportCount=true]
+ * @property {Boolean} [buildable=false]
+ * @property {Boolean} [addOpCode=false]
+ * @property {Boolean} [addOpCodeAll=false]
+ * @property {String} [zipFileName]
  *
  */
 
@@ -1210,7 +1214,6 @@ export default class SharedExportService extends SharedUtil
         {
             this.addLog("adding dependency of op: " + dep.op + " - " + dep.src, "debug");
         });
-
 
         if (options.combineJS)
         {

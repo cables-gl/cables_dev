@@ -143,4 +143,14 @@ export default class SharedUtil
     {
         return this._utilProvider.getUtil(UtilProvider.STORAGE_UTIL);
     }
+
+    /**
+     *
+     * @return {import("./shared_build_util.js").default}
+     * @protected
+     */
+    get _buildUtil()
+    {
+        return this._utilProvider.getUtil(UtilProvider.BUILD_UTIL);
+    }
 }

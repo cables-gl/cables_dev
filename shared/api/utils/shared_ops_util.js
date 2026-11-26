@@ -4,7 +4,6 @@ import path from "path";
 import uuidv4 from "uuid-v4";
 import mkdirp from "mkdirp";
 import sanitizeFileName from "sanitize-filename";
-import tokenString from "glsl-tokenizer/string.js";
 import XMLWriter from "xml-writer";
 import SharedUtil from "./shared_util.js";
 import { UtilProvider } from "./util_provider.js";
@@ -611,120 +610,41 @@ export default class SharedOpsUtil extends SharedUtil
 
         try
         {
-            code = code || fs.readFileSync(fn, "utf8");
-            let codeAttachments = "";
-            let codeAttachmentsInc = "";
-            let codeStaticAttachments = "";
-            const dir = fs.readdirSync(path.dirname(fn));
-            for (const i in dir)
+            code = code || fs.readFileSync(fn, "utf8");
+            const opDir = path.dirname(fn);
+            const attachments = [];
+            fs.readdirSync(opDir).forEach((fileName) =>
             {
-                if (dir[i].startsWith("att_inc_"))
+                if (!fileName.startsWith("att_")) return;
+                const file = path.join(opDir, fileName);
+                if (fileName.startsWith("att_bin_"))
                 {
-                    codeAttachmentsInc += fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
+                    attachments.push({ "name": fileName, "content": fs.readFileSync(file) });
+                    return;
                 }
-                if (dir[i].startsWith("att_bin_"))
+                let content = fs.readFileSync(file, "utf8");
+                if (prepareForExport && fileName === this.SUBPATCH_ATTACHMENT_NAME)
                 {
-                    let varName = dir[i].substr(8, dir[i].length - 8);
-                    varName = varName.replace(/\./g, "_");
-                    codeStaticAttachments += "\"" + varName + "\":\"" + Buffer.from(fs.readFileSync(path.dirname(fn) + "/" + dir[i])).toString("base64") + "\",";
-                }
-                else if (dir[i] === this.SUBPATCH_ATTACHMENT_PORTS)
-                {
-                    if (prepareForExport) continue;
-                    let varName = dir[i].substr(4, dir[i].length - 4);
-                    varName = varName.replace(/\./g, "_");
-                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8")) + ",";
-                }
-                else if (dir[i] === this.SUBPATCH_ATTACHMENT_NAME)
-                {
-                    let varName = dir[i].substr(4, dir[i].length - 4);
-                    varName = varName.replace(/\./g, "_");
-                    let content = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
-                    if (prepareForExport)
+                    try
                     {
-                        try
-                        {
-                            let subPatch = JSON.parse(content);
-                            subPatch = this._projectsUtil.makeExportable(subPatch);
-                            subPatch = JSON.stringify(subPatch);
-                            content = subPatch;
-                        }
-                        catch (e)
-                        {
-                            this._log.error("failed to parse", this.SUBPATCH_ATTACHMENT_NAME, "during minify, keeping unminified", e);
-                        }
+                        content = JSON.stringify(this._projectsUtil.makeExportable(JSON.parse(content)));
                     }
-                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(content) + ",";
-                }
-                else if (dir[i].startsWith("att_"))
-                {
-                    let attachment = fs.readFileSync(path.dirname(fn) + "/" + dir[i], "utf8");
-                    if (minifyGlsl && (dir[i].endsWith(".att") || dir[i].endsWith(".frag")))
+                    catch (e)
                     {
-                        try
-                        {
-                            attachment = this._minifyGlsl(attachment);
-                        }
-                        catch (e)
-                        {
-                            this._log.warn("failed to minify glsl, keeping unminified", opName, dir[i], e);
-                        }
+                        this._log.error("failed to parse", this.SUBPATCH_ATTACHMENT_NAME, "during minify, keeping unminified", e);
                     }
-                    let varName = dir[i].substr(4, dir[i].length - 4);
-                    varName = varName.replace(/\./g, "_");
-                    codeAttachments += "\"" + varName + "\":" + JSON.stringify(attachment) + ",";
                 }
-            }
+                attachments.push({ "name": fileName, "content": content });
+            });
 
-            let staticAttachments = "";
-            if (codeStaticAttachments)
-            {
-                staticAttachments = "static staticAttachments={";
-                staticAttachments += codeStaticAttachments;
-                staticAttachments += "};\n\n";
-            }
-
-            let attachments = "";
-            if (codeAttachments)
-            {
-                attachments = "const attachments=op.attachments={";
-                attachments += codeAttachments;
-                attachments += "};\n";
-            }
-
-            let codeHead = "\n\n// **************************************************************\n" +
-                "// \n" +
-                "// " + opName + "\n" +
-                "// \n" +
-                "// **************************************************************\n\n" +
-                opName + "= class extends CABLES.Op \n" +
-                "{\n" +
-                staticAttachments +
-                "constructor()\n" +
-                "{\nsuper(...arguments);\nconst op=this;\n";
-
-            if (staticAttachments)
-            {
-                codeHead += "const staticAttachments=this.constructor.staticAttachments;\n";
-            }
-
-            let codeFoot = "\n}\n};\n\n";
-            if (opId && !prepareForExport) codeFoot += "CABLES.OPS[\"" + opId + "\"]={f:" + opName + ",objName:\"" + opName + "\"};";
-            codeFoot += "\n\n\n";
-
-            let fullCode = codeHead;
-            if (attachments) fullCode += attachments;
-            if (codeAttachmentsInc) fullCode += codeAttachmentsInc;
-            fullCode += code;
-            fullCode += codeFoot;
-
-            return fullCode;
+            const fullCode = this._buildUtil.getOpFullCode(opName, opId, code, attachments, prepareForExport, minifyGlsl);
+            if (fullCode) return fullCode;
         }
         catch (e)
         {
             this._log.warn("getfullopcode fail", fn, opName);
-            this._docsUtil.removeOpNameFromLookup(opName);
         }
+        this._docsUtil.removeOpNameFromLookup(opName);
         return "";
     }
 
@@ -1990,7 +1910,12 @@ export default class SharedOpsUtil extends SharedUtil
         return false;
     }
 
-    opFileExists(opName)
+    /**
+     * @param {String} opName
+     * @param {Boolean} [cleanUp=true] remove a missing op from the lookup and the op docs
+     * @returns {Boolean}
+     */
+    opFileExists(opName, cleanUp = true)
     {
         let p = this.getOpAbsoluteFileName(opName);
         let exists = false;
@@ -2010,7 +1935,7 @@ export default class SharedOpsUtil extends SharedUtil
         {
             exists = false;
         }
-        if (!exists)
+        if (!exists && cleanUp)
         {
             this._docsUtil.removeOpNameFromLookup(opName);
             this._docsUtil.deleteOpDocs(opName);
@@ -3675,32 +3600,7 @@ export default class SharedOpsUtil extends SharedUtil
 
     getOpAssetPorts(op, includeLibraryAssets = false)
     {
-        const assetPorts = [];
-        if (!op) return assetPorts;
-        if (!op.portsIn) return assetPorts;
-
-        for (let i = 0; i < op.portsIn.length; i++)
-        {
-            const port = op.portsIn[i];
-            if (
-                port.value &&
-                typeof port.value == "string" &&
-                port.name &&
-                port.value.length &&
-                port.display === "file"
-            )
-            {
-                if (!port.value.toLowerCase().includes("assets/library"))
-                {
-                    assetPorts.push(port);
-                }
-                else if (includeLibraryAssets)
-                {
-                    assetPorts.push(port);
-                }
-            }
-        }
-        return assetPorts;
+        return this._buildUtil.getOpAssetPorts(op, includeLibraryAssets);
     }
 
     getOpNameByAbsoluteFileName(fileName)
@@ -3714,70 +3614,6 @@ export default class SharedOpsUtil extends SharedUtil
     updateOpDocs(opName)
     {
         this._docsUtil.updateOpDocs(opName);
-    }
-
-    _minifyGlsl(glsl)
-    {
-        if (!glsl) return "";
-
-        const tokens = tokenString(glsl);
-        let str = "";
-        for (let i = 0; i < tokens.length - 1; i++)
-        {
-            const token = tokens[i];
-
-            // a comment ending in \ also comments out the next line in webgl2 but not in webgl1, so it is kept as it is
-            if (token.type == "line-comment" && !token.data.includes("\n")) continue;
-            // a space, so the words around it stay apart: float/*c*/a
-            if (token.type == "block-comment")
-            {
-                token.type = "whitespace";
-                token.data = " ";
-            }
-
-            if (i > 0)
-            {
-                if (token.type == "whitespace" && token.data == "\n" && tokens[i - 1].type == "line-comment" && !tokens[i - 1].data.includes("\n") && (i < 2 || tokens[i - 2].data.includes("\n"))) continue;
-
-                if (token.type == "whitespace")
-                {
-                    if (token.data.indexOf("\n") == 0 && token.data.endsWith(" ")) token.data = "\n";
-
-                    for (let j = 0; j < 3; j++)
-                        token.data = token.data.replaceAll("\n\n", "\n");
-
-                    token.data = token.data.replaceAll("\t", " ");
-
-                    for (let j = 0; j < 3; j++)
-                        token.data = token.data.replaceAll("  ", " ");
-
-                    for (let j = 0; j < 2; j++)
-                        token.data = token.data.replaceAll("\n\n", "\n");
-                }
-
-                if (token.type == "float" && !token.data.toLowerCase().includes("e"))
-                    while (token.data.indexOf(".") > 0 && token.data.endsWith("0"))
-                        token.data = token.data.substring(0, token.data.length - 1);
-
-                // "a - -b" must not become "a--b"
-                const lastChar = tokens[i - 1].data.slice(-1);
-                const joinsSigns = (lastChar == "+" || lastChar == "-") && tokens[i + 1].data[0] == lastChar;
-
-                if (token.type == "whitespace" && token.data == " " && !joinsSigns)
-                {
-                    if (tokens[i - 1].type == "ident" && tokens[i + 1].type == "operator") continue;
-                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "ident") continue;
-                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "float") continue;
-                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "keyword") continue;
-                    if (tokens[i - 1].type == "operator" && tokens[i + 1].type == "operator") continue;
-                    if (tokens[i + 1].type != "ident" && tokens[i + 1].type != "keyword" && tokens[i - 1].type != "ident" && tokens[i - 1].type != "keyword") continue;
-                }
-            }
-
-            str += token.data;
-        }
-
-        return str;
     }
 
     getOpSVG(opName, backgroundOptions)

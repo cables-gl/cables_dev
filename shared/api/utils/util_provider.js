@@ -30,6 +30,7 @@ UtilProvider.LIBS_UTIL = "libsUtil";
 UtilProvider.EXPORT_SERVICE = "exportService";
 UtilProvider.BUILD_WATCHER = "buildWatcher";
 UtilProvider.STORAGE_UTIL = "storageUtil";
+UtilProvider.BUILD_UTIL = "buildUtil";
 
 export { UtilProvider };
 export default new UtilProvider();

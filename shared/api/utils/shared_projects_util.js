@@ -161,6 +161,7 @@ export default class SharedProjectsUtil extends SharedUtil
      * reduces the object to information that can be sent "over the wire", removes
      * private information, will add isExample and opExampleFor
      * information for projects that are marked as an example for ops
+     * has to be changed together with makeExportable in BuildUtil of @cables/builder
      **
      * @param ps project or array of projects
      * @param keepOps do not remove ops from the project (e.g. in export)
@@ -183,71 +184,22 @@ export default class SharedProjectsUtil extends SharedUtil
 
     makeExportable(p, keepAlso = [])
     {
-        let readable = JSON.parse(JSON.stringify(p));
-        readable = this.makeReadable(readable, true);
-
-        const keepInExport = ["_id", "ops", ...keepAlso];
-        const keepUiAttribs = ["subPatch"];
-
-        for (let key in readable)
+        const readable = this.makeReadable(JSON.parse(JSON.stringify(p)), true);
+        // patches from the db, .cables files and subpatch attachments only reliably have the opId, stored names can be outdated
+        readable.ops.forEach((op) =>
         {
-            if (!keepInExport.includes(key)) delete readable[key];
-        }
-
-        for (let i = 0; i < readable.ops.length; i++)
-        {
-            const op = readable.ops[i];
             if (op.opId)
             {
                 const objName = this._opsUtil.getOpNameById(op.opId);
-                if (objName)
-                {
-                    readable.ops[i].objName = objName;
-                    delete readable.ops[i].opId;
-                }
-                else
-                {
-                    this._log.error("NO OBJNAME BY ID IN EXPORT", p.shortId, op.opId);
-                }
+                if (objName) op.objName = objName;
+                else delete op.objName;
             }
-            else
+            else if (op.objName)
             {
-                if (op.objName)
-                {
-                    this._log.warn("NO OPID IN EXPORT", p.shortId, op.objName);
-                }
-                else
-                {
-                    this._log.error("NO OPID AND NO OBJNAME IN PROJECT", p.shortId, op);
-                }
+                this._log.warn("NO OPID IN EXPORT", p.shortId, op.objName);
             }
-
-            if (op.uiAttribs)
-            {
-                for (let key in op.uiAttribs)
-                {
-                    if (!keepUiAttribs.includes(key)) delete readable.ops[i].uiAttribs[key];
-                }
-                if (Object.keys(readable.ops[i].uiAttribs).length === 0) delete readable.ops[i].uiAttribs;
-            }
-
-            if (op.portsIn)
-            {
-                for (let j = 0; j < op.portsIn.length; j++)
-                {
-                    const port = op.portsIn[j];
-                    if (port.anim && port.anim.keys)
-                    {
-                        for (let k = 0; k < port.anim.keys.length; k++)
-                        {
-                            if (port.anim.keys[k].hasOwnProperty("uiAttribs")) delete readable.ops[i].portsIn[j].anim.keys[k].uiAttribs;
-                        }
-                    }
-                }
-            }
-        }
-
-        return readable;
+        });
+        return this._buildUtil.makeExportable(readable, keepAlso);
     }
 
     getBackup(project)
@@ -397,41 +349,15 @@ export default class SharedProjectsUtil extends SharedUtil
 
     getCreditsTextArray(proj)
     {
-        let credits = [];
-        let first = true;
+        const opDocs = [];
         if (proj && proj.ops)
-            for (let i = 0; i < proj.ops.length; i++)
+        {
+            proj.ops.forEach((op) =>
             {
-                const info = this._opsUtil.getOpInfo(this._opsUtil.getOpNameById(proj.ops[i].opId));
-                if (info && info.authorName)
-                {
-                    if (first)
-                    {
-                        credits.push("OP AUTHORS:");
-                        credits.push("");
-                        first = false;
-                    }
-                    credits.push("- ops by cables user " + info.authorName + " (https://cables.gl/user/" + info.authorName + ")");
-                }
-
-                if (info && info.credits)
-                {
-                    for (let j = 0; j < info.credits.length; j++)
-                    {
-                        let str = "- " + info.credits[j].title;
-                        if (info.credits[j].author) str += " by " + info.credits[j].author;
-                        if (info.credits[j].url) str += " (" + info.credits[j].url + ")";
-                        credits.push(str);
-                    }
-                }
-            }
-
-        credits = this._helperUtil.uniqueArray(credits);
-
-        credits.push("");
-        credits.push("cables is built on open source software and community contributions, check https://cables.gl/support");
-
-        return credits;
+                opDocs.push(this._opsUtil.getOpInfo(this._opsUtil.getOpNameById(op.opId)));
+            });
+        }
+        return this._buildUtil.getCreditsTextArray(opDocs);
     }
 
     getLicenceTextArray(proj)
@@ -441,113 +367,24 @@ export default class SharedProjectsUtil extends SharedUtil
         {
             usedOpsNames[op.opId] = this._opsUtil.getOpNameById(op.opId);
         });
-        usedOpsNames = Object.values(usedOpsNames);
+        const opDocs = Object.values(usedOpsNames).map((opName) => { return this._opsUtil.getOpInfo(opName); });
+
         const libs = this._docsUtil.getProjectLibs(proj);
-
-        const legal = {};
-
-        for (let i = 0; i < usedOpsNames.length; i++)
+        const libInfos = {};
+        libs.forEach((lib) =>
         {
-            const info = this._opsUtil.getOpInfo(usedOpsNames[i]);
-            if (info && info.credits)
-            {
-                for (let j = 0; j < info.credits.length; j++)
-                {
-                    const credit = info.credits[j];
-                    if (credit.licence)
-                    {
-                        if (!legal.hasOwnProperty(credit.licence))
-                        {
-                            legal[credit.licence] = [];
-                        }
-                        if (!legal[credit.licence].find((l) => { return l.url == credit.url; }))
-                        {
-                            legal[credit.licence].push(credit);
-                        }
-                    }
-                }
-            }
-        }
-
-        for (let i = 0; i < libs.length; i++)
-        {
-            const lib = libs[i];
-            const baseName = path.parse(lib).name;
+            if (this._libsUtil.isAssetLib(lib)) return;
             try
             {
-                if (this._libsUtil.isAssetLib(lib))
-                {
-                    const licence = "uploaded/unknown";
-                    const filename = path.basename(lib);
-                    if (!legal.hasOwnProperty(licence))
-                    {
-                        legal[licence] = [];
-                    }
-                    if (!legal[licence].find((l) => { return l.url === lib; }))
-                    {
-                        legal[licence].push({
-                            "title": filename,
-                            "url": lib
-                        });
-                    }
-                }
-                else
-                {
-                    const filename = path.join(this._cables.getLibsPath(), baseName + ".json");
-                    const libInfo = JSON.parse(fs.readFileSync(filename, "utf8"));
-                    if (libInfo && libInfo.hasOwnProperty("licence"))
-                    {
-                        if (!legal.hasOwnProperty(libInfo.licence))
-                        {
-                            legal[libInfo.licence] = [];
-                        }
-                        if (!legal[libInfo.licence].find((l) => { return l.url === libInfo.url; }))
-                        {
-                            legal[libInfo.licence].push({
-                                "title": libInfo.title,
-                                "url": libInfo.url
-                            });
-                        }
-                    }
-                }
+                const filename = path.join(this._cables.getLibsPath(), path.parse(lib).name + ".json");
+                libInfos[lib] = JSON.parse(fs.readFileSync(filename, "utf8"));
             }
             catch (e)
             {
                 this._log.error("FAILED TO LOAD INFOFILE FOR LIBRARY:", lib);
             }
-        }
-
-        const legalText = [];
-        legalText.push("All cables core code is licenced under the MIT licence");
-        legalText.push("");
-        legalText.push("Some ops may be using code from contributors or external libraries under different licences.");
-        legalText.push("");
-
-        if (Object.keys(legal).length > 0)
-        {
-            legalText.push("Additional code from contributors and libraries in this export are licenced as follows:");
-            legalText.push("");
-            for (const licence in legal)
-            {
-                legalText.push(licence + ":\n");
-                for (let i = 0; i < legal[licence].length; i++)
-                {
-                    const contrib = legal[licence][i];
-                    let str = "- " + contrib.title;
-                    if (contrib.author) str += " by " + contrib.author;
-                    if (contrib.url) str += " (" + contrib.url + ")";
-                    legalText.push(str);
-                    if (contrib.licenceText)
-                    {
-                        legalText.push("");
-                        legalText.push(contrib.licenceText);
-                    }
-                }
-                legalText.push("");
-            }
-        }
-
-        return legalText;
+        });
+        return this._buildUtil.getLegalTextArray(opDocs, libs, libInfos);
     }
 
     /**

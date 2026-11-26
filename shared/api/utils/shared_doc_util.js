@@ -425,6 +425,8 @@ export default class SharedDocUtil extends SharedUtil
                     this._log.warn("error reading oplookup file", this.opLookupFilename, e.message);
                     fileLookUp = emptyLookup;
                 }
+                // cached before checking the ops, op lookups during the check must not read the file again
+                this.setCachedLookup(fileLookUp);
                 if (fileLookUp && fileLookUp.ids && fileLookUp.names)
                 {
                     const idsAndNames = {};
@@ -446,7 +448,8 @@ export default class SharedDocUtil extends SharedUtil
                         for (let j = 0; j < opNamesForId.length; j++)
                         {
                             const opName = opNamesForId[j];
-                            if (!this._opsUtil.opExists(opName, true))
+                            // missing ops are removed from the lookup once after the loop, not one by one
+                            if (!this._opsUtil.opFileExists(opName, false))
                             {
                                 removeOps.push(opName);
                             }
@@ -458,7 +461,6 @@ export default class SharedDocUtil extends SharedUtil
                         }
                     }
                 }
-                this.setCachedLookup(fileLookUp);
                 if (updateCache) this.removeOpNamesFromLookup(removeOps);
             }
             catch (e)
