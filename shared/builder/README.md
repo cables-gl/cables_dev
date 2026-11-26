@@ -12,7 +12,7 @@
 ```
 
 A set of webpack configs to build a cables [patch export](https://cables.gl/docs/4_export_embed/dev_embed/export_standalone/export_standalone)
-into a standalone html export with webpack, like the "html" export on [cables.gl](https://cables.gl).
+into a html website with webpack, like the "html" export on [cables.gl](https://cables.gl).
 
 ## Usage
 
