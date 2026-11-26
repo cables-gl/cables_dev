@@ -6,45 +6,51 @@ import CablesWebpackHelper from "./webpack.helper.js";
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
  * @param {Object} patchJson
- * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ * @param {{"log": Function, "error": Function, "warn": Function, "info": Function, "debug": Function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = console) =>
 {
 
     if (!logger) logger = console;
     logger.info("assembling patchjson");
 
     const patchFile = config.entry;
-    const targetDir = path.join(config.output.path, "js");
+    const targetDir = CablesWebpackHelper.getJsDir(config);
     const sourceDir = path.resolve(path.dirname(patchFile));
     const buildMode = config.mode || "production";
-    const flat = config.options?.hasOwnProperty("flat") ? config.options.flat : false;
     const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    let jsonFileName = path.basename(config.entry, ".cables") + ".json";
-    let finalAssetPath = "assets/";
-    if (flat) finalAssetPath = "";
+    const jsonFileName = CablesWebpackHelper.getJsonFileName(config);
 
     let plugins = [
         {
-            apply(compiler)
+            "apply": function (compiler)
             {
                 compiler.hooks.thisCompilation.tap("CablesWebpackPatchJsonPlugin", (compilation) =>
                 {
                     compilation.hooks.processAssets.tap({
                         "name": "CablesWebpackPatchJsonPlugin",
-                        "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+                        "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
                     }, () =>
                     {
                         let exportable = CablesWebpackHelper.makeExportable(patchJson, []);
+                        const replacements = CablesWebpackHelper.getAssetReplacements();
+                        exportable.ops.forEach((op) =>
+                        {
+                            if (!op.portsIn) return;
+                            op.portsIn.forEach((port) =>
+                            {
+                                if (port.display === "file" && replacements.hasOwnProperty(port.value)) port.value = replacements[port.value];
+                            });
+                        });
                         exportable = JSON.stringify(exportable, null, minify ? 0 : 4);
                         compilation.emitAsset(
                             jsonFileName,
-                            new webpack.sources.RawSource(exportable),
+                            new webpack.sources.RawSource(exportable)
                         );
-                    },
+                    }
                     );
                 });
             }
@@ -57,10 +63,13 @@ export default (config, patchJson, logger = null) =>
 
     let buildConfig = {
         "name": "patchjson",
+        "performance": {
+            "hints": false
+        },
         "mode": buildMode,
         "entry": patchFile,
         "output": {
-            "path": targetDir,
+            "path": targetDir
         },
         "plugins": plugins,
         "optimization": {
@@ -75,8 +84,8 @@ export default (config, patchJson, logger = null) =>
             ]
         }
     };
-    if (config.overrides?.patchjson) buildConfig = { ...buildConfig, ...config.overrides.patchjson };
-    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    if (config.overrides?.patchjson) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.patchjson);
+    if (config.overrides?.all) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.all);
 
     return buildConfig;
 };

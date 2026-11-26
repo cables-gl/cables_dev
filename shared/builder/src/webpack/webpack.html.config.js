@@ -1,25 +1,27 @@
+import { createRequire } from "module";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
 import CablesWebpackHelper from "./webpack.helper.js";
 
+
+// loaders are resolved from this package, not from the folder webpack runs in
+const loaderPath = createRequire(import.meta.url).resolve;
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
  * @param {Object} patchJson
- * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ * @param {{"log": Function, "error": Function, "warn": Function, "info": Function, "debug": Function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = console) =>
 {
     if (!logger) logger = console;
 
     const patchFile = config.entry;
     const targetDir = config.output.path;
-    const sourceDir = path.resolve(path.dirname(patchFile));
     const buildMode = config.mode || "production";
     const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
     const indexHtml = config.options?.hasOwnProperty("index") ? config.options.index : true;
-    const flat = config.options?.hasOwnProperty("flat") ? config.options.flat : false;
     const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
@@ -42,17 +44,7 @@ export default (config, patchJson, logger = null) =>
             usedDeps = deps;
             usedCoreLibs = coreLibs;
 
-            let jsonFileName = null;
-            const patchFiles = fs.readdirSync(sourceDir);
-            patchFiles.forEach((file) =>
-            {
-                if (path.basename(file).endsWith(".cables"))
-                {
-                    jsonFileName = path.basename(file, ".cables");
-                }
-            });
-
-            patchSource = "patchFile: 'js/" + jsonFileName + ".json'";
+            patchSource = "patchFile: '" + CablesWebpackHelper.getJsPath(config) + CablesWebpackHelper.getJsonFileName(config) + "'";
         }
         else
         {
@@ -60,13 +52,16 @@ export default (config, patchJson, logger = null) =>
             usedDeps = deps.filter((dep) => { return dep.type && dep.type !== "op" && !(dep.type === "commonjs" && !dep.src.startsWith("http")); });
         }
 
-        usedDeps.forEach((dep) =>
-        {
-            if (dep.type === "module") dep.module = true;
-        });
+        const finalJsPath = CablesWebpackHelper.getJsPath(config);
 
-        let finalJsPath = "./js/";
-        if (flat) finalJsPath = "";
+        // like the web export: remote urls stay as they are, local esm imports need a relative path starting with ./
+        usedDeps = usedDeps.map((dep) =>
+        {
+            const isRemote = /^https?:\/\//i.test(dep.src);
+            let url = isRemote ? dep.src : finalJsPath + dep.src;
+            if (dep.type === "module" && !isRemote && !url.startsWith("/")) url = "./" + url;
+            return { ...dep, "module": dep.type === "module", "url": url };
+        });
 
         const cablesJs = [];
         if (combineJs)
@@ -83,7 +78,7 @@ export default (config, patchJson, logger = null) =>
 
         plugins.push(
             new HtmlWebpackPlugin({
-                "template": path.resolve(path.join(__dirname, "./patchview_export.hbs")),
+                "template": path.resolve(path.join(__dirname, "../../views/patchview_export.hbs")),
                 "minify": false,
                 "title": patchName,
                 "xhtml": true,
@@ -93,33 +88,33 @@ export default (config, patchJson, logger = null) =>
                     "viewport": "width=device-width, user-scalable=no, initial-scale=1",
                     "schema:name": {
                         "itemprop": "name",
-                        "content": patchName,
+                        "content": patchName
                     },
                     "schema:description": {
                         "itemprop": "description",
-                        "content": "made with cables",
+                        "content": "made with cables"
                     },
                     "description": "made with cables",
                     "schema:image": {
                         "itemprop": "image",
-                        "content": "screenshot.png",
-                    },
+                        "content": "screenshot.png"
+                    }
 
                 },
                 "templateParameters": {
                     "patchName": patchName,
                     "patchSource": patchSource,
-                    "assetPath": "",
+                    "assetPath": CablesWebpackHelper.getAssetPath(config),
                     "jsPath": finalJsPath,
                     "dependencies": usedDeps,
                     "cablesjs": cablesJs,
-                    "corelibs": usedCoreLibs,
-                },
-            },
+                    "corelibs": usedCoreLibs
+                }
+            }
             )
         );
-        plugins.push(CablesWebpackHelper.removeEmptyChunk());
     }
+    plugins.push(CablesWebpackHelper.removeEmptyChunk());
 
     if (config.plugins?.html) plugins = plugins.concat(config.plugins.html);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
@@ -129,7 +124,7 @@ export default (config, patchJson, logger = null) =>
         "mode": buildMode,
         "entry": patchFile,
         "output": {
-            "path": targetDir,
+            "path": targetDir
         },
         "optimization": {
             "minimize": minify
@@ -138,19 +133,19 @@ export default (config, patchJson, logger = null) =>
             "rules": [
                 {
                     "test": /\.hbs$/,
-                    "loader": "handlebars-loader",
+                    "loader": loaderPath("handlebars-loader")
                 },
                 {
                     "test": /\.cables/,
                     "type": "json"
                 }
-            ],
+            ]
         },
         "plugins": plugins,
         "dependencies": ["assets", "files", "combine"]
     };
-    if (config.overrides?.html) buildConfig = { ...buildConfig, ...config.overrides.html };
-    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    if (config.overrides?.html) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.html);
+    if (config.overrides?.all) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.all);
 
     return buildConfig;
 };

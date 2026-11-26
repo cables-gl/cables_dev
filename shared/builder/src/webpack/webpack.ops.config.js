@@ -1,50 +1,34 @@
 import path from "path";
 import fs from "fs";
 import webpack from "webpack";
-import { glob } from "glob";
 import { fileURLToPath } from "url";
-import jsonfile from "jsonfile";
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import CablesWebpackHelper from "./webpack.helper.js";
+import BuildUtil from "../build_util.js";
 
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
  * @param {Object} patchJson
- * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ * @param {{"log": Function, "error": Function, "warn": Function, "info": Function, "debug": Function}} [logger]
  */
-export default (config, patchJson, logger = null) =>
+export default (config, patchJson, logger = console) =>
 {
     if (!logger) logger = console;
+    const buildUtil = new BuildUtil(logger);
     logger.info("assembling ops");
 
-    const sourceDir = path.join(path.resolve(path.dirname(config.entry)), "ops");
-    const targetDir = path.join(config.output.path, "js");
+    const targetDir = CablesWebpackHelper.getJsDir(config);
     const buildMode = config.mode || "production";
     const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
-    const minifyGlsl = config.options?.hasOwnProperty("minifyglsl") ? config.options.minifyglsl : false;
+    const minifyGlsl = config.options?.hasOwnProperty("minifyglsl") ? config.options.minifyglsl : true;
     const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    const opsGlob = path.join(sourceDir, "./**/Ops.**.js");
-    const jsFiles = glob.sync(opsGlob);
-
-    const opNames = [];
-    const opFiles = [];
-    jsFiles.forEach((opFile) =>
-    {
-        const opName = path.basename(opFile, ".js");
-        if (path.dirname(opFile).includes(opName))
-        {
-            const jsonFile = path.join(path.dirname(opFile), opName + ".json");
-            const opDocs = jsonfile.readFileSync(jsonFile);
-            CablesWebpackHelper.addOpToLookup(opDocs.id, opName);
-            opNames.push(opName);
-            opFiles.push(opFile);
-        }
-    });
+    const usedOps = CablesWebpackHelper.getOps();
+    const opNames = usedOps.map((op) => { return op.name; });
+    const opFiles = usedOps.map((op) => { return path.join(op.dir, op.name + ".js"); });
 
     let plugins = [
         new webpack.BannerPlugin({
@@ -71,14 +55,14 @@ export default (config, patchJson, logger = null) =>
 
                     }
                 });
-                namespaces = CablesWebpackHelper.uniqueArray(namespaces);
+                namespaces = [...new Set(namespaces)];
                 namespaces.sort((a, b) => { return a.localeCompare(b); });
                 namespaces.forEach((namespace) =>
                 {
                     banner += namespace + "=" + namespace + "|| {};\n";
                 });
                 return banner;
-            },
+            }
         })
     ];
 
@@ -88,27 +72,59 @@ export default (config, patchJson, logger = null) =>
             "entryOnly": true,
             "footer": true,
             "raw": true,
-            "banner": () =>
-            {
-                let banner = "window.addEventListener('load', function(event) {\n";
-                banner += "\tCABLES.jsLoaded=new Event('CABLES.jsLoaded');\n";
-                banner += "\tdocument.dispatchEvent(CABLES.jsLoaded);\n";
-                banner += "});\n";
-                return banner;
-            },
+            "banner": () => { return buildUtil.getJsLoadedCode(); }
         }));
     }
+
+    // like the web export, asset paths and op ids are replaced in the whole op code, not per op, so cached op modules stay valid
+    plugins.push({
+        "apply": function (compiler)
+        {
+            compiler.hooks.thisCompilation.tap("CablesWebpackOpsReplacements", (compilation) =>
+            {
+                compilation.hooks.processAssets.tap({
+                    "name": "CablesWebpackOpsReplacements",
+                    "stage": webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE
+                }, () =>
+                {
+                    const asset = compilation.getAsset("ops.js");
+                    if (!asset) return;
+                    let source = asset.source;
+                    [CablesWebpackHelper.getAssetReplacements(), CablesWebpackHelper.getOpIdReplacements()].forEach((replacements) =>
+                    {
+                        const keys = Object.keys(replacements).sort((a, b) => { return b.length - a.length; });
+                        if (keys.length === 0) return;
+                        const regExp = new RegExp(keys.map((key) => { return key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("|"), "g");
+                        const code = source.source().toString();
+                        const replaced = new webpack.sources.ReplaceSource(source);
+                        for (const match of code.matchAll(regExp))
+                        {
+                            replaced.replace(match.index, match.index + match[0].length - 1, replacements[match[0]]);
+                        }
+                        source = replaced;
+                    });
+                    compilation.updateAsset("ops.js", source);
+                });
+            });
+        }
+    });
 
     if (config.plugins?.ops) plugins = plugins.concat(config.plugins.ops);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 
     let buildConfig = {
         "name": "ops",
+        "devtool": (minify && config.options?.sourcemaps) ? "source-map" : false,
+        // size depends on the ops used in the patch, warn only for very big patches
+        "performance": {
+            "maxAssetSize": 10 * 1024 * 1024,
+            "maxEntrypointSize": 10 * 1024 * 1024
+        },
         "mode": buildMode,
         "entry": opFiles,
         "output": {
             "path": targetDir,
-            "filename": "ops.js",
+            "filename": "ops.js"
         },
         "optimization": {
             "concatenateModules": true,
@@ -123,36 +139,21 @@ export default (config, patchJson, logger = null) =>
                     "use": {
                         "loader": path.resolve(path.join(__dirname, "./webpack.op.loader.js")),
                         "options": {
-                            "minifyGlsl": minifyGlsl,
+                            "minifyGlsl": minifyGlsl
                         }
-                    },
+                    }
                 },
                 {
                     "test": /\.cables/,
                     "type": "json"
                 }
-            ],
+            ]
         },
-        "plugins": plugins,
+        "plugins": plugins
     };
 
-    if (config.options?.analyze)
-    {
-        let reportsPath = config.options.analyze.path ? path.resolve(config.options.analyze.path) : path.join(__dirname, "reports");
-        const analyzer = new BundleAnalyzerPlugin(
-            {
-                "analyzerMode": config.options.analyze.mode || "static",
-                "openAnalyzer": false,
-                "reportTitle": "cables " + buildConfig.name,
-                "reportFilename": path.join(reportsPath, "report_" + buildConfig.name + ".html"),
-                "bundleDir": targetDir
-            });
-        buildConfig.plugins = buildConfig.plugins || [];
-        buildConfig.plugins.push(analyzer);
-    }
-
-    if (config.overrides?.ops) buildConfig = { ...buildConfig, ...config.overrides.ops };
-    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    if (config.overrides?.ops) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.ops);
+    if (config.overrides?.all) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.all);
 
     return buildConfig;
 };

@@ -45,9 +45,9 @@
 <!-- dependencies -->
 {{#each dependencies}}
     {{#if module}}
-<script type="module">import * as {{export}} from "{{../jsPath}}{{src}}"; window.{{export}}={{export}};</script>;
+<script type="module">import * as {{export}} from "{{url}}"; window.{{export}}={{export}};</script>
     {{else}}
-<script type="text/javascript" src="{{../jsPath}}{{src}}"></script>
+<script type="text/javascript" src="{{url}}"></script>
     {{/if}}
 {{/each}}
 {{/if}}

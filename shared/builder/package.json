@@ -1,0 +1,64 @@
+{
+    "name": "@cables/builder",
+    "version": "0.1.0",
+    "author": "undev (https://undev.studio)",
+    "homepage": "https://github.com/cables-gl/cables_dev/tree/develop/shared/builder",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cables-gl/cables_dev.git",
+        "directory": "shared/builder"
+    },
+    "bugs": {
+        "url": "https://github.com/cables-gl/cables/issues"
+    },
+    "description": "webpack config to build cables patch exports locally",
+    "main": "index.js",
+    "exports": {
+        ".": "./index.js",
+        "./webpack": "./src/webpack/webpack.config.js"
+    },
+    "files": [
+        "index.js",
+        "src/",
+        "views/"
+    ],
+    "license": "MIT",
+    "type": "module",
+    "engines": {
+        "node": ">=20.10"
+    },
+    "scripts": {
+        "build": "webpack",
+        "clean": "node -e \"require('fs').rmSync('gen', { recursive: true, force: true })\""
+    },
+    "dependencies": {
+        "copy-webpack-plugin": "14.0.0",
+        "deepmerge": "4.3.1",
+        "glob": "14.0.6",
+        "glsl-tokenizer": "2.1.5",
+        "handlebars-loader": "1.7.3",
+        "html-webpack-plugin": "5.6.7",
+        "jsonfile": "6.2.1",
+        "raw-loader": "4.0.2",
+        "terser": "5.47.0",
+        "terser-webpack-plugin": "5.6.1"
+    },
+    "peerDependencies": {
+        "webpack": "5.106.2"
+    },
+    "peerDependenciesMeta": {
+        "webpack": {
+            "optional": true
+        }
+    },
+    "devDependencies": {
+        "eslint": "8.40.0",
+        "eslint-config-airbnb-base": "15.0.0",
+        "webpack": "5.106.2",
+        "webpack-bundle-analyzer": "4.10.2",
+        "webpack-cli": "^7.2.2"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

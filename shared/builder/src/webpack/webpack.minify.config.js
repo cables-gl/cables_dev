@@ -1,23 +1,21 @@
 import path from "path";
 import fs from "fs";
 import { minify } from "terser";
-import { glob } from "glob";
 import jsonfile from "jsonfile";
 import CablesWebpackHelper from "./webpack.helper.js";
 
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
  * @param {Object} patchJson
- * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ * @param {{"log": Function, "error": Function, "warn": Function, "info": Function, "debug": Function}} [logger]
  */
-export default (config, patchJson, logger = null, dependencies = []) =>
+export default (config, patchJson, logger = console) =>
 {
     if (!logger) logger = console;
 
     const patchFile = config.entry;
-    const sourceDir = path.resolve(path.dirname(patchFile));
 
-    const targetDir = path.join(config.output.path, "js");
+    const targetDir = CablesWebpackHelper.getJsDir(config);
     const buildMode = config.mode || "production";
     const doMinify = config.options?.hasOwnProperty("minify") ? config.options.minify : true;
     const sourceMap = config.options?.hasOwnProperty("sourcemaps") ? config.options.sourcemaps : false;
@@ -25,32 +23,29 @@ export default (config, patchJson, logger = null, dependencies = []) =>
 
     fs.mkdirSync(targetDir, { "recursive": true });
 
-    // collect jsfiles
-    const jsGlob = path.join(targetDir, "./**/**.js");
-    const jsFiles = glob.sync(jsGlob);
-
     let plugins = [
         {
-            apply(compiler)
+            "apply": function (compiler)
             {
-                compiler.hooks.thisCompilation.tap("CablesWebpackMinifyPlugin", async (compilation) =>
+                compiler.hooks.make.tapPromise("CablesWebpackMinifyPlugin", async (compilation) =>
                 {
-                    const code = {};
                     if (doMinify)
                     {
+                        // core, ops and corelibs are minified by webpack, only libs and op dependencies are copied unminified
+                        const depFiles = CablesWebpackHelper.getOpDependencies()
+                            .filter((dep) => { return dep.src && !/^https?:\/\//i.test(dep.src) && dep.src.endsWith(".js"); })
+                            .map((dep) => { return { "file": path.join(targetDir, dep.src), "module": dep.type === "module" }; })
+                            .filter((dep) => { return fs.existsSync(dep.file); });
 
-                        jsFiles.forEach((jsFile) =>
+                        for (const dep of depFiles)
                         {
-                            code[jsFile] = fs.readFileSync(jsFile, "utf8");
-                        });
-
-                        for (const file of jsFiles)
-                        {
+                            const file = dep.file;
                             const toMinify = fs.readFileSync(file, "utf8");
 
                             const result = await minify(toMinify, {
                                 "compress": true,
                                 "mangle": true,
+                                "module": dep.module,
                                 "format": { "comments": false },
                                 "sourceMap": sourceMap ? {
                                     "filename": path.basename(file).replace(/\.js$/, ".min.js"),
@@ -66,19 +61,11 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                                 fs.writeFileSync(outFile + ".map", result.map, "utf8");
                             }
 
-                            logger.info("minified", outFile);
+                            logger.debug("minified", outFile);
                         }
 
-                        let jsonFileName = null;
-                        const patchFiles = fs.readdirSync(sourceDir);
-                        patchFiles.forEach((file) =>
-                        {
-                            if (path.basename(file).endsWith(".cables"))
-                            {
-                                jsonFileName = path.basename(file, ".cables") + ".json";
-                            }
-                        });
-                        if (jsonFileName && !combineJs)
+                        const jsonFileName = CablesWebpackHelper.getJsonFileName(config);
+                        if (!combineJs)
                         {
                             const json = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
                             await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), json);
@@ -110,10 +97,10 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                 }
             ]
         },
-        "dependencies": ["combine"]
+        "dependencies": ["patchjson"]
     };
-    if (config.overrides?.minify) buildConfig = { ...buildConfig, ...config.overrides.minify };
-    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    if (config.overrides?.minify) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.minify);
+    if (config.overrides?.all) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.all);
 
     return buildConfig;
 };

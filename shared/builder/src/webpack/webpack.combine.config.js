@@ -2,20 +2,23 @@ import path from "path";
 import fs from "fs";
 import webpack from "webpack";
 import CablesWebpackHelper from "./webpack.helper.js";
+import BuildUtil from "../build_util.js";
 
 /**
  * @param {import("./webpack.config").CablesWebpackConfig} config
  * @param {Object} patchJson
- * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ * @param {{"log": Function, "error": Function, "warn": Function, "info": Function, "debug": Function}} [logger]
+ * @param {String[]} [dependencies]
  */
-export default (config, patchJson, logger = null, dependencies = []) =>
+export default (config, patchJson, logger = console, dependencies = []) =>
 {
     if (!logger) logger = console;
+    const buildUtil = new BuildUtil(logger);
     logger.info("combining js");
 
     const patchFile = config.entry;
     const sourceDir = path.resolve(path.dirname(patchFile));
-    const targetDir = path.join(config.output.path, "js");
+    const targetDir = CablesWebpackHelper.getJsDir(config);
     const buildMode = config.mode || "production";
     const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
     const minify = config.options?.hasOwnProperty("minify") ? config.options?.minify : true;
@@ -29,31 +32,33 @@ export default (config, patchJson, logger = null, dependencies = []) =>
 
     let plugins = [
         {
-            apply(compiler)
+            "apply": function (compiler)
             {
                 compiler.hooks.thisCompilation.tap("InlinePlugin", (compilation) =>
                 {
                     if (!combineJs) return;
-                    compilation.hooks.afterOptimizeAssets.tap("InlinePluginProcessAssets", (assets) =>
+                    compilation.hooks.afterOptimizeAssets.tap("InlinePluginProcessAssets", (_assets) =>
                     {
-                        let jsonFileName = path.basename(config.entry, ".cables") + ".json";
+                        const jsonFileName = CablesWebpackHelper.getJsonFileName(config);
                         const jsonFile = path.resolve(path.join(targetDir, jsonFileName));
-                        const proJson = fs.readFileSync(jsonFile);
-                        const opsCode = fs.readFileSync(opsFile);
 
-                        let jsCode = "\n";
-                        jsCode += "if(!CABLES.exportedPatches) CABLES.exportedPatches={};";
-                        jsCode += "CABLES.exportedPatches['" + patchJson.shortId + "']=" + proJson + ";";
+                        const missing = [];
+                        if (!fs.existsSync(coreFile)) missing.push("core (" + path.basename(coreFile) + ")");
+                        if (!fs.existsSync(opsFile)) missing.push("ops (" + path.basename(opsFile) + ")");
+                        if (!fs.existsSync(jsonFile)) missing.push("patchjson (" + jsonFileName + ")");
+                        if (missing.length > 0)
+                        {
+                            compilation.errors.push(new webpack.WebpackError("can not combine, not built: " + missing.join(", ") + ", see errors of these steps"));
+                            return;
+                        }
 
-                        jsCode += "\n";
-                        jsCode += "if(!CABLES.exportedPatch){CABLES.exportedPatch=CABLES.exportedPatches['" + patchJson.shortId + "']}";
+                        const proJson = fs.readFileSync(jsonFile, "utf8");
+                        const opsCode = fs.readFileSync(opsFile, "utf8");
+
+                        let jsCode = buildUtil.getExportedPatchCode(patchJson.shortId, proJson);
                         jsCode += "\n";
                         jsCode += opsCode;
-                        jsCode += "\n";
-                        jsCode += "window.addEventListener('load', function(event) {\n";
-                        jsCode += "CABLES.jsLoaded=new Event('CABLES.jsLoaded');\n";
-                        jsCode += "document.dispatchEvent(CABLES.jsLoaded);\n";
-                        jsCode += "});\n";
+                        jsCode += buildUtil.getJsLoadedCode();
 
                         const libScripts = CablesWebpackHelper.getCoreLibs();
                         const depScripts = CablesWebpackHelper.getOpDependencies();
@@ -62,9 +67,12 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                         {
                             const lib = libScripts[i];
                             const sourceFile = path.resolve(path.join(targetDir, lib + ".js"));
-                            jsCode += "// start " + lib + "\n";
-                            jsCode += fs.readFileSync(sourceFile, "utf8");
-                            jsCode += "// end " + lib + "\n";
+                            if (!fs.existsSync(sourceFile))
+                            {
+                                compilation.errors.push(new webpack.WebpackError("core lib " + lib + " was not built, see errors of dependencies"));
+                                continue;
+                            }
+                            jsCode += buildUtil.getLibCode(lib, fs.readFileSync(sourceFile, "utf8"));
                             fs.rmSync(sourceFile);
                         }
 
@@ -74,9 +82,12 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                             const sourceFile = path.resolve(path.join(targetDir, lib.src));
                             if (lib.src && lib.type === "commonjs" && !lib.src.startsWith("http"))
                             {
-                                jsCode += "// start " + lib.src + "\n";
-                                jsCode += fs.readFileSync(sourceFile, "utf8");
-                                jsCode += "// end " + lib.src + "\n";
+                                if (!fs.existsSync(sourceFile))
+                                {
+                                    compilation.errors.push(new webpack.WebpackError("op dependency " + lib.src + " was not built, see errors of the dependencies builds"));
+                                    continue;
+                                }
+                                jsCode += buildUtil.getLibCode(lib.src, fs.readFileSync(sourceFile, "utf8"));
                                 fs.rmSync(sourceFile);
                             }
                         }
@@ -84,9 +95,7 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                         jsCode += "window.CABLES=CABLES\n";
                         jsCode += "window.Ops =Ops\n";
 
-                        jsCode = jsCode.replaceAll(/[\u2028]/g, " ");
-                        jsCode = jsCode.replaceAll(/[\u2029]/g, " ");
-                        jsCode = jsCode.replaceAll(/[\u00A0]/g, " ");
+                        jsCode = buildUtil.cleanCombinedCode(jsCode);
 
                         jsCode = fs.readFileSync(coreFile, "utf8") + "\n" + jsCode;
 
@@ -100,7 +109,7 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                         fs.rmSync(jsonFile);
                     });
                 });
-            },
+            }
         },
         CablesWebpackHelper.removeEmptyChunk()
     ];
@@ -110,6 +119,9 @@ export default (config, patchJson, logger = null, dependencies = []) =>
 
     let buildConfig = {
         "name": "combine",
+        "performance": {
+            "hints": false
+        },
         "mode": buildMode,
         "plugins": plugins,
         "entry": patchFile,
@@ -127,9 +139,9 @@ export default (config, patchJson, logger = null, dependencies = []) =>
                 }
             ]
         },
-        "dependencies": ["core", "ops", "patchjson", ...dependencies],
+        "dependencies": ["core", "ops", "patchjson", "minify", ...dependencies]
     };
-    if (config.overrides?.combine) buildConfig = { ...buildConfig, ...config.overrides.combine };
-    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+    if (config.overrides?.combine) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.combine);
+    if (config.overrides?.all) buildConfig = CablesWebpackHelper.mergeConfig(buildConfig, config.overrides.all);
     return buildConfig;
 };
