@@ -1,0 +1,119 @@
+import path from "path";
+import fs from "fs";
+import { minify } from "terser";
+import { glob } from "glob";
+import jsonfile from "jsonfile";
+import CablesWebpackHelper from "./webpack.helper.js";
+
+/**
+ * @param {import("./webpack.config").CablesWebpackConfig} config
+ * @param {Object} patchJson
+ * @param {{"log":function, "error": function, "warn":function, "info":function, "debug":function}} [logger]
+ */
+export default (config, patchJson, logger = null, dependencies = []) =>
+{
+    if (!logger) logger = console;
+
+    const patchFile = config.entry;
+    const sourceDir = path.resolve(path.dirname(patchFile));
+
+    const targetDir = path.join(config.output.path, "js");
+    const buildMode = config.mode || "production";
+    const doMinify = config.options?.hasOwnProperty("minify") ? config.options.minify : true;
+    const sourceMap = config.options?.hasOwnProperty("sourcemaps") ? config.options.sourcemaps : false;
+    const combineJs = config.options?.hasOwnProperty("combinejs") ? config.options.combinejs : true;
+
+    fs.mkdirSync(targetDir, { "recursive": true });
+
+    // collect jsfiles
+    const jsGlob = path.join(targetDir, "./**/**.js");
+    const jsFiles = glob.sync(jsGlob);
+
+    let plugins = [
+        {
+            apply(compiler)
+            {
+                compiler.hooks.thisCompilation.tap("CablesWebpackMinifyPlugin", async (compilation) =>
+                {
+                    const code = {};
+                    if (doMinify)
+                    {
+
+                        jsFiles.forEach((jsFile) =>
+                        {
+                            code[jsFile] = fs.readFileSync(jsFile, "utf8");
+                        });
+
+                        for (const file of jsFiles)
+                        {
+                            const toMinify = fs.readFileSync(file, "utf8");
+
+                            const result = await minify(toMinify, {
+                                "compress": true,
+                                "mangle": true,
+                                "format": { "comments": false },
+                                "sourceMap": sourceMap ? {
+                                    "filename": path.basename(file).replace(/\.js$/, ".min.js"),
+                                    "url": path.basename(file) + ".map"
+                                } : false
+                            });
+
+                            const outFile = file.replace(/\.js$/, ".js");
+                            fs.writeFileSync(outFile, result.code ?? "", "utf8");
+
+                            if (sourceMap && result.map)
+                            {
+                                fs.writeFileSync(outFile + ".map", result.map, "utf8");
+                            }
+
+                            logger.info("minified", outFile);
+                        }
+
+                        let jsonFileName = null;
+                        const patchFiles = fs.readdirSync(sourceDir);
+                        patchFiles.forEach((file) =>
+                        {
+                            if (path.basename(file).endsWith(".cables"))
+                            {
+                                jsonFileName = path.basename(file, ".cables") + ".json";
+                            }
+                        });
+                        if (jsonFileName && !combineJs)
+                        {
+                            const json = await jsonfile.readFile(path.resolve(targetDir, jsonFileName));
+                            await jsonfile.writeFile(path.resolve(targetDir, jsonFileName), json);
+                        }
+
+                    }
+                });
+            }
+        },
+        CablesWebpackHelper.removeEmptyChunk()
+    ];
+
+    if (config.plugins?.minify) plugins = plugins.concat(config.plugins.minify);
+    if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
+
+    let buildConfig = {
+        "name": "minify",
+        "mode": buildMode,
+        "entry": patchFile,
+        "output": {
+            "path": targetDir
+        },
+        "plugins": plugins,
+        "module": {
+            "rules": [
+                {
+                    "test": /\.cables/,
+                    "type": "json"
+                }
+            ]
+        },
+        "dependencies": ["combine"]
+    };
+    if (config.overrides?.minify) buildConfig = { ...buildConfig, ...config.overrides.minify };
+    if (config.overrides?.all) buildConfig = { ...buildConfig, ...config.overrides.all };
+
+    return buildConfig;
+};
