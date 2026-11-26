@@ -106,6 +106,7 @@ export {
  * @property {Boolean} [selected]
  * @property {OpDirType} type
  * @property {String[]} [opNames]
+ * @property {Object<String, String>} [opIds]
  * @property {Boolean} [showOptions]
  * @property {Boolean} [showOpOptions]
  */
