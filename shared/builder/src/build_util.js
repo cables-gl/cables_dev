@@ -705,7 +705,8 @@ export default class BuildUtil
             "private": true,
             "type": "module",
             "scripts": {
-                "build": "webpack"
+                "build": "webpack",
+                "build:headless": "webpack --env type=headless"
             },
             "devDependencies": {
                 "@cables/builder": "^" + builderPackage.version,

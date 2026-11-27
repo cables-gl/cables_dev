@@ -29,6 +29,7 @@ import BuildUtil from "../build_util.js";
  * @property {Boolean} [sourcemaps=false]
  * @property {Boolean} [minifyglsl=true]
  * @property {Boolean} [clean=false]
+ * @property {Boolean} [install=true]
  * @property {("error"|"warn"|"info"|"verbose"|"debug")} [loglevel="info"]
  * @property {(Boolean|String)} [cache=false]
  * @property {String[]} [opsDirs]
@@ -86,6 +87,17 @@ import BuildUtil from "../build_util.js";
  */
 export default (config, logger = console) =>
 {
+    const options = {};
+    Object.keys(config.options || {}).forEach((key) =>
+    {
+        if (key.startsWith("WEBPACK_")) return;
+        const value = config.options[key];
+        if (value === "true") options[key] = true;
+        else if (value === "false") options[key] = false;
+        else options[key] = value;
+    });
+    config.options = options;
+
     const baseLogger = logger || console;
     const logLevels = ["error", "warn", "info", "verbose", "debug"];
     const statsPresets = { "error": "errors-only", "warn": "errors-warnings", "info": "minimal", "verbose": "normal", "debug": "verbose" };

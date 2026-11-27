@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import { spawn } from "child_process";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
 import jsonfile from "jsonfile";
@@ -49,8 +50,9 @@ export default (config, patchJson, logger = console) =>
     });
 
     const name = "cables_" + String(patchJson.name || "patch").replace(/[/\\?<>:*|"\x00-\x1f]/g, "").replace(/ /g, "_") + "_headless";
+    const npmDependencies = buildUtil.getNpmDependencies(opDocs);
     const files = {
-        "package.json": buildUtil.getHeadlessPackageJson(name, "0.0." + (patchJson.exports || 0), buildUtil.getNpmDependencies(opDocs), jsPath + CablesWebpackHelper.getJsonFileName(config), manifestLibs),
+        "package.json": buildUtil.getHeadlessPackageJson(name, "0.0." + (patchJson.exports || 0), npmDependencies, jsPath + CablesWebpackHelper.getJsonFileName(config), manifestLibs),
         "run.js": fs.readFileSync(path.join(__dirname, "../headless/run.js"), "utf8")
     };
 
@@ -75,6 +77,39 @@ export default (config, patchJson, logger = console) =>
             }
         }
     ];
+    const install = config.options?.hasOwnProperty("install") ? config.options.install : true;
+    if (install && Object.keys(npmDependencies).length > 0)
+    {
+        plugins.push({
+            "apply": function (compiler)
+            {
+                compiler.hooks.afterEmit.tapPromise("CablesWebpackHeadlessInstall", () =>
+                {
+                    logger.info("installing npm dependencies of the ops in", targetDir);
+                    return new Promise((resolve) =>
+                    {
+                        // npm is npm.cmd on windows, which node only starts through a shell
+                        const npm = spawn(process.platform === "win32" ? "npm.cmd" : "npm", ["install", "--omit=dev"], {
+                            "cwd": targetDir,
+                            "stdio": "inherit",
+                            "shell": process.platform === "win32"
+                        });
+                        npm.on("error", (e) =>
+                        {
+                            logger.warn("npm install failed, run npm install in " + targetDir, e.message);
+                            resolve();
+                        });
+                        npm.on("close", (code) =>
+                        {
+                            if (code !== 0) logger.warn("npm install failed, run npm install in " + targetDir);
+                            resolve();
+                        });
+                    });
+                });
+            }
+        });
+    }
+
     if (config.plugins?.headless) plugins = plugins.concat(config.plugins.headless);
     if (config.plugins?.all) plugins = plugins.concat(config.plugins.all);
 

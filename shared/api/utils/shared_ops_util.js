@@ -2914,7 +2914,7 @@ export default class SharedOpsUtil extends SharedUtil
             const newNamespace = this.getNamespace(oneNewName);
             const oldNamespace = this.getNamespace(oneOldName);
             if (!newNamespace || newNamespace === this.PREFIX_OPS) problems.namespace_empty = problemNewPrefix + "Op namespace cannot be empty or only '" + this.PREFIX_OPS + "'.";
-            if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.patch_op_illegal_namespace = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
+            if (newNamespace && newNamespace.startsWith("Ops.Patch.") && !this.isPatchOp(oneNewName)) problems.namespace_illegal_patch_op = problemNewPrefix + "Illegal patch op namespace: '" + newNamespace + "'.";
 
             const existingNamespace = this.namespaceExists(newNamespace, opDocs);
             if (existingNamespace && newNamespace !== existingNamespace)
@@ -4057,17 +4057,20 @@ export default class SharedOpsUtil extends SharedUtil
             fs.rmSync(oldOpDir, { "recursive": true, "force": true });
             this._docsUtil.replaceOpNameInLookup(oldName, newName);
         }
-        if (newName.includes(this.INFIX_DEPRECATED))
+        if (oldName !== newName)
         {
-            this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
-        }
-        else if (this.getOpNameWithoutVersion(oldName) === this.getOpNameWithoutVersion(newName))
-        {
-            this.addOpChangelog(currentUser.username, newName, { "type": "new op", "message": "created as a new version of " + oldName });
-        }
-        else
-        {
-            this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
+            if (newName.includes(this.INFIX_DEPRECATED))
+            {
+                this.addOpChangelog(currentUser.username, newName, { "type": "deprecation", "message": "op " + oldNameChangelog + " was deprecated" });
+            }
+            else if (this.getOpNameWithoutVersion(oldName) === this.getOpNameWithoutVersion(newName))
+            {
+                this.addOpChangelog(currentUser.username, newName, { "type": "new op", "message": "created as a new version of " + oldName });
+            }
+            else
+            {
+                this.addOpChangelog(currentUser.username, newName, { "type": "rename", "message": oldNameChangelog + " renamed to " + newName });
+            }
         }
 
         let updateOld = false;
